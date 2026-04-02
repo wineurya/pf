@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local agent / skills workflow (not published)
+.agents/
+.claude/
+skills-lock.json
+CLAUDE.md

@@ -1,8 +1,6 @@
-Repo: **pf** (wineury.design canvas).
+# pf
 
-## Stack
-
-Vite, React, Tailwind v4, Motion, GSAP, Lenis, React Router.
+Vite + React + Tailwind v4 + Motion + GSAP + Lenis + React Router.
 
 ## Run
 
@@ -12,13 +10,11 @@ npm install && npm run dev
 
 ## Tokens
 
-`src/styles/tokens.css` — `@theme` utilities + `:root` semantics. Notes: `src/styles/tokens.readme.md`.
-
-Semantics: `var(--color-bg)`, `var(--color-fg)`, … Primitives: e.g. `bg-accent-500`.
+Design tokens: `src/styles/tokens.css` (`@theme` + `:root`). Details: `src/styles/tokens.readme.md`.
 
 ## Motion
 
-Single GSAP registration: `src/lib/gsap.js`. Lenis: `src/lib/lenis.js` (ScrollTrigger proxy + ticker).
+GSAP entry: `src/lib/gsap.js`. Lenis + ScrollTrigger: `src/lib/lenis.js`.
 
 ## Roadmap
 
@@ -36,8 +32,4 @@ Single GSAP registration: `src/lib/gsap.js`. Lenis: `src/lib/lenis.js` (ScrollTr
 
 ## Fonts
 
-SF Pro Rounded: system only. Nunito Variable: `@fontsource-variable/nunito` (OFL). Do not commit proprietary font files.
-
-## Skills
-
-`.agents/skills/` — see `CLAUDE.md`. Restore: `npx skills experimental_install`
+Nunito Variable ships via `@fontsource-variable/nunito` (OFL). SF Pro Rounded is system-only — do not commit proprietary font files.
