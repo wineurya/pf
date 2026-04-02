@@ -8,6 +8,16 @@ Vite + React + Tailwind v4 + Motion + GSAP + Lenis + React Router.
 npm install && npm run dev
 ```
 
+## Multiple machines (laptop + desktop)
+
+The repo includes **agent skills** and a lockfile so Cursor and the `skills` CLI stay aligned after `git pull`:
+
+- `.agents/skills/` — installed skills (same on every clone)
+- `skills-lock.json` — pinned versions; refresh from registries with `npx skills experimental_install` when you intentionally upgrade
+- `CLAUDE.md` — merge order and project notes for AI assistants
+
+Use **Node 20+** (see `package.json` `engines`). After cloning on a new machine: `npm install`, then open the project as usual.
+
 ## Tokens
 
 Design tokens: `src/styles/tokens.css` (`@theme` + `:root`). Details: `src/styles/tokens.readme.md`.

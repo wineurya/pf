@@ -23,8 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-# Local agent / skills workflow (not published)
-.agents/
+# Claude Code may mirror skills here; tracked copy is .agents/skills + skills-lock.json
 .claude/
-skills-lock.json
-CLAUDE.md
