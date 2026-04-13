@@ -1,0 +1,2 @@
+# After Effects scripts: consistent line endings for clean diffs across machines
+*.jsx text eol=lf
