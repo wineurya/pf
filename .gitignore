@@ -25,3 +25,7 @@ dist-ssr
 
 # Claude Code may mirror skills here; tracked copy is .agents/skills + skills-lock.json
 .claude/
+
+# After Effects
+ae/Adobe After Effects Auto-Save/
+ae/Newton Auto-Save/

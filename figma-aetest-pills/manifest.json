@@ -1,0 +1,8 @@
+{
+  "name": "AETEST — spawn pill grid",
+  "id": "com.wineury.aetest-pills",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page"
+}
