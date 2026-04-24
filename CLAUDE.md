@@ -1,6 +1,6 @@
 # wineury.design
 
-Canvas repo: `src/styles/tokens.css`, Motion + GSAP + Lenis as already wired.
+Canvas repo: `src/styles/tokens.css`, Motion + GSAP + Lenis as already wired. Dependencies for future WebGL/physics: `three`, `@react-three/fiber`, `@react-three/drei`, `matter-js`; import `.vert`/`.frag` via `vite-plugin-glsl`. For R3F animation prefer GSAP/`useFrame` or `motion` values—`framer-motion-3d` is deprecated and pins obsolete R3F.
 
 **Merge order when skills disagree**
 

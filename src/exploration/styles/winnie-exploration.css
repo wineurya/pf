@@ -1,0 +1,912 @@
+/* Figma wireframe 146:15377 — light only; --wx-* live in src/styles/tokens.css */
+.winnie-exploration {
+  color-scheme: light;
+  background-color: var(--wx-page-bg);
+  color: var(--wx-ink);
+  /* Must match AsideHeroHeadline word enter duration (motion) */
+  --wx-headline-word-enter-duration: 0.26s;
+  /* Sparkle rises with the word (no delay); brief blur flash (~1ms) then opacity/transform fade */
+  --wx-sparkle-rise-duration: 0.92s;
+  --wx-sparkle-rise-distance: -2.65rem;
+  --wx-sparkle-rise-ease: cubic-bezier(0.22, 0.65, 0.28, 1);
+  --wx-sparkle-blur-flash: 10px;
+}
+
+/* Custom dot cursor — pointer-fine only; class toggled from JS when motion is allowed */
+@media (pointer: fine) {
+  .winnie-exploration.wx-exploration-root--custom-cursor,
+  .winnie-exploration.wx-exploration-root--custom-cursor a,
+  .winnie-exploration.wx-exploration-root--custom-cursor button {
+    cursor: none;
+  }
+}
+
+.winnie-exploration .wx-dot-cursor {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9998;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background-color: var(--wx-ink);
+  opacity: 0.82;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-page-bg) 70%, transparent);
+}
+
+/* Work panel — center supporting chrome; card overlay copy is centered in .wx-work-center-copy */
+.winnie-exploration .wx-work-section {
+  text-align: center;
+}
+
+.winnie-exploration ::selection {
+  background: var(--wx-selection-bg);
+}
+
+.winnie-exploration .wx-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+.winnie-exploration [id^="winnie-section"] {
+  scroll-margin-top: 0.75rem;
+}
+
+@media (width >= 64rem) {
+  .winnie-exploration [id^="winnie-section"] {
+    scroll-margin-top: 0;
+  }
+}
+
+/* Right column media blocks — same aspect at every breakpoint */
+.winnie-exploration .wx-gallery-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: var(--wx-gallery-aspect);
+  background-color: var(--wx-surface);
+}
+
+.winnie-exploration .wx-gallery-frame > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform;
+}
+
+.winnie-exploration .wx-work-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--wx-radius-card);
+  background-color: var(--wx-surface);
+  box-shadow: inset 0 0 0 1px var(--wx-work-card-ring);
+}
+
+.winnie-exploration .wx-work-card .wx-gallery-frame {
+  border-radius: inherit;
+}
+
+.winnie-exploration .wx-work-card:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 3px;
+}
+
+/* Nugget lab pattern: clip media + scrim + copy; chips anchor at bottom center */
+.winnie-exploration .wx-work-card-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.winnie-exploration .wx-work-card-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.winnie-exploration .wx-work-card-media-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform;
+}
+
+.winnie-exploration .wx-work-card-media-fallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    var(--wx-surface) 0%,
+    var(--wx-work-fallback-mid) 45%,
+    var(--wx-work-fallback-end) 100%
+  );
+}
+
+.winnie-exploration .wx-work-card-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--wx-scrim-gradient);
+  opacity: 0;
+  transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.winnie-exploration .wx-work-card--active .wx-work-card-scrim {
+  opacity: 1;
+}
+
+.winnie-exploration .wx-work-center-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--wx-work-overlay-pad-y) var(--wx-work-overlay-pad-x)
+    var(--wx-work-copy-pad-bottom);
+  text-align: center;
+  pointer-events: none;
+}
+
+.winnie-exploration .wx-work-center-copy-inner {
+  display: flex;
+  max-width: min(36rem, 100%);
+  flex-direction: column;
+  align-items: center;
+  gap: var(--wx-work-copy-gap);
+}
+
+.winnie-exploration .wx-work-center-copy-inner p {
+  text-align: center;
+  text-wrap: balance;
+}
+
+.winnie-exploration .wx-work-nuggets-anchor {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  top: auto;
+  z-index: 4;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+}
+
+.winnie-exploration .wx-work-nugget-center {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.winnie-exploration .wx-work-nugget {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.winnie-exploration .wx-work-nugget--chip {
+  position: relative;
+  border-radius: 4px;
+  padding: 0.36rem 0.54rem;
+  border: none;
+  box-shadow: var(--wx-chip-float-shadow);
+}
+
+/* Aside footer — stack nuggets + contact (left-aligned, full width) */
+.winnie-exploration .wx-aside-footer__label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wx-mute-2);
+}
+
+/* Stack — two marquee lanes; calm spacing like hero CTAs */
+.winnie-exploration .wx-stack-marquee-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+.winnie-exploration .wx-stack-marquee-stack .wx-stack-marquee + .wx-stack-marquee {
+  padding-top: 0.625rem;
+  margin-top: 0.125rem;
+  border-top: 1px solid rgb(0 0 0 / 0.045);
+}
+
+/*
+ * Marquee clip: padding inside overflow:hidden gives chip shadows room so they aren’t cropped.
+ * Horizontal padding keeps the first/last pills from hugging the fade seam.
+ */
+.winnie-exploration .wx-stack-marquee {
+  overflow: hidden;
+  padding: 16px 10px;
+  margin: -16px -10px;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    var(--wx-mask-solid) 2rem,
+    var(--wx-mask-solid) calc(100% - 2rem),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    var(--wx-mask-solid) 2rem,
+    var(--wx-mask-solid) calc(100% - 2rem),
+    transparent 100%
+  );
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+.winnie-exploration .wx-stack-marquee__inner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: max-content;
+  will-change: transform;
+  animation: wx-marquee-x 50s linear infinite;
+}
+
+.winnie-exploration .wx-stack-marquee__inner--reverse {
+  animation-duration: 58s;
+  animation-direction: reverse;
+}
+
+/* Pause on hover/focus so users can interact */
+.winnie-exploration .wx-stack-marquee__inner:hover,
+.winnie-exploration .wx-stack-marquee__inner:focus-within {
+  animation-play-state: paused;
+}
+
+@keyframes wx-marquee-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.winnie-exploration .wx-stack-marquee__item {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/*
+ * Tool chips — calm Apple-like pills: light border + shallow depth (compact shadows = less marquee clip).
+ * Hover borrows primary ring/glow from .wx-btn-primary but kept tight so padding handles the rest.
+ */
+.winnie-exploration .wx-stack-nugget {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  border-radius: 12px;
+  background-color: var(--wx-page-bg);
+  padding: 6px 13px 6px 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--wx-ink);
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.85),
+    0 1px 2px rgb(0 0 0 / 0.04);
+  transition:
+    box-shadow 260ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 260ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 160ms cubic-bezier(0.3, 0, 0, 1);
+}
+
+.winnie-exploration .wx-stack-nugget:hover {
+  background-color: var(--wx-surface-soft);
+  border-color: color-mix(in srgb, var(--wx-primary) 42%, rgb(0 0 0 / 0.1));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    0 3px 10px -2px var(--wx-btn-primary-hover-glow),
+    0 0 0 1px color-mix(in srgb, var(--wx-primary) 38%, rgb(0 0 0 / 0.06));
+}
+
+.winnie-exploration .wx-stack-nugget:active {
+  transform: scale(0.98);
+}
+
+.winnie-exploration .wx-stack-nugget:hover .wx-stack-nugget__logo-wrap {
+  background-color: color-mix(
+    in srgb,
+    var(--wx-stack-accent) 10%,
+    var(--wx-surface-soft)
+  );
+}
+
+.winnie-exploration .wx-stack-nugget:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+/* Logo well — quiet neutral field; brand read from icon */
+.winnie-exploration .wx-stack-nugget__logo-wrap {
+  display: flex;
+  width: 1.625rem;
+  height: 1.625rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background-color: rgb(0 0 0 / 0.035);
+  transition: background-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.winnie-exploration .wx-stack-nugget__logo {
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  object-fit: contain;
+}
+
+.winnie-exploration .wx-stack-nugget__meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  line-height: 20px;
+  padding-right: 1px;
+}
+
+.winnie-exploration .wx-stack-nugget__label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: -0.022em;
+  color: var(--wx-ink);
+}
+
+.winnie-exploration .wx-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/*
+ * Ghost contact links: no fill, border, or ring — only icon + expanding label
+ * (motion from ContactPill). Hover/focus use color only for light feedback.
+ */
+.winnie-exploration .wx-contact-pill {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  overflow: hidden;
+  padding: 0.2rem 0.1rem;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--wx-ink);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.winnie-exploration .wx-contact-pill:hover {
+  color: var(--wx-primary);
+}
+
+.winnie-exploration .wx-contact-pill:focus-visible {
+  outline: none;
+  color: var(--wx-primary);
+}
+
+.winnie-exploration .wx-contact-pill__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
+
+/* Phosphor: single-color stroke icons inherit link color (ink → primary on hover/focus) */
+.winnie-exploration .wx-contact-pill__phosphor {
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.winnie-exploration .wx-contact-pill__label {
+  margin-left: 0.2rem;
+  padding-right: 0.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* =========================
+   Nav / tablist (premium glass)
+   ========================= */
+.winnie-exploration .wx-tab-track {
+  position: relative;
+  border-radius: var(--wx-radius-track);
+  background-color: var(--wx-tab-track);
+  border: 1px solid var(--wx-tab-track-border);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    0 1px 0 var(--wx-tab-glass-highlight) inset,
+    0 1px 2px var(--wx-tab-glass-shadow),
+    0 10px 30px -18px var(--wx-track-shadow-color);
+  transition: box-shadow 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .winnie-exploration .wx-tab-track {
+    background-color: var(--wx-tab-track-solid);
+  }
+}
+
+.winnie-exploration .wx-tab {
+  position: relative;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.winnie-exploration .wx-tab:hover[aria-selected="false"] {
+  filter: brightness(1.04);
+}
+
+.winnie-exploration .wx-tab:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+/* =========================
+   Headline — rotating word + single sparkle (straight rise, transform only)
+   ========================= */
+/* Tight line-height: rotating words have no descenders; trims stray gap under the line */
+.winnie-exploration .wx-headline {
+  line-height: 1;
+}
+
+/* One continuous line: real inline flow (not flex) so baselines match the h1 */
+.winnie-exploration .wx-headline-line {
+  display: inline;
+}
+
+.winnie-exploration .wx-headline-static {
+  display: inline;
+}
+
+.winnie-exploration .wx-alive {
+  position: relative;
+  display: inline;
+  font-weight: inherit;
+  color: var(--wx-alive);
+  white-space: nowrap;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+/* Shrink-wraps the rotating word; width follows the active word — sparkles anchor to edges */
+.winnie-exploration .wx-headline-word-wrap {
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+  width: max-content;
+  max-width: 100%;
+}
+
+/* Single inline-block for the clip — avoid nested inline-blocks adding height */
+.winnie-exploration .wx-headline-rotate {
+  display: inline;
+  vertical-align: baseline;
+}
+
+/* Clip frame: matches glyph width/height of the current word for clean slide animation */
+.winnie-exploration .wx-headline-rotate__mask {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  overflow: hidden;
+  width: max-content;
+  max-width: 100%;
+  height: 1em;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+.winnie-exploration .wx-headline-rotate__word {
+  display: block;
+  flex-shrink: 0;
+  width: max-content;
+  line-height: 1;
+}
+
+.winnie-exploration .wx-sparkle {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 0.06em;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  user-select: none;
+  color: inherit;
+  transform: translate3d(-50%, 0, 0);
+}
+
+.winnie-exploration .wx-sparkle__img {
+  display: block;
+  width: 0.9rem;
+  height: 0.9rem;
+  max-width: none;
+}
+
+.winnie-exploration .wx-sparkle--run {
+  will-change: transform, filter;
+  animation: wx-sparkle-rise var(--wx-sparkle-rise-duration) var(--wx-sparkle-rise-ease) both;
+}
+
+@keyframes wx-sparkle-rise {
+  /* ~1ms blur at 0.92s duration ≈ 0.11% — then sharp for the rest */
+  0% {
+    transform: translate3d(-50%, 0, 0) scale(0.94);
+    opacity: 0;
+    filter: blur(var(--wx-sparkle-blur-flash));
+  }
+
+  0.11% {
+    transform: translate3d(-50%, 0, 0) scale(0.94);
+    filter: blur(0);
+  }
+
+  12% {
+    opacity: 0.5;
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  48% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: 0.55;
+  }
+
+  100% {
+    transform: translate3d(-50%, var(--wx-sparkle-rise-distance), 0) scale(1);
+    opacity: 0;
+    filter: blur(0);
+  }
+}
+
+@media (width >= 40rem) {
+  .winnie-exploration .wx-sparkle__img {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .winnie-exploration .wx-headline-rotate__mask {
+    display: inline-flex;
+    overflow: visible;
+    height: auto;
+    min-height: 0;
+    line-height: 1;
+  }
+}
+
+/* CTAs — Figma 146:15388 (primary), 146:15390 (secondary) */
+.winnie-exploration .wx-btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--wx-btn-primary-border-soft);
+  background-color: var(--wx-primary);
+  box-shadow:
+    var(--wx-inset-highlight),
+    var(--wx-btn-press-shadow),
+    0 0 0 1px var(--wx-primary);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--wx-btn-primary-fg);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition:
+    box-shadow 260ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 160ms cubic-bezier(0.3, 0, 0, 1);
+}
+
+.winnie-exploration .wx-btn-primary:hover {
+  background-color: var(--wx-btn-primary-hover-bg);
+  box-shadow:
+    var(--wx-btn-primary-hover-inset),
+    0 6px 18px -6px var(--wx-btn-primary-hover-glow),
+    var(--wx-btn-shadow-xs),
+    0 0 0 1px var(--wx-btn-primary-hover-ring);
+}
+
+.winnie-exploration .wx-btn-primary:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+.winnie-exploration .wx-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--wx-btn-secondary-border);
+  background-color: var(--wx-btn-secondary-bg);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--wx-ink);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 160ms cubic-bezier(0.3, 0, 0, 1);
+}
+
+.winnie-exploration .wx-btn-secondary:hover {
+  background-color: var(--wx-btn-secondary-bg-hover);
+  border-color: var(--wx-btn-secondary-border-hover);
+}
+
+.winnie-exploration .wx-btn-secondary:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+.winnie-exploration .wx-btn-wrap {
+  white-space: normal;
+  text-align: center;
+}
+
+@media (width >= 40rem) {
+  .winnie-exploration .wx-btn-primary.wx-btn-wrap {
+    white-space: nowrap;
+  }
+}
+
+/* =========================
+   Clients marquee
+   ========================= */
+.winnie-exploration .wx-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    var(--wx-mask-solid) 8%,
+    var(--wx-mask-solid) 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    var(--wx-mask-solid) 8%,
+    var(--wx-mask-solid) 92%,
+    transparent 100%
+  );
+}
+
+.winnie-exploration .wx-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 3rem;
+  padding: 0.25rem 0;
+  animation: wx-marquee 38s linear infinite;
+}
+
+.winnie-exploration .wx-marquee:hover .wx-marquee-track,
+.winnie-exploration .wx-marquee:focus-within .wx-marquee-track {
+  animation-play-state: paused;
+}
+
+.winnie-exploration .wx-marquee-item {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  color: var(--wx-mute-2);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+@keyframes wx-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .winnie-exploration .wx-marquee-track {
+    animation: none;
+    transform: translateX(0) !important;
+  }
+}
+
+/* Studio capabilities — per-row accent from --wx-cap-accent (set inline on .wx-capability-row) */
+.winnie-exploration .wx-capability-icon {
+  background-color: color-mix(in srgb, var(--wx-cap-accent, var(--wx-primary)) 18%, var(--wx-page-bg));
+  color: var(--wx-cap-accent, var(--wx-primary));
+}
+
+.winnie-exploration .wx-capability-title {
+  color: var(--wx-cap-accent, var(--wx-primary));
+}
+
+/* =========================
+   Stats row
+   ========================= */
+.winnie-exploration .wx-stat-value {
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: var(--wx-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (width >= 40rem) {
+  .winnie-exploration .wx-stat-value {
+    font-size: 2.75rem;
+  }
+}
+
+/* =========================
+   FAQ
+   ========================= */
+.winnie-exploration .wx-faq-item {
+  border-top: 1px solid var(--wx-border-soft);
+}
+
+.winnie-exploration .wx-faq-item:last-child {
+  border-bottom: 1px solid var(--wx-border-soft);
+}
+
+.winnie-exploration .wx-faq-summary {
+  appearance: none;
+  margin: 0;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--wx-ink);
+  font: inherit;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.winnie-exploration .wx-faq-summary:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.winnie-exploration .wx-faq-chevron {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  position: relative;
+  display: block;
+}
+
+.winnie-exploration .wx-faq-chevron::before,
+.winnie-exploration .wx-faq-chevron::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background-color: currentColor;
+}
+
+.winnie-exploration .wx-faq-chevron::before {
+  width: 100%;
+  height: 1.5px;
+}
+
+.winnie-exploration .wx-faq-chevron::after {
+  height: 100%;
+  width: 1.5px;
+}
+
+.winnie-exploration .wx-faq-body {
+  padding-bottom: 1rem;
+  max-width: 42rem;
+  color: var(--wx-muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+/* =========================
+   Pull quote / testimonial
+   ========================= */
+.winnie-exploration .wx-quote-mark {
+  display: block;
+  font-size: 3rem;
+  line-height: 0.8;
+  color: var(--wx-primary);
+  font-weight: 500;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+/* Respect reduced motion globally for custom transitions */
+@media (prefers-reduced-motion: reduce) {
+  .winnie-exploration .wx-gallery-frame > img,
+  .winnie-exploration .wx-btn-primary,
+  .winnie-exploration .wx-btn-secondary,
+  .winnie-exploration .wx-stack-nugget,
+  .winnie-exploration .wx-faq-chevron,
+  .winnie-exploration .wx-work-card,
+  .winnie-exploration .wx-work-card-scrim,
+  .winnie-exploration .wx-work-nugget {
+    transition: none !important;
+  }
+
+  .winnie-exploration .wx-stack-nugget:active {
+    transform: none !important;
+  }
+
+  /* Pause the marquee scroll for users who prefer no motion */
+  .winnie-exploration .wx-stack-marquee__inner {
+    animation-play-state: paused !important;
+  }
+
+}

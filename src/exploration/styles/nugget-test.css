@@ -1,0 +1,322 @@
+/* Nugget lab — dark / light page chrome; tokens: src/styles/tokens.css (--nt-*) */
+
+.nugget-test {
+  color-scheme: dark;
+  min-height: 100dvh;
+  background: var(--nt-page-bg-dark);
+  color: var(--nt-page-fg-dark);
+  /* Named snapshot for View Transitions API circular reveal */
+  view-transition-name: nt-page;
+}
+
+.nugget-test--light {
+  color-scheme: light;
+  background: var(--nt-page-bg-light);
+  color: var(--nt-page-fg-light);
+}
+
+.nugget-test a:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.nugget-test__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem clamp(1rem, 4vw, 2rem);
+  border-bottom: 1px solid var(--nt-top-border-dark);
+  transition: border-color 0.35s ease;
+}
+
+.nugget-test--light .nugget-test__top {
+  border-bottom-color: var(--nt-top-border-light);
+}
+
+.nugget-test__back {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--nt-link-muted-dark);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.nugget-test__back:hover {
+  color: var(--nt-link-fg-dark);
+}
+
+.nugget-test--light .nugget-test__back {
+  color: var(--nt-link-muted-light);
+}
+
+.nugget-test--light .nugget-test__back:hover {
+  color: var(--nt-page-fg-light);
+}
+
+.nugget-test__badge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nt-badge);
+}
+
+.nugget-test__main {
+  display: flex;
+  min-height: calc(100dvh - 3.25rem);
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.nugget-test__card {
+  position: relative;
+  width: 100%;
+  max-width: 42rem;
+  /* Clips nuggets as they exit straight down past the bottom edge */
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--nt-card-border-dark);
+  background: var(--nt-card-bg-dark);
+  box-shadow: var(--nt-card-shadow-dark);
+  aspect-ratio: 16 / 10;
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+}
+
+/* Clips hero + scrim + copy; card outer also clips so tag exit is cropped at bottom */
+.nugget-test__card-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.nugget-test--light .nugget-test__card {
+  border: 1px solid var(--nt-card-border-light);
+  background: var(--nt-card-bg-light);
+  box-shadow: var(--nt-card-shadow-light);
+}
+
+.nugget-test__card-media {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.nugget-test__card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nugget-test__card-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 12px;
+  background: var(--nt-scrim-gradient);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nugget-test__card--engaged .nugget-test__card-scrim {
+  opacity: 1;
+}
+
+.nugget-test__center-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Always light-on-scrim for readability in both page themes */
+.nugget-test__title {
+  margin: 0;
+  font-size: clamp(1.375rem, 3.5vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--nt-title-on-scrim);
+}
+
+.nugget-test__sub {
+  margin: 0.65rem 0 0;
+  max-width: 28rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--nt-sub-on-scrim);
+}
+
+.nugget-test__nuggets-anchor {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  top: auto;
+  z-index: 4;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+}
+
+.nugget-test__nugget-center {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.nugget-test__nugget {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 4px;
+  padding: 0.38rem 0.58rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  border: none;
+  box-shadow: var(--nt-nugget-shadow-dark);
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.nugget-test--light .nugget-test__nugget {
+  box-shadow: var(--nt-nugget-shadow-light);
+}
+
+/*
+ * View Transitions: real old/new snapshots (nothing “disappears” into a flat overlay).
+ * Default crossfade off; clip-path is driven from JS on ::view-transition-new(nt-page).
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using
+ */
+::view-transition-image-pair(nt-page) {
+  isolation: isolate;
+}
+
+::view-transition-old(nt-page),
+::view-transition-new(nt-page) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+/*
+ * Theme FAB: tokens + “liquid glass” on dark (high-end-visual-design), soft raised on light
+ * (design-taste: single functional accent via focus ring only; tinted shadows; no generic gray slab).
+ */
+.nugget-test__theme-toggle {
+  position: fixed;
+  z-index: 10000;
+  right: clamp(1rem, 3vw, 1.5rem);
+  bottom: clamp(1rem, 3vw, 1.5rem);
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 9999px;
+  cursor: pointer;
+  line-height: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.nugget-test__theme-icon-svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.nugget-test:not(.nugget-test--light) .nugget-test__theme-toggle {
+  color: var(--color-neutral-50);
+  background: color-mix(in oklch, var(--color-neutral-0) 11%, transparent);
+  border: 1px solid color-mix(in oklch, var(--color-neutral-0) 20%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--color-neutral-0) 18%, transparent),
+    0 12px 44px -16px color-mix(in oklch, var(--color-neutral-1000) 58%, transparent);
+  backdrop-filter: blur(14px) saturate(150%);
+}
+
+.nugget-test:not(.nugget-test--light) .nugget-test__theme-toggle:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--color-neutral-0) 17%, transparent);
+  border-color: color-mix(in oklch, var(--color-neutral-0) 28%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--color-neutral-0) 24%, transparent),
+    0 16px 50px -16px color-mix(in oklch, var(--color-neutral-1000) 62%, transparent);
+}
+
+.nugget-test--light .nugget-test__theme-toggle {
+  color: var(--color-neutral-900);
+  background: var(--color-neutral-0);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--color-neutral-0) 70%, transparent),
+    0 14px 46px -20px color-mix(in oklch, var(--color-neutral-800) 22%, transparent);
+}
+
+.nugget-test--light .nugget-test__theme-toggle:hover:not(:disabled) {
+  background: var(--color-neutral-50);
+  border-color: var(--color-border-strong);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--color-neutral-0) 85%, transparent),
+    0 18px 52px -18px color-mix(in oklch, var(--color-neutral-800) 26%, transparent);
+}
+
+.nugget-test__theme-toggle:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.nugget-test__theme-toggle:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nugget-test:not(.nugget-test--light) .nugget-test__theme-toggle {
+    backdrop-filter: none;
+    background: color-mix(in oklch, var(--color-neutral-800) 88%, transparent);
+    border-color: color-mix(in oklch, var(--color-neutral-0) 22%, transparent);
+  }
+
+  .nugget-test__theme-toggle:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+.nugget-test__theme-toggle:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nugget-test__card-scrim {
+    transition-duration: 0.12s !important;
+  }
+
+  .nugget-test__nugget {
+    transition: none !important;
+  }
+}

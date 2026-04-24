@@ -228,6 +228,123 @@
   --gsap-ease-fluid: "0.3, 0, 0, 1";
   --gsap-ease-spring: "0.34, 1.56, 0.64, 1";
   --gsap-ease-bounce: "0.68, -0.55, 0.265, 1.55";
+
+  /*
+   * Winnie exploration (Figma 146) — light marketing surface; inherits on :root
+   * so Tailwind arbitrary values and Framer Motion can use var(--wx-*).
+   */
+  --wx-page-bg: var(--color-neutral-0);
+  --wx-primary: #00aaff;
+  --wx-primary-soft: #eaf7ff;
+  --wx-primary-active: #00aaff;
+  --wx-alive: #01aaff;
+  --wx-primary-ring: rgb(0 170 255 / 0.45);
+  --wx-primary-glow: rgb(0 170 255 / 0.2);
+  --wx-primary-hover-mix: #006699;
+  --wx-primary-border-mix: #004466;
+  --wx-surface: #f5f5f5;
+  --wx-surface-soft: #fafafa;
+  --wx-ink: #1a1a1a;
+  --wx-muted: #515151;
+  --wx-mute-2: #6b7280;
+  --wx-tab-idle: #8b9498;
+  --wx-tab-idle-fg: #ffffff;
+  --wx-tab-track: rgb(245 245 245 / 0.72);
+  --wx-tab-track-solid: #f5f5f5;
+  --wx-border-soft: rgb(0 0 0 / 0.06);
+  --wx-border-faint: rgb(0 0 0 / 0.05);
+  --wx-ring-subtle: rgb(0 0 0 / 0.04);
+  --wx-ring-strong: rgb(0 0 0 / 0.16);
+  --wx-shadow-tab:
+    0 2px 4px rgb(9 9 11 / 0.16), 0 1px 2px rgb(9 9 11 / 0.08);
+  --wx-inset-highlight: inset 0 1px 20px rgb(255 255 255 / 0.16);
+  --wx-radius-segment: 12px;
+  --wx-radius-track: 16px;
+  --wx-radius-card: 8px;
+  --wx-gallery-gap: 12px;
+  --wx-gallery-aspect: 16 / 10;
+  --wx-work-overlay-pad-x: clamp(1rem, 3.5vw, 1.5rem);
+  --wx-work-overlay-pad-y: clamp(1rem, 3vw, 1.375rem);
+  --wx-work-copy-gap: 0.5rem;
+  --wx-work-copy-pad-bottom: clamp(3.125rem, 9vmin, 4.5rem);
+  --wx-max-copy: 31.3125rem;
+  --wx-pad-x: clamp(1.25rem, 4vw, 3.75rem);
+  --wx-space-section: clamp(1.75rem, 4vw, 2.5rem);
+  --wx-selection-bg: color-mix(in srgb, var(--wx-primary) 22%, transparent);
+  --wx-work-card-ring: rgb(0 0 0 / 0.04);
+  --wx-work-fallback-mid: var(--color-neutral-200);
+  --wx-work-fallback-end: var(--color-neutral-300);
+  --wx-scrim-gradient: linear-gradient(
+    to top,
+    rgb(6 6 10 / 0.78) 0%,
+    rgb(6 6 10 / 0.28) 42%,
+    rgb(6 6 10 / 0.48) 100%
+  );
+  --wx-chip-float-shadow: 0 12px 28px -16px rgb(0 0 0 / 0.65);
+  --wx-track-shadow-color: rgb(9 9 11 / 0.08);
+  --wx-tab-track-border: rgb(0 0 0 / 0.05);
+  --wx-tab-glass-highlight: rgb(255 255 255 / 0.65);
+  --wx-tab-glass-shadow: rgb(9 9 11 / 0.04);
+  --wx-tab-glass-elevated: rgb(9 9 11 / 0.08);
+  --wx-btn-primary-border-soft: rgb(255 255 255 / 0.26);
+  --wx-btn-primary-fg: var(--color-neutral-0);
+  --wx-btn-primary-hover-bg: color-mix(in srgb, var(--wx-primary) 88%, var(--wx-primary-hover-mix));
+  --wx-btn-primary-hover-glow: rgb(0 170 255 / 0.45);
+  --wx-btn-primary-hover-ring: color-mix(in srgb, var(--wx-primary) 85%, var(--wx-primary-border-mix));
+  --wx-btn-secondary-bg: var(--color-neutral-0);
+  --wx-btn-secondary-bg-hover: var(--color-neutral-50);
+  --wx-btn-secondary-border: rgb(0 0 0 / 0.16);
+  --wx-btn-secondary-border-hover: rgb(0 0 0 / 0.22);
+  --wx-mask-solid: var(--color-neutral-1000);
+  --wx-tab-shadow-active:
+    inset 0 1px 20px rgb(255 255 255 / 0.18),
+    0 4px 10px -4px var(--wx-primary-glow),
+    0 1px 2px rgb(9 9 11 / 0.08),
+    0 0 0 1px var(--wx-primary);
+  --wx-tab-shadow-idle:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 1px 1px rgb(9 9 11 / 0.08),
+    0 0 0 1px rgb(255 255 255 / 0.28);
+  --wx-btn-press-shadow: 0 2px 4px rgb(9 9 11 / 0.16), 0 1px 2px rgb(9 9 11 / 0.08);
+  --wx-btn-shadow-xs: 0 1px 2px rgb(9 9 11 / 0.08);
+  --wx-btn-primary-hover-inset: inset 0 1px 20px rgb(255 255 255 / 0.22);
+
+  /* Nugget lab page — dark/light chrome (matches previous hex; single source) */
+  --nt-page-bg-dark: #0a0a0c;
+  --nt-page-fg-dark: #f4f4f5;
+  --nt-page-bg-light: #f4f4f5;
+  --nt-page-fg-light: #18181b;
+  --nt-card-bg-dark: #111113;
+  --nt-card-border-dark: rgb(255 255 255 / 0.08);
+  --nt-card-shadow-dark:
+    0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 24px 48px -24px rgb(0 0 0 / 0.75);
+  --nt-card-bg-light: var(--color-neutral-0);
+  --nt-card-border-light: rgb(0 0 0 / 0.1);
+  --nt-card-shadow-light:
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 24px 48px -28px rgb(0 0 0 / 0.18);
+  --nt-top-border-dark: rgb(255 255 255 / 0.06);
+  --nt-top-border-light: rgb(0 0 0 / 0.08);
+  --nt-link-muted-dark: #a1a1aa;
+  --nt-link-fg-dark: #fafafa;
+  --nt-link-muted-light: #52525b;
+  --nt-badge: #71717a;
+  --nt-nugget-shadow-dark: 0 14px 34px -18px rgb(0 0 0 / 0.72);
+  --nt-nugget-shadow-light: 0 12px 30px -16px rgb(15 23 42 / 0.4);
+  --nt-scrim-gradient: var(--wx-scrim-gradient);
+  --nt-title-on-scrim: var(--color-neutral-0);
+  --nt-sub-on-scrim: rgb(255 255 255 / 0.92);
+
+  /*
+   * Nugget lab demo chip fills (Tailwind *-600); keep in sync with NuggetTestPage LAB_NUGGETS
+   */
+  --chip-lab-react: #0284c7;
+  --chip-lab-figma: #7c3aed;
+  --chip-lab-motion: #e11d48;
+  --chip-lab-a11y: #059669;
+  --chip-lab-cms: #2563eb;
+  --chip-lab-layout: #d97706;
 }
 
 @media (width >= 48rem) {
