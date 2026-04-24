@@ -33,7 +33,7 @@
   border-radius: 50%;
   background-color: var(--wx-ink);
   opacity: 0.82;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-page-bg) 70%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-white) 70%, transparent);
 }
 
 /* Work panel — center supporting chrome; card overlay copy is centered in .wx-work-center-copy */
@@ -240,7 +240,7 @@
 .winnie-exploration .wx-stack-marquee-stack .wx-stack-marquee + .wx-stack-marquee {
   padding-top: 0.625rem;
   margin-top: 0.125rem;
-  border-top: 1px solid rgb(0 0 0 / 0.045);
+  border-top: 1px solid var(--wx-border-hairline);
 }
 
 /*
@@ -308,7 +308,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid rgb(0 0 0 / 0.08);
+  border: 1px solid var(--wx-border-muted);
   border-radius: 12px;
   background-color: var(--wx-page-bg);
   padding: 6px 13px 6px 6px;
@@ -318,8 +318,8 @@
   color: var(--wx-ink);
   outline: none;
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.85),
-    0 1px 2px rgb(0 0 0 / 0.04);
+    inset 0 1px 0 color-mix(in srgb, var(--wx-white) 85%, transparent),
+    0 1px 2px var(--wx-ring-subtle);
   transition:
     box-shadow 260ms cubic-bezier(0.4, 0, 0.2, 1),
     border-color 260ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -329,11 +329,11 @@
 
 .winnie-exploration .wx-stack-nugget:hover {
   background-color: var(--wx-surface-soft);
-  border-color: color-mix(in srgb, var(--wx-primary) 42%, rgb(0 0 0 / 0.1));
+  border-color: color-mix(in srgb, var(--wx-primary) 42%, var(--wx-stack-hover-border-mix));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 1px 0 color-mix(in srgb, var(--wx-white) 95%, transparent),
     0 3px 10px -2px var(--wx-btn-primary-hover-glow),
-    0 0 0 1px color-mix(in srgb, var(--wx-primary) 38%, rgb(0 0 0 / 0.06));
+    0 0 0 1px color-mix(in srgb, var(--wx-primary) 38%, var(--wx-stack-hover-ring-mix));
 }
 
 .winnie-exploration .wx-stack-nugget:active {
@@ -362,7 +362,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 7px;
-  background-color: rgb(0 0 0 / 0.035);
+  background-color: var(--wx-stack-logo-well-tint);
   transition: background-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -492,15 +492,30 @@
 /* Tight line-height: rotating words have no descenders; trims stray gap under the line */
 .winnie-exploration .wx-headline {
   line-height: 1;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1;
 }
 
 /* One continuous line: real inline flow (not flex) so baselines match the h1 */
 .winnie-exploration .wx-headline-line {
   display: inline;
+  /* With tracking-tight, nudge word spaces so they match sentence rhythm */
+  word-spacing: 0.02em;
 }
 
 .winnie-exploration .wx-headline-static {
   display: inline;
+}
+
+/* Single word space between “feel” and the cyan word: body color + same metrics (no cyan bleed, no double space) */
+.winnie-exploration .wx-headline-gap {
+  display: inline;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  color: var(--wx-ink);
+  white-space: pre;
 }
 
 .winnie-exploration .wx-alive {

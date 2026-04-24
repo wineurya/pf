@@ -355,7 +355,7 @@ function WorkCard({ entry, reduceMotion }) {
           <div className="wx-work-center-copy">
             <div className="wx-work-center-copy-inner">
               <motion.p
-                className="w-full text-center text-lg font-medium tracking-tight text-white sm:text-xl"
+                className="w-full text-center text-lg font-medium tracking-tight text-[var(--wx-on-scrim)] sm:text-xl"
                 initial={false}
                 animate={active ? { opacity: 1 } : { opacity: 0 }}
                 transition={
@@ -369,7 +369,7 @@ function WorkCard({ entry, reduceMotion }) {
                 {entry.overlayTitle}
               </motion.p>
               <motion.p
-                className="w-full text-center text-sm leading-relaxed text-white/78 sm:text-[0.9375rem]"
+                className="w-full text-center text-sm leading-relaxed text-[var(--wx-on-scrim-muted)] sm:text-[0.9375rem]"
                 initial={false}
                 animate={active ? { opacity: 1 } : { opacity: 0 }}
                 transition={
@@ -429,7 +429,8 @@ function AsideHeroHeadline({ reduceMotion }) {
   return (
     <h1 className="wx-headline relative block w-full max-w-full text-[1.625rem] font-medium leading-none tracking-tight text-[var(--wx-ink)] sm:text-[1.75rem]">
       <span className="wx-headline-line">
-        <span className="wx-headline-static">Designs that feel </span>
+        <span className="wx-headline-static">Designs that feel</span>
+        <span className="wx-headline-gap"> </span>
         <span className="wx-alive">
           <span className="wx-headline-word-wrap">
             <span className="wx-headline-rotate" aria-live="polite">
@@ -807,7 +808,7 @@ export function WinnieExplorationPage() {
         <aside
           className={clsx(
             "relative z-20 flex w-full shrink-0 flex-col border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
-            "lg:h-svh lg:max-h-svh lg:w-1/2 lg:min-w-0 lg:sticky lg:top-0 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0",
+            "lg:h-svh lg:max-h-svh lg:grow-0 lg:shrink-0 lg:basis-[var(--wx-explore-aside-basis)] lg:min-w-0 lg:sticky lg:top-0 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0",
           )}
           aria-label="Introduction"
         >
@@ -864,7 +865,7 @@ export function WinnieExplorationPage() {
                       tabIndex={selected ? 0 : -1}
                       className={clsx(
                         "wx-tab relative flex min-h-10 items-center justify-center rounded-[var(--wx-radius-segment)] text-sm outline-none",
-                        "text-white",
+                        "text-[var(--wx-tab-idle-fg)]",
                         "active:scale-[0.97]",
                         selected ? "px-3 py-2 font-semibold" : "min-w-10 px-2 py-2 font-medium",
                       )}
@@ -997,7 +998,7 @@ export function WinnieExplorationPage() {
         </aside>
 
         <div
-          className="relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-[var(--wx-gallery-gap)] px-[var(--wx-pad-x)] pb-20 pt-10 lg:w-1/2 lg:px-3 lg:pl-3 lg:pr-[var(--wx-pad-x)] lg:pb-24 lg:pt-12"
+          className="relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-[var(--wx-gallery-gap)] px-[var(--wx-pad-x)] pb-20 pt-10 lg:min-w-0 lg:flex-1 lg:basis-0 lg:px-3 lg:pl-3 lg:pr-[var(--wx-pad-x)] lg:pb-24 lg:pt-12"
           id="winnie-panels"
         >
           {/* ============================== WORK ============================== */}

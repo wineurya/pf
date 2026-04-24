@@ -132,7 +132,7 @@ export const WINNIE_WORK = [
 
 /**
  * Aside stack — two marquee lanes (design vs build/AI). Simple Icons CDN SVGs include
- * fill; Adobe is local; VS Code uses Wikimedia Commons. brandHex tints the chip.
+ * fill; Adobe + Claude marks are local under public/stack-logos/; VS Code uses Wikimedia.
  */
 export const WINNIE_STACK_MARQUEE_LAYERS = [
   [
@@ -238,15 +238,16 @@ export const WINNIE_STACK_MARQUEE_LAYERS = [
     },
     {
       label: "Claude",
-      href: "https://www.anthropic.com/",
-      brandSlug: "anthropic",
+      href: "https://claude.ai/",
+      logoUrl: "/stack-logos/claude.svg",
       brandHex: "#d97757",
     },
     {
       label: "ChatGPT",
       href: "https://chatgpt.com/",
-      brandSlug: "openai",
-      brandHex: "#412991",
+      logoUrl:
+        "https://upload.wikimedia.org/wikipedia/commons/e/ef/ChatGPT-Logo.svg",
+      brandHex: "#10a37f",
     },
   ],
 ];

@@ -232,8 +232,11 @@
   /*
    * Winnie exploration (Figma 146) — light marketing surface; inherits on :root
    * so Tailwind arbitrary values and Framer Motion can use var(--wx-*).
+   * Darks/whites: derive from --color-neutral-* only (no raw #000/#fff in wx-*).
    */
   --wx-page-bg: var(--color-neutral-0);
+  --wx-white: var(--color-neutral-0);
+  --wx-black: var(--color-neutral-1000);
   --wx-primary: #00aaff;
   --wx-primary-soft: #eaf7ff;
   --wx-primary-active: #00aaff;
@@ -242,26 +245,34 @@
   --wx-primary-glow: rgb(0 170 255 / 0.2);
   --wx-primary-hover-mix: #006699;
   --wx-primary-border-mix: #004466;
-  --wx-surface: #f5f5f5;
-  --wx-surface-soft: #fafafa;
-  --wx-ink: #1a1a1a;
-  --wx-muted: #515151;
-  --wx-mute-2: #6b7280;
-  --wx-tab-idle: #8b9498;
-  --wx-tab-idle-fg: #ffffff;
-  --wx-tab-track: rgb(245 245 245 / 0.72);
-  --wx-tab-track-solid: #f5f5f5;
-  --wx-border-soft: rgb(0 0 0 / 0.06);
-  --wx-border-faint: rgb(0 0 0 / 0.05);
-  --wx-ring-subtle: rgb(0 0 0 / 0.04);
-  --wx-ring-strong: rgb(0 0 0 / 0.16);
-  --wx-shadow-tab:
-    0 2px 4px rgb(9 9 11 / 0.16), 0 1px 2px rgb(9 9 11 / 0.08);
-  --wx-inset-highlight: inset 0 1px 20px rgb(255 255 255 / 0.16);
+  --wx-surface: var(--color-neutral-100);
+  --wx-surface-soft: var(--color-neutral-50);
+  --wx-ink: var(--color-neutral-900);
+  --wx-muted: var(--color-neutral-600);
+  --wx-mute-2: var(--color-neutral-500);
+  --wx-tab-idle: var(--color-neutral-400);
+  --wx-tab-idle-fg: var(--color-neutral-0);
+  --wx-tab-track: color-mix(in srgb, var(--color-neutral-100) 72%, transparent);
+  --wx-tab-track-solid: var(--color-neutral-100);
+  --wx-border-soft: color-mix(in srgb, var(--wx-black) 6%, transparent);
+  --wx-border-faint: color-mix(in srgb, var(--wx-black) 5%, transparent);
+  --wx-border-muted: color-mix(in srgb, var(--wx-black) 8%, transparent);
+  --wx-border-hairline: color-mix(in srgb, var(--wx-black) 4.5%, transparent);
+  --wx-stack-logo-well-tint: color-mix(in srgb, var(--wx-black) 3.5%, transparent);
+  --wx-stack-hover-border-mix: color-mix(in srgb, var(--wx-black) 10%, transparent);
+  --wx-stack-hover-ring-mix: color-mix(in srgb, var(--wx-black) 6%, transparent);
+  --wx-ring-subtle: color-mix(in srgb, var(--wx-black) 4%, transparent);
+  --wx-ring-strong: color-mix(in srgb, var(--wx-black) 16%, transparent);
+  --wx-shadow-key: color-mix(in srgb, var(--wx-black) 16%, transparent);
+  --wx-shadow-ambient: color-mix(in srgb, var(--wx-black) 8%, transparent);
+  --wx-shadow-tab: 0 2px 4px var(--wx-shadow-key), 0 1px 2px var(--wx-shadow-ambient);
+  --wx-inset-highlight: inset 0 1px 20px color-mix(in srgb, var(--wx-white) 16%, transparent);
   --wx-radius-segment: 12px;
   --wx-radius-track: 16px;
   --wx-radius-card: 8px;
   --wx-gallery-gap: 12px;
+  /* Aside vs work column: capped rail + fluid gallery (see WinnieExplorationPage) */
+  --wx-explore-aside-basis: min(42%, 36rem);
   --wx-gallery-aspect: 16 / 10;
   --wx-work-overlay-pad-x: clamp(1rem, 3.5vw, 1.5rem);
   --wx-work-overlay-pad-y: clamp(1rem, 3vw, 1.375rem);
@@ -271,70 +282,72 @@
   --wx-pad-x: clamp(1.25rem, 4vw, 3.75rem);
   --wx-space-section: clamp(1.75rem, 4vw, 2.5rem);
   --wx-selection-bg: color-mix(in srgb, var(--wx-primary) 22%, transparent);
-  --wx-work-card-ring: rgb(0 0 0 / 0.04);
+  --wx-work-card-ring: color-mix(in srgb, var(--wx-black) 4%, transparent);
   --wx-work-fallback-mid: var(--color-neutral-200);
   --wx-work-fallback-end: var(--color-neutral-300);
   --wx-scrim-gradient: linear-gradient(
     to top,
-    rgb(6 6 10 / 0.78) 0%,
-    rgb(6 6 10 / 0.28) 42%,
-    rgb(6 6 10 / 0.48) 100%
+    color-mix(in srgb, var(--wx-black) 78%, transparent) 0%,
+    color-mix(in srgb, var(--wx-black) 28%, transparent) 42%,
+    color-mix(in srgb, var(--wx-black) 48%, transparent) 100%
   );
-  --wx-chip-float-shadow: 0 12px 28px -16px rgb(0 0 0 / 0.65);
-  --wx-track-shadow-color: rgb(9 9 11 / 0.08);
-  --wx-tab-track-border: rgb(0 0 0 / 0.05);
-  --wx-tab-glass-highlight: rgb(255 255 255 / 0.65);
-  --wx-tab-glass-shadow: rgb(9 9 11 / 0.04);
-  --wx-tab-glass-elevated: rgb(9 9 11 / 0.08);
-  --wx-btn-primary-border-soft: rgb(255 255 255 / 0.26);
-  --wx-btn-primary-fg: var(--color-neutral-0);
+  --wx-chip-float-shadow: 0 12px 28px -16px color-mix(in srgb, var(--wx-black) 65%, transparent);
+  --wx-track-shadow-color: var(--wx-shadow-ambient);
+  --wx-tab-track-border: color-mix(in srgb, var(--wx-black) 5%, transparent);
+  --wx-tab-glass-highlight: color-mix(in srgb, var(--wx-white) 65%, transparent);
+  --wx-tab-glass-shadow: color-mix(in srgb, var(--wx-black) 4%, transparent);
+  --wx-tab-glass-elevated: color-mix(in srgb, var(--wx-black) 8%, transparent);
+  --wx-btn-primary-border-soft: color-mix(in srgb, var(--wx-white) 26%, transparent);
+  --wx-btn-primary-fg: var(--wx-white);
   --wx-btn-primary-hover-bg: color-mix(in srgb, var(--wx-primary) 88%, var(--wx-primary-hover-mix));
   --wx-btn-primary-hover-glow: rgb(0 170 255 / 0.45);
   --wx-btn-primary-hover-ring: color-mix(in srgb, var(--wx-primary) 85%, var(--wx-primary-border-mix));
-  --wx-btn-secondary-bg: var(--color-neutral-0);
+  --wx-btn-secondary-bg: var(--wx-white);
   --wx-btn-secondary-bg-hover: var(--color-neutral-50);
-  --wx-btn-secondary-border: rgb(0 0 0 / 0.16);
-  --wx-btn-secondary-border-hover: rgb(0 0 0 / 0.22);
-  --wx-mask-solid: var(--color-neutral-1000);
+  --wx-btn-secondary-border: color-mix(in srgb, var(--wx-black) 16%, transparent);
+  --wx-btn-secondary-border-hover: color-mix(in srgb, var(--wx-black) 22%, transparent);
+  --wx-mask-solid: var(--wx-black);
+  --wx-on-scrim: var(--wx-white);
+  --wx-on-scrim-muted: color-mix(in srgb, var(--wx-white) 78%, transparent);
   --wx-tab-shadow-active:
-    inset 0 1px 20px rgb(255 255 255 / 0.18),
+    inset 0 1px 20px color-mix(in srgb, var(--wx-white) 18%, transparent),
     0 4px 10px -4px var(--wx-primary-glow),
-    0 1px 2px rgb(9 9 11 / 0.08),
+    0 1px 2px var(--wx-shadow-ambient),
     0 0 0 1px var(--wx-primary);
   --wx-tab-shadow-idle:
-    inset 0 1px 0 rgb(255 255 255 / 0.3),
-    0 1px 1px rgb(9 9 11 / 0.08),
-    0 0 0 1px rgb(255 255 255 / 0.28);
-  --wx-btn-press-shadow: 0 2px 4px rgb(9 9 11 / 0.16), 0 1px 2px rgb(9 9 11 / 0.08);
-  --wx-btn-shadow-xs: 0 1px 2px rgb(9 9 11 / 0.08);
-  --wx-btn-primary-hover-inset: inset 0 1px 20px rgb(255 255 255 / 0.22);
+    inset 0 1px 0 color-mix(in srgb, var(--wx-white) 30%, transparent),
+    0 1px 1px var(--wx-shadow-ambient),
+    0 0 0 1px color-mix(in srgb, var(--wx-white) 28%, transparent);
+  --wx-btn-press-shadow: 0 2px 4px var(--wx-shadow-key), 0 1px 2px var(--wx-shadow-ambient);
+  --wx-btn-shadow-xs: 0 1px 2px var(--wx-shadow-ambient);
+  --wx-btn-primary-hover-inset: inset 0 1px 20px color-mix(in srgb, var(--wx-white) 22%, transparent);
 
-  /* Nugget lab page — dark/light chrome (matches previous hex; single source) */
-  --nt-page-bg-dark: #0a0a0c;
-  --nt-page-fg-dark: #f4f4f5;
-  --nt-page-bg-light: #f4f4f5;
-  --nt-page-fg-light: #18181b;
-  --nt-card-bg-dark: #111113;
-  --nt-card-border-dark: rgb(255 255 255 / 0.08);
+  /* Nugget lab page — dark/light chrome (neutrals only) */
+  --nt-page-bg-dark: var(--color-neutral-950);
+  --nt-page-fg-dark: var(--color-neutral-100);
+  --nt-page-bg-light: var(--color-neutral-100);
+  --nt-page-fg-light: var(--color-neutral-900);
+  --nt-card-bg-dark: var(--color-neutral-900);
+  --nt-card-border-dark: color-mix(in srgb, var(--wx-white) 8%, transparent);
   --nt-card-shadow-dark:
-    0 1px 0 rgb(255 255 255 / 0.04) inset,
-    0 24px 48px -24px rgb(0 0 0 / 0.75);
-  --nt-card-bg-light: var(--color-neutral-0);
-  --nt-card-border-light: rgb(0 0 0 / 0.1);
+    0 1px 0 color-mix(in srgb, var(--wx-white) 4%, transparent) inset,
+    0 24px 48px -24px color-mix(in srgb, var(--wx-black) 75%, transparent);
+  --nt-card-bg-light: var(--wx-white);
+  --nt-card-border-light: color-mix(in srgb, var(--wx-black) 10%, transparent);
   --nt-card-shadow-light:
-    0 1px 0 rgb(255 255 255 / 0.9) inset,
-    0 24px 48px -28px rgb(0 0 0 / 0.18);
-  --nt-top-border-dark: rgb(255 255 255 / 0.06);
-  --nt-top-border-light: rgb(0 0 0 / 0.08);
-  --nt-link-muted-dark: #a1a1aa;
-  --nt-link-fg-dark: #fafafa;
-  --nt-link-muted-light: #52525b;
-  --nt-badge: #71717a;
-  --nt-nugget-shadow-dark: 0 14px 34px -18px rgb(0 0 0 / 0.72);
-  --nt-nugget-shadow-light: 0 12px 30px -16px rgb(15 23 42 / 0.4);
+    0 1px 0 color-mix(in srgb, var(--wx-white) 90%, transparent) inset,
+    0 24px 48px -28px color-mix(in srgb, var(--wx-black) 18%, transparent);
+  --nt-top-border-dark: color-mix(in srgb, var(--wx-white) 6%, transparent);
+  --nt-top-border-light: color-mix(in srgb, var(--wx-black) 8%, transparent);
+  --nt-link-muted-dark: var(--color-neutral-400);
+  --nt-link-fg-dark: var(--color-neutral-50);
+  --nt-link-muted-light: var(--color-neutral-600);
+  --nt-badge: var(--color-neutral-500);
+  --nt-nugget-shadow-dark: 0 14px 34px -18px color-mix(in srgb, var(--wx-black) 72%, transparent);
+  --nt-nugget-shadow-light: 0 12px 30px -16px color-mix(in srgb, var(--wx-black) 40%, transparent);
   --nt-scrim-gradient: var(--wx-scrim-gradient);
-  --nt-title-on-scrim: var(--color-neutral-0);
-  --nt-sub-on-scrim: rgb(255 255 255 / 0.92);
+  --nt-title-on-scrim: var(--wx-on-scrim);
+  --nt-sub-on-scrim: color-mix(in srgb, var(--wx-white) 92%, transparent);
 
   /*
    * Nugget lab demo chip fills (Tailwind *-600); keep in sync with NuggetTestPage LAB_NUGGETS
