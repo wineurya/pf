@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
+@import "./styles/work-case.css";
 
 @layer base {
   :root {
@@ -33,6 +34,9 @@
     background-color: var(--color-bg);
     color: var(--color-fg);
     font-family: var(--font-body);
+    /* SF Pro Rounded / Text: Regular 400 is the default text weight; use font-medium/semibold utilities where UI needs 500/600 */
+    font-weight: 400;
+    font-synthesis: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

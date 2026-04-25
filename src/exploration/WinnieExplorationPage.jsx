@@ -39,34 +39,35 @@ import { InstagramLogo } from "@phosphor-icons/react/dist/csr/InstagramLogo";
 import { LinkedinLogo } from "@phosphor-icons/react/dist/csr/LinkedinLogo";
 import { XLogo } from "@phosphor-icons/react/dist/csr/XLogo";
 import { clsx } from "clsx";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
 import { ScrollTrigger } from "@/lib/gsap.js";
+import { navigateWithViewTransition } from "@/lib/navigateViewTransition.js";
 import { useLenis } from "@/providers/LenisProvider.jsx";
 import {
   WINNIE_AVAILABILITY,
-  WINNIE_CAPABILITIES,
   WINNIE_CONTACT_SOCIALS,
+  WINNIE_ENTRY_SERVICE,
   WINNIE_EXTRA_IMAGES,
   WINNIE_FAQ,
   WINNIE_FIGMA_ASSETS,
+  WINNIE_FINAL_CTA,
+  WINNIE_HERO,
   WINNIE_IMAGE_FALLBACKS,
+  WINNIE_NEGATIVE_LIST,
+  WINNIE_QUALIFICATION_FIELDS,
   WINNIE_SECTION_IDS,
+  WINNIE_SERVICES,
   WINNIE_STATS,
   WINNIE_TABS,
   WINNIE_STACK_MARQUEE_LAYERS,
-  WINNIE_TESTIMONIAL,
+  WINNIE_TESTIMONIALS,
   WINNIE_WORK,
 } from "@/exploration/winnie-content.js";
 import { useWinnieSectionScroll } from "@/exploration/useWinnieSectionScroll.js";
 import "@/exploration/styles/winnie-exploration.css";
 
 const TAB_ICONS = [Briefcase01Icon, BookUserIcon, Layers01Icon, Mail01Icon];
-
-const CAPABILITY_ICON_MAP = {
-  PenTool01Icon,
-  MagicWand01Icon,
-  CodeCircleIcon,
-  FallingStarIcon,
-};
 
 const NUGGET_ICON_MAP = {
   CodeCircleIcon,
@@ -150,8 +151,6 @@ const WX_TAB_PILL_DURATION = 0.36;
 const WX_TAB_MICRO_DURATION = 0.28;
 /** Resting blur on inactive labels — they crossfade through this on (de)select. */
 const WX_TAB_LABEL_BLUR = 4;
-/** Label strip: avoid animating width "auto" (janky); cap to longest tab label. */
-const WX_TAB_LABEL_MAX_PX = 100;
 /** Lenis scroll-to-section — smoother than linear. */
 const WX_LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
 
@@ -371,6 +370,19 @@ function WorkCard({ entry, reduceMotion }) {
           </div>
           <div className="wx-work-card-scrim" aria-hidden />
 
+          {/* Persistent metadata corners — Concept badge + stack label */}
+          <div className="wx-work-card-meta wx-work-card-meta--top">
+            {entry.concept ? (
+              <span className="wx-work-card-badge" aria-label="Concept project">
+                <span className="wx-work-card-badge__dot" aria-hidden />
+                Concept
+              </span>
+            ) : null}
+            {entry.stackLabel ? (
+              <span className="wx-work-card-stacklabel">{entry.stackLabel}</span>
+            ) : null}
+          </div>
+
           <div className="wx-work-center-copy">
             <div className="wx-work-center-copy-inner">
               <motion.p
@@ -401,6 +413,23 @@ function WorkCard({ entry, reduceMotion }) {
               >
                 {entry.overlaySubtitle}
               </motion.p>
+              {entry.metric ? (
+                <motion.p
+                  className="wx-work-card-metric"
+                  initial={false}
+                  animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0.12, ease: "easeOut" }
+                      : active
+                        ? copyTrans(0.22)
+                        : { duration: 0.24, ease: [0.5, 0, 0.88, 1] }
+                  }
+                >
+                  <span className="wx-work-card-metric__value">{entry.metric.value}</span>
+                  <span className="wx-work-card-metric__label">{entry.metric.label}</span>
+                </motion.p>
+              ) : null}
             </div>
           </div>
         </div>
@@ -422,6 +451,17 @@ function WorkCard({ entry, reduceMotion }) {
             ))}
           </div>
         ) : null}
+        {entry.caseStudyPath ? (
+          <ViewTransitionLink
+            to={entry.caseStudyPath}
+            className="mt-2 inline-flex w-full items-center justify-center text-[0.8125rem] font-medium text-[var(--wx-primary)] underline-offset-4 sm:justify-start hover:underline"
+          >
+            Case study
+            <span aria-hidden className="ml-0.5">
+              ↗
+            </span>
+          </ViewTransitionLink>
+        ) : null}
       </div>
     </RevealCard>
   );
@@ -430,6 +470,34 @@ function WorkCard({ entry, reduceMotion }) {
 const HEADLINE_ROTATE_WORDS = ["clear", "human", "accessible", "intentional"];
 /** Keep in sync with `--wx-headline-word-enter-duration` in winnie-exploration.css */
 const HEADLINE_WORD_ENTER_DURATION = 0.26;
+
+/** Same order as `WINNIE_ACCENT_HEX` / capability cards — tints the wordmark via mask */
+const WX_WORDMARK_MARK_GRADIENT = `linear-gradient(135deg, var(--wx-primary) 0%, var(--wx-accent-teal) 32%, var(--wx-accent-violet) 64%, var(--wx-accent-amber) 100%)`;
+
+/**
+ * Figma SVG as mask + `background` so fill tracks tokens (Figma files often ship fixed raster colors).
+ */
+function MaskedFigmaIcon({ src, className, background = "var(--wx-primary)", style, ...rest }) {
+  return (
+    <div
+      className={className}
+      style={{
+        background,
+        WebkitMaskImage: `url(${src})`,
+        maskImage: `url(${src})`,
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        ...style,
+      }}
+      aria-hidden
+      {...rest}
+    />
+  );
+}
 
 function AsideHeroHeadline({ reduceMotion }) {
   const [wordIndex, setWordIndex] = useState(0);
@@ -461,13 +529,13 @@ function AsideHeroHeadline({ reduceMotion }) {
                     initial={
                       reduceMotion
                         ? false
-                        : { y: "110%", opacity: 0.12, filter: "blur(10px)" }
+                        : { y: "110%", opacity: 0.12, filter: "blur(10px)", scale: 0.8 }
                     }
-                    animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                    animate={{ y: 0, opacity: 1, filter: "blur(0px)", scale: 1 }}
                     exit={
                       reduceMotion
                         ? undefined
-                        : { y: "-120%", opacity: 0, filter: "blur(12px)" }
+                        : { y: "-120%", opacity: 0, filter: "blur(12px)", scale: 0.8 }
                     }
                     transition={
                       reduceMotion
@@ -485,11 +553,10 @@ function AsideHeroHeadline({ reduceMotion }) {
               className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
               aria-hidden
             >
-              <FigmaImage
-                primary={WINNIE_FIGMA_ASSETS.headlineSparkle}
-                alt=""
+              <MaskedFigmaIcon
                 className="wx-sparkle__img"
-                loading="eager"
+                src={WINNIE_FIGMA_ASSETS.headlineSparkle}
+                background="var(--wx-primary)"
               />
             </span>
           </span>
@@ -766,8 +833,434 @@ function WinnieDotCursor({ reduceMotion }) {
   return <div ref={ref} className="wx-dot-cursor" aria-hidden />;
 }
 
+/* =====================================================================
+   Commercial-clarity components
+   - Trust strip, productized service cards, P→D→O case story, How-I-work
+     fallback, and qualified-contact form. All accents driven by the four
+     wx-accent tokens (primary, teal, violet, amber) so the palette stays
+     coherent across nuggets, icons, and hovers.
+   ===================================================================== */
+
+const SERVICE_ICON_MAP = {
+  PenTool01Icon,
+  MagicWand01Icon,
+  Layers01Icon,
+  CodeCircleIcon,
+  FallingStarIcon,
+};
+
+function HeroProofRow({ proof }) {
+  if (!proof?.items?.length) return null;
+  return (
+    <dl className="wx-hero-proof grid grid-cols-3 gap-x-3 gap-y-1 text-left">
+      {proof.items.map((it) => (
+        <div key={it.label} className="wx-hero-proof__cell">
+          <dt className="wx-hero-proof__value">{it.value}</dt>
+          <dd className="wx-hero-proof__label">{it.label}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function ServiceEntryCard({ svc, reduceMotion, onClick }) {
+  const Icon = SERVICE_ICON_MAP[svc.iconKey];
+  return (
+    <RevealCard
+      reduceMotion={reduceMotion}
+      className="wx-service-entry overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6"
+      style={{ "--wx-cap-accent": svc.accent }}
+    >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+        <div className="flex items-center gap-3 sm:flex-1">
+          <span className="wx-capability-icon flex size-10 shrink-0 items-center justify-center rounded-full">
+            {Icon ? <HugeiconsIcon icon={Icon} size={18} strokeWidth={1.6} /> : null}
+          </span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span
+                className="wx-service-code"
+                style={{ color: svc.accent, borderColor: "color-mix(in srgb, var(--wx-cap-accent) 36%, transparent)" }}
+              >
+                {svc.code}
+              </span>
+              <p className="font-medium text-[var(--wx-ink)]">{svc.title}</p>
+            </div>
+            <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--wx-muted)]">
+              {svc.tagline ?? svc.forWhom}
+            </p>
+          </div>
+        </div>
+        <div className="flex shrink-0 items-center justify-between gap-4 sm:justify-end sm:gap-5">
+          <p className="text-[0.8125rem] font-medium text-[var(--wx-ink)]">
+            from {svc.priceFrom}
+            <span className="block text-[0.75rem] font-normal text-[var(--wx-muted)]">
+              {svc.timeline}
+            </span>
+          </p>
+          <motion.button
+            type="button"
+            onClick={onClick}
+            className="wx-btn-secondary"
+            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+            transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+          >
+            Start here <span aria-hidden className="wx-btn-arrow">→</span>
+          </motion.button>
+        </div>
+      </div>
+    </RevealCard>
+  );
+}
+
+function RetainerAdjuster({ tiers, accent }) {
+  const [tierIdx, setTierIdx] = useState(1);
+  const tier = tiers[tierIdx];
+  return (
+    <div className="wx-retainer-adjuster mt-3 flex items-center justify-between gap-3 rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] px-3 py-2">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setTierIdx((i) => Math.max(0, i - 1))}
+          disabled={tierIdx === 0}
+          aria-label="Fewer active tasks"
+          className="wx-stepper-btn"
+          style={{ "--wx-cap-accent": accent }}
+        >
+          −
+        </button>
+        <span className="wx-stepper-value tabular-nums">{tier.tasks}</span>
+        <button
+          type="button"
+          onClick={() => setTierIdx((i) => Math.min(tiers.length - 1, i + 1))}
+          disabled={tierIdx === tiers.length - 1}
+          aria-label="More active tasks"
+          className="wx-stepper-btn"
+          style={{ "--wx-cap-accent": accent }}
+        >
+          +
+        </button>
+      </div>
+      <div className="min-w-0 text-right">
+        <p className="text-[0.8125rem] font-medium text-[var(--wx-ink)]">{tier.priceFrom}</p>
+        <p className="truncate text-[0.6875rem] text-[var(--wx-muted)]">{tier.note}</p>
+      </div>
+    </div>
+  );
+}
+
+function ServicesGrid({ reduceMotion, onStart }) {
+  return (
+    <div className="space-y-[var(--wx-gallery-gap)]">
+      <ServiceEntryCard svc={WINNIE_ENTRY_SERVICE} reduceMotion={reduceMotion} onClick={onStart} />
+      <RevealCard
+        reduceMotion={reduceMotion}
+        className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] ring-1 ring-[color:var(--wx-border-soft)]"
+      >
+        <div className="flex items-center justify-between gap-4 border-b border-[color:var(--wx-border-soft)] px-6 py-4 sm:px-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
+            Services
+          </p>
+          <p className="text-[0.75rem] text-[var(--wx-muted)]">Starting points · final scope in SOW</p>
+        </div>
+        <ul className="grid gap-px bg-[color:var(--wx-border-soft)] sm:grid-cols-2">
+          {WINNIE_SERVICES.map((svc) => {
+            const Icon = SERVICE_ICON_MAP[svc.iconKey];
+            return (
+              <li
+                key={svc.slug}
+                className="wx-service-card flex flex-col gap-4 bg-[var(--wx-page-bg)] p-5 sm:p-6"
+                style={{ "--wx-cap-accent": svc.accent }}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="wx-capability-icon flex size-9 shrink-0 items-center justify-center rounded-full">
+                      {Icon ? <HugeiconsIcon icon={Icon} size={17} strokeWidth={1.6} /> : null}
+                    </span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="wx-service-code"
+                          style={{ color: svc.accent, borderColor: "color-mix(in srgb, var(--wx-cap-accent) 36%, transparent)" }}
+                        >
+                          {svc.code}
+                        </span>
+                        <p
+                          className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em]"
+                          style={{ color: svc.accent }}
+                        >
+                          {svc.eyebrow}
+                        </p>
+                      </div>
+                      <p className="font-medium text-[var(--wx-ink)]">{svc.title}</p>
+                    </div>
+                  </div>
+                  <p className="shrink-0 text-right text-[0.8125rem] font-medium text-[var(--wx-ink)]">
+                    from {svc.priceFrom}
+                    <span className="block text-[0.75rem] font-normal text-[var(--wx-muted)]">
+                      {svc.timeline}
+                    </span>
+                  </p>
+                </div>
+                <p className="text-sm leading-relaxed text-[var(--wx-muted)]">
+                  <span className="font-medium text-[var(--wx-ink)]">For:</span> {svc.forWhom}
+                </p>
+                <ul className="space-y-1.5 text-[0.8125rem] leading-relaxed text-[var(--wx-ink)]">
+                  {svc.deliverables.map((d) => (
+                    <li key={d} className="flex items-start gap-2">
+                      <span
+                        aria-hidden
+                        className="mt-[0.55em] size-1.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: svc.accent }}
+                      />
+                      <span>{d}</span>
+                    </li>
+                  ))}
+                </ul>
+                {svc.adjusterTiers ? (
+                  <RetainerAdjuster tiers={svc.adjusterTiers} accent={svc.accent} />
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      </RevealCard>
+    </div>
+  );
+}
+
+function NegativeListCard({ reduceMotion }) {
+  return (
+    <RevealCard
+      reduceMotion={reduceMotion}
+      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6"
+    >
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
+        {WINNIE_NEGATIVE_LIST.eyebrow}
+      </p>
+      <ul className="mt-4 grid gap-px bg-[color:var(--wx-border-soft)] sm:grid-cols-1">
+        {WINNIE_NEGATIVE_LIST.items.map((item, i) => (
+          <li
+            key={item}
+            className="wx-negative-row flex items-baseline gap-4 bg-[var(--wx-page-bg)] py-3"
+          >
+            <span className="wx-negative-row__num tabular-nums">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span className="text-sm leading-relaxed text-[var(--wx-ink)]">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </RevealCard>
+  );
+}
+
+function FinalCtaCard({ reduceMotion, onSendBrief }) {
+  return (
+    <RevealCard
+      reduceMotion={reduceMotion}
+      className="wx-final-cta overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8"
+    >
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <div className="space-y-2">
+          <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">
+            {WINNIE_FINAL_CTA.heading}
+          </h3>
+          <p className="max-w-xl text-[0.9375rem] leading-relaxed text-[var(--wx-muted)]">
+            {WINNIE_FINAL_CTA.body}
+          </p>
+        </div>
+        <motion.button
+          type="button"
+          onClick={onSendBrief}
+          className="wx-btn-primary shrink-0"
+          whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+          transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+        >
+          {WINNIE_FINAL_CTA.ctaLabel}
+          <span aria-hidden className="wx-btn-arrow">→</span>
+        </motion.button>
+      </div>
+    </RevealCard>
+  );
+}
+
+function HowIWorkCard({ reduceMotion }) {
+  const rows = [
+    {
+      label: "Kickoff",
+      text: "Short brief, written goals, first milestone agreed in week one.",
+      accent: "var(--wx-accent-violet)",
+    },
+    {
+      label: "Weekly rhythm",
+      text: "Async updates Mondays, shared Figma, prototype links you can click.",
+      accent: "var(--wx-accent-teal)",
+    },
+    {
+      label: "Decisions",
+      text: "Bigger calls go to a 30-minute review with options + rationale.",
+      accent: "var(--wx-primary)",
+    },
+    {
+      label: "Handoff",
+      text: "Build-ready spec or shipped front-end — your team isn't left guessing.",
+      accent: "var(--wx-accent-amber)",
+    },
+  ];
+  return (
+    <RevealCard
+      reduceMotion={reduceMotion}
+      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-10"
+    >
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
+          How I work
+        </p>
+        <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">
+          You&apos;ll always know what happens next.
+        </h3>
+      </div>
+      <ul className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5">
+        {rows.map((row) => (
+          <li
+            key={row.label}
+            className="flex items-start gap-3 rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] p-4"
+          >
+            <span
+              aria-hidden
+              className="mt-1.5 size-2 shrink-0 rounded-full"
+              style={{ backgroundColor: row.accent }}
+            />
+            <div>
+              <p className="font-medium text-[var(--wx-ink)]">{row.label}</p>
+              <p className="mt-1 text-sm leading-relaxed text-[var(--wx-muted)]">{row.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </RevealCard>
+  );
+}
+
+function QualificationForm({ reduceMotion }) {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const lines = [];
+    for (const field of WINNIE_QUALIFICATION_FIELDS) {
+      const value = (data.get(field.id) ?? "").toString().trim();
+      if (!value) continue;
+      lines.push(`${field.label}: ${value}`);
+    }
+    const body = encodeURIComponent(lines.join("\n\n"));
+    const subject = encodeURIComponent("Project brief — wineury.design");
+    setSubmitted(true);
+    window.location.href = `mailto:wineurya30@gmail.com?subject=${subject}&body=${body}`;
+  };
+
+  if (submitted) {
+    return (
+      <div
+        role="status"
+        className="rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] p-5 text-sm leading-relaxed text-[var(--wx-ink)]"
+      >
+        Your brief is on its way. If your email client didn&apos;t open, send the same
+        details to{" "}
+        <a className="text-[var(--wx-primary)] underline-offset-4 hover:underline" href="mailto:wineurya30@gmail.com">
+          wineurya30@gmail.com
+        </a>
+        . I&apos;ll reply within two business days.
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="grid gap-4 sm:grid-cols-2 sm:gap-5"
+      aria-label="Project qualification form"
+    >
+      {WINNIE_QUALIFICATION_FIELDS.map((field) => {
+        const isFullWidth =
+          field.type === "textarea" || field.id === "name" || field.id === "links";
+        return (
+          <label
+            key={field.id}
+            htmlFor={`wx-qf-${field.id}`}
+            className={clsx("flex flex-col gap-1.5", isFullWidth && "sm:col-span-2")}
+          >
+            <span className="text-[0.75rem] font-medium tracking-wide text-[var(--wx-ink)]">
+              {field.label}
+              {field.required ? (
+                <span aria-hidden className="ml-1 text-[var(--wx-primary)]">
+                  *
+                </span>
+              ) : null}
+            </span>
+            {field.type === "textarea" ? (
+              <textarea
+                id={`wx-qf-${field.id}`}
+                name={field.id}
+                required={field.required}
+                placeholder={field.placeholder}
+                rows={3}
+                className="wx-form-input wx-form-input--textarea"
+              />
+            ) : field.type === "select" ? (
+              <select
+                id={`wx-qf-${field.id}`}
+                name={field.id}
+                required={field.required}
+                defaultValue=""
+                className="wx-form-input"
+              >
+                <option value="" disabled>
+                  Select one
+                </option>
+                {field.options.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                id={`wx-qf-${field.id}`}
+                type="text"
+                name={field.id}
+                required={field.required}
+                placeholder={field.placeholder}
+                className="wx-form-input"
+              />
+            )}
+          </label>
+        );
+      })}
+      <div className="sm:col-span-2 flex flex-wrap items-center gap-3 sm:gap-4">
+        <motion.button
+          type="submit"
+          className="wx-btn-primary"
+          whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+          transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+        >
+          <HugeiconsIcon icon={Mail01Icon} size={15} strokeWidth={1.6} />
+          Send brief
+        </motion.button>
+        <p className="text-[0.75rem] leading-relaxed text-[var(--wx-muted)]">
+          Opens your mail client with the brief preformatted. No data leaves your device.
+        </p>
+      </div>
+    </form>
+  );
+}
+
 export function WinnieExplorationPage() {
   const lenis = useLenis();
+  const navigate = useNavigate();
+  const location = useLocation();
   const reduceMotion = useReducedMotion();
   const activeIndex = useWinnieSectionScroll(WINNIE_SECTION_IDS);
   /** ScrollTrigger lags Lenis during smooth scroll — keep tab UI in sync with user intent. */
@@ -780,34 +1273,6 @@ export function WinnieExplorationPage() {
   }, [activeIndex, scrollIntentIndex]);
 
   const tabRowRef = useRef(null);
-  const [tabPill, setTabPill] = useState({ left: 0, top: 0, width: 0, height: 0 });
-
-  useLayoutEffect(() => {
-    const row = tabRowRef.current;
-    if (!row) return;
-
-    const measure = () => {
-      const tab = WINNIE_TABS[selectedIndex];
-      if (!tab) return;
-      const btn = row.querySelector(`#winnie-tab-${tab.id}`);
-      if (!btn) return;
-      setTabPill({
-        left: btn.offsetLeft,
-        top: btn.offsetTop,
-        width: btn.offsetWidth,
-        height: btn.offsetHeight,
-      });
-    };
-
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(row);
-    for (const t of WINNIE_TABS) {
-      const el = row.querySelector(`#winnie-tab-${t.id}`);
-      if (el) ro.observe(el);
-    }
-    return () => ro.disconnect();
-  }, [selectedIndex]);
 
   const tabPillTransition = useMemo(
     () =>
@@ -889,21 +1354,25 @@ export function WinnieExplorationPage() {
             <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
             <div className="wx-mobile-sticky-nav flex w-full min-w-0 shrink-0 flex-row flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
               <a
-                href="#winnie-section-work"
+                href={location.pathname === "/" ? "#winnie-section-work" : "/"}
                 className="group relative inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
                 onClick={(e) => {
+                  if (location.pathname === "/") {
+                    e.preventDefault();
+                    scrollToSection("winnie-section-work", 0);
+                    return;
+                  }
                   e.preventDefault();
-                  scrollToSection("winnie-section-work", 0);
+                  navigateWithViewTransition(navigate, "/");
                 }}
               >
                 <span className="flex flex-col gap-0 text-[1rem] font-medium leading-[1.12] text-[var(--wx-ink)]">
                   <span className="tracking-tight">wineury</span>
                   <span className="-mt-px flex items-center gap-1">
-                    <FigmaImage
-                      primary={WINNIE_FIGMA_ASSETS.logoMark}
-                      alt=""
+                    <MaskedFigmaIcon
+                      src={WINNIE_FIGMA_ASSETS.logoMark}
                       className="size-3 shrink-0 translate-y-px select-none"
-                      loading="eager"
+                      background={WX_WORDMARK_MARK_GRADIENT}
                     />
                     <span className="tracking-tight">almonte</span>
                   </span>
@@ -927,26 +1396,8 @@ export function WinnieExplorationPage() {
                   ref={tabRowRef}
                   className="relative inline-flex w-max min-w-0 flex-nowrap items-center gap-1 p-1.5"
                 >
-                  <motion.div
-                    aria-hidden
-                    className="pointer-events-none absolute -z-10 rounded-[var(--wx-radius-segment)]"
-                    style={{
-                      backgroundColor: "var(--wx-primary)",
-                      boxShadow: "var(--wx-tab-shadow-active)",
-                    }}
-                    initial={false}
-                    animate={{
-                      left: tabPill.left,
-                      top: tabPill.top,
-                      width: tabPill.width,
-                      height: tabPill.height,
-                      opacity: tabPill.width > 0 ? 1 : 0,
-                    }}
-                    transition={tabPillTransition}
-                  />
                   {WINNIE_TABS.map((tab, i) => {
                     const selected = selectedIndex === i;
-                    const idleShadow = "var(--wx-tab-shadow-idle)";
                     return (
                       <motion.button
                         key={tab.id}
@@ -957,30 +1408,43 @@ export function WinnieExplorationPage() {
                         aria-controls={tab.sectionId}
                         aria-label={tab.label}
                         tabIndex={selected ? 0 : -1}
+                        layout
+                        transition={tabPillTransition}
+                        whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                         className={clsx(
                           "wx-tab relative flex min-h-10 items-center justify-center rounded-[var(--wx-radius-segment)] text-sm outline-none",
-                          "text-[var(--wx-tab-idle-fg)]",
-                          "active:scale-[0.97]",
-                          selected ? "px-3 py-2 font-semibold" : "min-w-10 px-2 py-2 font-medium",
+                          "text-[var(--wx-tab-idle-fg)] px-3 py-2",
+                          selected ? "font-semibold" : "min-w-10 font-medium",
                         )}
                         onClick={() => scrollToSection(tab.sectionId, i)}
                       >
-                        <motion.div
+                        {/* Idle background — static per-button. Hidden under the layoutId pill when selected. */}
+                        <span
                           aria-hidden
                           className="pointer-events-none absolute inset-0 -z-20 rounded-[var(--wx-radius-segment)]"
                           style={{
                             backgroundColor: "var(--wx-tab-idle)",
-                            boxShadow: idleShadow,
+                            boxShadow: "var(--wx-tab-shadow-idle)",
                           }}
-                          initial={false}
-                          animate={{ opacity: selected ? 0 : 1 }}
-                          transition={
-                            reduceMotion
-                              ? { duration: 0.01 }
-                              : { duration: WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT }
-                          }
                         />
-                        <span className="relative z-10 flex min-w-0 items-center justify-center">
+                        {/* Active pill — single instance, FLIPs between buttons via shared layoutId. */}
+                        {selected ? (
+                          <motion.span
+                            layoutId="wx-tab-pill"
+                            aria-hidden
+                            className="pointer-events-none absolute inset-0 -z-10 rounded-[var(--wx-radius-segment)]"
+                            style={{
+                              backgroundColor: "var(--wx-primary)",
+                              boxShadow: "var(--wx-tab-shadow-active)",
+                            }}
+                            transition={tabPillTransition}
+                          />
+                        ) : null}
+                        <motion.span
+                          layout="position"
+                          className="relative z-10 flex min-w-0 items-center justify-center"
+                          transition={tabPillTransition}
+                        >
                           <motion.span
                             className="flex shrink-0 items-center justify-center"
                             initial={false}
@@ -998,25 +1462,36 @@ export function WinnieExplorationPage() {
                               strokeWidth={1.6}
                             />
                           </motion.span>
-                          <motion.span
-                            className="wx-tab-label-text overflow-hidden whitespace-nowrap tracking-tight"
-                            style={{
-                              filter:
-                                reduceMotion || selected
-                                  ? "blur(0px)"
-                                  : `blur(${WX_TAB_LABEL_BLUR}px)`,
-                            }}
-                            initial={false}
-                            animate={{
-                              opacity: selected ? 1 : 0,
-                              maxWidth: selected ? WX_TAB_LABEL_MAX_PX : 0,
-                              marginLeft: selected ? 8 : 0,
-                            }}
-                            transition={tabMicroTransition}
-                          >
-                            {tab.label}
-                          </motion.span>
-                        </span>
+                          <AnimatePresence initial={false}>
+                            {selected ? (
+                              <motion.span
+                                key="label"
+                                layout
+                                className="wx-tab-label-text overflow-hidden whitespace-nowrap tracking-tight"
+                                style={{ display: "inline-block" }}
+                                initial={
+                                  reduceMotion
+                                    ? { opacity: 1, width: "auto", marginLeft: 8 }
+                                    : { opacity: 0, width: 0, marginLeft: 0, filter: `blur(${WX_TAB_LABEL_BLUR}px)` }
+                                }
+                                animate={{
+                                  opacity: 1,
+                                  width: "auto",
+                                  marginLeft: 8,
+                                  filter: "blur(0px)",
+                                }}
+                                exit={
+                                  reduceMotion
+                                    ? { opacity: 0, width: 0, marginLeft: 0 }
+                                    : { opacity: 0, width: 0, marginLeft: 0, filter: `blur(${WX_TAB_LABEL_BLUR}px)` }
+                                }
+                                transition={tabPillTransition}
+                              >
+                                {tab.label}
+                              </motion.span>
+                            ) : null}
+                          </AnimatePresence>
+                        </motion.span>
                       </motion.button>
                     );
                   })}
@@ -1027,43 +1502,49 @@ export function WinnieExplorationPage() {
             <div className="mt-9 flex w-full flex-1 flex-col items-start justify-center lg:mt-12 lg:min-h-0 lg:py-2">
               <div className="relative w-full max-w-[var(--wx-max-copy)] space-y-5 text-left">
                 <div className="flex items-center gap-2 text-[0.9375rem] leading-6 text-[var(--wx-muted)] sm:text-[1rem] sm:leading-7">
-                  <FigmaImage
-                    primary={WINNIE_FIGMA_ASSETS.statusDot}
-                    alt=""
+                  <MaskedFigmaIcon
+                    src={WINNIE_FIGMA_ASSETS.statusDot}
                     className="size-2 shrink-0 select-none"
-                    loading="eager"
+                    background="var(--wx-accent-teal)"
                   />
-                  <p>Available for projects</p>
+                  <p>{WINNIE_HERO.eyebrow}</p>
                 </div>
 
                 <div className="space-y-5">
                   <div className="relative">
                     <AsideHeroHeadline reduceMotion={reduceMotion} />
                     <p className="mt-2 max-w-[var(--wx-max-copy)] text-[0.9375rem] leading-relaxed text-[var(--wx-muted)] sm:text-[1rem] sm:leading-6">
-                      I&apos;m Wineury, a UX/Product Designer based in Atlanta, turning confusing flows into clearer,
-                      faster, and more accessible digital experiences.
+                      {WINNIE_HERO.subhead}
                     </p>
                   </div>
 
+                  <HeroProofRow proof={WINNIE_HERO.proof} />
+
                   <div className="flex flex-wrap gap-3 sm:gap-4">
-                    <motion.a
-                      href="mailto:wineurya30@gmail.com"
+                    <motion.button
+                      type="button"
                       className="wx-btn-primary"
                       whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                       transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+                      onClick={() => scrollToSection("winnie-section-contact", 3)}
                     >
-                      Get in Touch
-                    </motion.a>
+                      {WINNIE_HERO.primaryCta.label}
+                      <span aria-hidden className="wx-btn-arrow">→</span>
+                    </motion.button>
                     <motion.button
                       type="button"
                       className="wx-btn-secondary"
                       whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                       transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-                      onClick={() => scrollToSection("winnie-section-work", 0)}
+                      onClick={() => scrollToSection("winnie-section-approach", 2)}
                     >
-                      View Work
+                      {WINNIE_HERO.secondaryCta.label}
                     </motion.button>
                   </div>
+
+                  <p className="text-[0.8125rem] leading-relaxed text-[var(--wx-muted)]">
+                    {WINNIE_HERO.microtrust}
+                  </p>
 
                   <dl className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.8125rem] text-[var(--wx-muted)]">
                     <div className="flex items-center gap-1.5">
@@ -1108,7 +1589,7 @@ export function WinnieExplorationPage() {
             aria-labelledby="winnie-tab-work"
             className="wx-work-section min-h-0 space-y-[var(--wx-gallery-gap)] pb-[var(--wx-space-section)]"
           >
-            {WINNIE_WORK.map((entry) => (
+            {WINNIE_WORK.filter((entry) => entry.status !== "incomplete").map((entry) => (
               <WorkCard key={entry.slug} entry={entry} reduceMotion={reduceMotion} />
             ))}
           </section>
@@ -1132,7 +1613,7 @@ export function WinnieExplorationPage() {
                   Research-led design, built end to end.
                 </h2>
                 <p className="text-[0.9375rem] leading-relaxed text-[var(--wx-muted)] sm:text-[1rem]">
-                  UX/Product Designer focused on research, interaction design, and accessible digital experiences. I design and build in the same conversation — no handoff gap between what I sketch and what ships.
+                  Product designer focused on research, interaction design, and accessible interfaces. I design and build in the same conversation — no handoff gap between what I sketch and what ships.
                 </p>
               </div>
               <div className="wx-gallery-frame overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:col-span-2">
@@ -1145,61 +1626,42 @@ export function WinnieExplorationPage() {
               </div>
             </RevealCard>
 
-            <RevealCard
+            {/* Productized services — what to scope, how long, what it costs to start. */}
+            <ServicesGrid
               reduceMotion={reduceMotion}
-              className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] ring-1 ring-[color:var(--wx-border-soft)]"
-            >
-              <div className="border-b border-[color:var(--wx-border-soft)] px-6 py-4 sm:px-7">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
-                  Capabilities
-                </p>
-              </div>
-              <ul className="grid gap-px bg-[color:var(--wx-border-soft)] sm:grid-cols-2">
-                {WINNIE_CAPABILITIES.map((cap) => {
-                  const Icon = CAPABILITY_ICON_MAP[cap.iconKey];
-                  return (
-                    <li
-                      key={cap.title}
-                      className="wx-capability-row flex items-start gap-4 bg-[var(--wx-page-bg)] p-5 sm:p-6"
-                      style={{ "--wx-cap-accent": cap.accent }}
-                    >
-                      <span className="wx-capability-icon flex size-9 shrink-0 items-center justify-center rounded-full">
-                        {Icon ? <HugeiconsIcon icon={Icon} size={17} strokeWidth={1.6} /> : null}
-                      </span>
-                      <div className="min-w-0 space-y-1">
-                        <p className="wx-capability-title font-medium">{cap.title}</p>
-                        <p className="text-sm leading-relaxed text-[var(--wx-muted)]">{cap.body}</p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </RevealCard>
+              onStart={() => scrollToSection("winnie-section-contact", 3)}
+            />
 
-            <RevealCard
-              reduceMotion={reduceMotion}
-              className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-10"
-            >
-              <figure className="space-y-5">
-                <HugeiconsIcon
-                  icon={QuoteUpIcon}
-                  size={26}
-                  strokeWidth={1.4}
-                  color="currentColor"
-                  className="text-[var(--wx-primary)]"
-                />
-                <blockquote className="text-[1.0625rem] font-medium leading-relaxed tracking-tight text-[var(--wx-ink)] sm:text-[1.25rem] sm:leading-[1.5]">
-                  &ldquo;{WINNIE_TESTIMONIAL.quote}&rdquo;
-                </blockquote>
-                <figcaption className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] text-[var(--wx-muted)]">
-                  <span className="font-medium text-[var(--wx-ink)]">
-                    {WINNIE_TESTIMONIAL.attribution}
-                  </span>
-                  <span aria-hidden>·</span>
-                  <span>{WINNIE_TESTIMONIAL.role}</span>
-                </figcaption>
-              </figure>
-            </RevealCard>
+            {WINNIE_TESTIMONIALS.length > 0 ? (
+              <RevealCard
+                reduceMotion={reduceMotion}
+                className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-10"
+              >
+                <figure className="space-y-5">
+                  <HugeiconsIcon
+                    icon={QuoteUpIcon}
+                    size={26}
+                    strokeWidth={1.4}
+                    color="currentColor"
+                    className="text-[var(--wx-primary)]"
+                  />
+                  <blockquote className="text-[1.0625rem] font-medium leading-relaxed tracking-tight text-[var(--wx-ink)] sm:text-[1.25rem] sm:leading-[1.5]">
+                    &ldquo;{WINNIE_TESTIMONIALS[0].quote}&rdquo;
+                  </blockquote>
+                  <figcaption className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] text-[var(--wx-muted)]">
+                    <span className="font-medium text-[var(--wx-ink)]">
+                      {WINNIE_TESTIMONIALS[0].attribution}
+                    </span>
+                    <span aria-hidden>·</span>
+                    <span>{WINNIE_TESTIMONIALS[0].role}</span>
+                  </figcaption>
+                </figure>
+              </RevealCard>
+            ) : (
+              <HowIWorkCard reduceMotion={reduceMotion} />
+            )}
+
+            <NegativeListCard reduceMotion={reduceMotion} />
           </section>
 
           {/* ============================== APPROACH ============================== */}
@@ -1288,62 +1750,42 @@ export function WinnieExplorationPage() {
             aria-labelledby="winnie-tab-contact"
             className="space-y-[var(--wx-gallery-gap)]"
           >
+            <FinalCtaCard
+              reduceMotion={reduceMotion}
+              onSendBrief={() => {
+                const first = document.getElementById("wx-qf-name");
+                if (first) first.focus();
+              }}
+            />
             <RevealCard
               reduceMotion={reduceMotion}
               className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] ring-1 ring-[color:var(--wx-ring-subtle)]"
             >
-              <div className="grid gap-6 p-6 sm:gap-8 sm:p-8 lg:grid-cols-2 lg:items-center lg:gap-10 lg:p-8">
-                <div className="space-y-4 lg:space-y-5 lg:pr-2">
+              <div className="grid gap-6 p-6 sm:gap-8 sm:p-8 lg:gap-10 lg:p-10">
+                <div className="space-y-4 lg:space-y-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
                     Contact
                   </p>
                   <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
                     Tell me what you&apos;re building.
                   </h2>
-                  <p className="text-[1rem] leading-relaxed text-[var(--wx-muted)]">
-                    Share a timeline, budget range, and links. I reply within two business days with next
-                    steps.
+                  <p className="max-w-xl text-[1rem] leading-relaxed text-[var(--wx-muted)]">
+                    A short brief gets you a faster, more useful reply — two business days, every time.
+                    If we&apos;re not the right fit, I&apos;ll say so quickly and point you somewhere better.
                   </p>
-                  <div className="flex flex-wrap gap-3 sm:gap-4">
-                    <a
-                      href="mailto:wineurya30@gmail.com"
-                      className="wx-btn-primary wx-btn-wrap max-w-full sm:max-w-none"
-                    >
-                      <HugeiconsIcon icon={Mail01Icon} size={15} strokeWidth={1.6} />
-                      Email wineurya30@gmail.com
-                    </a>
-                    <button
-                      type="button"
-                      className="wx-btn-secondary"
-                      onClick={() => scrollToSection("winnie-section-work", 0)}
-                    >
-                      Back to work
-                    </button>
-                  </div>
-                  <ul className="mt-2 space-y-1.5 text-[0.8125rem] text-[var(--wx-muted)]">
-                    <li className="flex items-center gap-2">
-                      <span aria-hidden className="text-[var(--wx-primary)]">·</span>
-                      Studios, independent operators, and in-house teams.
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span aria-hidden className="text-[var(--wx-primary)]">·</span>
-                      Remote-first · based in Atlanta, GA (Eastern Time).
-                    </li>
-                  </ul>
                 </div>
-                <div className="relative isolate min-w-0">
-                  <div className="wx-gallery-frame overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)]">
-                    <img
-                      src={WINNIE_EXTRA_IMAGES.aurora}
-                      alt="Deep abstract aurora texture"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-[calc(var(--wx-radius-card)-2px)] bg-gradient-to-r from-[var(--wx-surface)]/70 via-[var(--wx-surface)]/10 to-transparent lg:from-[var(--wx-surface)]/45"
-                  />
+                <QualificationForm reduceMotion={reduceMotion} />
+                <div className="flex flex-wrap items-center gap-3 border-t border-[color:var(--wx-border-soft)] pt-5 text-[0.8125rem] text-[var(--wx-muted)]">
+                  <span>Prefer email?</span>
+                  <a
+                    href="mailto:wineurya30@gmail.com"
+                    className="inline-flex items-center gap-1.5 text-[var(--wx-ink)] underline-offset-4 hover:underline"
+                  >
+                    <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={1.6} />
+                    wineurya30@gmail.com
+                  </a>
+                  <span aria-hidden>·</span>
+                  <span>Same questions, same two-day reply.</span>
                 </div>
               </div>
             </RevealCard>
@@ -1351,12 +1793,13 @@ export function WinnieExplorationPage() {
             <div className="flex flex-wrap items-center justify-between gap-3 px-1 pt-2 text-[0.8125rem] text-[var(--wx-muted)]">
               <p>© {new Date().getFullYear()} Wineury Almonte</p>
               <p className="flex items-center gap-3">
-                <a className="hover:text-[var(--wx-ink)]" href="https://read.cv/" rel="noreferrer" target="_blank">
-                  Read.cv
-                </a>
-                <span aria-hidden>·</span>
-                <a className="hover:text-[var(--wx-ink)]" href="https://instagram.com/" rel="noreferrer" target="_blank">
-                  Instagram
+                <a
+                  className="hover:text-[var(--wx-ink)]"
+                  href="https://www.linkedin.com/in/wineury"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  LinkedIn
                 </a>
                 <span aria-hidden>·</span>
                 <a className="hover:text-[var(--wx-ink)]" href="mailto:wineurya30@gmail.com">

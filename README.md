@@ -42,4 +42,4 @@ GSAP entry: `src/lib/gsap.js`. Lenis + ScrollTrigger: `src/lib/lenis.js`.
 
 ## Fonts
 
-Nunito Variable ships via `@fontsource-variable/nunito` (OFL). SF Pro Rounded is system-only — do not commit proprietary font files.
+**SF Pro / SF Pro Rounded (San Francisco)** use a **system font stack** in `src/styles/tokens.css` (`--font-body`, `--font-display`): `ui-rounded`, `-apple-system`, `"SF Pro Rounded"`, then `"SF Pro Text"` / `"SF Pro Display"`, `BlinkMacSystemFont`, and `Segoe UI` / `Roboto` / `system-ui` fallbacks. Base body weight is **400 (Regular)** in `index.css`. **Do not commit** Apple font files; the stack uses installed OS fonts only.

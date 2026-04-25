@@ -8,10 +8,13 @@
   --breakpoint-2xl: 96rem;
   --breakpoint-3xl: 120rem;
 
+  /* San Francisco: system stack only (no font files in repo). Order: ui-rounded + SF Pro Rounded (where installed), then standard SF, then system fallbacks. */
   --font-display:
-    ui-rounded, -apple-system, "SF Pro Rounded", "Nunito Variable", system-ui, sans-serif;
+    ui-rounded, -apple-system, "SF Pro Rounded", "SF Pro Display", "SF Pro Text", BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
   --font-body:
-    ui-rounded, -apple-system, "SF Pro Rounded", "Nunito Variable", system-ui, sans-serif;
+    ui-rounded, -apple-system, "SF Pro Rounded", "SF Pro Text", "SF Pro Display", BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
   --font-mono:
     ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
