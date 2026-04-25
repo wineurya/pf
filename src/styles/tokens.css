@@ -131,22 +131,18 @@
   --radius-pill: 624.9375rem;
   --radius-full: 50%;
 
-  --shadow-xs: 0 0.0625rem 0.125rem oklch(0 0 0 / 0.05);
-  --shadow-sm:
-    0 0.0625rem 0.1875rem oklch(0 0 0 / 0.1), 0 0.0625rem 0.125rem oklch(0 0 0 / 0.06);
-  --shadow-md:
-    0 0.25rem 0.375rem oklch(0 0 0 / 0.07), 0 0.125rem 0.25rem oklch(0 0 0 / 0.06);
-  --shadow-lg:
-    0 0.625rem 0.9375rem oklch(0 0 0 / 0.1), 0 0.25rem 0.375rem oklch(0 0 0 / 0.05);
-  --shadow-xl:
-    0 1.25rem 1.5625rem oklch(0 0 0 / 0.1), 0 0.625rem 0.625rem oklch(0 0 0 / 0.04);
-  --shadow-2xl: 0 1.5625rem 3.125rem oklch(0 0 0 / 0.25);
-  --shadow-inner: inset 0 0.125rem 0.25rem oklch(0 0 0 / 0.06);
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
+  --shadow-inner: none;
   --shadow-none: none;
 
-  --shadow-glow-sm: 0 0 0.75rem oklch(0.58 0.26 280 / 0.25);
-  --shadow-glow-md: 0 0 1.5rem oklch(0.58 0.26 280 / 0.35);
-  --shadow-glow-lg: 0 0 2.5rem oklch(0.58 0.26 280 / 0.45);
+  --shadow-glow-sm: none;
+  --shadow-glow-md: none;
+  --shadow-glow-lg: none;
 
   --duration-instant: 0ms;
   --duration-fast: 100ms;
@@ -171,10 +167,11 @@
 
 /* :root — semantics + fluid (no extra utilities) */
 :root {
-  --color-bg: var(--color-neutral-50);
-  --color-bg-subtle: var(--color-neutral-100);
-  --color-bg-muted: var(--color-neutral-200);
-  --color-bg-raised: var(--color-neutral-0);
+  /* Clean white shell — no tinted grays for page surfaces */
+  --color-bg: oklch(1 0 0);
+  --color-bg-subtle: oklch(1 0 0);
+  --color-bg-muted: oklch(1 0 0);
+  --color-bg-raised: oklch(1 0 0);
   --color-bg-overlay: oklch(0 0 0 / 0.4);
 
   --color-fg: var(--color-neutral-900);
@@ -183,9 +180,10 @@
   --color-fg-disabled: var(--color-neutral-300);
   --color-fg-inverse: var(--color-neutral-0);
 
-  --color-border: var(--color-neutral-200);
-  --color-border-strong: var(--color-neutral-400);
-  --color-border-subtle: var(--color-neutral-100);
+  /* Invisible — keeps border utilities from drawing lines */
+  --color-border: transparent;
+  --color-border-strong: transparent;
+  --color-border-subtle: transparent;
 
   --color-brand: var(--color-accent-500);
   --color-brand-hover: var(--color-accent-600);
@@ -237,14 +235,24 @@
   --wx-page-bg: var(--color-neutral-0);
   --wx-white: var(--color-neutral-0);
   --wx-black: var(--color-neutral-1000);
-  --wx-primary: #00aaff;
-  --wx-primary-soft: #eaf7ff;
-  --wx-primary-active: #00aaff;
-  --wx-alive: #01aaff;
-  --wx-primary-ring: rgb(0 170 255 / 0.45);
-  --wx-primary-glow: rgb(0 170 255 / 0.2);
-  --wx-primary-hover-mix: #006699;
-  --wx-primary-border-mix: #004466;
+  /*
+   * Accent system — aligned with wineury.design (clean Framer portfolio: deep ink + confident blue).
+   * All UI blues derive from these tokens (no scattered hex in components).
+   */
+  --wx-primary: #2563eb;
+  --wx-primary-soft: color-mix(in srgb, var(--wx-primary) 14%, var(--wx-page-bg));
+  --wx-primary-active: color-mix(in srgb, var(--wx-primary) 92%, var(--wx-black));
+  --wx-alive: var(--wx-primary);
+  --wx-primary-ring: color-mix(in srgb, var(--wx-primary) 55%, transparent);
+  --wx-primary-glow: color-mix(in srgb, var(--wx-primary) 35%, transparent);
+  --wx-primary-hover-mix: #1d4ed8;
+  --wx-primary-border-mix: #1e3a8a;
+  --wx-accent-blue-muted: color-mix(in srgb, var(--wx-primary) 22%, var(--wx-muted));
+  --wx-accent-teal: #0d9488;
+  --wx-accent-violet: #7c3aed;
+  --wx-accent-amber: #d97706;
+  --wx-imessage-bubble: color-mix(in srgb, var(--wx-black) 6%, var(--wx-page-bg));
+  --wx-imessage-bubble-ring: color-mix(in srgb, var(--wx-black) 8%, transparent);
   --wx-surface: var(--color-neutral-100);
   --wx-surface-soft: var(--color-neutral-50);
   --wx-ink: var(--color-neutral-900);
@@ -277,7 +285,6 @@
   --wx-work-overlay-pad-x: clamp(1rem, 3.5vw, 1.5rem);
   --wx-work-overlay-pad-y: clamp(1rem, 3vw, 1.375rem);
   --wx-work-copy-gap: 0.5rem;
-  --wx-work-copy-pad-bottom: clamp(3.125rem, 9vmin, 4.5rem);
   --wx-max-copy: 31.3125rem;
   --wx-pad-x: clamp(1.25rem, 4vw, 3.75rem);
   --wx-space-section: clamp(1.75rem, 4vw, 2.5rem);
@@ -300,7 +307,7 @@
   --wx-btn-primary-border-soft: color-mix(in srgb, var(--wx-white) 26%, transparent);
   --wx-btn-primary-fg: var(--wx-white);
   --wx-btn-primary-hover-bg: color-mix(in srgb, var(--wx-primary) 88%, var(--wx-primary-hover-mix));
-  --wx-btn-primary-hover-glow: rgb(0 170 255 / 0.45);
+  --wx-btn-primary-hover-glow: color-mix(in srgb, var(--wx-primary) 45%, transparent);
   --wx-btn-primary-hover-ring: color-mix(in srgb, var(--wx-primary) 85%, var(--wx-primary-border-mix));
   --wx-btn-secondary-bg: var(--wx-white);
   --wx-btn-secondary-bg-hover: var(--color-neutral-50);
@@ -321,43 +328,6 @@
   --wx-btn-press-shadow: 0 2px 4px var(--wx-shadow-key), 0 1px 2px var(--wx-shadow-ambient);
   --wx-btn-shadow-xs: 0 1px 2px var(--wx-shadow-ambient);
   --wx-btn-primary-hover-inset: inset 0 1px 20px color-mix(in srgb, var(--wx-white) 22%, transparent);
-
-  /* Nugget lab page — dark/light chrome (neutrals only) */
-  --nt-page-bg-dark: var(--color-neutral-950);
-  --nt-page-fg-dark: var(--color-neutral-100);
-  --nt-page-bg-light: var(--color-neutral-100);
-  --nt-page-fg-light: var(--color-neutral-900);
-  --nt-card-bg-dark: var(--color-neutral-900);
-  --nt-card-border-dark: color-mix(in srgb, var(--wx-white) 8%, transparent);
-  --nt-card-shadow-dark:
-    0 1px 0 color-mix(in srgb, var(--wx-white) 4%, transparent) inset,
-    0 24px 48px -24px color-mix(in srgb, var(--wx-black) 75%, transparent);
-  --nt-card-bg-light: var(--wx-white);
-  --nt-card-border-light: color-mix(in srgb, var(--wx-black) 10%, transparent);
-  --nt-card-shadow-light:
-    0 1px 0 color-mix(in srgb, var(--wx-white) 90%, transparent) inset,
-    0 24px 48px -28px color-mix(in srgb, var(--wx-black) 18%, transparent);
-  --nt-top-border-dark: color-mix(in srgb, var(--wx-white) 6%, transparent);
-  --nt-top-border-light: color-mix(in srgb, var(--wx-black) 8%, transparent);
-  --nt-link-muted-dark: var(--color-neutral-400);
-  --nt-link-fg-dark: var(--color-neutral-50);
-  --nt-link-muted-light: var(--color-neutral-600);
-  --nt-badge: var(--color-neutral-500);
-  --nt-nugget-shadow-dark: 0 14px 34px -18px color-mix(in srgb, var(--wx-black) 72%, transparent);
-  --nt-nugget-shadow-light: 0 12px 30px -16px color-mix(in srgb, var(--wx-black) 40%, transparent);
-  --nt-scrim-gradient: var(--wx-scrim-gradient);
-  --nt-title-on-scrim: var(--wx-on-scrim);
-  --nt-sub-on-scrim: color-mix(in srgb, var(--wx-white) 92%, transparent);
-
-  /*
-   * Nugget lab demo chip fills (Tailwind *-600); keep in sync with NuggetTestPage LAB_NUGGETS
-   */
-  --chip-lab-react: #0284c7;
-  --chip-lab-figma: #7c3aed;
-  --chip-lab-motion: #e11d48;
-  --chip-lab-a11y: #059669;
-  --chip-lab-cms: #2563eb;
-  --chip-lab-layout: #d97706;
 }
 
 @media (width >= 48rem) {
@@ -386,71 +356,64 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: var(--color-neutral-950);
-    --color-bg-subtle: var(--color-neutral-900);
-    --color-bg-muted: var(--color-neutral-800);
-    --color-bg-raised: var(--color-neutral-900);
-    --color-bg-overlay: oklch(0 0 0 / 0.6);
+  :root:not([data-theme="light"]) {
+    /* Match light shell: white surfaces, no borders / shadows */
+    --color-bg: oklch(1 0 0);
+    --color-bg-subtle: oklch(1 0 0);
+    --color-bg-muted: oklch(1 0 0);
+    --color-bg-raised: oklch(1 0 0);
+    --color-bg-overlay: oklch(0 0 0 / 0.4);
 
-    --color-fg: var(--color-neutral-50);
-    --color-fg-secondary: var(--color-neutral-400);
-    --color-fg-muted: var(--color-neutral-600);
-    --color-fg-disabled: var(--color-neutral-700);
-    --color-fg-inverse: var(--color-neutral-950);
+    --color-fg: var(--color-neutral-900);
+    --color-fg-secondary: var(--color-neutral-600);
+    --color-fg-muted: var(--color-neutral-400);
+    --color-fg-disabled: var(--color-neutral-300);
+    --color-fg-inverse: var(--color-neutral-0);
 
-    --color-border: var(--color-neutral-800);
-    --color-border-strong: var(--color-neutral-600);
-    --color-border-subtle: var(--color-neutral-900);
+    --color-border: transparent;
+    --color-border-strong: transparent;
+    --color-border-subtle: transparent;
 
-    --color-brand: var(--color-accent-400);
-    --color-brand-hover: var(--color-accent-300);
-    --color-brand-subtle: oklch(0.58 0.26 280 / 0.15);
-    --color-brand-fg: var(--color-neutral-950);
+    --color-brand: var(--color-accent-500);
+    --color-brand-hover: var(--color-accent-600);
+    --color-brand-subtle: var(--color-accent-100);
+    --color-brand-fg: var(--color-neutral-0);
 
-    --shadow-sm:
-      0 0.0625rem 0.1875rem oklch(0 0 0 / 0.3), 0 0.0625rem 0.125rem oklch(0 0 0 / 0.2);
-    --shadow-md:
-      0 0.25rem 0.375rem oklch(0 0 0 / 0.3), 0 0.125rem 0.25rem oklch(0 0 0 / 0.2);
-    --shadow-lg:
-      0 0.625rem 0.9375rem oklch(0 0 0 / 0.4), 0 0.25rem 0.375rem oklch(0 0 0 / 0.2);
-    --shadow-xl:
-      0 1.25rem 1.5625rem oklch(0 0 0 / 0.5), 0 0.625rem 0.625rem oklch(0 0 0 / 0.2);
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-xl: none;
   }
 }
 
 :root[data-theme="dark"] {
-  --color-bg: var(--color-neutral-950);
-  --color-bg-subtle: var(--color-neutral-900);
-  --color-bg-muted: var(--color-neutral-800);
-  --color-bg-raised: var(--color-neutral-900);
-  --color-bg-overlay: oklch(0 0 0 / 0.6);
+  --color-bg: oklch(1 0 0);
+  --color-bg-subtle: oklch(1 0 0);
+  --color-bg-muted: oklch(1 0 0);
+  --color-bg-raised: oklch(1 0 0);
+  --color-bg-overlay: oklch(0 0 0 / 0.4);
 
-  --color-fg: var(--color-neutral-50);
-  --color-fg-secondary: var(--color-neutral-400);
-  --color-fg-muted: var(--color-neutral-600);
-  --color-fg-disabled: var(--color-neutral-700);
-  --color-fg-inverse: var(--color-neutral-950);
+  --color-fg: var(--color-neutral-900);
+  --color-fg-secondary: var(--color-neutral-600);
+  --color-fg-muted: var(--color-neutral-400);
+  --color-fg-disabled: var(--color-neutral-300);
+  --color-fg-inverse: var(--color-neutral-0);
 
-  --color-border: var(--color-neutral-800);
-  --color-border-strong: var(--color-neutral-600);
-  --color-border-subtle: var(--color-neutral-900);
+  --color-border: transparent;
+  --color-border-strong: transparent;
+  --color-border-subtle: transparent;
 
-  --color-brand: var(--color-accent-400);
-  --color-brand-hover: var(--color-accent-300);
-  --color-brand-subtle: oklch(0.58 0.26 280 / 0.15);
-  --color-brand-fg: var(--color-neutral-950);
+  --color-brand: var(--color-accent-500);
+  --color-brand-hover: var(--color-accent-600);
+  --color-brand-subtle: var(--color-accent-100);
+  --color-brand-fg: var(--color-neutral-0);
 
   --color-focus-ring: var(--color-accent-400);
 
-  --shadow-sm:
-    0 0.0625rem 0.1875rem oklch(0 0 0 / 0.3), 0 0.0625rem 0.125rem oklch(0 0 0 / 0.2);
-  --shadow-md:
-    0 0.25rem 0.375rem oklch(0 0 0 / 0.3), 0 0.125rem 0.25rem oklch(0 0 0 / 0.2);
-  --shadow-lg:
-    0 0.625rem 0.9375rem oklch(0 0 0 / 0.4), 0 0.25rem 0.375rem oklch(0 0 0 / 0.2);
-  --shadow-xl:
-    0 1.25rem 1.5625rem oklch(0 0 0 / 0.5), 0 0.625rem 0.625rem oklch(0 0 0 / 0.2);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

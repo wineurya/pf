@@ -1,5 +1,18 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handler = (e) => setReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+}
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   BookUserIcon,
@@ -31,7 +44,6 @@ import { useLenis } from "@/providers/LenisProvider.jsx";
 import {
   WINNIE_AVAILABILITY,
   WINNIE_CAPABILITIES,
-  WINNIE_CLIENTS,
   WINNIE_CONTACT_SOCIALS,
   WINNIE_EXTRA_IMAGES,
   WINNIE_FAQ,
@@ -107,17 +119,14 @@ function relativeLuminanceHex(hex) {
   );
 }
 
-/** High-contrast label on chip fills (matches nugget lab). */
+/** High-contrast label on chip fills from hex luminance. */
 function labelOnChipFill(fillHex) {
   return relativeLuminanceHex(fillHex) > 0.5
     ? "var(--color-neutral-1000)"
     : "var(--color-neutral-0)";
 }
 
-/**
- * Work-card chips: same motion as `/nugget_test` (bottom row, y up / stagger down).
- * Timings/ease/lift/drop intentionally mirror `pages/NuggetTestPage.jsx` — keep in sync.
- */
+/** Work-card chips: bottom row, y up / stagger down on engage; reverse on exit. */
 const WX_NUGGET_GAP_PREFERRED = 90;
 /** Floor for empty px between neighbouring chip edges once gap collapses on narrow cards. */
 const WX_NUGGET_GAP_EDGE_BUFFER = 8;
@@ -135,6 +144,16 @@ const WX_NUGGET_EXIT_DROP = 52;
 
 /** On-screen UI easing — Emil Kowalski flowchart (not entering viewport). */
 const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
+/** Sliding tab pill — out-expo so it glides without overshoot. */
+const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
+const WX_TAB_PILL_DURATION = 0.36;
+const WX_TAB_MICRO_DURATION = 0.28;
+/** Resting blur on inactive labels — they crossfade through this on (de)select. */
+const WX_TAB_LABEL_BLUR = 4;
+/** Label strip: avoid animating width "auto" (janky); cap to longest tab label. */
+const WX_TAB_LABEL_MAX_PX = 100;
+/** Lenis scroll-to-section — smoother than linear. */
+const WX_LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
 
 function FigmaImage({ primary, fallback, alt, className, loading = "lazy" }) {
   const [src, setSrc] = useState(primary);
@@ -408,7 +427,7 @@ function WorkCard({ entry, reduceMotion }) {
   );
 }
 
-const HEADLINE_ROTATE_WORDS = ["alive", "clear", "human", "intentional"];
+const HEADLINE_ROTATE_WORDS = ["clear", "human", "accessible", "intentional"];
 /** Keep in sync with `--wx-headline-word-enter-duration` in winnie-exploration.css */
 const HEADLINE_WORD_ENTER_DURATION = 0.26;
 
@@ -640,7 +659,7 @@ function AsideContactRow({ reduceMotion }) {
 const FAQ_PANEL_EASE = [0.33, 1, 0.68, 1];
 
 function WinnieFaqAccordion({ reduceMotion }) {
-  const [openSet, setOpenSet] = useState(() => new Set([0]));
+  const [openSet, setOpenSet] = useState(() => new Set());
 
   const toggle = useCallback((idx) => {
     setOpenSet((prev) => {
@@ -698,7 +717,27 @@ function WinnieFaqAccordion({ reduceMotion }) {
               transition={panelTransition}
               style={{ overflow: "hidden" }}
             >
-              <p className="wx-faq-body">{item.a}</p>
+              <div className="wx-faq-panel-inner">
+                <div className="wx-faq-answer-row">
+                  <div className="wx-faq-avatar-placeholder" aria-hidden />
+                  <motion.div
+                    className="wx-faq-bubble"
+                    initial={false}
+                    animate={
+                      isOpen
+                        ? { opacity: 1, y: 0, scale: 1 }
+                        : { opacity: 0, y: 10, scale: 0.97 }
+                    }
+                    transition={
+                      reduceMotion
+                        ? { duration: 0 }
+                        : { type: "spring", stiffness: 420, damping: 32, mass: 0.85 }
+                    }
+                  >
+                    <p className="wx-faq-bubble__text wx-faq-bubble__answer">{item.a}</p>
+                  </motion.div>
+                </div>
+              </div>
             </motion.div>
           </div>
         );
@@ -740,19 +779,49 @@ export function WinnieExplorationPage() {
     if (activeIndex === scrollIntentIndex) setScrollIntentIndex(null);
   }, [activeIndex, scrollIntentIndex]);
 
-  const tabLabelTransition = useMemo(
+  const tabRowRef = useRef(null);
+  const [tabPill, setTabPill] = useState({ left: 0, top: 0, width: 0, height: 0 });
+
+  useLayoutEffect(() => {
+    const row = tabRowRef.current;
+    if (!row) return;
+
+    const measure = () => {
+      const tab = WINNIE_TABS[selectedIndex];
+      if (!tab) return;
+      const btn = row.querySelector(`#winnie-tab-${tab.id}`);
+      if (!btn) return;
+      setTabPill({
+        left: btn.offsetLeft,
+        top: btn.offsetTop,
+        width: btn.offsetWidth,
+        height: btn.offsetHeight,
+      });
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(row);
+    for (const t of WINNIE_TABS) {
+      const el = row.querySelector(`#winnie-tab-${t.id}`);
+      if (el) ro.observe(el);
+    }
+    return () => ro.disconnect();
+  }, [selectedIndex]);
+
+  const tabPillTransition = useMemo(
     () =>
       reduceMotion
-        ? { duration: 0.01 }
-        : { type: "tween", duration: 0.2, ease: WX_TAB_EASE_IN_OUT },
+        ? { duration: 0 }
+        : { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE },
     [reduceMotion],
   );
 
-  const tabIconTransition = useMemo(
+  const tabMicroTransition = useMemo(
     () =>
       reduceMotion
         ? { duration: 0.01 }
-        : { duration: 0.22, ease: WX_TAB_EASE_IN_OUT },
+        : { duration: WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT },
     [reduceMotion],
   );
 
@@ -786,9 +855,13 @@ export function WinnieExplorationPage() {
     const el = document.getElementById(sectionId);
     if (!el) return;
     const offset = 0;
-    const duration = reduceMotion ? 0 : 1.12;
+    const duration = reduceMotion ? 0 : 1.35;
     if (lenis) {
-      lenis.scrollTo(el, { offset, duration });
+      lenis.scrollTo(el, {
+        offset,
+        duration,
+        easing: reduceMotion ? undefined : WX_LENIS_EASE_IN_OUT,
+      });
       return;
     }
     el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
@@ -812,18 +885,19 @@ export function WinnieExplorationPage() {
           )}
           aria-label="Introduction"
         >
-          <div className="flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-10 lg:min-h-0 lg:pb-12 lg:pt-12">
-            <div className="flex w-full shrink-0 flex-col gap-5 sm:min-h-14 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:flex-wrap">
+          <div className="flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12">
+            <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
+            <div className="wx-mobile-sticky-nav flex w-full min-w-0 shrink-0 flex-row flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
               <a
                 href="#winnie-section-work"
-                className="group relative inline-flex shrink-0 items-start rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
+                className="group relative inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
                 onClick={(e) => {
                   e.preventDefault();
                   scrollToSection("winnie-section-work", 0);
                 }}
               >
                 <span className="flex flex-col gap-0 text-[1rem] font-medium leading-[1.12] text-[var(--wx-ink)]">
-                  <span className="tracking-tight">winnie</span>
+                  <span className="tracking-tight">wineury</span>
                   <span className="-mt-px flex items-center gap-1">
                     <FigmaImage
                       primary={WINNIE_FIGMA_ASSETS.logoMark}
@@ -831,13 +905,13 @@ export function WinnieExplorationPage() {
                       className="size-3 shrink-0 translate-y-px select-none"
                       loading="eager"
                     />
-                    <span className="tracking-tight">studios</span>
+                    <span className="tracking-tight">almonte</span>
                   </span>
                 </span>
               </a>
 
               <div
-                className="wx-tab-track flex min-w-0 flex-1 flex-wrap justify-end gap-1 p-1.5 sm:flex-initial"
+                className="wx-tab-track min-w-0 max-w-full shrink overflow-x-auto overflow-y-visible overscroll-x-contain [-webkit-overflow-scrolling:touch]"
                 role="tablist"
                 aria-label="Sections"
                 onKeyDown={(e) => {
@@ -849,78 +923,104 @@ export function WinnieExplorationPage() {
                   document.getElementById(`winnie-tab-${WINNIE_TABS[next].id}`)?.focus();
                 }}
               >
-                {WINNIE_TABS.map((tab, i) => {
-                  const selected = selectedIndex === i;
-                  const activeShadow = "var(--wx-tab-shadow-active)";
-                  const idleShadow = "var(--wx-tab-shadow-idle)";
-                  return (
-                    <motion.button
-                      key={tab.id}
-                      type="button"
-                      role="tab"
-                      id={`winnie-tab-${tab.id}`}
-                      aria-selected={selected}
-                      aria-controls={tab.sectionId}
-                      aria-label={tab.label}
-                      tabIndex={selected ? 0 : -1}
-                      className={clsx(
-                        "wx-tab relative flex min-h-10 items-center justify-center rounded-[var(--wx-radius-segment)] text-sm outline-none",
-                        "text-[var(--wx-tab-idle-fg)]",
-                        "active:scale-[0.97]",
-                        selected ? "px-3 py-2 font-semibold" : "min-w-10 px-2 py-2 font-medium",
-                      )}
-                      animate={{
-                        backgroundColor: selected
-                          ? "var(--wx-primary)"
-                          : "var(--wx-tab-idle)",
-                        boxShadow: selected ? activeShadow : idleShadow,
-                      }}
-                      transition={
-                        reduceMotion
-                          ? { duration: 0.01 }
-                          : {
-                              backgroundColor: { duration: 0.3, ease: WX_TAB_EASE_IN_OUT },
-                              boxShadow: { duration: 0.3, ease: WX_TAB_EASE_IN_OUT },
-                            }
-                      }
-                      onClick={() => scrollToSection(tab.sectionId, i)}
-                    >
-                      <span className="relative z-10 flex items-center justify-center">
-                        <motion.span
-                          className="flex shrink-0 items-center justify-center"
+                <div
+                  ref={tabRowRef}
+                  className="relative inline-flex w-max min-w-0 flex-nowrap items-center gap-1 p-1.5"
+                >
+                  <motion.div
+                    aria-hidden
+                    className="pointer-events-none absolute -z-10 rounded-[var(--wx-radius-segment)]"
+                    style={{
+                      backgroundColor: "var(--wx-primary)",
+                      boxShadow: "var(--wx-tab-shadow-active)",
+                    }}
+                    initial={false}
+                    animate={{
+                      left: tabPill.left,
+                      top: tabPill.top,
+                      width: tabPill.width,
+                      height: tabPill.height,
+                      opacity: tabPill.width > 0 ? 1 : 0,
+                    }}
+                    transition={tabPillTransition}
+                  />
+                  {WINNIE_TABS.map((tab, i) => {
+                    const selected = selectedIndex === i;
+                    const idleShadow = "var(--wx-tab-shadow-idle)";
+                    return (
+                      <motion.button
+                        key={tab.id}
+                        type="button"
+                        role="tab"
+                        id={`winnie-tab-${tab.id}`}
+                        aria-selected={selected}
+                        aria-controls={tab.sectionId}
+                        aria-label={tab.label}
+                        tabIndex={selected ? 0 : -1}
+                        className={clsx(
+                          "wx-tab relative flex min-h-10 items-center justify-center rounded-[var(--wx-radius-segment)] text-sm outline-none",
+                          "text-[var(--wx-tab-idle-fg)]",
+                          "active:scale-[0.97]",
+                          selected ? "px-3 py-2 font-semibold" : "min-w-10 px-2 py-2 font-medium",
+                        )}
+                        onClick={() => scrollToSection(tab.sectionId, i)}
+                      >
+                        <motion.div
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 -z-20 rounded-[var(--wx-radius-segment)]"
+                          style={{
+                            backgroundColor: "var(--wx-tab-idle)",
+                            boxShadow: idleShadow,
+                          }}
                           initial={false}
-                          animate={
+                          animate={{ opacity: selected ? 0 : 1 }}
+                          transition={
                             reduceMotion
-                              ? { scale: 1, opacity: 1 }
-                              : { scale: selected ? 1 : 0.92, opacity: selected ? 1 : 0.92 }
+                              ? { duration: 0.01 }
+                              : { duration: WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT }
                           }
-                          transition={tabIconTransition}
-                        >
-                          <HugeiconsIcon
-                            icon={TAB_ICONS[i]}
-                            size={17}
-                            color="currentColor"
-                            strokeWidth={1.6}
-                          />
-                        </motion.span>
-                        <AnimatePresence initial={false} mode="popLayout">
-                          {selected ? (
-                            <motion.span
-                              key={`${tab.id}-label`}
-                              className="ml-2 overflow-hidden whitespace-nowrap tracking-tight"
-                              initial={reduceMotion ? false : { opacity: 0, width: 0 }}
-                              animate={{ opacity: 1, width: "auto" }}
-                              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, width: 0 }}
-                              transition={tabLabelTransition}
-                            >
-                              {tab.label}
-                            </motion.span>
-                          ) : null}
-                        </AnimatePresence>
-                      </span>
-                    </motion.button>
-                  );
-                })}
+                        />
+                        <span className="relative z-10 flex min-w-0 items-center justify-center">
+                          <motion.span
+                            className="flex shrink-0 items-center justify-center"
+                            initial={false}
+                            animate={
+                              reduceMotion
+                                ? { opacity: 1 }
+                                : { opacity: selected ? 1 : 0.82 }
+                            }
+                            transition={tabMicroTransition}
+                          >
+                            <HugeiconsIcon
+                              icon={TAB_ICONS[i]}
+                              size={17}
+                              color="currentColor"
+                              strokeWidth={1.6}
+                            />
+                          </motion.span>
+                          <motion.span
+                            className="wx-tab-label-text overflow-hidden whitespace-nowrap tracking-tight"
+                            style={{
+                              filter:
+                                reduceMotion || selected
+                                  ? "blur(0px)"
+                                  : `blur(${WX_TAB_LABEL_BLUR}px)`,
+                            }}
+                            initial={false}
+                            animate={{
+                              opacity: selected ? 1 : 0,
+                              maxWidth: selected ? WX_TAB_LABEL_MAX_PX : 0,
+                              marginLeft: selected ? 8 : 0,
+                            }}
+                            transition={tabMicroTransition}
+                          >
+                            {tab.label}
+                          </motion.span>
+                        </span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -940,14 +1040,14 @@ export function WinnieExplorationPage() {
                   <div className="relative">
                     <AsideHeroHeadline reduceMotion={reduceMotion} />
                     <p className="mt-2 max-w-[var(--wx-max-copy)] text-[0.9375rem] leading-relaxed text-[var(--wx-muted)] sm:text-[1rem] sm:leading-6">
-                      I design calm and modern sites for studios and businesses so people know who you are, what
-                      you do, and how to book you in a few seconds.
+                      I&apos;m Wineury, a UX/Product Designer based in Atlanta, turning confusing flows into clearer,
+                      faster, and more accessible digital experiences.
                     </p>
                   </div>
 
                   <div className="flex flex-wrap gap-3 sm:gap-4">
                     <motion.a
-                      href="mailto:hello@winnie.studio"
+                      href="mailto:wineurya30@gmail.com"
                       className="wx-btn-primary"
                       whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                       transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
@@ -1011,30 +1111,6 @@ export function WinnieExplorationPage() {
             {WINNIE_WORK.map((entry) => (
               <WorkCard key={entry.slug} entry={entry} reduceMotion={reduceMotion} />
             ))}
-
-            <div
-              className="mt-2 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface-soft)] ring-1 ring-[color:var(--wx-ring-subtle)]"
-              aria-label="Trusted by"
-            >
-              <div className="flex items-center gap-6 border-b border-[color:var(--wx-border-faint)] px-5 py-3">
-                <p className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
-                  Trusted by
-                </p>
-                <span
-                  className="hidden h-px flex-1 bg-[color:var(--wx-border-soft)] sm:block"
-                  aria-hidden
-                />
-              </div>
-              <div className="wx-marquee py-5">
-                <div className="wx-marquee-track">
-                  {[...WINNIE_CLIENTS, ...WINNIE_CLIENTS].map((name, i) => (
-                    <span key={`${name}-${i}`} className="wx-marquee-item">
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
           </section>
 
           {/* ============================== STUDIO ============================== */}
@@ -1053,11 +1129,10 @@ export function WinnieExplorationPage() {
                   Studio
                 </p>
                 <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
-                  Editorial clarity, engineered calm.
+                  Research-led design, built end to end.
                 </h2>
                 <p className="text-[0.9375rem] leading-relaxed text-[var(--wx-muted)] sm:text-[1rem]">
-                  A small practice focused on narrative, rhythm, and conversion paths that feel human — not
-                  loud. Every interface is built to earn trust before it asks for a click.
+                  UX/Product Designer focused on research, interaction design, and accessible digital experiences. I design and build in the same conversation — no handoff gap between what I sketch and what ships.
                 </p>
               </div>
               <div className="wx-gallery-frame overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:col-span-2">
@@ -1143,22 +1218,22 @@ export function WinnieExplorationPage() {
                   Approach
                 </p>
                 <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
-                  A tight loop from discovery to launch.
+                  Research first, every time.
                 </h2>
               </div>
               <ol className="grid gap-5 sm:grid-cols-3 sm:gap-6">
                 {[
                   {
-                    title: "Define the promise",
-                    body: "Positioning, story, and the one sentence people should remember.",
+                    title: "Research",
+                    body: "User interviews, usability testing, affinity mapping, and competitive audits before touching a wireframe.",
                   },
                   {
-                    title: "Design the system",
-                    body: "Typography, spacing, and motion that scale without shouting.",
+                    title: "Structure and prototype",
+                    body: "Flows, wireframes, and high-fidelity prototypes that trace decisions back to research findings.",
                   },
                   {
-                    title: "Ship with care",
-                    body: "Performance, accessibility, and handoff that respects engineering time.",
+                    title: "Test and refine",
+                    body: "Usability testing, iteration, and accessibility validation through to handoff or build.",
                   },
                 ].map((step, idx) => (
                   <li
@@ -1194,12 +1269,12 @@ export function WinnieExplorationPage() {
               reduceMotion={reduceMotion}
               className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
             >
-              <div className="mb-5 space-y-2">
+              <div className="mb-6 space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
                   FAQ
                 </p>
                 <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">
-                  Small print, clearly said.
+                  Questions, answered.
                 </h3>
               </div>
               <WinnieFaqAccordion reduceMotion={reduceMotion} />
@@ -1231,11 +1306,11 @@ export function WinnieExplorationPage() {
                   </p>
                   <div className="flex flex-wrap gap-3 sm:gap-4">
                     <a
-                      href="mailto:hello@winnie.studio"
+                      href="mailto:wineurya30@gmail.com"
                       className="wx-btn-primary wx-btn-wrap max-w-full sm:max-w-none"
                     >
                       <HugeiconsIcon icon={Mail01Icon} size={15} strokeWidth={1.6} />
-                      Email hello@winnie.studio
+                      Email wineurya30@gmail.com
                     </a>
                     <button
                       type="button"
@@ -1252,7 +1327,7 @@ export function WinnieExplorationPage() {
                     </li>
                     <li className="flex items-center gap-2">
                       <span aria-hidden className="text-[var(--wx-primary)]">·</span>
-                      Remote-first, based in Brooklyn NY (EST).
+                      Remote-first · based in Atlanta, GA (Eastern Time).
                     </li>
                   </ul>
                 </div>
@@ -1274,7 +1349,7 @@ export function WinnieExplorationPage() {
             </RevealCard>
 
             <div className="flex flex-wrap items-center justify-between gap-3 px-1 pt-2 text-[0.8125rem] text-[var(--wx-muted)]">
-              <p>© {new Date().getFullYear()} winnie studios</p>
+              <p>© {new Date().getFullYear()} Wineury Almonte</p>
               <p className="flex items-center gap-3">
                 <a className="hover:text-[var(--wx-ink)]" href="https://read.cv/" rel="noreferrer" target="_blank">
                   Read.cv
@@ -1284,7 +1359,7 @@ export function WinnieExplorationPage() {
                   Instagram
                 </a>
                 <span aria-hidden>·</span>
-                <a className="hover:text-[var(--wx-ink)]" href="mailto:hello@winnie.studio">
+                <a className="hover:text-[var(--wx-ink)]" href="mailto:wineurya30@gmail.com">
                   Email
                 </a>
               </p>

@@ -44,88 +44,79 @@ export const WINNIE_EXTRA_IMAGES = {
 
 /**
  * Work grid — image-first; copy + tech nuggets live in hover/focus overlays (center only).
+ * Order: flagship first. Logitech marked incomplete until route + screenshots are ready.
  */
 export const WINNIE_WORK = [
   {
-    slug: "north-ridge",
-    title: "North Ridge",
-    kind: "Brand · Website",
-    year: "2026",
-    summary: "Positioning and identity for a climbing guides collective — calm, earned, unsentimental.",
+    slug: "incity",
+    title: "InCity",
+    kind: "Civic UX · Mobile",
+    year: "2025",
+    summary:
+      "Redesigned ATL311 into a mobile-first civic reporting flow — fewer steps, live case tracking, and clearer confirmation for Atlanta residents.",
     image: { primary: "heroMountain", fallback: "heroMountain" },
-    alt: "Misty layered landscape",
+    alt: "Misty layered mountain landscape representing a calm, clear civic experience",
     featured: true,
-    overlayTitle: "North Ridge",
-    overlaySubtitle: "Brand system · marketing site",
-    nuggets: [
-      { label: "React", color: "#61dafb", icon: "CodeCircleIcon" },
-      { label: "Design system", color: "#a855f7", icon: "GridViewIcon" },
-      { label: "Motion", color: "#f97316", icon: "FramerIcon" },
-    ],
-  },
-  {
-    slug: "okeanos",
-    title: "Okeanos",
-    kind: "Website · Motion",
-    year: "2025",
-    summary: "Immersive booking experience for a sustainable dive school — water cadence, zero chrome.",
-    image: { primary: "heroOcean", fallback: "heroOcean" },
-    alt: "Turquoise water and sea foam",
-    featured: true,
-    overlayTitle: "Okeanos",
-    overlaySubtitle: "Booking · editorial film",
-    nuggets: [
-      { label: "Lenis", color: "#22d3ee", icon: "Layout01Icon" },
-      { label: "WCAG 2.2", color: "#4ade80", icon: "Layers01Icon" },
-      { label: "CMS", color: "#818cf8", icon: "ComputerDesk01Icon" },
-    ],
-  },
-  {
-    slug: "atelier-marée",
-    title: "Atelier Marée",
-    kind: "Identity · Art direction",
-    year: "2025",
-    summary: "Perfumery reimagined as an editorial journal — a system of restrained type and object.",
-    image: null,
-    alt: "Atelier Marée project placeholder",
-    overlayTitle: "Atelier Marée",
-    overlaySubtitle: "Identity · lookbook",
+    overlayTitle: "InCity",
+    overlaySubtitle: "ATL311 redesign · civic reporting",
     nuggets: [
       { label: "Figma", color: "#a259ff", icon: "FigmaIcon" },
-      { label: "Type", color: "#f472b6", icon: "PenTool01Icon" },
-      { label: "Print", color: "#94a3b8", icon: "LayoutTwoColumnIcon" },
+      { label: "Research", color: "#4ade80", icon: "FallingStarIcon" },
+      { label: "A11y", color: "#2dd4bf", icon: "Layers01Icon" },
     ],
   },
   {
-    slug: "studio-nord",
-    title: "Studio Nord",
-    kind: "Website · CMS",
-    year: "2024",
-    summary: "Architecture practice site with a careful, photo-first rhythm and precise type pairings.",
-    image: null,
-    alt: "Studio Nord project placeholder",
-    overlayTitle: "Studio Nord",
-    overlaySubtitle: "Architecture · case studies",
+    slug: "siren",
+    title: "Siren",
+    kind: "Safety UX · Mobile",
+    year: "2025",
+    summary:
+      "Safety-first dating app exploring trust signals, behavior reporting, and required video verification — refined through iterative usability testing.",
+    image: { primary: "heroOcean", fallback: "heroOcean" },
+    alt: "Turquoise water and sea foam representing trust, clarity, and a calm safety experience",
+    featured: true,
+    overlayTitle: "Siren",
+    overlaySubtitle: "Safety-first dating app",
     nuggets: [
-      { label: "Next.js", color: "#7dd3fc", icon: "CodeCircleIcon" },
-      { label: "Sanity", color: "#f43f5e", icon: "GridTableIcon" },
-      { label: "Maps API", color: "#4ade80", icon: "LayoutThreeColumnIcon" },
+      { label: "Lean UX", color: "#f97316", icon: "MagicWand01Icon" },
+      { label: "Testing", color: "#60a5fa", icon: "GridViewIcon" },
+      { label: "Figma", color: "#a259ff", icon: "FigmaIcon" },
     ],
   },
   {
-    slug: "quiet-labs",
-    title: "Quiet Labs",
-    kind: "Product · Web",
+    slug: "resolutions",
+    title: "Resolutions",
+    kind: "Product UX · Web + App",
     year: "2024",
-    summary: "Interface system for a research studio — soft density, strong defaults, no noise.",
+    summary:
+      "Habit-tracking experience helping users organize goals, routines, and progress in one place — designed to cut setup friction.",
     image: null,
-    alt: "Quiet Labs project placeholder",
-    overlayTitle: "Quiet Labs",
-    overlaySubtitle: "Product UI · research tools",
+    alt: "Habit tracking app screens showing goal setup and progress dashboard",
+    overlayTitle: "Resolutions",
+    overlaySubtitle: "Habit tracker · goal flows",
     nuggets: [
-      { label: "React", color: "#61dafb", icon: "CodeCircleIcon" },
-      { label: "Design tokens", color: "#c084fc", icon: "MagicWand01Icon" },
-      { label: "A11y", color: "#2dd4bf", icon: "FallingStarIcon" },
+      { label: "Figma", color: "#a259ff", icon: "FigmaIcon" },
+      { label: "Research", color: "#4ade80", icon: "FallingStarIcon" },
+      { label: "Prototype", color: "#818cf8", icon: "LayoutTwoColumnIcon" },
+    ],
+  },
+  {
+    slug: "logitech",
+    title: "Logitech G PRO",
+    kind: "Web · Product Storytelling",
+    year: "2024",
+    // TODO: Case study route + screenshots incomplete — hide card until rebuilt
+    status: "incomplete",
+    summary:
+      "Interactive promotional microsite for the Logitech G PRO mouse — product specs and guided setup delivered through visual storytelling and UX principles.",
+    image: null,
+    alt: "Promotional website screens for Logitech G PRO mouse",
+    overlayTitle: "Logitech G PRO",
+    overlaySubtitle: "Promotional microsite · motion",
+    nuggets: [
+      { label: "HTML/CSS", color: "#e34c26", icon: "CodeCircleIcon" },
+      { label: "Motion", color: "#f97316", icon: "FramerIcon" },
+      { label: "UX Principles", color: "#c084fc", icon: "MagicWand01Icon" },
     ],
   },
 ];
@@ -259,58 +250,48 @@ export const WINNIE_STACK_TOOLS = WINNIE_STACK_MARQUEE_LAYERS.flat();
  * Contact row — `icon` keys map to Phosphor icons (monochrome stroke, B/W via currentColor).
  */
 export const WINNIE_CONTACT_SOCIALS = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/", icon: "linkedin" },
-  { label: "X (Twitter)", href: "https://twitter.com/", icon: "x" },
-  { label: "Instagram", href: "https://www.instagram.com/", icon: "instagram" },
-  { label: "Email", href: "mailto:hello@winnie.studio", icon: "email" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/wineury", icon: "linkedin" },
+  // TODO: Confirm X handle before publishing
+  { label: "X (Twitter)", href: "https://twitter.com/wineury", icon: "x" },
+  // TODO: Confirm Instagram handle before publishing
+  { label: "Instagram", href: "https://www.instagram.com/wineury", icon: "instagram" },
+  { label: "Email", href: "mailto:wineurya30@gmail.com", icon: "email" },
 ];
 
-/** Clients marquee (wordmarks, not logos — keeps typographic consistency). */
-export const WINNIE_CLIENTS = [
-  "Atelier Marée",
-  "North Ridge",
-  "Okeanos",
-  "Studio Nord",
-  "Quiet Labs",
-  "Hana + Co.",
-  "Forme Studio",
-  "Brightwater",
-];
-
-/** Studio capabilities — short verbs, then sub-line. `accent` tints icon well + title. */
+/** Capabilities — UX/Product Design focused. `accent` = tokenized CSS var. */
 export const WINNIE_CAPABILITIES = [
   {
     iconKey: "PenTool01Icon",
-    title: "Identity",
-    body: "Positioning, verbal identity, wordmarks, type systems.",
-    accent: "#9333ea",
+    title: "UX Research",
+    body: "User interviews, usability testing, affinity mapping, competitive audits — research that actually changes the design.",
+    accent: "var(--wx-accent-violet)",
   },
   {
     iconKey: "MagicWand01Icon",
-    title: "Interface",
-    body: "Systems that scale from landing to product without shouting.",
-    accent: "#0d9488",
+    title: "Product Design",
+    body: "Flows, wireframes, prototypes, and design systems that connect research to shipped interfaces.",
+    accent: "var(--wx-accent-teal)",
   },
   {
     iconKey: "CodeCircleIcon",
-    title: "Engineering",
-    body: "React, Next, Motion, Lenis — shipped with care and accessibility.",
-    accent: "#2563eb",
+    title: "Interaction & Engineering",
+    body: "React, Tailwind, GSAP, Lenis — design and build in the same conversation, no handoff gap.",
+    accent: "var(--wx-primary)",
   },
   {
     iconKey: "FallingStarIcon",
-    title: "Motion",
-    body: "Restrained transitions that feel like part of the craft, not paint on top.",
-    accent: "#ea580c",
+    title: "Accessibility",
+    body: "WCAG best practices, keyboard navigation, and inclusive design baked in from the start.",
+    accent: "var(--wx-accent-amber)",
   },
 ];
 
-/** Featured testimonial pulled from a notional client note — replace with real quotes. */
+// TODO: Replace with a real verified testimonial before publishing.
 export const WINNIE_TESTIMONIAL = {
   quote:
     "Winnie rewrote our story with more care than we wrote it ourselves. The site feels like the studio we've been trying to describe for years.",
-  attribution: "Mara Lindqvist",
-  role: "Creative Director, Studio Nord",
+  attribution: "— Unverified placeholder",
+  role: "Replace with real name and context",
 };
 
 /** Stats row — calm, factual. */
@@ -320,23 +301,27 @@ export const WINNIE_STATS = [
   { value: "99", label: "Lighthouse median", hint: "Performance, a11y, SEO." },
 ];
 
-/** FAQ — concise, agency-grade. */
+/** FAQ — questions people actually ask before hiring or collaborating. */
 export const WINNIE_FAQ = [
   {
-    q: "How do you scope a project?",
-    a: "A short paid discovery to define the promise, audience, and success metric. Then a fixed-fee build with clear milestones and a single point of contact.",
+    q: "What do you need from me to get started?",
+    a: "A short brief: the problem, who it’s for, any deadlines, and links to what exists today (Figma, staging, or a doc). From there I’ll suggest a lightweight plan and the first milestone.",
   },
   {
-    q: "Do you work with in-house teams?",
-    a: "Often. I partner with founders, creative directors, and engineering leads — and hand off a system your team can own without me.",
+    q: "How do you work day to day?",
+    a: "Async updates with regular checkpoints — shared Figma, notes from research, and prototypes you can click. For bigger decisions we’ll align on a call; otherwise I keep momentum in the file.",
   },
   {
-    q: "What's the typical timeline?",
-    a: "Four to eight weeks for a focused marketing site. Product and brand systems usually run eight to sixteen weeks depending on scope.",
+    q: "Do you design and build?",
+    a: "Yes. I design in Figma and ship UI in React with Tailwind (and motion where it helps). That keeps interaction detail from getting lost between design and code.",
   },
   {
-    q: "Can you code the design yourself?",
-    a: "Yes. Design and engineering are the same conversation here — no throw-over-the-wall handoffs.",
+    q: "Are you open to contract or full-time?",
+    a: "Open to both — contract sprints for a defined scope, or full-time product design roles with research and prototyping in the loop. Tell me what you’re hiring for and we’ll see if it’s a fit.",
+  },
+  {
+    q: "Where are you based?",
+    a: "Atlanta, GA — remote-first and happy to overlap EST hours with your team.",
   },
 ];
 

@@ -6,14 +6,25 @@
     color-scheme: light dark;
   }
 
+  html[data-theme="light"] {
+    color-scheme: light;
+  }
+
   *,
   *::before,
   *::after {
-    border-color: var(--color-border);
+    border-color: transparent;
   }
 
   html {
     height: 100%;
+  }
+
+  /* Winnie mobile fixed nav — anchor scroll lands below the bar */
+  @media (max-width: 639px) {
+    html {
+      scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 5.5rem);
+    }
   }
 
   body {

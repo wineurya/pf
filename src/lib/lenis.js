@@ -40,6 +40,10 @@ export function initLenis() {
     gsap.ticker.remove(tickerFn);
     ScrollTrigger.removeEventListener("refresh", onRefresh);
     unsubscribeLenisScroll();
+    // Drop the viewport proxy before destroying Lenis, otherwise ScrollTrigger can
+    // still call the proxy’s scrollTop and touch a dead instance (notably under
+    // React StrictMode’s double mount in dev).
+    ScrollTrigger.scrollerProxy(document.documentElement);
     lenis.destroy();
     ScrollTrigger.refresh();
   }
