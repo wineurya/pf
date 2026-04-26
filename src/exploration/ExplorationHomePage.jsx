@@ -306,7 +306,7 @@ function getWorkCardVariant(entry) {
 function getWorkCardNuggetsListAriaLabel(entry) {
   const custom = entry.workCardNuggetsAriaLabel?.trim();
   if (custom) return custom;
-  return `${entry.title} â€” role-relevant highlights`;
+  return `${entry.title} — role-relevant highlights`;
 }
 
 const WORK_CARD_TEASER_WORDS = 8;
@@ -611,6 +611,8 @@ function WorkCardFigma20088Artboard({ entry, bgUrl }) {
   if (!bgUrl) {
     return <div className="wx-work-card__bg wx-work-card__bg--empty" aria-hidden />;
   }
+  const objectPos = entry.workCardFigmaObjectPosition?.trim();
+  const mockImgStyle = objectPos ? { objectPosition: objectPos } : undefined;
   const media = entry.workCardBackgroundWebp ? (
     <picture>
       <source
@@ -623,6 +625,7 @@ function WorkCardFigma20088Artboard({ entry, bgUrl }) {
         srcSet={`${bgUrl} 2000w`}
         sizes={FIGMA_200_88_SIZES}
         alt=""
+        style={mockImgStyle}
         decoding="async"
         fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
         loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
@@ -634,6 +637,7 @@ function WorkCardFigma20088Artboard({ entry, bgUrl }) {
       srcSet={`${bgUrl} 2000w`}
       sizes={FIGMA_200_88_SIZES}
       alt=""
+      style={mockImgStyle}
       decoding="async"
       fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
       loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
@@ -686,14 +690,10 @@ function WorkNuggetMotionLi({ n, i, entry, nuggets, nuggetMotionInitial, reduceM
   );
 }
 
-function WorkCardNuggetsChromeRow({
-  entry,
-  nuggets,
-  reduceMotion,
-  nuggetsRevealed,
-  nuggetMotionInitial,
-  isCaseStudy,
-}) {
+function WorkCardNuggetsChromeRow({ entry, nuggets, reduceMotion, nuggetsRevealed, isCaseStudy }) {
+  const nuggetMotionInitial = reduceMotion
+    ? { opacity: 1, y: 0 }
+    : { opacity: 0, y: NUGGET_ROW_MOTION.yFrom };
   return (
     <>
       {nuggets.length > 0 ? (
@@ -767,30 +767,40 @@ function WorkCardChromeAndFooterBlock({
   useLightText,
   hovered,
   reduceMotion,
+  omitTopChrome,
+  footerMinimal,
 }) {
   return (
     <>
-      {useWarmFooter ? (
-        <motion.div
-          className="wx-work-card-v2__chrome-top"
-          initial={reduceMotion ? { y: 0, opacity: 1 } : { y: -18, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.32, margin: "0px 0px -8% 0px" }}
-          transition={{
-            duration: reduceMotion ? 0.01 : 0.5,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        >
-          {workCardChromeTopInnards}
-        </motion.div>
-      ) : (
-        <div className="wx-work-card-v2__chrome-top">{workCardChromeTopInnards}</div>
-      )}
-      <div className={clsx("wx-work-card-v2__footer", useWarmFooter && "wx-work-card-v2__footer--warm-pin")}>
+      {!omitTopChrome &&
+        (useWarmFooter ? (
+          <motion.div
+            className="wx-work-card-v2__chrome-top"
+            initial={reduceMotion ? { y: 0, opacity: 1 } : { y: -18, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, amount: 0.32, margin: "0px 0px -8% 0px" }}
+            transition={{
+              duration: reduceMotion ? 0.01 : 0.5,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            {workCardChromeTopInnards}
+          </motion.div>
+        ) : (
+          <div className="wx-work-card-v2__chrome-top">{workCardChromeTopInnards}</div>
+        ))}
+      <div
+        className={clsx(
+          "wx-work-card-v2__footer",
+          useWarmFooter && "wx-work-card-v2__footer--warm-pin",
+          footerMinimal && "wx-work-card-v2__footer--minimal",
+        )}
+      >
         <h3
           className={clsx(
             "wx-work-card-v2__title m-0 text-balance text-left font-medium tracking-tight",
-            useWarmFooter ? "max-w-[min(100%,40rem)]" : "max-w-[min(100%,20rem)]",
+            useWarmFooter ? "max-w-[min(100%,40rem)]" : !footerMinimal && "max-w-[min(100%,20rem)]",
+            footerMinimal && "max-w-[min(100%,26rem)]",
             useLightText && "wx-work-card-v2__title--on-image",
             useWarmFooter && "wx-work-card-v2__title--warm",
           )}
@@ -818,6 +828,9 @@ function WorkCardShellBlock({
   hovered,
   reduceMotion,
   workCardChromeTopInnards,
+  omitTopChrome,
+  omitScrim,
+  footerMinimal,
 }) {
   return (
     <div
@@ -826,6 +839,7 @@ function WorkCardShellBlock({
         !useWarmFooter && "gap-3 p-4 sm:p-5",
         useWarmFooter && "wx-work-card__shell--footer-warm",
         useLightText && "wx-work-card__shell--image-footer",
+        footerMinimal && "wx-work-card__shell--footer-minimal",
       )}
     >
       <WorkCardMediaBackground
@@ -834,12 +848,13 @@ function WorkCardShellBlock({
         useFigma20088={useFigma20088}
         useWarmFooter={useWarmFooter}
       />
-      {!useWarmFooter ? <div className="wx-work-card__scrim" aria-hidden /> : null}
+      {!useWarmFooter && !omitScrim ? <div className="wx-work-card__scrim" aria-hidden /> : null}
       <div className="wx-work-card__sweep" aria-hidden />
       <div
         className={clsx(
           "wx-work-card-v2 pointer-events-auto",
           useWarmFooter && "wx-work-card-v2--footer-warm-pin",
+          omitTopChrome && "wx-work-card-v2--no-chrome",
         )}
       >
         <WorkCardChromeAndFooterBlock
@@ -849,6 +864,8 @@ function WorkCardShellBlock({
           useLightText={useLightText}
           hovered={hovered}
           reduceMotion={reduceMotion}
+          omitTopChrome={omitTopChrome}
+          footerMinimal={footerMinimal}
         />
       </div>
     </div>
@@ -856,11 +873,18 @@ function WorkCardShellBlock({
 }
 
 function workCardAriaLabel(entry, { isEmptyProjectSlot, isNavOnlyViewCard }) {
+  const custom = entry.workCardAccessibleLabel?.trim();
+  if (custom) {
+    if (isEmptyProjectSlot) {
+      return `${custom} — opens empty project canvas.`;
+    }
+    return custom;
+  }
   if (isEmptyProjectSlot) {
-    return `${entry.title}. ${entry.summary} â€” opens empty project canvas.`;
+    return `${entry.title}. ${entry.summary} — opens empty project canvas.`;
   }
   if (isNavOnlyViewCard) {
-    return `${entry.title}. ${entry.summary} â€” click for focused view; Case Study link opens the write-up.`;
+    return `${entry.title}. ${entry.summary} — click for focused view; Case Study link opens the write-up.`;
   }
   return `${entry.title}. ${entry.summary}`;
 }
@@ -911,7 +935,7 @@ function WorkCardLinkOverlays({
         <ViewTransitionLink
           to={entry.caseStudyPath}
           className="wx-work-card-v2__link absolute inset-0 z-20 rounded-[var(--wx-radius-card)] text-inherit no-underline focus:outline-none focus-visible:outline-none"
-          aria-label={isCaseStudy ? `${entry.title} â€” view case study` : `${entry.title} â€” case study`}
+          aria-label={isCaseStudy ? `${entry.title} — view case study` : `${entry.title} — case study`}
         />
       ) : null}
       {showCaseStudyConnector ? (
@@ -925,7 +949,7 @@ function WorkCardLinkOverlays({
             to={entry.caseStudyPath}
             onClick={(e) => e.stopPropagation()}
             className="inline-flex items-center gap-1.5 wx-text-meta font-normal leading-snug tracking-wide text-[color-mix(in_srgb,var(--wx-ink)_88%,var(--wx-page-bg))] no-underline transition-colors hover:text-[var(--wx-ink)] hover:underline hover:decoration-[color-mix(in_srgb,var(--wx-ink)_35%,transparent)] hover:underline-offset-4 focus:outline-none focus-visible:outline-none"
-            aria-label={`${entry.title} â€” case study page`}
+            aria-label={`${entry.title} — case study page`}
           >
             Case Study
             <ArrowUpRight className="size-3.5 shrink-0 opacity-90" weight="regular" aria-hidden />
@@ -957,9 +981,6 @@ function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavO
     duration: reduceMotion ? 0.01 : 0.3,
     ease: [0.22, 1, 0.36, 1],
   };
-  const nuggetMotionInitial = reduceMotion
-    ? { opacity: 1, y: 0 }
-    : { opacity: 0, y: NUGGET_ROW_MOTION.yFrom };
   const useFigma20088 = entry.workCardFigmaFrame === "200-88" && Boolean(bgUrl);
   const figmaCanvasHex = entry.workCardFigmaCanvas?.trim() || null;
   const figmaLightCanvas = Boolean(entry.workCardFigmaLightCanvas);
@@ -969,7 +990,6 @@ function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavO
       nuggets={nuggets}
       reduceMotion={reduceMotion}
       nuggetsRevealed={nuggetsRevealed}
-      nuggetMotionInitial={nuggetMotionInitial}
       isCaseStudy={isCaseStudy}
     />
   );
@@ -990,6 +1010,9 @@ function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavO
       hovered={hovered}
       reduceMotion={reduceMotion}
       workCardChromeTopInnards={workCardChromeTopInnards}
+      omitTopChrome={Boolean(entry.workCardOmitTopChrome)}
+      omitScrim={Boolean(entry.workCardOmitScrim)}
+      footerMinimal={Boolean(entry.workCardFooterMinimal)}
     />
   );
   return {
@@ -1011,6 +1034,8 @@ function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavO
     onClickHandler,
     keyDownHandler,
     shell,
+    omitScrim: Boolean(entry.workCardOmitScrim),
+    footerMinimal: Boolean(entry.workCardFooterMinimal),
   };
 }
 
@@ -1024,6 +1049,8 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
           m.useFigma20088 ? "wx-work-card--figma-20088 overflow-visible" : "overflow-hidden",
           m.useWarmFooter && "wx-work-card--footer-warm",
           m.figmaLightCanvas && m.useFigma20088 && "wx-work-card--figma-canvas-light",
+          m.omitScrim && "wx-work-card--omit-scrim",
+          m.footerMinimal && "wx-work-card--footer-minimal",
           !m.useFigma20088 && workCardAspectClassName(entry),
           (m.isEmptyProjectSlot || m.isNavOnlyViewCard) && "cursor-pointer",
         )}

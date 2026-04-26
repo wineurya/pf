@@ -680,6 +680,11 @@
   width: 100%;
 }
 
+/* Hero-only: no nugget row — keep title + teaser pinned to the bottom. */
+.site-canvas .wx-work-card-v2--no-chrome {
+  justify-content: flex-end;
+}
+
 /* Top nuggets + view more: enter from top on hover (fine pointer only) */
 .site-canvas .wx-work-card-v2__chrome-top {
   position: relative;
@@ -844,6 +849,29 @@
   text-align: left;
   text-wrap: balance;
   padding-top: 0.25rem;
+}
+
+/* Figma-style gallery row: light field + short footer (e.g. InCity 458:10858). */
+.site-canvas .wx-work-card-v2__footer.wx-work-card-v2__footer--minimal {
+  gap: 0.3rem;
+  padding-top: 0.15rem;
+}
+
+.site-canvas .wx-work-card--footer-minimal .wx-work-card__shell--footer-minimal {
+  gap: 0.35rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .site-canvas .wx-work-card--footer-minimal .wx-work-card__shell--footer-minimal {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+}
+
+.site-canvas .wx-work-card--footer-minimal .wx-work-card-v2__title {
+  font-size: clamp(1.0625rem, 0.2vw + 0.95rem, 1.2rem);
 }
 
 /* Warm footer: 8px title↔summary gap; wins over default footer gap (declared after base). */

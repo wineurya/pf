@@ -147,23 +147,24 @@ export const SITE_WORK = [
     workCardFigmaCanvas: "#f4f4f1",
     /** Paper-like grain: multiply, not `soft-light` (reserved for dark canvases) */
     workCardFigmaLightCanvas: true,
-    workCardTeaserLead:
-      "Your all-in-one access to city services, updates, and support. InCity keeps the full stack in your pocket—not on a form behind a browser tab.",
+    /** Figma 458:10858 — let the export carry tags/bubbles; no duplicate chrome row. */
+    workCardOmitTopChrome: true,
+    workCardOmitScrim: true,
+    workCardFooterMinimal: true,
+    /** Tweak if the 200:109 raster needs optical centering in the frame. */
+    workCardFigmaObjectPosition: "50% 42%",
+    workCardTeaserLead: "All-in-one access to city services, updates, and support.",
     workCardStutters: [],
-    workCardFinale: "One home for the questions that used to start with “where do I even…”.",
-    summary:
-      "Civic app: welcome flow, “connected / support / updates” tags, and chat-style prompts for city problems, waiting on updates, and simpler reporting—mobile-first, same patterns as the Avance card (200:88, nav focus, case study).",
+    workCardFinale: "Right when you need it.",
+    /** Short: card `aria-label` and nav; hero copy lives in the mock. */
+    summary: "Civic app: welcome flow, service tags, and chat prompts for city issues, updates, and reporting.",
+    workCardAccessibleLabel:
+      "InCity. Civic app for city services, updates, and reporting. Click for focused view; Case Study link opens the write-up.",
     alt: "InCity marketing mock: hand holding phone with welcome screen, service tags, floating civic prompts, light background",
     featured: true,
     overlayTitle: "InCity",
     overlaySubtitle: "Civic app · services + reporting",
-    workCardNuggetsAriaLabel: "In-app service tags and themes from the Figma artboard",
-    nuggets: [
-      { label: "Connected", color: "#f97316", icon: "GridViewIcon" },
-      { label: "Support", color: "#22c55e", icon: "QuoteUpIcon" },
-      { label: "Updates", color: "#eab308", icon: "Calendar01Icon" },
-      { label: "Right at hand", color: "#e7e5e4", icon: "Layers01Icon" },
-    ],
+    nuggets: [],
   },
 ];
 
