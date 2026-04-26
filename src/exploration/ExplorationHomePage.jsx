@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -75,6 +75,7 @@ import {
 } from "@/exploration/layout/ExplorationLayout.jsx";
 import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
+import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
 const NUGGET_ICON_MAP = {
   CodeCircleIcon,
@@ -97,7 +98,7 @@ const NUGGET_ICON_MAP = {
 };
 
 /**
- * Lucide Animated — https://lucide-animated.com (npm: `lucide-animated`). Icons animate on hover.
+ * Lucide Animated â€” https://lucide-animated.com (npm: `lucide-animated`). Icons animate on hover.
  * Keys match `nuggets[].icon` in `siteContent.js`; unmapped keys fall back to `NUGGET_ICON_MAP` + Hugeicons.
  */
 const LUCIDE_NUGGET_MAP = {
@@ -122,8 +123,8 @@ const LUCIDE_NUGGET_MAP = {
 
 /**
  * Work card nugget list: one timing model for show + hide (forward stagger in, reverse out).
- * Easing: Emil Kowalski — strong ease-out cubic-bezier(0.23, 1, 0.32, 1) for transform + opacity; ~240ms
- * for small UI; stagger 0.05s fits his 30–80ms list spacing. See emilkowal.ski, Motion easing docs.
+ * Easing: Emil Kowalski â€” strong ease-out cubic-bezier(0.23, 1, 0.32, 1) for transform + opacity; ~240ms
+ * for small UI; stagger 0.05s fits his 30â€“80ms list spacing. See emilkowal.ski, Motion easing docs.
  */
 const NUGGET_ROW_MOTION = {
   stagger: 0.05,
@@ -167,7 +168,7 @@ function linearizeChannel(u) {
   return u <= 0.03928 ? u / 12.92 : ((u + 0.055) / 1.055) ** 2.4;
 }
 
-/** sRGB 0–1 → WCAG 2.1 relative luminance. */
+/** sRGB 0â€“1 â†’ WCAG 2.1 relative luminance. */
 function relativeLuminanceFromHex(hex) {
   const { r, g, b } = hexToSrgb(hex);
   return (
@@ -175,7 +176,7 @@ function relativeLuminanceFromHex(hex) {
   );
 }
 
-/** L1, L2 in [0,1]. Returns contrast ratio (≥1). */
+/** L1, L2 in [0,1]. Returns contrast ratio (â‰¥1). */
 function contrastRatio(L1, L2) {
   const hi = Math.max(L1, L2);
   const lo = Math.min(L1, L2);
@@ -184,7 +185,7 @@ function contrastRatio(L1, L2) {
 
 /**
  * Work card nugget: pick UI near-black vs near-white for **maximum** contrast against fill.
- * (Luminance-threshold only fails in the “muddy mid” where both sides are weak; WCAG is target ≥4.5:1 for small type.)
+ * (Luminance-threshold only fails in the â€œmuddy midâ€ where both sides are weak; WCAG is target â‰¥4.5:1 for small type.)
  * Returns CSS color tokens; Hugeicons can consume `currentColor` via the span.
  */
 function nuggetTextColor(fillHex) {
@@ -218,15 +219,15 @@ const CONTACT_PHOSPHOR_ICONS = {
   email: Envelope,
 };
 
-/** On-screen UI easing — Emil Kowalski flowchart (not entering viewport). */
+/** On-screen UI easing â€” Emil Kowalski flowchart (not entering viewport). */
 const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
 /** Tab label expand/collapse when a segment is selected. */
 const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
 const WX_TAB_PILL_DURATION = 0.36;
 const WX_TAB_MICRO_DURATION = 0.28;
-/** Resting blur on inactive labels — they crossfade through this on (de)select. */
+/** Resting blur on inactive labels â€” they crossfade through this on (de)select. */
 const WX_TAB_LABEL_BLUR = 4;
-/** Lenis scroll-to-section — smoother than linear. */
+/** Lenis scroll-to-section â€” smoother than linear. */
 const WX_LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
 
 /** Empty-canvas: crossfade duration (ms) for main + aside copy + section tabs. */
@@ -234,7 +235,7 @@ const EMPTY_CANVAS_ENTER_MS = 1100;
 const EMPTY_CANVAS_EXIT_MS = 1100;
 /**
  * `#site-panels` off-screen rest pose: `translateY` only (no scale). Used for nav-only + **route remount**
- * (e.g. `/work/…` → `/`) so the main column eases in the same way as leaving empty-canvas.
+ * (e.g. `/work/â€¦` â†’ `/`) so the main column eases in the same way as leaving empty-canvas.
  */
 const EMPTY_CANVAS_PANELS_DY = 20;
 const EMPTY_CANVAS_ENTER_S = EMPTY_CANVAS_ENTER_MS / 1000;
@@ -300,12 +301,12 @@ function getWorkCardVariant(entry) {
 }
 
 /**
- * `workCardNuggetsAriaLabel` optional in `siteContent.js` per entry. Default: “{title} — role-relevant highlights”.
+ * `workCardNuggetsAriaLabel` optional in `siteContent.js` per entry. Default: â€œ{title} â€” role-relevant highlightsâ€.
  */
 function getWorkCardNuggetsListAriaLabel(entry) {
   const custom = entry.workCardNuggetsAriaLabel?.trim();
   if (custom) return custom;
-  return `${entry.title} — role-relevant highlights`;
+  return `${entry.title} â€” role-relevant highlights`;
 }
 
 const WORK_CARD_TEASER_WORDS = 8;
@@ -377,13 +378,8 @@ function WorkCardTeaserSimple({ full, isActive, reduceMotion, useLightOnImage, u
   );
 }
 
-/** Slight ragged typing: longer pauses on “phrase” boundaries (deterministic). */
-function typeCharDelay(i) {
-  return 16 + (i > 0 && i % 5 === 0 ? 28 : 0) + (i % 9 === 4 ? 16 : 0);
-}
-
 /**
- * `workCardTeaserLead` stands alone. On hover: optional 0–2 stutter lines (e.g. “Try:” nudges), then `finale`.
+ * `workCardTeaserLead` stands alone. On hover: optional 0â€“2 stutter lines (e.g. â€œTry:â€ nudges), then `finale`.
  * With no stutters, only the finale (e.g. a one-line quip) is typed in.
  */
 function formatStutterSegment(s) {
@@ -401,83 +397,15 @@ function splitWorkCardLeadLines(lead) {
   return { line1: t.slice(0, idx + 1).trim(), line2: t.slice(idx + 2).trim() };
 }
 
-function WorkCardStutterTeaser({ lead, s0, s1, finale, isActive, reduceMotion, useLightOnImage, useWarmImageFooter }) {
-  const { line1, line2 } = useMemo(() => splitWorkCardLeadLines(lead), [lead]);
-  const stutterParts = useMemo(() => {
-    return [formatStutterSegment(s0), formatStutterSegment(s1)].filter((p) => p.length > 0);
-  }, [s0, s1]);
-  const finSpaced = useMemo(() => {
-    const t = (finale.startsWith(" ") ? finale : ` ${finale}`).trimEnd();
-    return t.startsWith(" ") ? t : ` ${t}`;
-  }, [finale]);
-
-  const [ext, setExt] = useState("");
-  const [tone, setTone] = useState("finale");
-
-  useEffect(() => {
-    if (!isActive) {
-      return;
-    }
-    if (reduceMotion) {
-      setExt(finSpaced);
-      setTone("finale");
-      return;
-    }
-    const sleep = (ms) => new Promise((resolve) => { window.setTimeout(resolve, ms); });
-    let gone = false;
-    const partDelMs = 11;
-
-    (async () => {
-      setExt("");
-      for (const [idx, part] of stutterParts.entries()) {
-        if (gone) return;
-        setTone(idx === 0 ? "s0" : "s1");
-        for (let i = 0; i <= part.length; i += 1) {
-          if (gone) return;
-          setExt(part.slice(0, i));
-          if (i < part.length) await sleep(typeCharDelay(i));
-        }
-        await sleep(400);
-        for (let i = part.length; i >= 0; i -= 1) {
-          if (gone) return;
-          setExt(part.slice(0, i));
-          if (i > 0) await sleep(partDelMs);
-        }
-        await sleep(120);
-      }
-      if (gone) return;
-      setTone("finale");
-      for (let i = 0; i <= finSpaced.length; i += 1) {
-        if (gone) return;
-        setExt(finSpaced.slice(0, i));
-        if (i < finSpaced.length) await sleep(typeCharDelay(i));
-      }
-    })();
-
-    return () => {
-      gone = true;
-    };
-  }, [isActive, reduceMotion, stutterParts, finSpaced]);
-
-  useEffect(() => {
-    if (isActive) {
-      return;
-    }
-    if (reduceMotion) {
-      setExt("");
-      setTone("finale");
-      return;
-    }
-    if (ext.length === 0) {
-      setTone("finale");
-      return;
-    }
-    const id = window.setTimeout(() => {
-      setExt((prev) => prev.slice(0, -1));
-    }, WORK_CARD_STUTTER_UNTYPE_MS);
-    return () => window.clearTimeout(id);
-  }, [isActive, reduceMotion, ext]);
-
+function WorkCardStutterTeaserBody({
+  line1,
+  line2,
+  ext,
+  tone,
+  isActive,
+  useLightOnImage,
+  useWarmImageFooter,
+}) {
   return (
     <p
       className={clsx(
@@ -507,6 +435,73 @@ function WorkCardStutterTeaser({ lead, s0, s1, finale, isActive, reduceMotion, u
         {ext}
       </span>
     </p>
+  );
+}
+
+function WorkCardStutterTeaser({ lead, s0, s1, finale, isActive, reduceMotion, useLightOnImage, useWarmImageFooter }) {
+  const { line1, line2 } = useMemo(() => splitWorkCardLeadLines(lead), [lead]);
+  const stutterParts = useMemo(() => {
+    return [formatStutterSegment(s0), formatStutterSegment(s1)].filter((p) => p.length > 0);
+  }, [s0, s1]);
+  const finSpaced = useMemo(() => {
+    const t = (finale.startsWith(" ") ? finale : ` ${finale}`).trimEnd();
+    return t.startsWith(" ") ? t : ` ${t}`;
+  }, [finale]);
+
+  const [ext, setExt] = useState("");
+  const [tone, setTone] = useState("finale");
+
+  useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+    if (reduceMotion) {
+      setExt(finSpaced);
+      setTone("finale");
+      return;
+    }
+    let gone = false;
+    void runWorkCardStutterSequence({
+      stutterParts,
+      finSpaced,
+      setExt,
+      setTone,
+      getGone: () => gone,
+    });
+    return () => {
+      gone = true;
+    };
+  }, [isActive, reduceMotion, stutterParts, finSpaced]);
+
+  useEffect(() => {
+    if (isActive) {
+      return;
+    }
+    if (reduceMotion) {
+      setExt("");
+      setTone("finale");
+      return;
+    }
+    if (ext.length === 0) {
+      setTone("finale");
+      return;
+    }
+    const id = window.setTimeout(() => {
+      setExt((prev) => prev.slice(0, -1));
+    }, WORK_CARD_STUTTER_UNTYPE_MS);
+    return () => window.clearTimeout(id);
+  }, [isActive, reduceMotion, ext]);
+
+  return (
+    <WorkCardStutterTeaserBody
+      line1={line1}
+      line2={line2}
+      ext={ext}
+      tone={tone}
+      isActive={isActive}
+      useLightOnImage={useLightOnImage}
+      useWarmImageFooter={useWarmImageFooter}
+    />
   );
 }
 
@@ -548,7 +543,7 @@ function workCardBackgroundUrl(entry) {
   return null;
 }
 
-/** Default 16:9; optional `workCardAspect` (`"1/1"`, `"4/5"`, …) on a work entry. */
+/** Default 16:9; optional `workCardAspect` (`"1/1"`, `"4/5"`, â€¦) on a work entry. */
 function workCardAspectClassName(entry) {
   if (entry.workCardAspect === "1/1") return "aspect-square";
   if (entry.workCardAspect === "4/5") return "aspect-[4/5]";
@@ -606,11 +601,11 @@ function WorkNuggetPill({ label, color, iconKey, reduceMotion, nuggetsRevealed, 
   );
 }
 
-/** `sizes` for 200:88 artboard: mock ≈0.6 card width, high-DPR — pair with 2560w/2000w `srcset` */
+/** `sizes` for 200:88 artboard: mock â‰ˆ0.6 card width, high-DPR â€” pair with 2560w/2000w `srcset` */
 const FIGMA_200_88_SIZES = "(min-width: 64rem) min(40vw, 32rem), min(100vw, 100vw)";
 
 /**
- * Figma `Testing/200:88` (Frame 4): 2400×2400, canvas rgb(227,219,209); child `200:109` 1410.14×1490.18px, centered, img cover + warm shadow.
+ * Figma `Testing/200:88` (Frame 4): 2400Ã—2400, canvas rgb(227,219,209); child `200:109` 1410.14Ã—1490.18px, centered, img cover + warm shadow.
  */
 function WorkCardFigma20088Artboard({ entry, bgUrl }) {
   if (!bgUrl) {
@@ -662,81 +657,58 @@ function WorkCardFigma20088Artboard({ entry, bgUrl }) {
   );
 }
 
-export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOnlyView }) {
-  const isEmptyProjectSlot = typeof onEmptyProjectClick === "function";
-  const isNavOnlyViewCard = Boolean(entry.workCardOpenNavOnlyView) && typeof onOpenNavOnlyView === "function";
-  const variant = getWorkCardVariant(entry);
-  const isCaseStudy = variant === "case-study" && Boolean(entry.caseStudyPath);
-  const showCaseStudyConnector = Boolean(entry.caseStudyPath) && Boolean(entry.workCardCaseStudyConnector);
-  /** Full-bleed link only for classic case-study cards; not when the card click opens nav-only (Avance). */
-  const showCaseStudyCardOverlay =
-    Boolean(entry.caseStudyPath) && (isCaseStudy || (showCaseStudyConnector && !entry.workCardOpenNavOnlyView));
-  const [hovered, setHovered] = useState(false);
-  const bgUrl = workCardBackgroundUrl(entry);
-  const useWarmFooter = Boolean(entry.workCardFooterWarm);
-  const useLightText = Boolean(entry.workCardFooterOnDark) && !useWarmFooter;
-  const nuggets = (entry.nuggets ?? []).slice(0, 8);
-  const coarsePointer = useCoarsePointerOrNoHover();
-  /**
-   * Warm 200:88 nuggets get the same pill styling in CSS, but **motion** follows hover like other
-   * cards (always show on coarse / no-hover devices). Including `useWarmFooter` here used to
-   * pin opacity to 1 and removed stagger in/out.
-   */
-  const nuggetsRevealed = coarsePointer || hovered;
-  /** Case Study label: slide in on card hover (or always on coarse / reduced motion). */
-  const caseStudyRevealed = reduceMotion || coarsePointer || hovered;
-  const caseStudyLabelTransition = {
-    type: "tween",
-    duration: reduceMotion ? 0.01 : 0.3,
-    ease: [0.22, 1, 0.36, 1],
-  };
-  /**
-   * Start above the final row (reduced motion: no travel).
-   */
-  const nuggetMotionInitial = reduceMotion
+function WorkNuggetMotionLi({ n, i, entry, nuggets, nuggetMotionInitial, reduceMotion, nuggetsRevealed }) {
+  const liStagger = nuggetsRevealed
+    ? i * NUGGET_ROW_MOTION.stagger
+    : (nuggets.length - 1 - i) * NUGGET_ROW_MOTION.stagger;
+  const liTransition = reduceMotion
+    ? { duration: 0 }
+    : { delay: liStagger, duration: NUGGET_ROW_MOTION.duration, ease: NUGGET_ROW_MOTION.ease };
+  const liAnimate = reduceMotion
     ? { opacity: 1, y: 0 }
-    : { opacity: 0, y: NUGGET_ROW_MOTION.yFrom };
-  const useFigma20088 = entry.workCardFigmaFrame === "200-88" && Boolean(bgUrl);
-  const figmaCanvasHex = entry.workCardFigmaCanvas?.trim() || null;
-  const figmaLightCanvas = Boolean(entry.workCardFigmaLightCanvas);
-  const workCardChromeTopInnards = (
+    : { opacity: nuggetsRevealed ? 1 : 0, y: nuggetsRevealed ? 0 : NUGGET_ROW_MOTION.yFrom };
+  return (
+    <motion.li
+      className="m-0 p-0"
+      initial={nuggetMotionInitial}
+      animate={liAnimate}
+      transition={liTransition}
+    >
+      <WorkNuggetPill
+        label={n.label}
+        color={n.color}
+        iconKey={n.icon}
+        reduceMotion={reduceMotion}
+        nuggetsRevealed={nuggetsRevealed}
+        nuggetIndex={i}
+      />
+    </motion.li>
+  );
+}
+
+function WorkCardNuggetsChromeRow({
+  entry,
+  nuggets,
+  reduceMotion,
+  nuggetsRevealed,
+  nuggetMotionInitial,
+  isCaseStudy,
+}) {
+  return (
     <>
       {nuggets.length > 0 ? (
         <ul className="wx-work-card-v2__nuggets" aria-label={getWorkCardNuggetsListAriaLabel(entry)}>
           {nuggets.map((n, i) => (
-            <motion.li
+            <WorkNuggetMotionLi
               key={`${entry.slug}-nug-${n.label}`}
-              className="m-0 p-0"
-              initial={nuggetMotionInitial}
-              animate={
-                reduceMotion
-                  ? { opacity: 1, y: 0 }
-                  : {
-                      opacity: nuggetsRevealed ? 1 : 0,
-                      y: nuggetsRevealed ? 0 : NUGGET_ROW_MOTION.yFrom,
-                    }
-              }
-              transition={
-                reduceMotion
-                  ? { duration: 0 }
-                  : {
-                      delay: nuggetsRevealed
-                        ? i * NUGGET_ROW_MOTION.stagger
-                        : (nuggets.length - 1 - i) * NUGGET_ROW_MOTION.stagger,
-                      duration: NUGGET_ROW_MOTION.duration,
-                      ease: NUGGET_ROW_MOTION.ease,
-                    }
-              }
-            >
-              <WorkNuggetPill
-                label={n.label}
-                color={n.color}
-                iconKey={n.icon}
-                reduceMotion={reduceMotion}
-                nuggetsRevealed={nuggetsRevealed}
-                nuggetIndex={i}
-              />
-            </motion.li>
+              n={n}
+              i={i}
+              entry={entry}
+              nuggets={nuggets}
+              nuggetMotionInitial={nuggetMotionInitial}
+              reduceMotion={reduceMotion}
+              nuggetsRevealed={nuggetsRevealed}
+            />
           ))}
         </ul>
       ) : (
@@ -750,7 +722,104 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
       ) : null}
     </>
   );
-  const shell = (
+}
+
+function WorkCardMediaBackground({ entry, bgUrl, useFigma20088, useWarmFooter }) {
+  if (useFigma20088) {
+    return <WorkCardFigma20088Artboard entry={entry} bgUrl={bgUrl} />;
+  }
+  if (bgUrl && entry.workCardBackgroundWebp) {
+    return (
+      <picture className="wx-work-card__bg" aria-hidden>
+        <source type="image/webp" srcSet={entry.workCardBackgroundWebp} />
+        <img
+          src={bgUrl}
+          alt=""
+          decoding="async"
+          fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
+          loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
+          sizes="(min-width: 64rem) min(50vw, 40rem), 100vw"
+        />
+      </picture>
+    );
+  }
+  if (bgUrl) {
+    return (
+      <img
+        className="wx-work-card__bg"
+        src={bgUrl}
+        alt=""
+        decoding="async"
+        fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
+        loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
+        sizes="(min-width: 64rem) min(50vw, 40rem), 100vw"
+        aria-hidden
+      />
+    );
+  }
+  return <div className="wx-work-card__bg wx-work-card__bg--empty" aria-hidden />;
+}
+
+function WorkCardChromeAndFooterBlock({
+  entry,
+  workCardChromeTopInnards,
+  useWarmFooter,
+  useLightText,
+  hovered,
+  reduceMotion,
+}) {
+  return (
+    <>
+      {useWarmFooter ? (
+        <motion.div
+          className="wx-work-card-v2__chrome-top"
+          initial={reduceMotion ? { y: 0, opacity: 1 } : { y: -18, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          viewport={{ once: true, amount: 0.32, margin: "0px 0px -8% 0px" }}
+          transition={{
+            duration: reduceMotion ? 0.01 : 0.5,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          {workCardChromeTopInnards}
+        </motion.div>
+      ) : (
+        <div className="wx-work-card-v2__chrome-top">{workCardChromeTopInnards}</div>
+      )}
+      <div className={clsx("wx-work-card-v2__footer", useWarmFooter && "wx-work-card-v2__footer--warm-pin")}>
+        <h3
+          className={clsx(
+            "wx-work-card-v2__title m-0 text-balance text-left font-medium tracking-tight",
+            useWarmFooter ? "max-w-[min(100%,40rem)]" : "max-w-[min(100%,20rem)]",
+            useLightText && "wx-work-card-v2__title--on-image",
+            useWarmFooter && "wx-work-card-v2__title--warm",
+          )}
+        >
+          {entry.title}
+        </h3>
+        <WorkCardTeaserText
+          entry={entry}
+          isActive={hovered}
+          reduceMotion={reduceMotion}
+          useLightOnImage={useLightText}
+          useWarmImageFooter={useWarmFooter}
+        />
+      </div>
+    </>
+  );
+}
+
+function WorkCardShellBlock({
+  entry,
+  bgUrl,
+  useFigma20088,
+  useWarmFooter,
+  useLightText,
+  hovered,
+  reduceMotion,
+  workCardChromeTopInnards,
+}) {
+  return (
     <div
       className={clsx(
         "wx-work-card__shell flex h-full min-h-0 flex-col justify-between",
@@ -759,164 +828,230 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
         useLightText && "wx-work-card__shell--image-footer",
       )}
     >
-      {useFigma20088 ? (
-        <WorkCardFigma20088Artboard entry={entry} bgUrl={bgUrl} />
-      ) : bgUrl && entry.workCardBackgroundWebp ? (
-        <picture className="wx-work-card__bg" aria-hidden>
-          <source type="image/webp" srcSet={entry.workCardBackgroundWebp} />
-          <img
-            src={bgUrl}
-            alt=""
-            decoding="async"
-            fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
-            loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
-            sizes="(min-width: 64rem) min(50vw, 40rem), 100vw"
-          />
-        </picture>
-      ) : bgUrl ? (
-        <img
-          className="wx-work-card__bg"
-          src={bgUrl}
-          alt=""
-          decoding="async"
-          fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
-          loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
-          sizes="(min-width: 64rem) min(50vw, 40rem), 100vw"
-          aria-hidden
-        />
-      ) : (
-        <div className="wx-work-card__bg wx-work-card__bg--empty" aria-hidden />
-      )}
+      <WorkCardMediaBackground
+        entry={entry}
+        bgUrl={bgUrl}
+        useFigma20088={useFigma20088}
+        useWarmFooter={useWarmFooter}
+      />
       {!useWarmFooter ? <div className="wx-work-card__scrim" aria-hidden /> : null}
       <div className="wx-work-card__sweep" aria-hidden />
-        <div
-          className={clsx(
-            "wx-work-card-v2 pointer-events-auto",
-            useWarmFooter && "wx-work-card-v2--footer-warm-pin",
-          )}
-        >
-        {useWarmFooter ? (
-          <motion.div
-            className="wx-work-card-v2__chrome-top"
-            initial={reduceMotion ? { y: 0, opacity: 1 } : { y: -18, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true, amount: 0.32, margin: "0px 0px -8% 0px" }}
-            transition={{
-              duration: reduceMotion ? 0.01 : 0.5,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          >
-            {workCardChromeTopInnards}
-          </motion.div>
-        ) : (
-          <div className="wx-work-card-v2__chrome-top">{workCardChromeTopInnards}</div>
+      <div
+        className={clsx(
+          "wx-work-card-v2 pointer-events-auto",
+          useWarmFooter && "wx-work-card-v2--footer-warm-pin",
         )}
-        <div
-          className={clsx("wx-work-card-v2__footer", useWarmFooter && "wx-work-card-v2__footer--warm-pin")}
-        >
-          <h3
-            className={clsx(
-              "wx-work-card-v2__title m-0 text-balance text-left font-medium tracking-tight",
-              useWarmFooter ? "max-w-[min(100%,40rem)]" : "max-w-[min(100%,20rem)]",
-              useLightText && "wx-work-card-v2__title--on-image",
-              useWarmFooter && "wx-work-card-v2__title--warm",
-            )}
-          >
-            {entry.title}
-          </h3>
-          <WorkCardTeaserText
-            entry={entry}
-            isActive={hovered}
-            reduceMotion={reduceMotion}
-            useLightOnImage={useLightText}
-            useWarmImageFooter={useWarmFooter}
-          />
-        </div>
+      >
+        <WorkCardChromeAndFooterBlock
+          entry={entry}
+          workCardChromeTopInnards={workCardChromeTopInnards}
+          useWarmFooter={useWarmFooter}
+          useLightText={useLightText}
+          hovered={hovered}
+          reduceMotion={reduceMotion}
+        />
       </div>
     </div>
   );
+}
 
+function workCardAriaLabel(entry, { isEmptyProjectSlot, isNavOnlyViewCard }) {
+  if (isEmptyProjectSlot) {
+    return `${entry.title}. ${entry.summary} â€” opens empty project canvas.`;
+  }
+  if (isNavOnlyViewCard) {
+    return `${entry.title}. ${entry.summary} â€” click for focused view; Case Study link opens the write-up.`;
+  }
+  return `${entry.title}. ${entry.summary}`;
+}
+
+function workCardOnClickForSlot({ isEmptyProjectSlot, isNavOnlyViewCard, onEmptyProjectClick, onOpenNavOnlyView }) {
+  if (isEmptyProjectSlot) {
+    return () => onEmptyProjectClick();
+  }
+  if (isNavOnlyViewCard) {
+    return (e) => {
+      if (e.target instanceof Element && e.target.closest("a[href]")) return;
+      onOpenNavOnlyView();
+    };
+  }
+  return undefined;
+}
+
+function workCardKeyDownForEmptySlot(isEmptyProjectSlot, onEmptyProjectClick) {
+  if (!isEmptyProjectSlot) return undefined;
+  return (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onEmptyProjectClick();
+    }
+  };
+}
+
+function caseStudyConnectorTargetMotion({ reduceMotion, coarsePointer, caseStudyRevealed }) {
+  if (reduceMotion || coarsePointer) {
+    return { opacity: 1, y: 0 };
+  }
+  return caseStudyRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 };
+}
+
+function WorkCardLinkOverlays({
+  showCaseStudyCardOverlay,
+  showCaseStudyConnector,
+  entry,
+  isCaseStudy,
+  caseStudyRevealed,
+  reduceMotion,
+  coarsePointer,
+  caseStudyLabelTransition,
+}) {
+  return (
+    <>
+      {showCaseStudyCardOverlay ? (
+        <ViewTransitionLink
+          to={entry.caseStudyPath}
+          className="wx-work-card-v2__link absolute inset-0 z-20 rounded-[var(--wx-radius-card)] text-inherit no-underline focus:outline-none focus-visible:outline-none"
+          aria-label={isCaseStudy ? `${entry.title} â€” view case study` : `${entry.title} â€” case study`}
+        />
+      ) : null}
+      {showCaseStudyConnector ? (
+        <motion.div
+          className="absolute bottom-[var(--spacing-4)] right-[var(--spacing-4)] z-30 sm:bottom-[var(--spacing-5)] sm:right-[var(--spacing-5)]"
+          initial={reduceMotion || coarsePointer ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+          animate={caseStudyConnectorTargetMotion({ reduceMotion, coarsePointer, caseStudyRevealed })}
+          transition={caseStudyLabelTransition}
+        >
+          <ViewTransitionLink
+            to={entry.caseStudyPath}
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 wx-text-meta font-normal leading-snug tracking-wide text-[color-mix(in_srgb,var(--wx-ink)_88%,var(--wx-page-bg))] no-underline transition-colors hover:text-[var(--wx-ink)] hover:underline hover:decoration-[color-mix(in_srgb,var(--wx-ink)_35%,transparent)] hover:underline-offset-4 focus:outline-none focus-visible:outline-none"
+            aria-label={`${entry.title} â€” case study page`}
+          >
+            Case Study
+            <ArrowUpRight className="size-3.5 shrink-0 opacity-90" weight="regular" aria-hidden />
+          </ViewTransitionLink>
+        </motion.div>
+      ) : null}
+    </>
+  );
+}
+
+function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOnlyView }) {
+  const isEmptyProjectSlot = typeof onEmptyProjectClick === "function";
+  const isNavOnlyViewCard = Boolean(entry.workCardOpenNavOnlyView) && typeof onOpenNavOnlyView === "function";
+  const variant = getWorkCardVariant(entry);
+  const isCaseStudy = variant === "case-study" && Boolean(entry.caseStudyPath);
+  const showCaseStudyConnector = Boolean(entry.caseStudyPath) && Boolean(entry.workCardCaseStudyConnector);
+  const showCaseStudyCardOverlay =
+    Boolean(entry.caseStudyPath) && (isCaseStudy || (showCaseStudyConnector && !entry.workCardOpenNavOnlyView));
+  const [hovered, setHovered] = useState(false);
+  const bgUrl = workCardBackgroundUrl(entry);
+  const useWarmFooter = Boolean(entry.workCardFooterWarm);
+  const useLightText = Boolean(entry.workCardFooterOnDark) && !useWarmFooter;
+  const nuggets = (entry.nuggets ?? []).slice(0, 8);
+  const coarsePointer = useCoarsePointerOrNoHover();
+  const nuggetsRevealed = coarsePointer || hovered;
+  const caseStudyRevealed = reduceMotion || coarsePointer || hovered;
+  const caseStudyLabelTransition = {
+    type: "tween",
+    duration: reduceMotion ? 0.01 : 0.3,
+    ease: [0.22, 1, 0.36, 1],
+  };
+  const nuggetMotionInitial = reduceMotion
+    ? { opacity: 1, y: 0 }
+    : { opacity: 0, y: NUGGET_ROW_MOTION.yFrom };
+  const useFigma20088 = entry.workCardFigmaFrame === "200-88" && Boolean(bgUrl);
+  const figmaCanvasHex = entry.workCardFigmaCanvas?.trim() || null;
+  const figmaLightCanvas = Boolean(entry.workCardFigmaLightCanvas);
+  const workCardChromeTopInnards = (
+    <WorkCardNuggetsChromeRow
+      entry={entry}
+      nuggets={nuggets}
+      reduceMotion={reduceMotion}
+      nuggetsRevealed={nuggetsRevealed}
+      nuggetMotionInitial={nuggetMotionInitial}
+      isCaseStudy={isCaseStudy}
+    />
+  );
+  const onClickHandler = workCardOnClickForSlot({
+    isEmptyProjectSlot,
+    isNavOnlyViewCard,
+    onEmptyProjectClick,
+    onOpenNavOnlyView,
+  });
+  const keyDownHandler = workCardKeyDownForEmptySlot(isEmptyProjectSlot, onEmptyProjectClick);
+  const shell = (
+    <WorkCardShellBlock
+      entry={entry}
+      bgUrl={bgUrl}
+      useFigma20088={useFigma20088}
+      useWarmFooter={useWarmFooter}
+      useLightText={useLightText}
+      hovered={hovered}
+      reduceMotion={reduceMotion}
+      workCardChromeTopInnards={workCardChromeTopInnards}
+    />
+  );
+  return {
+    isEmptyProjectSlot,
+    isNavOnlyViewCard,
+    isCaseStudy,
+    showCaseStudyCardOverlay,
+    showCaseStudyConnector,
+    setHovered,
+    bgUrl,
+    useWarmFooter,
+    useLightText,
+    coarsePointer,
+    caseStudyRevealed,
+    caseStudyLabelTransition,
+    useFigma20088,
+    figmaCanvasHex,
+    figmaLightCanvas,
+    onClickHandler,
+    keyDownHandler,
+    shell,
+  };
+}
+
+export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOnlyView }) {
+  const m = useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOnlyView });
   return (
     <RevealCard reduceMotion={reduceMotion} as="div" className="w-full">
       <div
         className={clsx(
           "wx-work-card wx-work-card--figma group relative w-full max-w-full rounded-[var(--wx-radius-card)]",
-          useFigma20088 ? "wx-work-card--figma-20088 overflow-visible" : "overflow-hidden",
-          useWarmFooter && "wx-work-card--footer-warm",
-          figmaLightCanvas && useFigma20088 && "wx-work-card--figma-canvas-light",
-          !useFigma20088 && workCardAspectClassName(entry),
-          (isEmptyProjectSlot || isNavOnlyViewCard) && "cursor-pointer",
+          m.useFigma20088 ? "wx-work-card--figma-20088 overflow-visible" : "overflow-hidden",
+          m.useWarmFooter && "wx-work-card--footer-warm",
+          m.figmaLightCanvas && m.useFigma20088 && "wx-work-card--figma-canvas-light",
+          !m.useFigma20088 && workCardAspectClassName(entry),
+          (m.isEmptyProjectSlot || m.isNavOnlyViewCard) && "cursor-pointer",
         )}
-        {...(figmaCanvasHex
+        {...(m.figmaCanvasHex
           ? {
               "data-figma-canvas": "",
-              style: { "--wx-figma-200-canvas": figmaCanvasHex },
+              style: { "--wx-figma-200-canvas": m.figmaCanvasHex },
             }
           : {})}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        role={isEmptyProjectSlot ? "button" : "group"}
-        tabIndex={isEmptyProjectSlot ? 0 : undefined}
-        onClick={
-          isEmptyProjectSlot
-            ? () => onEmptyProjectClick()
-            : isNavOnlyViewCard
-              ? (e) => {
-                  if (e.target instanceof Element && e.target.closest("a[href]")) return;
-                  onOpenNavOnlyView();
-                }
-              : undefined
-        }
-        onKeyDown={
-          isEmptyProjectSlot
-            ? (e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onEmptyProjectClick();
-                }
-              }
-            : undefined
-        }
-        aria-label={
-          isEmptyProjectSlot
-            ? `${entry.title}. ${entry.summary} — opens empty project canvas.`
-            : isNavOnlyViewCard
-              ? `${entry.title}. ${entry.summary} — click for focused view; Case Study link opens the write-up.`
-              : `${entry.title}. ${entry.summary}`
-        }
+        onMouseEnter={() => m.setHovered(true)}
+        onMouseLeave={() => m.setHovered(false)}
+        role={m.isEmptyProjectSlot ? "button" : "group"}
+        tabIndex={m.isEmptyProjectSlot ? 0 : undefined}
+        onClick={m.onClickHandler}
+        onKeyDown={m.keyDownHandler}
+        aria-label={workCardAriaLabel(entry, { isEmptyProjectSlot: m.isEmptyProjectSlot, isNavOnlyViewCard: m.isNavOnlyViewCard })}
       >
-        {showCaseStudyCardOverlay ? (
-          <ViewTransitionLink
-            to={entry.caseStudyPath}
-            className="wx-work-card-v2__link absolute inset-0 z-20 rounded-[var(--wx-radius-card)] text-inherit no-underline focus:outline-none focus-visible:outline-none"
-            aria-label={isCaseStudy ? `${entry.title} — view case study` : `${entry.title} — case study`}
-          />
-        ) : null}
-        {showCaseStudyConnector ? (
-          <motion.div
-            className="absolute bottom-[var(--spacing-4)] right-[var(--spacing-4)] z-30 sm:bottom-[var(--spacing-5)] sm:right-[var(--spacing-5)]"
-            initial={reduceMotion || coarsePointer ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-            animate={
-              reduceMotion || coarsePointer
-                ? { opacity: 1, y: 0 }
-                : caseStudyRevealed
-                  ? { opacity: 1, y: 0 }
-                  : { opacity: 0, y: 10 }
-            }
-            transition={caseStudyLabelTransition}
-          >
-            <ViewTransitionLink
-              to={entry.caseStudyPath}
-              onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1.5 wx-text-meta font-normal leading-snug tracking-wide text-[color-mix(in_srgb,var(--wx-ink)_88%,var(--wx-page-bg))] no-underline transition-colors hover:text-[var(--wx-ink)] hover:underline hover:decoration-[color-mix(in_srgb,var(--wx-ink)_35%,transparent)] hover:underline-offset-4 focus:outline-none focus-visible:outline-none"
-              aria-label={`${entry.title} — case study page`}
-            >
-              Case Study
-              <ArrowUpRight className="size-3.5 shrink-0 opacity-90" weight="regular" aria-hidden />
-            </ViewTransitionLink>
-          </motion.div>
-        ) : null}
-        <div className="pointer-events-none relative z-10 h-full min-h-0">{shell}</div>
+        <WorkCardLinkOverlays
+          showCaseStudyCardOverlay={m.showCaseStudyCardOverlay}
+          showCaseStudyConnector={m.showCaseStudyConnector}
+          entry={entry}
+          isCaseStudy={m.isCaseStudy}
+          caseStudyRevealed={m.caseStudyRevealed}
+          reduceMotion={reduceMotion}
+          coarsePointer={m.coarsePointer}
+          caseStudyLabelTransition={m.caseStudyLabelTransition}
+        />
+        <div className="pointer-events-none relative z-10 h-full min-h-0">{m.shell}</div>
       </div>
     </RevealCard>
   );
@@ -1150,9 +1285,78 @@ function AsideContactRow({ reduceMotion }) {
 
 const FAQ_PANEL_EASE = [0.33, 1, 0.68, 1];
 
+function faqPanelTransition(reduceMotion) {
+  if (reduceMotion) return { duration: 0 };
+  return {
+    height: { type: "tween", duration: 0.42, ease: FAQ_PANEL_EASE },
+    opacity: { type: "tween", duration: 0.26, ease: FAQ_PANEL_EASE },
+  };
+}
+
+function faqChevronT(reduceMotion) {
+  if (reduceMotion) return { duration: 0 };
+  return { type: "tween", duration: 0.34, ease: FAQ_PANEL_EASE };
+}
+
+function faqBubbleT(reduceMotion) {
+  if (reduceMotion) return { duration: 0 };
+  return { type: "spring", stiffness: 420, damping: 32, mass: 0.85 };
+}
+
+function FaqAccordionRow({ item, idx, isOpen, onToggle, reduceMotion, panelTransition }) {
+  const openAnim = { height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 };
+  const bubbleAnim = isOpen
+    ? { opacity: 1, y: 0, scale: 1 }
+    : { opacity: 0, y: 10, scale: 0.97 };
+  return (
+    <div className="wx-faq-item">
+      <button
+        type="button"
+        id={`site-faq-trigger-${idx}`}
+        className="wx-faq-summary"
+        aria-expanded={isOpen}
+        aria-controls={`site-faq-panel-${idx}`}
+        onClick={() => onToggle(idx)}
+      >
+        <span>{item.q}</span>
+        <motion.span
+          className="wx-faq-chevron text-[var(--wx-muted)]"
+          aria-hidden
+          initial={false}
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={faqChevronT(reduceMotion)}
+        />
+      </button>
+      <motion.div
+        id={`site-faq-panel-${idx}`}
+        role="region"
+        aria-labelledby={`site-faq-trigger-${idx}`}
+        aria-hidden={!isOpen}
+        initial={false}
+        animate={openAnim}
+        transition={panelTransition}
+        style={{ overflow: "hidden" }}
+      >
+        <div className="wx-faq-panel-inner">
+          <div className="wx-faq-answer-row">
+            <div className="wx-faq-avatar-placeholder" aria-hidden />
+            <motion.div
+              className="wx-faq-bubble"
+              initial={false}
+              animate={bubbleAnim}
+              transition={faqBubbleT(reduceMotion)}
+            >
+              <p className="wx-faq-bubble__text wx-faq-bubble__answer">{item.a}</p>
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 function FaqAccordion({ reduceMotion }) {
   const [openSet, setOpenSet] = useState(() => new Set());
-
   const toggle = useCallback((idx) => {
     setOpenSet((prev) => {
       const next = new Set(prev);
@@ -1161,93 +1365,34 @@ function FaqAccordion({ reduceMotion }) {
       return next;
     });
   }, []);
-
-  const panelTransition = reduceMotion
-    ? { duration: 0 }
-    : {
-        height: { type: "tween", duration: 0.42, ease: FAQ_PANEL_EASE },
-        opacity: { type: "tween", duration: 0.26, ease: FAQ_PANEL_EASE },
-      };
-
+  const panelT = faqPanelTransition(reduceMotion);
   return (
     <div>
-      {SITE_FAQ.map((item, idx) => {
-        const isOpen = openSet.has(idx);
-        return (
-          <div key={item.q} className="wx-faq-item">
-            <button
-              type="button"
-              id={`site-faq-trigger-${idx}`}
-              className="wx-faq-summary"
-              aria-expanded={isOpen}
-              aria-controls={`site-faq-panel-${idx}`}
-              onClick={() => toggle(idx)}
-            >
-              <span>{item.q}</span>
-              <motion.span
-                className="wx-faq-chevron text-[var(--wx-muted)]"
-                aria-hidden
-                initial={false}
-                animate={{ rotate: isOpen ? 45 : 0 }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0 }
-                    : { type: "tween", duration: 0.34, ease: FAQ_PANEL_EASE }
-                }
-              />
-            </button>
-            <motion.div
-              id={`site-faq-panel-${idx}`}
-              role="region"
-              aria-labelledby={`site-faq-trigger-${idx}`}
-              aria-hidden={!isOpen}
-              initial={false}
-              animate={{
-                height: isOpen ? "auto" : 0,
-                opacity: isOpen ? 1 : 0,
-              }}
-              transition={panelTransition}
-              style={{ overflow: "hidden" }}
-            >
-              <div className="wx-faq-panel-inner">
-                <div className="wx-faq-answer-row">
-                  <div className="wx-faq-avatar-placeholder" aria-hidden />
-                  <motion.div
-                    className="wx-faq-bubble"
-                    initial={false}
-                    animate={
-                      isOpen
-                        ? { opacity: 1, y: 0, scale: 1 }
-                        : { opacity: 0, y: 10, scale: 0.97 }
-                    }
-                    transition={
-                      reduceMotion
-                        ? { duration: 0 }
-                        : { type: "spring", stiffness: 420, damping: 32, mass: 0.85 }
-                    }
-                  >
-                    <p className="wx-faq-bubble__text wx-faq-bubble__answer">{item.a}</p>
-                  </motion.div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        );
-      })}
+      {SITE_FAQ.map((item, idx) => (
+        <FaqAccordionRow
+          key={item.q}
+          item={item}
+          idx={idx}
+          isOpen={openSet.has(idx)}
+          onToggle={toggle}
+          reduceMotion={reduceMotion}
+          panelTransition={panelT}
+        />
+      ))}
     </div>
   );
 }
 
 /* =====================================================================
    Commercial-clarity components
-   - Trust strip, productized service cards, P→D→O case story, How-I-work
+   - Trust strip, productized service cards, Pâ†’Dâ†’O case story, How-I-work
      fallback, and qualified-contact form. All accents driven by the four
      wx-accent tokens (primary, teal, violet, amber) so the palette stays
      coherent across nuggets, icons, and hovers.
    ===================================================================== */
 
 /**
- * ServicesList — calm typographic list. Title + a single sentence.
+ * ServicesList â€” calm typographic list. Title + a single sentence.
  * No prices, no codes, no icons, no cards. Pricing lives in the FAQ.
  * Pattern follows Reynolds / Rusli / Carignan.
  */
@@ -1277,9 +1422,72 @@ function ServicesList({ reduceMotion }) {
   );
 }
 
+function QualificationFormFieldInput({ field }) {
+  if (field.type === "textarea") {
+    return (
+      <textarea
+        id={`wx-qf-${field.id}`}
+        name={field.id}
+        required={field.required}
+        placeholder={field.placeholder}
+        rows={3}
+        className="wx-form-input wx-form-input--textarea"
+      />
+    );
+  }
+  if (field.type === "select") {
+    return (
+      <select
+        id={`wx-qf-${field.id}`}
+        name={field.id}
+        required={field.required}
+        defaultValue=""
+        className="wx-form-input"
+      >
+        <option value="" disabled>
+          Select one
+        </option>
+        {field.options.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    );
+  }
+  return (
+    <input
+      id={`wx-qf-${field.id}`}
+      type="text"
+      name={field.id}
+      required={field.required}
+      placeholder={field.placeholder}
+      className="wx-form-input"
+    />
+  );
+}
+
+function QualificationFormField({ field, isFullWidth }) {
+  return (
+    <label
+      htmlFor={`wx-qf-${field.id}`}
+      className={clsx("flex flex-col gap-1.5", isFullWidth && "sm:col-span-2")}
+    >
+      <span className="wx-text-form-label text-[var(--wx-ink)]">
+        {field.label}
+        {field.required ? (
+          <span aria-hidden className="ml-1 text-[var(--wx-primary)]">
+            *
+          </span>
+        ) : null}
+      </span>
+      <QualificationFormFieldInput field={field} />
+    </label>
+  );
+}
+
 function QualificationForm({ reduceMotion }) {
   const [submitted, setSubmitted] = useState(false);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -1290,7 +1498,7 @@ function QualificationForm({ reduceMotion }) {
       lines.push(`${field.label}: ${value}`);
     }
     const body = encodeURIComponent(lines.join("\n\n"));
-    const subject = encodeURIComponent("Project brief — wineury.design");
+    const subject = encodeURIComponent("Project brief â€” wineury.design");
     setSubmitted(true);
     window.location.href = `mailto:wineurya30@gmail.com?subject=${subject}&body=${body}`;
   };
@@ -1318,60 +1526,8 @@ function QualificationForm({ reduceMotion }) {
       aria-label="Project qualification form"
     >
       {SITE_QUALIFICATION_FIELDS.map((field) => {
-        const isFullWidth =
-          field.type === "textarea" || field.id === "name" || field.id === "links";
-        return (
-          <label
-            key={field.id}
-            htmlFor={`wx-qf-${field.id}`}
-            className={clsx("flex flex-col gap-1.5", isFullWidth && "sm:col-span-2")}
-          >
-            <span className="wx-text-form-label text-[var(--wx-ink)]">
-              {field.label}
-              {field.required ? (
-                <span aria-hidden className="ml-1 text-[var(--wx-primary)]">
-                  *
-                </span>
-              ) : null}
-            </span>
-            {field.type === "textarea" ? (
-              <textarea
-                id={`wx-qf-${field.id}`}
-                name={field.id}
-                required={field.required}
-                placeholder={field.placeholder}
-                rows={3}
-                className="wx-form-input wx-form-input--textarea"
-              />
-            ) : field.type === "select" ? (
-              <select
-                id={`wx-qf-${field.id}`}
-                name={field.id}
-                required={field.required}
-                defaultValue=""
-                className="wx-form-input"
-              >
-                <option value="" disabled>
-                  Select one
-                </option>
-                {field.options.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <input
-                id={`wx-qf-${field.id}`}
-                type="text"
-                name={field.id}
-                required={field.required}
-                placeholder={field.placeholder}
-                className="wx-form-input"
-              />
-            )}
-          </label>
-        );
+        const isFullWidth = field.type === "textarea" || field.id === "name" || field.id === "links";
+        return <QualificationFormField key={field.id} field={field} isFullWidth={isFullWidth} />;
       })}
       <div className="sm:col-span-2 flex flex-wrap items-center gap-3 sm:gap-4">
         <motion.button
@@ -1391,61 +1547,14 @@ function QualificationForm({ reduceMotion }) {
   );
 }
 
-export function ExplorationHomePage() {
-  const lenis = useLenis();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const reduceMotion = useReducedMotion();
-  const activeIndex = useSectionScroll(SECTION_IDS);
-  /** ScrollTrigger lags Lenis during smooth scroll — keep tab UI in sync with user intent. */
-  const [scrollIntentIndex, setScrollIntentIndex] = useState(null);
-  const [emptyProjectFocus, setEmptyProjectFocus] = useState(false);
-  /** After enter fade: main column can collapse; aside can step to full width. */
-  const [emptyCanvasSettled, setEmptyCanvasSettled] = useState(false);
-  const emptyProjectFocusRef = useRef(false);
-  emptyProjectFocusRef.current = emptyProjectFocus;
-  const selectedIndex = scrollIntentIndex ?? activeIndex;
-
+function useScrollIntentIndex(activeIndex, scrollIntentIndex, setScrollIntentIndex) {
   useEffect(() => {
     if (scrollIntentIndex === null) return;
     if (activeIndex === scrollIntentIndex) setScrollIntentIndex(null);
-  }, [activeIndex, scrollIntentIndex]);
+  }, [activeIndex, scrollIntentIndex, setScrollIntentIndex]);
+}
 
-  const tabRowRef = useRef(null);
-
-  const tabPillTransition = useMemo(
-    () =>
-      reduceMotion
-        ? { duration: 0 }
-        : { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE },
-    [reduceMotion],
-  );
-
-  const tabMicroTransition = useMemo(
-    () =>
-      reduceMotion
-        ? { duration: 0.01 }
-        : { duration: WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT },
-    [reduceMotion],
-  );
-
-  /** Panels, aside copy, and section tab rail. */
-  const emptyCanvasOpacityTransition = useMemo(
-    () =>
-      reduceMotion
-        ? {
-            duration: EMPTY_CANVAS_REDUCE_MOTION_OPACITY_S,
-            ease: EASE_EMPTY_CANVAS_FADE,
-          }
-        : {
-            duration: emptyProjectFocus
-              ? EMPTY_CANVAS_ENTER_S
-              : EMPTY_CANVAS_EXIT_S,
-            ease: EASE_EMPTY_CANVAS_FADE,
-          },
-    [reduceMotion, emptyProjectFocus],
-  );
-
+function useImageLoadScrollTriggerRefresh() {
   useEffect(() => {
     const onRefresh = () => ScrollTrigger.refresh();
     const imgs = document.querySelectorAll(".site-canvas img");
@@ -1465,35 +1574,9 @@ export function ExplorationHomePage() {
     const t = window.setTimeout(onRefresh, 450);
     return () => window.clearTimeout(t);
   }, []);
+}
 
-  const scrollToSection = useCallback(
-    (sectionId, tabIndexOverride) => {
-      flushSync(() => {
-        setEmptyProjectFocus(false);
-      });
-      const tabIndex =
-        typeof tabIndexOverride === "number"
-          ? tabIndexOverride
-          : SECTION_TABS.findIndex((t) => t.sectionId === sectionId);
-      if (tabIndex >= 0) setScrollIntentIndex(tabIndex);
-
-      const el = document.getElementById(sectionId);
-      if (!el) return;
-      const offset = 0;
-      const duration = reduceMotion ? 0 : 1.35;
-      if (lenis) {
-        lenis.scrollTo(el, {
-          offset,
-          duration,
-          easing: reduceMotion ? undefined : WX_LENIS_EASE_IN_OUT,
-        });
-        return;
-      }
-      el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-    },
-    [lenis, reduceMotion],
-  );
-
+function useHashScrollToSection(location, scrollToSection) {
   useEffect(() => {
     if (location.pathname !== "/") return;
     const id = (location.hash || "").replace("#", "");
@@ -1501,7 +1584,9 @@ export function ExplorationHomePage() {
     const t = window.setTimeout(() => scrollToSection(id), 80);
     return () => window.clearTimeout(t);
   }, [location.hash, location.pathname, scrollToSection]);
+}
 
+function useEmptyCanvasResetSettled({ emptyProjectFocus, reduceMotion, setEmptyCanvasSettled }) {
   useEffect(() => {
     if (!emptyProjectFocus) {
       setEmptyCanvasSettled(false);
@@ -1512,9 +1597,15 @@ export function ExplorationHomePage() {
       return;
     }
     setEmptyCanvasSettled(false);
-  }, [emptyProjectFocus, reduceMotion]);
+  }, [emptyProjectFocus, reduceMotion, setEmptyCanvasSettled]);
+}
 
-  /** If Motion onAnimationComplete does not run (rare), still advance layout. */
+function useEmptyCanvasSettledTimeout({
+  emptyProjectFocus,
+  emptyCanvasSettled,
+  reduceMotion,
+  setEmptyCanvasSettled,
+}) {
   useEffect(() => {
     if (!emptyProjectFocus) return;
     if (emptyCanvasSettled) return;
@@ -1527,14 +1618,10 @@ export function ExplorationHomePage() {
     }
     const t = window.setTimeout(() => setEmptyCanvasSettled(true), EMPTY_CANVAS_ENTER_MS + 150);
     return () => clearTimeout(t);
-  }, [emptyProjectFocus, reduceMotion, emptyCanvasSettled]);
+  }, [emptyProjectFocus, reduceMotion, emptyCanvasSettled, setEmptyCanvasSettled]);
+}
 
-  const onMainPanelsOpacityComplete = useCallback(() => {
-    if (emptyProjectFocusRef.current) {
-      setEmptyCanvasSettled(true);
-    }
-  }, []);
-
+function useEscapeClosesEmptyCanvas(emptyProjectFocus, setEmptyProjectFocus) {
   useEffect(() => {
     if (!emptyProjectFocus) return;
     const onKey = (e) => {
@@ -1542,8 +1629,10 @@ export function ExplorationHomePage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [emptyProjectFocus]);
+  }, [emptyProjectFocus, setEmptyProjectFocus]);
+}
 
+function useStRefreshOnEmptyCanvasTransition(emptyProjectFocus, emptyCanvasSettled) {
   useEffect(() => {
     const id = requestAnimationFrame(() => ScrollTrigger.refresh());
     const span = !emptyProjectFocus
@@ -1562,383 +1651,519 @@ export function ExplorationHomePage() {
       clearTimeout(t3);
     };
   }, [emptyProjectFocus, emptyCanvasSettled]);
+}
 
+function useExplorationTabTransitions(reduceMotion, emptyProjectFocus) {
+  const tabPillTransition = useMemo(
+    () => (reduceMotion ? { duration: 0 } : { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE }),
+    [reduceMotion],
+  );
+  const tabMicroTransition = useMemo(
+    () => (reduceMotion ? { duration: 0.01 } : { duration: WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT }),
+    [reduceMotion],
+  );
+  const emptyCanvasOpacityTransition = useMemo(
+    () =>
+      reduceMotion
+        ? { duration: EMPTY_CANVAS_REDUCE_MOTION_OPACITY_S, ease: EASE_EMPTY_CANVAS_FADE }
+        : { duration: emptyProjectFocus ? EMPTY_CANVAS_ENTER_S : EMPTY_CANVAS_EXIT_S, ease: EASE_EMPTY_CANVAS_FADE },
+    [reduceMotion, emptyProjectFocus],
+  );
+  return { tabPillTransition, tabMicroTransition, emptyCanvasOpacityTransition };
+}
+
+function useScrollToSectionForExploration(lenis, reduceMotion, setEmptyProjectFocus, setScrollIntentIndex) {
+  return useCallback(
+    (sectionId, tabIndexOverride) => {
+      flushSync(() => {
+        setEmptyProjectFocus(false);
+      });
+      const tabIndex =
+        typeof tabIndexOverride === "number"
+          ? tabIndexOverride
+          : SECTION_TABS.findIndex((t) => t.sectionId === sectionId);
+      if (tabIndex >= 0) setScrollIntentIndex(tabIndex);
+      const el = document.getElementById(sectionId);
+      if (!el) return;
+      const duration = reduceMotion ? 0 : 1.35;
+      if (lenis) {
+        lenis.scrollTo(el, { offset: 0, duration, easing: reduceMotion ? undefined : WX_LENIS_EASE_IN_OUT });
+        return;
+      }
+      el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    },
+    [lenis, reduceMotion, setEmptyProjectFocus, setScrollIntentIndex],
+  );
+}
+
+function useExplorationLayoutModel() {
+  const lenis = useLenis();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const reduceMotion = useReducedMotion();
+  const activeIndex = useSectionScroll(SECTION_IDS);
+  const [scrollIntentIndex, setScrollIntentIndex] = useState(null);
+  const [emptyProjectFocus, setEmptyProjectFocus] = useState(false);
+  const [emptyCanvasSettled, setEmptyCanvasSettled] = useState(false);
+  const emptyProjectFocusRef = useRef(false);
+  emptyProjectFocusRef.current = emptyProjectFocus;
+  const selectedIndex = scrollIntentIndex ?? activeIndex;
+  const tabRowRef = useRef(null);
+  const { tabPillTransition, tabMicroTransition, emptyCanvasOpacityTransition } = useExplorationTabTransitions(
+    reduceMotion,
+    emptyProjectFocus,
+  );
+  useScrollIntentIndex(activeIndex, scrollIntentIndex, setScrollIntentIndex);
+  useImageLoadScrollTriggerRefresh();
+  const scrollToSection = useScrollToSectionForExploration(
+    lenis,
+    reduceMotion,
+    setEmptyProjectFocus,
+    setScrollIntentIndex,
+  );
+  useHashScrollToSection(location, scrollToSection);
+  useEmptyCanvasResetSettled({ emptyProjectFocus, reduceMotion, setEmptyCanvasSettled });
+  useEmptyCanvasSettledTimeout({
+    emptyProjectFocus,
+    emptyCanvasSettled,
+    reduceMotion,
+    setEmptyCanvasSettled,
+  });
+  const onMainPanelsOpacityComplete = useCallback(() => {
+    if (emptyProjectFocusRef.current) setEmptyCanvasSettled(true);
+  }, []);
+  useEscapeClosesEmptyCanvas(emptyProjectFocus, setEmptyProjectFocus);
+  useStRefreshOnEmptyCanvasTransition(emptyProjectFocus, emptyCanvasSettled);
+  return {
+    lenis,
+    navigate,
+    location,
+    reduceMotion,
+    activeIndex,
+    scrollIntentIndex,
+    setScrollIntentIndex,
+    emptyProjectFocus,
+    setEmptyProjectFocus,
+    emptyCanvasSettled,
+    setEmptyCanvasSettled,
+    emptyProjectFocusRef,
+    selectedIndex,
+    tabRowRef,
+    tabPillTransition,
+    tabMicroTransition,
+    emptyCanvasOpacityTransition,
+    scrollToSection,
+    onMainPanelsOpacityComplete,
+  };
+}
+
+function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
+  return (
+    <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
+      <div className="relative w-full space-y-5 text-left">
+        <div className="wx-text-eyebrow flex items-center gap-2 text-[var(--wx-muted)]">
+          <MaskedFigmaIcon
+            src={SITE_FIGMA_ASSETS.statusDot}
+            className="size-2 shrink-0 select-none"
+            background="var(--wx-accent-teal)"
+          />
+          <p>{SITE_HERO.eyebrow}</p>
+        </div>
+        <div className="w-full space-y-5">
+          <div className="relative">
+            <AsideHeroHeadline reduceMotion={reduceMotion} />
+            <p className="mt-2 wx-text-body-secondary text-[var(--wx-muted)]">{SITE_HERO.subhead}</p>
+          </div>
+          <div className="flex flex-wrap gap-3 sm:gap-4">
+            <motion.button
+              type="button"
+              className="wx-btn-primary"
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+              onClick={() => scrollToSection("section-contact", 3)}
+            >
+              {SITE_HERO.primaryCta.label}
+            </motion.button>
+            <motion.button
+              type="button"
+              className="wx-btn-secondary"
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+              onClick={() => scrollToSection("section-work", 0)}
+            >
+              {SITE_HERO.secondaryCta.label}
+            </motion.button>
+          </div>
+          <dl className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 wx-text-meta text-[var(--wx-muted)]">
+            <div className="flex items-center gap-1.5">
+              <HugeiconsIcon icon={Calendar01Icon} size={14} strokeWidth={1.6} />
+              <dt className="sr-only">Availability</dt>
+              <dd>{SITE_AVAILABILITY.opening}</dd>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="size-1.5 rounded-full bg-[var(--wx-primary)]" aria-hidden />
+              <dt className="sr-only">Engagements</dt>
+              <dd>{SITE_AVAILABILITY.note}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExplorationPageAsideFooter({ reduceMotion }) {
+  return (
+    <div className="mt-auto w-full min-w-0 space-y-6 pt-8 lg:space-y-7 lg:pt-10">
+      <div>
+        <p className="wx-aside-footer__label">Stack</p>
+        <div className="mt-2">
+          <StackToolkitNuggets />
+        </div>
+      </div>
+      <div>
+        <div className="mt-1">
+          <AsideContactRow reduceMotion={reduceMotion} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExplorationPageAside(p) {
+  const {
+    emptyProjectFocus,
+    emptyCanvasSettled,
+    location,
+    navigate,
+    scrollToSection,
+    selectedIndex,
+    reduceMotion,
+    tabPillTransition,
+    tabMicroTransition,
+    tabRowRef,
+    emptyCanvasOpacityTransition,
+  } = p;
+  return (
+    <aside
+      className={clsx(
+        "relative z-20 flex w-full min-w-0 shrink-0 flex-col border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
+        "lg:grow-0 lg:shrink-0 lg:sticky lg:top-0 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0",
+        "lg:flex-none",
+        (!emptyProjectFocus || !emptyCanvasSettled) && "lg:w-[min(42%,36rem)] lg:h-svh lg:max-h-svh",
+        emptyProjectFocus && emptyCanvasSettled && "lg:w-full lg:max-w-none lg:self-start",
+        emptyProjectFocus && emptyCanvasSettled && "lg:h-auto lg:max-h-none lg:min-h-0",
+      )}
+      aria-label="Introduction"
+      data-site-region="aside"
+    >
+      <div
+        className={clsx(
+          "flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12",
+          emptyProjectFocus && emptyCanvasSettled && "lg:flex-none",
+        )}
+      >
+        <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
+        <ExplorationNavRow
+          location={location}
+          navigate={navigate}
+          onSelectSection={scrollToSection}
+          selectedIndex={selectedIndex}
+          reduceMotion={reduceMotion}
+          tabPillTransition={tabPillTransition}
+          tabMicroTransition={tabMicroTransition}
+          tabRowRef={tabRowRef}
+          tabRailHidden={emptyProjectFocus}
+          tabRailFadeTransition={emptyCanvasOpacityTransition}
+        />
+        <motion.div
+          className={clsx(
+            "site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col",
+            emptyProjectFocus && emptyCanvasSettled && "h-0 min-h-0 overflow-hidden",
+          )}
+          initial={false}
+          animate={{ opacity: emptyProjectFocus ? 0 : 1 }}
+          transition={emptyCanvasOpacityTransition}
+          inert={emptyProjectFocus ? true : undefined}
+          aria-hidden={emptyProjectFocus ? true : undefined}
+        >
+          <ExplorationPageAsideCopy reduceMotion={reduceMotion} scrollToSection={scrollToSection} />
+          <ExplorationPageAsideFooter reduceMotion={reduceMotion} />
+        </motion.div>
+      </div>
+    </aside>
+  );
+}
+
+function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
+  return (
+    <section
+      id="section-work"
+      role="tabpanel"
+      aria-labelledby="site-tab-work"
+      className="wx-work-section min-h-0 pb-[var(--wx-space-section)]"
+    >
+      {SITE_WORK.map((entry) => (
+        <WorkCard
+          key={entry.slug}
+          entry={entry}
+          reduceMotion={reduceMotion}
+          onEmptyProjectClick={entry.status === "incomplete" ? () => setEmptyProjectFocus(true) : undefined}
+          onOpenNavOnlyView={entry.workCardOpenNavOnlyView ? () => setEmptyProjectFocus(true) : undefined}
+        />
+      ))}
+    </section>
+  );
+}
+
+function ExplorationMainStudioSection({ reduceMotion }) {
+  return (
+    <section
+      id="section-studio"
+      role="tabpanel"
+      aria-labelledby="site-tab-studio"
+      className="space-y-[var(--wx-gallery-gap)]"
+    >
+      <RevealCard
+        reduceMotion={reduceMotion}
+        className="grid gap-6 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:gap-7 lg:grid-cols-5 lg:items-center lg:gap-10 lg:p-8"
+      >
+        <div className="space-y-3 lg:col-span-3 lg:space-y-4">
+          <p className="wx-text-section-kicker text-[var(--wx-muted)]">Studio</p>
+          <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
+            Research-led design, built end to end.
+          </h2>
+          <p className="wx-text-body-secondary text-[var(--wx-muted)]">
+            Product designer focused on research, interaction design, and accessible interfaces. I design and build in
+            the same conversation — no handoff gap between what I sketch and what ships.
+          </p>
+        </div>
+        <div className="wx-gallery-frame overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:col-span-2">
+          <img
+            src={SITE_EXTRA_IMAGES.marble}
+            alt="Abstract marble light forms"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </RevealCard>
+      <ServicesList reduceMotion={reduceMotion} />
+      {SITE_TESTIMONIALS.length > 0 ? (
+        <RevealCard
+          reduceMotion={reduceMotion}
+          className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-10"
+        >
+          <figure className="space-y-5">
+            <HugeiconsIcon
+              icon={QuoteUpIcon}
+              size={26}
+              strokeWidth={1.4}
+              color="currentColor"
+              className="text-[var(--wx-primary)]"
+            />
+            <blockquote className="wx-text-pullquote tracking-tight text-[var(--wx-ink)]">
+              &ldquo;{SITE_TESTIMONIALS[0].quote}&rdquo;
+            </blockquote>
+            <figcaption className="wx-text-meta flex flex-wrap items-center gap-x-2 gap-y-1 text-[var(--wx-muted)]">
+              <span className="font-medium text-[var(--wx-ink)]">{SITE_TESTIMONIALS[0].attribution}</span>
+              <span aria-hidden>·</span>
+              <span>{SITE_TESTIMONIALS[0].role}</span>
+            </figcaption>
+          </figure>
+        </RevealCard>
+      ) : null}
+    </section>
+  );
+}
+
+const APPROACH_STEPS = [
+  { title: "Research", body: "User interviews, usability testing, affinity mapping, and competitive audits before touching a wireframe." },
+  { title: "Structure and prototype", body: "Flows, wireframes, and high-fidelity prototypes that trace decisions back to research findings." },
+  { title: "Test and refine", body: "Usability testing, iteration, and accessibility validation through to handoff or build." },
+];
+
+function ExplorationMainApproachSection({ reduceMotion }) {
+  return (
+    <section
+      id="section-approach"
+      role="tabpanel"
+      aria-labelledby="site-tab-approach"
+      className="space-y-[var(--wx-gallery-gap)]"
+    >
+      <RevealCard
+        reduceMotion={reduceMotion}
+        className="space-y-6 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:space-y-7 lg:space-y-8 lg:p-10"
+      >
+        <div className="max-w-2xl space-y-2 lg:space-y-3">
+          <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
+          <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">Research first, every time.</h2>
+        </div>
+        <ol className="grid gap-5 sm:grid-cols-3 sm:gap-6">
+          {APPROACH_STEPS.map((step, idx) => (
+            <li
+              key={step.title}
+              className="rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] p-5"
+            >
+              <p className="wx-text-step-index text-[var(--wx-primary)]">0{idx + 1}</p>
+              <p className="mt-2 font-medium text-[var(--wx-ink)]">{step.title}</p>
+              <p className="mt-2 wx-text-sm text-[var(--wx-muted)]">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </RevealCard>
+      <RevealCard
+        reduceMotion={reduceMotion}
+        className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
+      >
+        <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
+          {SITE_STATS.map((stat) => (
+            <div key={stat.label} className="space-y-2">
+              <p className="wx-stat-value">{stat.value}</p>
+              <p className="wx-text-sm font-medium text-[var(--wx-ink)]">{stat.label}</p>
+              <p className="wx-text-meta leading-relaxed text-[var(--wx-muted)]">{stat.hint}</p>
+            </div>
+          ))}
+        </div>
+      </RevealCard>
+      <RevealCard
+        reduceMotion={reduceMotion}
+        className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
+      >
+        <div className="mb-6 space-y-2">
+          <p className="wx-text-section-kicker text-[var(--wx-muted)]">FAQ</p>
+          <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">Questions, answered.</h3>
+        </div>
+        <FaqAccordion reduceMotion={reduceMotion} />
+      </RevealCard>
+    </section>
+  );
+}
+
+function ExplorationMainContactSection({ reduceMotion }) {
+  return (
+    <section
+      id="section-contact"
+      role="tabpanel"
+      aria-labelledby="site-tab-contact"
+      className="space-y-[var(--wx-gallery-gap)]"
+    >
+      <RevealCard
+        reduceMotion={reduceMotion}
+        className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] ring-1 ring-[color:var(--wx-ring-subtle)]"
+      >
+        <div className="grid gap-6 p-6 sm:gap-8 sm:p-8 lg:gap-10 lg:p-10">
+          <div className="space-y-4 lg:space-y-5">
+            <p className="wx-text-section-kicker text-[var(--wx-muted)]">Contact</p>
+            <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
+              Tell me what you&apos;re building.
+            </h2>
+            <p className="max-w-xl wx-text-body-secondary text-[var(--wx-muted)]">
+              A short brief gets you a faster, more useful reply — two business days, every time. If we&apos;re not the
+              right fit, I&apos;ll say so quickly and point you somewhere better.
+            </p>
+          </div>
+          <QualificationForm reduceMotion={reduceMotion} />
+          <div className="wx-text-meta flex flex-wrap items-center gap-3 border-t border-[color:var(--wx-border-soft)] pt-5 text-[var(--wx-muted)]">
+            <span>Prefer email?</span>
+            <a
+              href="mailto:wineurya30@gmail.com"
+              className="inline-flex items-center gap-1.5 text-[var(--wx-ink)] underline-offset-4 hover:underline"
+            >
+              <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={1.6} />
+              wineurya30@gmail.com
+            </a>
+            <span aria-hidden>·</span>
+            <span>Same questions, same two-day reply.</span>
+          </div>
+        </div>
+      </RevealCard>
+      <div className="wx-text-meta flex flex-wrap items-center justify-between gap-3 px-1 pt-2 text-[var(--wx-muted)]">
+        <p>© {new Date().getFullYear()} Wineury Almonte</p>
+        <p className="flex items-center gap-3">
+          <a
+            className="hover:text-[var(--wx-ink)]"
+            href="https://www.linkedin.com/in/wineury"
+            rel="noreferrer"
+            target="_blank"
+          >
+            LinkedIn
+          </a>
+          <span aria-hidden>·</span>
+          <a className="hover:text-[var(--wx-ink)]" href="mailto:wineurya30@gmail.com">
+            Email
+          </a>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function ExplorationPageMainColumn(p) {
+  const {
+    emptyProjectFocus,
+    emptyCanvasSettled,
+    reduceMotion,
+    emptyCanvasOpacityTransition,
+    onMainPanelsOpacityComplete,
+    setEmptyProjectFocus,
+  } = p;
+  return (
+    <ExplorationMainPanels
+      as={motion.div}
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: EMPTY_CANVAS_PANELS_DY }}
+      animate={
+        reduceMotion
+          ? { opacity: emptyProjectFocus ? 0 : 1, y: 0 }
+          : { opacity: emptyProjectFocus ? 0 : 1, y: emptyProjectFocus ? EMPTY_CANVAS_PANELS_DY : 0 }
+      }
+      transition={emptyCanvasOpacityTransition}
+      onAnimationComplete={onMainPanelsOpacityComplete}
+      inert={emptyProjectFocus ? true : undefined}
+      aria-hidden={emptyProjectFocus ? true : undefined}
+      data-panels-mode={emptyCanvasSettled ? "empty" : emptyProjectFocus ? "fading" : "default"}
+      className={clsx("isolate", emptyProjectFocus && emptyCanvasSettled && EMPTY_CANVAS_MAIN_GEOM_LG)}
+    >
+      <ExplorationMainWorkSection reduceMotion={reduceMotion} setEmptyProjectFocus={setEmptyProjectFocus} />
+      <ExplorationMainStudioSection reduceMotion={reduceMotion} />
+      <ExplorationMainApproachSection reduceMotion={reduceMotion} />
+      <ExplorationMainContactSection reduceMotion={reduceMotion} />
+    </ExplorationMainPanels>
+  );
+}
+
+export function ExplorationHomePage() {
+  const m = useExplorationLayoutModel();
   return (
     <ExplorationRoot
-      reduceMotion={reduceMotion}
-      data-empty-canvas={emptyProjectFocus ? "true" : undefined}
+      reduceMotion={m.reduceMotion}
+      data-empty-canvas={m.emptyProjectFocus ? "true" : undefined}
     >
       <ExplorationBody
         className={clsx(
-          emptyProjectFocus && "lg:min-h-0 lg:items-start lg:overflow-x-clip",
+          m.emptyProjectFocus && "lg:min-h-0 lg:items-start lg:overflow-x-clip",
         )}
       >
-        <aside
-          className={clsx(
-            "relative z-20 flex w-full min-w-0 shrink-0 flex-col border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
-            "lg:grow-0 lg:shrink-0 lg:sticky lg:top-0 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0",
-            "lg:flex-none",
-            (!emptyProjectFocus || !emptyCanvasSettled) &&
-              "lg:w-[min(42%,36rem)] lg:h-svh lg:max-h-svh",
-            emptyProjectFocus && emptyCanvasSettled && "lg:w-full lg:max-w-none lg:self-start",
-            emptyProjectFocus && emptyCanvasSettled && "lg:h-auto lg:max-h-none lg:min-h-0",
-          )}
-          aria-label="Introduction"
-          data-site-region="aside"
-        >
-            <div
-              className={clsx(
-                "flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12",
-                // Keep the same top/side padding in nav-only as default so “Available for projects”
-                // does not shift when empty-canvas / nav-only state toggles. Flex-only tweak after settle.
-                emptyProjectFocus && emptyCanvasSettled && "lg:flex-none",
-              )}
-            >
-            <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
-            <ExplorationNavRow
-              location={location}
-              navigate={navigate}
-              onSelectSection={scrollToSection}
-              selectedIndex={selectedIndex}
-              reduceMotion={reduceMotion}
-              tabPillTransition={tabPillTransition}
-              tabMicroTransition={tabMicroTransition}
-              tabRowRef={tabRowRef}
-              tabRailHidden={emptyProjectFocus}
-              tabRailFadeTransition={emptyCanvasOpacityTransition}
-            />
-
-            <motion.div
-              className={clsx(
-                "site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col",
-                emptyProjectFocus &&
-                  emptyCanvasSettled &&
-                  "h-0 min-h-0 overflow-hidden",
-              )}
-              initial={false}
-              animate={{ opacity: emptyProjectFocus ? 0 : 1 }}
-              transition={emptyCanvasOpacityTransition}
-              inert={emptyProjectFocus ? true : undefined}
-              aria-hidden={emptyProjectFocus ? true : undefined}
-            >
-            <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
-              <div className="relative w-full space-y-5 text-left">
-                <div className="wx-text-eyebrow flex items-center gap-2 text-[var(--wx-muted)]">
-                  <MaskedFigmaIcon
-                    src={SITE_FIGMA_ASSETS.statusDot}
-                    className="size-2 shrink-0 select-none"
-                    background="var(--wx-accent-teal)"
-                  />
-                  <p>{SITE_HERO.eyebrow}</p>
-                </div>
-
-                <div className="w-full space-y-5">
-                  <div className="relative">
-                    <AsideHeroHeadline reduceMotion={reduceMotion} />
-                    <p className="mt-2 wx-text-body-secondary text-[var(--wx-muted)]">
-                      {SITE_HERO.subhead}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 sm:gap-4">
-                    <motion.button
-                      type="button"
-                      className="wx-btn-primary"
-                      whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-                      transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-                      onClick={() => scrollToSection("section-contact", 3)}
-                    >
-                      {SITE_HERO.primaryCta.label}
-                    </motion.button>
-                    <motion.button
-                      type="button"
-                      className="wx-btn-secondary"
-                      whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-                      transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-                      onClick={() => scrollToSection("section-work", 0)}
-                    >
-                      {SITE_HERO.secondaryCta.label}
-                    </motion.button>
-                  </div>
-
-                  <dl className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 wx-text-meta text-[var(--wx-muted)]">
-                    <div className="flex items-center gap-1.5">
-                      <HugeiconsIcon icon={Calendar01Icon} size={14} strokeWidth={1.6} />
-                      <dt className="sr-only">Availability</dt>
-                      <dd>{SITE_AVAILABILITY.opening}</dd>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="size-1.5 rounded-full bg-[var(--wx-primary)]" aria-hidden />
-                      <dt className="sr-only">Engagements</dt>
-                      <dd>{SITE_AVAILABILITY.note}</dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-auto w-full min-w-0 space-y-6 pt-8 lg:space-y-7 lg:pt-10">
-              <div>
-                <p className="wx-aside-footer__label">Stack</p>
-                <div className="mt-2">
-                  <StackToolkitNuggets />
-                </div>
-              </div>
-              <div>
-                <div className="mt-1">
-                  <AsideContactRow reduceMotion={reduceMotion} />
-                </div>
-              </div>
-            </div>
-            </motion.div>
-            </div>
-        </aside>
-
-        <ExplorationMainPanels
-          as={motion.div}
-          initial={
-            reduceMotion
-              ? { opacity: 1, y: 0 }
-              : { opacity: 0, y: EMPTY_CANVAS_PANELS_DY }
-          }
-          animate={
-            reduceMotion
-              ? { opacity: emptyProjectFocus ? 0 : 1, y: 0 }
-              : {
-                  opacity: emptyProjectFocus ? 0 : 1,
-                  y: emptyProjectFocus ? EMPTY_CANVAS_PANELS_DY : 0,
-                }
-          }
-          transition={emptyCanvasOpacityTransition}
-          onAnimationComplete={onMainPanelsOpacityComplete}
-          inert={emptyProjectFocus ? true : undefined}
-          aria-hidden={emptyProjectFocus ? true : undefined}
-          data-panels-mode={
-            emptyCanvasSettled ? "empty" : emptyProjectFocus ? "fading" : "default"
-          }
-          className={clsx(
-            "isolate",
-            emptyProjectFocus && emptyCanvasSettled && EMPTY_CANVAS_MAIN_GEOM_LG,
-          )}
-        >
-          {/* ============================== WORK ============================== */}
-          <section
-            id="section-work"
-            role="tabpanel"
-            aria-labelledby="site-tab-work"
-            className="wx-work-section min-h-0 pb-[var(--wx-space-section)]"
-          >
-            {SITE_WORK.map((entry) => (
-              <WorkCard
-                key={entry.slug}
-                entry={entry}
-                reduceMotion={reduceMotion}
-                onEmptyProjectClick={entry.status === "incomplete" ? () => setEmptyProjectFocus(true) : undefined}
-                onOpenNavOnlyView={entry.workCardOpenNavOnlyView ? () => setEmptyProjectFocus(true) : undefined}
-              />
-            ))}
-          </section>
-
-          {/* ============================== STUDIO ============================== */}
-          <section
-            id="section-studio"
-            role="tabpanel"
-            aria-labelledby="site-tab-studio"
-            className="space-y-[var(--wx-gallery-gap)]"
-          >
-            <RevealCard
-              reduceMotion={reduceMotion}
-              className="grid gap-6 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:gap-7 lg:grid-cols-5 lg:items-center lg:gap-10 lg:p-8"
-            >
-              <div className="space-y-3 lg:col-span-3 lg:space-y-4">
-                <p className="wx-text-section-kicker text-[var(--wx-muted)]">
-                  Studio
-                </p>
-                <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
-                  Research-led design, built end to end.
-                </h2>
-                <p className="wx-text-body-secondary text-[var(--wx-muted)]">
-                  Product designer focused on research, interaction design, and accessible interfaces. I design and build in the same conversation — no handoff gap between what I sketch and what ships.
-                </p>
-              </div>
-              <div className="wx-gallery-frame overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:col-span-2">
-                <img
-                  src={SITE_EXTRA_IMAGES.marble}
-                  alt="Abstract marble light forms"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            </RevealCard>
-
-            <ServicesList reduceMotion={reduceMotion} />
-
-            {SITE_TESTIMONIALS.length > 0 ? (
-              <RevealCard
-                reduceMotion={reduceMotion}
-                className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-10"
-              >
-                <figure className="space-y-5">
-                  <HugeiconsIcon
-                    icon={QuoteUpIcon}
-                    size={26}
-                    strokeWidth={1.4}
-                    color="currentColor"
-                    className="text-[var(--wx-primary)]"
-                  />
-                  <blockquote className="wx-text-pullquote tracking-tight text-[var(--wx-ink)]">
-                    &ldquo;{SITE_TESTIMONIALS[0].quote}&rdquo;
-                  </blockquote>
-                  <figcaption className="wx-text-meta flex flex-wrap items-center gap-x-2 gap-y-1 text-[var(--wx-muted)]">
-                    <span className="font-medium text-[var(--wx-ink)]">
-                      {SITE_TESTIMONIALS[0].attribution}
-                    </span>
-                    <span aria-hidden>·</span>
-                    <span>{SITE_TESTIMONIALS[0].role}</span>
-                  </figcaption>
-                </figure>
-              </RevealCard>
-            ) : null}
-          </section>
-
-          {/* ============================== APPROACH ============================== */}
-          <section
-            id="section-approach"
-            role="tabpanel"
-            aria-labelledby="site-tab-approach"
-            className="space-y-[var(--wx-gallery-gap)]"
-          >
-            <RevealCard
-              reduceMotion={reduceMotion}
-              className="space-y-6 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:space-y-7 lg:space-y-8 lg:p-10"
-            >
-              <div className="max-w-2xl space-y-2 lg:space-y-3">
-                <p className="wx-text-section-kicker text-[var(--wx-muted)]">
-                  Approach
-                </p>
-                <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
-                  Research first, every time.
-                </h2>
-              </div>
-              <ol className="grid gap-5 sm:grid-cols-3 sm:gap-6">
-                {[
-                  {
-                    title: "Research",
-                    body: "User interviews, usability testing, affinity mapping, and competitive audits before touching a wireframe.",
-                  },
-                  {
-                    title: "Structure and prototype",
-                    body: "Flows, wireframes, and high-fidelity prototypes that trace decisions back to research findings.",
-                  },
-                  {
-                    title: "Test and refine",
-                    body: "Usability testing, iteration, and accessibility validation through to handoff or build.",
-                  },
-                ].map((step, idx) => (
-                  <li
-                    key={step.title}
-                    className="rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] p-5"
-                  >
-                    <p className="wx-text-step-index text-[var(--wx-primary)]">0{idx + 1}</p>
-                    <p className="mt-2 font-medium text-[var(--wx-ink)]">{step.title}</p>
-                    <p className="mt-2 wx-text-sm text-[var(--wx-muted)]">{step.body}</p>
-                  </li>
-                ))}
-              </ol>
-            </RevealCard>
-
-            <RevealCard
-              reduceMotion={reduceMotion}
-              className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
-            >
-              <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
-                {SITE_STATS.map((stat) => (
-                  <div key={stat.label} className="space-y-2">
-                    <p className="wx-stat-value">{stat.value}</p>
-                    <p className="wx-text-sm font-medium text-[var(--wx-ink)]">{stat.label}</p>
-                    <p className="wx-text-meta leading-relaxed text-[var(--wx-muted)]">
-                      {stat.hint}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </RevealCard>
-
-            <RevealCard
-              reduceMotion={reduceMotion}
-              className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
-            >
-              <div className="mb-6 space-y-2">
-                <p className="wx-text-section-kicker text-[var(--wx-muted)]">
-                  FAQ
-                </p>
-                <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">
-                  Questions, answered.
-                </h3>
-              </div>
-              <FaqAccordion reduceMotion={reduceMotion} />
-            </RevealCard>
-          </section>
-
-          {/* ============================== CONTACT ============================== */}
-          <section
-            id="section-contact"
-            role="tabpanel"
-            aria-labelledby="site-tab-contact"
-            className="space-y-[var(--wx-gallery-gap)]"
-          >
-            <RevealCard
-              reduceMotion={reduceMotion}
-              className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] ring-1 ring-[color:var(--wx-ring-subtle)]"
-            >
-              <div className="grid gap-6 p-6 sm:gap-8 sm:p-8 lg:gap-10 lg:p-10">
-                <div className="space-y-4 lg:space-y-5">
-                  <p className="wx-text-section-kicker text-[var(--wx-muted)]">
-                    Contact
-                  </p>
-                  <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
-                    Tell me what you&apos;re building.
-                  </h2>
-                  <p className="max-w-xl wx-text-body-secondary text-[var(--wx-muted)]">
-                    A short brief gets you a faster, more useful reply — two business days, every time.
-                    If we&apos;re not the right fit, I&apos;ll say so quickly and point you somewhere better.
-                  </p>
-                </div>
-                <QualificationForm reduceMotion={reduceMotion} />
-                <div className="wx-text-meta flex flex-wrap items-center gap-3 border-t border-[color:var(--wx-border-soft)] pt-5 text-[var(--wx-muted)]">
-                  <span>Prefer email?</span>
-                  <a
-                    href="mailto:wineurya30@gmail.com"
-                    className="inline-flex items-center gap-1.5 text-[var(--wx-ink)] underline-offset-4 hover:underline"
-                  >
-                    <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={1.6} />
-                    wineurya30@gmail.com
-                  </a>
-                  <span aria-hidden>·</span>
-                  <span>Same questions, same two-day reply.</span>
-                </div>
-              </div>
-            </RevealCard>
-
-            <div className="wx-text-meta flex flex-wrap items-center justify-between gap-3 px-1 pt-2 text-[var(--wx-muted)]">
-              <p>© {new Date().getFullYear()} Wineury Almonte</p>
-              <p className="flex items-center gap-3">
-                <a
-                  className="hover:text-[var(--wx-ink)]"
-                  href="https://www.linkedin.com/in/wineury"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  LinkedIn
-                </a>
-                <span aria-hidden>·</span>
-                <a className="hover:text-[var(--wx-ink)]" href="mailto:wineurya30@gmail.com">
-                  Email
-                </a>
-              </p>
-            </div>
-          </section>
-        </ExplorationMainPanels>
+        <ExplorationPageAside
+          emptyProjectFocus={m.emptyProjectFocus}
+          emptyCanvasSettled={m.emptyCanvasSettled}
+          location={m.location}
+          navigate={m.navigate}
+          scrollToSection={m.scrollToSection}
+          selectedIndex={m.selectedIndex}
+          reduceMotion={m.reduceMotion}
+          tabPillTransition={m.tabPillTransition}
+          tabMicroTransition={m.tabMicroTransition}
+          tabRowRef={m.tabRowRef}
+          emptyCanvasOpacityTransition={m.emptyCanvasOpacityTransition}
+        />
+        <ExplorationPageMainColumn
+          emptyProjectFocus={m.emptyProjectFocus}
+          emptyCanvasSettled={m.emptyCanvasSettled}
+          reduceMotion={m.reduceMotion}
+          emptyCanvasOpacityTransition={m.emptyCanvasOpacityTransition}
+          onMainPanelsOpacityComplete={m.onMainPanelsOpacityComplete}
+          setEmptyProjectFocus={m.setEmptyProjectFocus}
+        />
       </ExplorationBody>
     </ExplorationRoot>
   );
