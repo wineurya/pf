@@ -1,0 +1,1858 @@
+/* Figma wireframe 146:15377 — light only; --wx-* live in src/styles/tokens.css */
+.site-canvas {
+  color-scheme: light;
+  background-color: var(--wx-page-bg);
+  color: var(--wx-ink);
+  /**
+   * Figma: Testing, 200:88 — canvas; chip fills from `siteContent.js` (tuned sienna / paper / warm ink on #E3DBD1).
+   * Hairline: brown–ink mix so borders aren’t cool gray. Shadow: rgb(47,32,14).
+   */
+  --wx-warm-figma-canvas: #e3dbd1;
+  --wx-warm-title-ink: #1a1a1a;
+  /* Muted subcopy on photo (Figma: brown-gray, not flat black) */
+  --wx-warm-body-ink: oklch(0.4 0.02 50 / 0.82);
+  /* Warm plan-summary chips: one border + one shadow (One Page Love–style: tight cluster, no mixed “elevation” styles). */
+  --wx-warm-nugget-pill-border: color-mix(in srgb, #2c2722 16%, #8f6b4e 14%);
+  --wx-warm-nugget-pill-shadow: 0 1px 2px color-mix(in srgb, #2c2722 9%, transparent);
+  --wx-warm-nugget-pill-shadow-ink: 0 1px 2px color-mix(in srgb, #1a1210 18%, transparent);
+  --wx-warm-nugget-hairline: color-mix(in srgb, #8f6b4e 22%, #2c2722 10%);
+  --wx-warm-nugget-shadow: color-mix(in srgb, #2c2722 10%, transparent);
+  /* Figma 200:109 (Frame 6) art — `drop-shadow` on <img> (alpha), rgb(47,32,14); sync from Effects panel on re-export */
+  --wx-figma-200109-shadow-1: 0 2px 4px rgba(47, 32, 14, 0.16);
+  --wx-figma-200109-shadow-2: 0 6px 18px rgba(47, 32, 14, 0.12);
+  --wx-figma-200109-shadow-3: 0 16px 40px rgba(47, 32, 14, 0.07);
+  /* Must match AsideHeroHeadline word enter duration (motion) */
+  --wx-headline-word-enter-duration: 0.26s;
+  /* Sparkle rises just after the word (tiny delay); brief blur flash then opacity/transform fade */
+  --wx-sparkle-rise-delay: 0.07s;
+  --wx-sparkle-rise-duration: 0.92s;
+  --wx-sparkle-rise-distance: -2.65rem;
+  --wx-sparkle-rise-ease: cubic-bezier(0.22, 0.65, 0.28, 1);
+  --wx-sparkle-blur-flash: 10px;
+  /* Work cards: `min(80dvb, 720px)` = tested 80dvb cap, ~80% of 900px dynamic viewport; px bounds tall screens */
+  --wx-work-card-vb-px: 720px;
+  --wx-work-card-vb-cap: min(80dvb, var(--wx-work-card-vb-px, 720px));
+}
+
+/* Home `#site-panels`: no `site-fade-panels` VT group (see work-case.css). */
+@supports (view-transition-name: none) {
+  .site-canvas.wx-exploration-root .site-vt--panels#site-panels {
+    view-transition-name: none;
+  }
+}
+
+/* Work case routes — full-bleed top bar (Figma 165-53); `WorkCasePage.jsx` */
+.site-canvas.wx-work-case-chrome {
+  --wx-explore-top-nav-h: calc(max(0.5rem, env(safe-area-inset-top, 0px)) + 4rem);
+}
+
+/* Custom dot cursor — pointer-fine only; class toggled from JS when motion is allowed */
+@media (pointer: fine) {
+  .site-canvas.wx-exploration-root--custom-cursor,
+  .site-canvas.wx-exploration-root--custom-cursor a,
+  .site-canvas.wx-exploration-root--custom-cursor button {
+    cursor: none;
+  }
+}
+
+.site-canvas .wx-dot-cursor {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9998;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background-color: var(--wx-ink);
+  opacity: 0.82;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-white) 70%, transparent);
+}
+
+/* Work — gallery cards (Figma 162-395/414, tuned to exploration surfaces) */
+.site-canvas .wx-work-section {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 4vw, 2.25rem);
+  /* `cqw` in card height = full column width (cards are width: 100%) */
+  container-type: inline-size;
+  container-name: wx-work;
+}
+
+.site-canvas ::selection {
+  background: var(--wx-selection-bg);
+}
+
+/* Type scale: `--wx-text-*` in tokens.css; UI sans = `--font-body` (global body stack). */
+.wx-text-body-secondary {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-body-secondary-size);
+  line-height: var(--wx-text-body-secondary-leading);
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-text-body-secondary {
+    font-size: var(--wx-text-body-secondary-size-sm);
+    line-height: var(--wx-text-body-secondary-leading-sm);
+  }
+}
+
+.wx-text-eyebrow {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-body-secondary-size);
+  line-height: var(--wx-text-eyebrow-leading);
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-text-eyebrow {
+    font-size: var(--wx-text-body-secondary-size-sm);
+    line-height: var(--wx-text-eyebrow-leading-sm);
+  }
+}
+
+.wx-text-meta {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-meta-size);
+  line-height: var(--wx-text-meta-leading);
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+.wx-text-sm {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-sm-size);
+  line-height: var(--wx-text-sm-leading);
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+.wx-text-sm-tight {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-sm-size);
+  line-height: var(--wx-text-sm-leading-snug);
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+.wx-text-sm.font-medium,
+.font-medium.wx-text-sm {
+  font-weight: 500;
+}
+
+.wx-text-overline {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-overline-size);
+  line-height: var(--wx-text-overline-leading);
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+/* Studio / section uppercase labels (Services, Contact, …) */
+.wx-text-section-kicker {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-overline-size);
+  line-height: var(--wx-text-overline-leading);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-synthesis: none;
+}
+
+/* Qualification + short field labels (sentence case) */
+.wx-text-form-label {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-overline-size);
+  line-height: var(--wx-text-overline-leading);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-synthesis: none;
+}
+
+.wx-text-service-title {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-service-title-size);
+  line-height: var(--wx-text-service-title-leading);
+  font-weight: 500;
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-text-service-title {
+    font-size: var(--wx-text-service-title-size-sm);
+  }
+}
+
+.wx-text-pullquote {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-pullquote-size);
+  line-height: var(--wx-text-pullquote-leading);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-text-pullquote {
+    font-size: var(--wx-text-pullquote-size-sm);
+    line-height: var(--wx-text-pullquote-leading-sm);
+  }
+}
+
+.wx-text-wordmark {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-wordmark-size);
+  line-height: var(--wx-text-wordmark-leading);
+  font-weight: 500;
+  font-synthesis: none;
+}
+
+.wx-text-step-index {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-overline-size);
+  line-height: var(--wx-text-overline-leading);
+  font-weight: 500;
+  font-synthesis: none;
+}
+
+.wx-headline {
+  font-size: var(--wx-text-hero-line-size);
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-headline {
+    font-size: var(--wx-text-hero-line-size-sm);
+  }
+}
+
+.site-canvas .wx-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+.site-canvas [id^="section-"] {
+  scroll-margin-top: 0.75rem;
+}
+
+@media (max-width: 639px) {
+  .site-canvas {
+    --wx-mobile-nav-h: calc(env(safe-area-inset-top, 0px) + 5.5rem);
+  }
+
+  .site-canvas [id^="section-"] {
+    scroll-margin-top: calc(var(--wx-mobile-nav-h) + 0.35rem);
+  }
+}
+
+@media (width >= 64rem) {
+  .site-canvas [id^="section-"] {
+    scroll-margin-top: 0;
+  }
+}
+
+/* Right column media blocks — same aspect at every breakpoint */
+.site-canvas .wx-gallery-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: var(--wx-gallery-aspect);
+  background-color: var(--wx-surface);
+}
+
+.site-canvas .wx-gallery-frame > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform;
+}
+
+/* Work card — default 16:9; optional `workCardAspect` (`1/1`, `4/5`). Full-bleed bg, top chrome, sweep */
+.site-canvas .wx-work-card--figma {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  box-shadow:
+    0 1px 2px var(--wx-shadow-ambient),
+    inset 0 0 0 1px var(--wx-border-soft);
+  transition: box-shadow 0.2s ease;
+  color: var(--wx-ink);
+}
+
+/* Figma 200:88 — canvas #E3DBD1 shows at rounded edge / before image loads */
+.site-canvas .wx-work-card--figma.wx-work-card--footer-warm {
+  background-color: var(--wx-warm-figma-canvas);
+}
+
+/* Optional per-entry canvas (e.g. InCity navy) — `style="--wx-figma-200-canvas"`, not warm */
+.site-canvas .wx-work-card--figma-20088[data-figma-canvas] {
+  background-color: var(--wx-figma-200-canvas);
+}
+
+/* 200:88 artboard: full width of the work column; height = min(square 1:1, viewport block cap) */
+.site-canvas .wx-work-card--figma.wx-work-card--figma-20088 {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  max-height: var(--wx-work-card-vb-cap, min(80dvb, 720px));
+  /* Square height from column width until the cap binds (200:109 mock is `contain` for full art) */
+  height: min(100cqw, var(--wx-work-card-vb-cap, min(80dvb, 720px)));
+  aspect-ratio: unset;
+}
+
+/* 16:9 cards — full column width; height from 9/16 of width, capped at `--wx-work-card-vb-cap` */
+.site-canvas .wx-work-card--figma.aspect-video {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  max-height: var(--wx-work-card-vb-cap, min(80dvb, 720px));
+  height: min(calc(100cqw * 9 / 16), var(--wx-work-card-vb-cap, min(80dvb, 720px)));
+  aspect-ratio: unset;
+}
+
+/* Shell matches the aspected box (absolute bg + content fill the used size) */
+.site-canvas .wx-work-card--figma.wx-work-card--figma-20088 > .pointer-events-none,
+.site-canvas .wx-work-card--figma.aspect-video > .pointer-events-none {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  flex-direction: column;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-canvas .wx-work-card--figma.wx-work-card--figma-20088:where(:hover, :focus-within) {
+    z-index: 1;
+  }
+}
+
+.site-canvas .wx-work-card--figma:has(.wx-work-card-v2__link:hover) {
+  box-shadow:
+    0 4px 18px -6px var(--wx-shadow-ambient),
+    0 1px 2px var(--wx-shadow-ambient),
+    inset 0 0 0 1px color-mix(in srgb, var(--wx-primary) 22%, var(--wx-border-soft));
+}
+
+.site-canvas .wx-work-card__shell {
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Background: div (empty gradient) or Figma-sourced <picture> / <img> (object-fit cover) */
+.site-canvas .wx-work-card__bg,
+.site-canvas picture.wx-work-card__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+.site-canvas .wx-work-card__bg--empty,
+.site-canvas div.wx-work-card__bg--empty {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.site-canvas picture.wx-work-card__bg {
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.site-canvas picture.wx-work-card__bg img,
+.site-canvas img.wx-work-card__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Figma `Testing/200:88` — Frame 4: 2400×2400; child 200:109 mock 1410.14×1490.18px, centered, object-fit: cover. */
+/* Raster: alpha around devices — `drop-shadow` on `img` (not a box on the media wrapper). */
+.site-canvas .wx-work-card__figma-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  /* Card fill is --wx-warm-figma-canvas; keep transparent so layout matches artboard. */
+  background-color: transparent;
+  pointer-events: none;
+}
+
+.site-canvas .wx-work-card__figma-mock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  box-sizing: border-box;
+  /* 1410.14/2400 × 100%  |  1490.18/2400 × 100% (Figma Frame 4 vs Frame 6) */
+  width: calc(100% * 1410.14 / 2400);
+  height: calc(100% * 1490.18 / 2400);
+  transform: translate3d(-50%, -50%, 0);
+  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas, #e3dbd1));
+}
+
+.site-canvas .wx-work-card__figma-mock-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas, #e3dbd1));
+  overflow: visible;
+}
+
+.site-canvas .wx-work-card__figma-mock-media picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  pointer-events: none;
+}
+
+.site-canvas .wx-work-card__figma-mock-media picture img,
+.site-canvas .wx-work-card__figma-mock-media > img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  /* Shadow on alpha — values from 200:109 Effects; adjust vars in :root to match the file. */
+  filter: drop-shadow(var(--wx-figma-200109-shadow-1)) drop-shadow(var(--wx-figma-200109-shadow-2))
+    drop-shadow(var(--wx-figma-200109-shadow-3));
+}
+
+/* 200:109 raster — show full art (no crop). Warm canvas fills any letterbox. */
+.site-canvas .wx-work-card--figma-20088 .wx-work-card__figma-mock-media picture img,
+.site-canvas .wx-work-card--figma-20088 .wx-work-card__figma-mock-media > img {
+  object-fit: contain;
+}
+
+.site-canvas .wx-work-card__bg--empty {
+  background-image: linear-gradient(
+    98deg,
+    var(--wx-surface-soft) 0%,
+    var(--wx-surface) 48%,
+    var(--wx-surface-soft) 100%
+  );
+}
+
+.site-canvas .wx-work-card__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wx-black) 0%, transparent) 0%,
+    color-mix(in srgb, var(--wx-black) 0%, transparent) 40%,
+    color-mix(in srgb, var(--wx-black) 48%, transparent) 100%
+  );
+}
+
+.site-canvas .wx-work-card__shell--image-footer .wx-work-card__scrim {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wx-black) 2%, transparent) 0%,
+    color-mix(in srgb, var(--wx-black) 0%, transparent) 38%,
+    color-mix(in srgb, var(--wx-black) 55%, transparent) 100%
+  );
+}
+
+/* Warm image card: one inset ring (spacing-4/5) — top, left, right, bottom match Figma; footer `left:0; bottom:0` inside v2 */
+.site-canvas .wx-work-card__shell--footer-warm {
+  box-sizing: border-box;
+  padding: var(--spacing-4);
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .site-canvas .wx-work-card__shell--footer-warm {
+    padding: var(--spacing-5);
+  }
+}
+
+/* Warm work cards: light paper grain over the mock, under chrome + footer (same pattern as .wx-grain) */
+.site-canvas .wx-work-card__shell--footer-warm::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--wx-radius-card);
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* Dark 200:88 (custom canvas): same grain as warm, over mock, under chrome — `soft-light` on navy */
+.site-canvas .wx-work-card--figma-20088[data-figma-canvas] .wx-work-card__shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--wx-radius-card);
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.site-canvas .wx-work-card-v2--footer-warm-pin {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.site-canvas .wx-work-card-v2__footer--warm-pin {
+  position: absolute;
+  /* Flush to v2 edges; bottom gap = same token as left via shell padding */
+  left: 0;
+  bottom: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  /* Use the column: two-line + finale read cleaner than 24rem cap; still bounded for very wide cards */
+  width: 100%;
+  max-width: min(100%, 40rem);
+  margin: 0;
+  padding: 0;
+  padding-top: 0;
+  text-align: left;
+}
+
+/* Tighter type block — no reserved stutter/extend tower; quip is one line */
+.site-canvas .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary,
+.site-canvas .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary--stutter {
+  min-height: 0;
+}
+
+.site-canvas .wx-work-card-v2__title--warm {
+  color: var(--wx-warm-title-ink);
+  text-shadow: none;
+  font-weight: 600;
+}
+
+.site-canvas .wx-work-card-v2__summary--warm-image {
+  color: var(--wx-warm-body-ink);
+  text-shadow: none;
+}
+
+.site-canvas .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-lead,
+.site-canvas .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-extend,
+.site-canvas .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-extend--stutter,
+.site-canvas .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-extend--finale {
+  color: var(--wx-warm-body-ink);
+  font-style: normal;
+  font-weight: 400;
+  opacity: 1;
+}
+
+/* Hover quip: one line; stutter lines can still grow (no `max-height` on `--stutter`). */
+.site-canvas .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary-extend--finale {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 1lh;
+  max-height: 1lh;
+  line-height: inherit;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  hyphens: none;
+}
+
+/* Accent sweep — Figma 200:88 CTA / tan (#A67C52) on warm brown; align to shell gutters (1:1 with content) */
+.site-canvas .wx-work-card--footer-warm .wx-work-card__sweep {
+  left: var(--spacing-4);
+  right: var(--spacing-4);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, #a67c52 32%, transparent),
+    color-mix(in srgb, #6b5344 36%, transparent),
+    color-mix(in srgb, #a67c52 32%, transparent)
+  );
+}
+
+@media (min-width: 640px) {
+  .site-canvas .wx-work-card--footer-warm .wx-work-card__sweep {
+    left: var(--spacing-5);
+    right: var(--spacing-5);
+  }
+}
+
+/* Accent sweep: slides in from bottom (creative chrome — not copy) */
+.site-canvas .wx-work-card__sweep {
+  position: absolute;
+  bottom: 0;
+  left: 8%;
+  right: 8%;
+  z-index: 2;
+  height: 2px;
+  border-radius: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--wx-primary) 45%, transparent),
+    color-mix(in srgb, var(--wx-accent-teal) 50%, transparent),
+    color-mix(in srgb, var(--wx-accent-violet) 50%, transparent),
+    color-mix(in srgb, var(--wx-primary) 40%, transparent)
+  );
+  transform: scaleX(0);
+  transform-origin: center bottom;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-canvas .wx-work-card--figma:where(:hover, :focus-within) .wx-work-card__sweep {
+    transform: scaleX(1);
+  }
+}
+
+/* Warm 200:88: no bottom “sweep” (2px line on hover) — it clashes with the full-bleed canvas; nuggets keep CTA color. */
+.site-canvas .wx-work-card--footer-warm .wx-work-card__sweep {
+  display: none;
+}
+
+.site-canvas .wx-work-card-v2 {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Top nuggets + view more: enter from top on hover (fine pointer only) */
+.site-canvas .wx-work-card-v2__chrome-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 0.5rem;
+  will-change: transform, opacity;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+}
+
+/* Warm: Motion drives entrance slide; don’t add a second transform transition here. */
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__chrome-top {
+  transition: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-canvas .wx-work-card--figma .wx-work-card-v2__chrome-top {
+    transform: translateY(-0.75rem);
+    opacity: 0;
+  }
+  .site-canvas .wx-work-card--figma:where(:hover, :focus-within) .wx-work-card-v2__chrome-top {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  /* Figma 200:88 warm: chips stay in the composition; no empty strip before hover. */
+  .site-canvas .wx-work-card--figma.wx-work-card--footer-warm .wx-work-card-v2__chrome-top {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.site-canvas .wx-work-card-v2__nuggets {
+  display: flex;
+  flex: 1 1 0%;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-canvas .wx-work-card-v2__nuggets > li {
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .site-canvas .wx-work-card-v2__nuggets {
+    gap: 0.75rem;
+  }
+}
+
+.site-canvas .wx-work-card-v2__nugget {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  box-sizing: border-box;
+  padding: 0.35rem 0.5rem 0.35rem 0.4rem;
+  border-radius: 0.4rem;
+  font-size: var(--wx-text-nugget);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-transform: none;
+  border: 1px solid color-mix(in srgb, var(--wx-black) 6%, transparent);
+  box-shadow: 0 1px 1px var(--wx-shadow-ambient);
+}
+
+/* Warm image card: Figma 200:88 + OPL-style tag row — one radius, one stroke system, even gaps, no full-width sprawl. */
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nuggets {
+  flex: 0 1 auto;
+  width: max-content;
+  max-width: 100%;
+  gap: 0.5rem;
+  row-gap: 0.5rem;
+}
+
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget {
+  min-height: 1.75rem;
+  box-sizing: border-box;
+  border-radius: 9999px;
+  padding: 0.3125rem 0.7rem;
+  font-size: var(--wx-text-nugget-warm);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--wx-warm-nugget-pill-border);
+  box-shadow: var(--wx-warm-nugget-pill-shadow);
+}
+
+/* Icon column: every chip same optical box (matches Lucide 12 in JSX). */
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget-ic,
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget-ic > div,
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget-icon-fallback,
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget-icon-fallback > svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget-label {
+  display: inline-block;
+  line-height: 1.15;
+}
+
+/* Ink: same family, slightly stronger rim + shadow; no “second style” of inset. */
+.site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget--on-dark {
+  border: 1px solid color-mix(in srgb, #fff 14%, #2c2722 86%);
+  box-shadow: var(--wx-warm-nugget-pill-shadow-ink);
+}
+
+.site-canvas .wx-work-card-v2__view-pill {
+  -webkit-tap-highlight-color: transparent;
+  color: var(--wx-white);
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--wx-black) 35%, transparent);
+  font-size: var(--wx-text-sm-size);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-canvas .wx-work-card__shell:not(.wx-work-card__shell--image-footer) .wx-work-card-v2__view-pill {
+  color: var(--wx-muted);
+  text-shadow: none;
+}
+
+.site-canvas .wx-work-card--figma:where(:hover, :focus-within) .wx-work-card-v2__view-pill,
+.site-canvas .wx-work-card--figma:has(.wx-work-card-v2__link:hover) .wx-work-card-v2__view-pill,
+.site-canvas .wx-work-card--figma:has(.wx-work-card-v2__link:focus-visible) .wx-work-card-v2__view-pill {
+  color: var(--wx-primary);
+}
+
+/* Footer: title + typing teaser — not involved in top slide */
+.site-canvas .wx-work-card-v2__footer {
+  z-index: 2;
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: 0.4rem;
+  text-align: left;
+  text-wrap: balance;
+  padding-top: 0.25rem;
+}
+
+/* Warm footer: 8px title↔summary gap; wins over default footer gap (declared after base). */
+.site-canvas .wx-work-card-v2__footer.wx-work-card-v2__footer--warm-pin {
+  gap: var(--spacing-2);
+  padding-top: 0;
+  /* `balance` on base footer can split the hover quip across two “even” lines — use normal wrap for lead, line lock on finale below */
+  text-wrap: wrap;
+}
+
+.site-canvas .wx-work-card-v2__title--on-image {
+  color: #fff;
+  text-shadow:
+    0 0.5px 0 color-mix(in srgb, var(--wx-black) 30%, transparent),
+    0 1px 2px color-mix(in srgb, var(--wx-black) 55%, transparent),
+    0 2px 14px color-mix(in srgb, var(--wx-black) 40%, transparent);
+}
+
+.site-canvas .wx-work-card-v2__title {
+  font-size: clamp(0.9875rem, 2.5vw, 1.125rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--wx-ink);
+}
+
+.site-canvas .wx-work-card-v2__summary {
+  min-height: 2.4em;
+  max-width: min(100%, 36rem);
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-body-secondary-size);
+  line-height: var(--wx-text-body-secondary-leading);
+  font-weight: 400;
+  color: var(--wx-muted);
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .site-canvas .wx-work-card-v2__summary {
+    font-size: var(--wx-text-body-secondary-size-sm);
+    line-height: var(--wx-text-body-secondary-leading-sm);
+  }
+}
+
+/* Stable block: lead + typewriter area keeps height when extension empties. */
+.site-canvas .wx-work-card-v2__summary--has-extend,
+.site-canvas .wx-work-card-v2__summary--stutter {
+  min-height: max(4.2lh, 2.6em);
+}
+
+/* Two-sentence lead (first `". "` break) — extra line + breathing room vs single-line. */
+.site-canvas .wx-work-card-v2__summary--lead-two-lines {
+  min-height: max(5.4lh, 3.2em);
+}
+
+/* Warm (absolute) footer: lead is at most two lines; full-width footer gives room for that before ellipsis. */
+.site-canvas .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary--lead-two-lines {
+  min-height: max(3.2lh, 2.2em);
+}
+
+.site-canvas .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary--lead-two-lines .wx-work-card-v2__summary-lead {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.site-canvas .wx-work-card-v2__summary--lead-two-lines .wx-work-card-v2__summary-extend--slot {
+  min-height: 3.2lh;
+}
+
+/* Warm (absolute) footer: single-line quip area — wins over `summary--lead-two-lines` slot reserve. */
+.site-canvas .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary-extend--slot {
+  min-height: 1lh;
+}
+
+.site-canvas .wx-work-card-v2__summary-extend--slot {
+  display: inline-block;
+  width: 100%;
+  /* Reserve ~3 lines so clearing the typewriter doesn’t jump; content can grow taller. */
+  min-height: 4lh;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+.site-canvas .wx-work-card-v2__summary--on-image {
+  color: rgba(255, 255, 255, 0.84);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.38);
+}
+
+.site-canvas .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-lead {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.site-canvas .wx-work-card-v2__summary-extend {
+  color: color-mix(in srgb, var(--wx-muted) 100%, var(--wx-primary) 0%);
+  font-weight: 400;
+}
+
+.site-canvas .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-extend {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+/* No italic — same metrics as finale so line breaks don’t shift between beats. */
+.site-canvas .wx-work-card-v2__summary-extend--stutter {
+  color: color-mix(in srgb, var(--wx-muted) 94%, var(--wx-primary) 6%);
+  opacity: 0.95;
+}
+
+.site-canvas .wx-work-card-v2__summary-extend--finale {
+  color: color-mix(in srgb, var(--wx-ink) 90%, var(--wx-primary) 10%);
+  opacity: 1;
+}
+
+.site-canvas .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-extend--stutter {
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.site-canvas .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-extend--finale {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+}
+
+/* Aside footer — stack nuggets + contact (left-aligned, full width) */
+.site-canvas .wx-aside-footer__label {
+  font-size: var(--wx-text-aside-footer-size);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wx-mute-2);
+}
+
+/* Stack — two marquee lanes; calm spacing like hero CTAs */
+.site-canvas .wx-stack-marquee-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+.site-canvas .wx-stack-marquee-stack .wx-stack-marquee + .wx-stack-marquee {
+  padding-top: 0.625rem;
+  margin-top: 0.125rem;
+  border-top: 1px solid var(--wx-border-hairline);
+}
+
+/*
+ * Marquee clip: padding inside overflow:hidden gives chip shadows room so they aren’t cropped.
+ * Horizontal padding keeps the first/last pills from hugging the fade seam.
+ */
+.site-canvas .wx-stack-marquee {
+  overflow: hidden;
+  padding: 16px 10px;
+  margin: -16px -10px;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    var(--wx-mask-solid) 2rem,
+    var(--wx-mask-solid) calc(100% - 2rem),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    var(--wx-mask-solid) 2rem,
+    var(--wx-mask-solid) calc(100% - 2rem),
+    transparent 100%
+  );
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+.site-canvas .wx-stack-marquee__inner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: max-content;
+  will-change: transform;
+  animation: wx-marquee-x 50s linear infinite;
+}
+
+.site-canvas .wx-stack-marquee__inner--reverse {
+  animation-duration: 58s;
+  animation-direction: reverse;
+}
+
+/* Pause on hover/focus so users can interact */
+.site-canvas .wx-stack-marquee__inner:hover,
+.site-canvas .wx-stack-marquee__inner:focus-within {
+  animation-play-state: paused;
+}
+
+@keyframes wx-marquee-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.site-canvas .wx-stack-marquee__item {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/*
+ * Tool chips — calm Apple-like pills: light border + shallow depth (compact shadows = less marquee clip).
+ * Hover borrows primary ring/glow from .wx-btn-primary but kept tight so padding handles the rest.
+ */
+.site-canvas .wx-stack-nugget {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--wx-border-muted);
+  border-radius: 12px;
+  background-color: var(--wx-page-bg);
+  padding: 6px 13px 6px 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--wx-ink);
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--wx-white) 85%, transparent),
+    0 1px 2px var(--wx-ring-subtle);
+  transition:
+    box-shadow 260ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 260ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 160ms cubic-bezier(0.3, 0, 0, 1);
+}
+
+.site-canvas .wx-stack-nugget:hover {
+  background-color: var(--wx-surface-soft);
+  border-color: color-mix(in srgb, var(--wx-primary) 42%, var(--wx-stack-hover-border-mix));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--wx-white) 95%, transparent),
+    0 3px 10px -2px var(--wx-btn-primary-hover-glow),
+    0 0 0 1px color-mix(in srgb, var(--wx-primary) 38%, var(--wx-stack-hover-ring-mix));
+}
+
+.site-canvas .wx-stack-nugget:active {
+  transform: scale(0.98);
+}
+
+.site-canvas .wx-stack-nugget:hover .wx-stack-nugget__logo-wrap {
+  background-color: color-mix(
+    in srgb,
+    var(--wx-stack-accent) 10%,
+    var(--wx-surface-soft)
+  );
+}
+
+.site-canvas .wx-stack-nugget:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+/* Logo well — quiet neutral field; brand read from icon */
+.site-canvas .wx-stack-nugget__logo-wrap {
+  display: flex;
+  width: 1.625rem;
+  height: 1.625rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background-color: var(--wx-stack-logo-well-tint);
+  transition: background-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-canvas .wx-stack-nugget__logo {
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  object-fit: contain;
+}
+
+.site-canvas .wx-stack-nugget__meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  line-height: 20px;
+  padding-right: 1px;
+}
+
+.site-canvas .wx-stack-nugget__label {
+  font-size: var(--wx-text-ui-14);
+  line-height: var(--wx-text-ui-14-lh);
+  font-weight: 500;
+  letter-spacing: -0.022em;
+  color: var(--wx-ink);
+}
+
+.site-canvas .wx-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/*
+ * Ghost contact links: no fill, border, or ring — only icon + expanding label
+ * (motion from ContactPill). Hover/focus use color only for light feedback.
+ */
+.site-canvas .wx-contact-pill {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  overflow: hidden;
+  padding: 0.2rem 0.1rem;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-size: var(--wx-text-meta-size);
+  line-height: var(--wx-text-meta-leading);
+  font-weight: 600;
+  color: var(--wx-ink);
+  text-decoration: none;
+  transition: color 0.18s ease;
+  font-synthesis: none;
+}
+
+.site-canvas .wx-contact-pill:hover {
+  color: var(--wx-primary);
+}
+
+.site-canvas .wx-contact-pill:focus-visible {
+  outline: none;
+  color: var(--wx-primary);
+}
+
+.site-canvas .wx-contact-pill__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
+
+/* Phosphor: single-color stroke icons inherit link color (ink → primary on hover/focus) */
+.site-canvas .wx-contact-pill__phosphor {
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.site-canvas .wx-contact-pill__label {
+  margin-left: 0.2rem;
+  padding-right: 0.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Home exploration only: in-aside nav; fixed to viewport on small screens (spacer in layout) */
+@media (max-width: 639px) {
+  .site-canvas .wx-mobile-nav-spacer {
+    height: var(--wx-mobile-nav-h);
+    flex-shrink: 0;
+  }
+
+  .site-canvas .wx-mobile-sticky-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 70;
+    margin-inline: 0;
+    padding-inline: var(--wx-pad-x);
+    padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+    padding-bottom: 0.875rem;
+    background: linear-gradient(
+      180deg,
+      var(--wx-page-bg) 0%,
+      color-mix(in srgb, var(--wx-page-bg) 88%, transparent) 55%,
+      color-mix(in srgb, var(--wx-page-bg) 45%, transparent) 85%,
+      transparent 100%
+    );
+    -webkit-backdrop-filter: blur(14px) saturate(165%);
+    backdrop-filter: blur(14px) saturate(165%);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--wx-black) 5%, transparent);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .site-canvas .wx-mobile-sticky-nav {
+      background: linear-gradient(
+        180deg,
+        var(--wx-page-bg) 0%,
+        color-mix(in srgb, var(--wx-page-bg) 96%, transparent) 100%
+      );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-canvas .wx-mobile-sticky-nav {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+}
+
+/* Work case: full-bleed top bar — sticky; mobile: frosted scrim; sm+ solid (border in JSX) */
+.site-canvas .wx-explore-top-header {
+  background-color: var(--wx-page-bg);
+}
+
+@media (max-width: 639px) {
+  .site-canvas .wx-explore-top-header {
+    background: linear-gradient(
+      180deg,
+      var(--wx-page-bg) 0%,
+      color-mix(in srgb, var(--wx-page-bg) 88%, transparent) 55%,
+      color-mix(in srgb, var(--wx-page-bg) 45%, transparent) 85%,
+      transparent 100%
+    );
+    -webkit-backdrop-filter: blur(14px) saturate(165%);
+    backdrop-filter: blur(14px) saturate(165%);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .site-canvas .wx-explore-top-header {
+      background: linear-gradient(
+        180deg,
+        var(--wx-page-bg) 0%,
+        color-mix(in srgb, var(--wx-page-bg) 96%, transparent) 100%
+      );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-canvas .wx-explore-top-header {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+}
+
+/* =========================
+   Nav / tablist (premium glass)
+   ========================= */
+.site-canvas .wx-tab-track {
+  position: relative;
+  border-radius: var(--wx-radius-track);
+  background-color: var(--wx-tab-track);
+  border: 1px solid var(--wx-tab-track-border);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    0 1px 0 var(--wx-tab-glass-highlight) inset,
+    0 1px 2px var(--wx-tab-glass-shadow),
+    0 10px 30px -18px var(--wx-track-shadow-color);
+  transition: box-shadow 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .site-canvas .wx-tab-track {
+    background-color: var(--wx-tab-track-solid);
+  }
+}
+
+.site-canvas .wx-tab {
+  position: relative;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.site-canvas .wx-tab:hover[aria-selected="false"] {
+  filter: brightness(1.04);
+}
+
+.site-canvas .wx-tab:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+/* Smooth filter interpolation handled by the browser, not motion. */
+.site-canvas .wx-tab-label-text {
+  transition: filter 0.34s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Tight tracking + subpixel width — avoid trimming the last glyph. */
+  padding-inline-end: 0.1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-canvas .wx-tab-label-text {
+    transition: none;
+  }
+}
+
+/* =========================
+   Headline — rotating word + single sparkle (straight rise, transform only)
+   ========================= */
+/* Tight line-height: rotating words have no descenders; trims stray gap under the line */
+.wx-headline {
+  line-height: 1;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1;
+}
+
+/* One continuous line: real inline flow (not flex) so baselines match the h1 */
+.site-canvas .wx-headline-line {
+  display: inline;
+  word-spacing: normal;
+}
+
+.site-canvas .wx-headline-static {
+  display: inline;
+}
+
+.site-canvas .wx-alive {
+  position: relative;
+  display: inline;
+  font-weight: inherit;
+  color: var(--wx-alive);
+  white-space: nowrap;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+/* Shrink-wraps the rotating word; width follows the active word — sparkles anchor to edges */
+.site-canvas .wx-headline-word-wrap {
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+  width: max-content;
+  max-width: 100%;
+}
+
+/* Single inline-block for the clip — avoid nested inline-blocks adding height */
+.site-canvas .wx-headline-rotate {
+  display: inline;
+  vertical-align: baseline;
+}
+
+/* Clip frame: matches glyph width/height of the current word for clean slide animation */
+.site-canvas .wx-headline-rotate__mask {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  overflow: hidden;
+  width: max-content;
+  max-width: 100%;
+  height: 1em;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+.site-canvas .wx-headline-rotate__word {
+  display: block;
+  flex-shrink: 0;
+  width: max-content;
+  line-height: 1;
+  transform-origin: 50% 100%;
+}
+
+.site-canvas .wx-sparkle {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 0.06em;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  user-select: none;
+  transform: translate3d(-50%, 0, 0);
+}
+
+/* Figma asset tinted via mask + background in JSX — keep box for rise animation */
+.site-canvas .wx-sparkle__img {
+  display: block;
+  width: 0.9rem;
+  height: 0.9rem;
+  max-width: none;
+  flex-shrink: 0;
+}
+
+.site-canvas .wx-sparkle--run {
+  will-change: transform, filter;
+  animation: wx-sparkle-rise var(--wx-sparkle-rise-duration) var(--wx-sparkle-rise-ease)
+    var(--wx-sparkle-rise-delay) both;
+}
+
+@keyframes wx-sparkle-rise {
+  /* ~1ms blur at 0.92s duration ≈ 0.11% — then sharp for the rest */
+  0% {
+    transform: translate3d(-50%, 0, 0) scale(0.94);
+    opacity: 0;
+    filter: blur(var(--wx-sparkle-blur-flash));
+  }
+
+  0.11% {
+    transform: translate3d(-50%, 0, 0) scale(0.94);
+    filter: blur(0);
+  }
+
+  12% {
+    opacity: 0.5;
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  48% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: 0.55;
+  }
+
+  100% {
+    transform: translate3d(-50%, var(--wx-sparkle-rise-distance), 0) scale(1);
+    opacity: 0;
+    filter: blur(0);
+  }
+}
+
+@media (width >= 40rem) {
+  .site-canvas .wx-sparkle__img {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-canvas .wx-headline-rotate__mask {
+    display: inline-flex;
+    overflow: visible;
+    height: auto;
+    min-height: 0;
+    line-height: 1;
+  }
+}
+
+/* CTAs — Figma 146:15388 (primary), 146:15390 (secondary) */
+.site-canvas .wx-btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--wx-btn-primary-border-soft);
+  background-color: var(--wx-primary);
+  box-shadow:
+    var(--wx-inset-highlight),
+    var(--wx-btn-press-shadow),
+    0 0 0 1px var(--wx-primary);
+  font-size: var(--wx-text-ui-14);
+  line-height: var(--wx-text-ui-14-lh);
+  font-weight: 500;
+  color: var(--wx-btn-primary-fg);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition:
+    box-shadow 260ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 160ms cubic-bezier(0.3, 0, 0, 1);
+}
+
+.site-canvas .wx-btn-primary:hover {
+  background-color: var(--wx-btn-primary-hover-bg);
+  box-shadow:
+    var(--wx-btn-primary-hover-inset),
+    0 6px 18px -6px var(--wx-btn-primary-hover-glow),
+    var(--wx-btn-shadow-xs),
+    0 0 0 1px var(--wx-btn-primary-hover-ring);
+}
+
+.site-canvas .wx-btn-primary:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+.site-canvas .wx-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--wx-btn-secondary-border);
+  background-color: var(--wx-btn-secondary-bg);
+  font-size: var(--wx-text-ui-14);
+  line-height: var(--wx-text-ui-14-lh);
+  font-weight: 500;
+  color: var(--wx-ink);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 160ms cubic-bezier(0.3, 0, 0, 1);
+}
+
+.site-canvas .wx-btn-secondary:hover {
+  background-color: var(--wx-btn-secondary-bg-hover);
+  border-color: var(--wx-btn-secondary-border-hover);
+}
+
+.site-canvas .wx-btn-secondary:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+}
+
+.site-canvas .wx-btn-wrap {
+  white-space: normal;
+  text-align: center;
+}
+
+@media (width >= 40rem) {
+  .site-canvas .wx-btn-primary.wx-btn-wrap {
+    white-space: nowrap;
+  }
+}
+
+/* Studio capabilities — per-row accent from --wx-cap-accent (set inline on .wx-capability-row) */
+.site-canvas .wx-capability-icon {
+  background-color: color-mix(in srgb, var(--wx-cap-accent, var(--wx-primary)) 18%, var(--wx-page-bg));
+  color: var(--wx-cap-accent, var(--wx-primary));
+}
+
+.site-canvas .wx-capability-title {
+  color: var(--wx-cap-accent, var(--wx-primary));
+}
+
+/* =========================
+   Stats row
+   ========================= */
+.site-canvas .wx-stat-value {
+  font-size: var(--wx-stat-value-size);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: var(--wx-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (width >= 40rem) {
+  .site-canvas .wx-stat-value {
+    font-size: var(--wx-stat-value-size-sm);
+  }
+}
+
+/* =========================
+   FAQ — accordion + iMessage-style answer bubble per item
+   ========================= */
+.site-canvas .wx-faq-panel-inner {
+  padding-bottom: 0.75rem;
+}
+
+.site-canvas .wx-faq-answer-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  max-width: min(36rem, 100%);
+}
+
+.site-canvas .wx-faq-avatar-placeholder {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--wx-primary) 35%, var(--wx-surface-soft)),
+    var(--wx-surface-soft)
+  );
+  box-shadow:
+    0 0 0 1px var(--wx-imessage-bubble-ring),
+    0 2px 6px color-mix(in srgb, var(--wx-black) 8%, transparent);
+}
+
+.site-canvas .wx-faq-bubble {
+  flex: 1;
+  min-width: 0;
+  border-radius: 1.125rem 1.125rem 1.125rem 0.25rem;
+  background-color: var(--wx-imessage-bubble);
+  box-shadow:
+    0 0 0 1px var(--wx-imessage-bubble-ring),
+    0 4px 14px color-mix(in srgb, var(--wx-black) 7%, transparent);
+  padding: 0.65rem 0.85rem 0.7rem;
+}
+
+.site-canvas .wx-faq-bubble__text {
+  margin: 0;
+  font-size: var(--wx-text-faq-bubble-line-size);
+  line-height: var(--wx-text-faq-bubble-line-leading);
+  color: var(--wx-ink);
+  letter-spacing: -0.01em;
+}
+
+.site-canvas .wx-faq-bubble__answer {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  color: var(--wx-muted);
+  font-size: var(--wx-text-body-secondary-size);
+  line-height: var(--wx-text-body-secondary-leading);
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .site-canvas .wx-faq-bubble__answer {
+    font-size: var(--wx-text-body-secondary-size-sm);
+    line-height: var(--wx-text-body-secondary-leading-sm);
+  }
+}
+
+.site-canvas .wx-faq-item {
+  border-top: 1px solid var(--wx-border-soft);
+}
+
+.site-canvas .wx-faq-item:last-child {
+  border-bottom: 1px solid var(--wx-border-soft);
+}
+
+.site-canvas .wx-faq-summary {
+  appearance: none;
+  margin: 0;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--wx-ink);
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-weight: 500;
+  font-size: var(--wx-text-faq-summary-size);
+  line-height: var(--wx-text-faq-summary-leading);
+  text-align: left;
+  font-synthesis: none;
+}
+
+.site-canvas .wx-faq-summary:focus-visible {
+  outline: 2px solid var(--wx-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.site-canvas .wx-faq-chevron {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  position: relative;
+  display: block;
+}
+
+.site-canvas .wx-faq-chevron::before,
+.site-canvas .wx-faq-chevron::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background-color: currentColor;
+}
+
+.site-canvas .wx-faq-chevron::before {
+  width: 100%;
+  height: 1.5px;
+}
+
+.site-canvas .wx-faq-chevron::after {
+  height: 100%;
+  width: 1.5px;
+}
+
+/* =========================
+   Pull quote / testimonial
+   ========================= */
+.site-canvas .wx-quote-mark {
+  display: block;
+  font-size: var(--wx-text-quote-mark-size);
+  line-height: 0.8;
+  color: var(--wx-primary);
+  font-weight: 500;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+/* =========================
+   Service cards — productized offers
+   Per-card accent inherited from inline `--wx-cap-accent`
+   ========================= */
+.site-canvas .wx-service-card {
+  position: relative;
+  transition:
+    background-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-canvas .wx-service-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-left: 2px solid transparent;
+  transition: border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-canvas .wx-service-card:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--wx-cap-accent, var(--wx-primary)) 4%,
+    var(--wx-page-bg)
+  );
+}
+
+.site-canvas .wx-service-card:hover::after {
+  border-color: var(--wx-cap-accent, var(--wx-primary));
+}
+
+/* =========================
+   Qualification form
+   ========================= */
+.site-canvas .wx-form-input {
+  width: 100%;
+  appearance: none;
+  background-color: var(--wx-page-bg);
+  border: 1px solid var(--wx-border-soft);
+  border-radius: calc(var(--wx-radius-card) - 2px);
+  padding: 0.625rem 0.875rem;
+  font-size: var(--wx-text-sm-size);
+  line-height: var(--wx-text-form-input-leading);
+  color: var(--wx-ink);
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  transition:
+    border-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-canvas .wx-form-input::placeholder {
+  color: var(--wx-muted);
+}
+
+.site-canvas .wx-form-input--textarea {
+  min-height: 5.5rem;
+  resize: vertical;
+}
+
+.site-canvas .wx-form-input:hover {
+  border-color: color-mix(in srgb, var(--wx-primary) 32%, var(--wx-border-soft));
+}
+
+.site-canvas .wx-form-input:focus,
+.site-canvas .wx-form-input:focus-visible {
+  outline: none;
+  border-color: var(--wx-primary);
+  box-shadow: 0 0 0 3px var(--wx-primary-ring);
+  background-color: var(--wx-page-bg);
+}
+
+.site-canvas select.wx-form-input {
+  background-image: linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--wx-muted) 50%
+    ),
+    linear-gradient(135deg, var(--wx-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 16px) 50%,
+    calc(100% - 11px) 50%;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 2rem;
+}
+
+/* =========================
+   Services row — flat typographic list, no cards
+   ========================= */
+.site-canvas .wx-service-row {
+  /* Each row is just type. The list does the rest. */
+}
+
+/* Respect reduced motion globally for custom transitions */
+@media (prefers-reduced-motion: reduce) {
+  .site-canvas .wx-gallery-frame > img,
+  .site-canvas .wx-btn-primary,
+  .site-canvas .wx-btn-secondary,
+  .site-canvas .wx-stack-nugget,
+  .site-canvas .wx-faq-chevron,
+  .site-canvas .wx-work-card--figma,
+  .site-canvas .wx-work-card-v2__view-pill,
+  .site-canvas .wx-service-card,
+  .site-canvas .wx-service-card::after,
+  .site-canvas .wx-form-input {
+    transition: none !important;
+  }
+
+  .site-canvas .wx-stack-nugget:active {
+    transform: none !important;
+  }
+
+  /* Pause the marquee scroll for users who prefer no motion */
+  .site-canvas .wx-stack-marquee__inner {
+    animation-play-state: paused !important;
+  }
+
+  /* Figma work cards: show chrome and footer links without slide/sweep */
+  .site-canvas .wx-work-card-v2__chrome-top {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .site-canvas .wx-work-card__sweep {
+    transform: scaleX(0) !important;
+  }
+}
