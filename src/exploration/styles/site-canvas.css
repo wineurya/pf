@@ -298,7 +298,7 @@
   background-color: var(--wx-warm-figma-canvas);
 }
 
-/* Optional per-entry canvas (e.g. InCity navy) — `style="--wx-figma-200-canvas"`, not warm */
+/* Optional per-entry 200:88 canvas — `style="--wx-figma-200-canvas"`, not warm (light or deep field) */
 .site-canvas .wx-work-card--figma-20088[data-figma-canvas] {
   background-color: var(--wx-figma-200-canvas);
 }
@@ -525,8 +525,21 @@
   mix-blend-mode: multiply;
 }
 
-/* Dark 200:88 (custom canvas): same grain as warm, over mock, under chrome — `soft-light` on navy */
-.site-canvas .wx-work-card--figma-20088[data-figma-canvas] .wx-work-card__shell::after {
+/* 200:88 + custom light canvas: paper grain (aligns with Figma “film” on white) */
+.site-canvas .wx-work-card--figma-20088.wx-work-card--figma-canvas-light .wx-work-card__shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--wx-radius-card);
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* 200:88 + custom dark canvas (no `figma-canvas-light`): `soft-light` on deep fields */
+.site-canvas .wx-work-card--figma-20088[data-figma-canvas]:not(.wx-work-card--figma-canvas-light) .wx-work-card__shell::after {
   content: "";
   position: absolute;
   inset: 0;

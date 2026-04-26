@@ -136,31 +136,33 @@ export const SITE_WORK = [
     caseStudyPath: "/work/incity",
     workCardAspect: "1/1",
     /**
-     * Figma `InCity` — phone mock + floating prompts on a deep navy field (MCP → `public/work`, same pipeline as Avance).
+     * Figma `InCity` node 458:10858 — hand + iPhone, welcome UI, three tilted service tags, floating bubbles
+     * + icon orbs. Light field; hero export via MCP to `public/work` (re-export when the frame changes).
      * @see https://www.figma.com/design/zxOvL9r7aK2GqiBTUcgGei/InCity?node-id=458-10858
      */
     workCardBackgroundImage: "/work/incity-hero.png",
     workCardImageHighPriority: false,
     workCardFigmaFrame: "200-88",
-    /** Letterbox / load color behind `contain` mock — matches Figma field */
-    workCardFigmaCanvas: "#050816",
-    workCardFooterOnDark: true,
+    /** Figma artboard: clean light field around the mock (letterbox + load state) */
+    workCardFigmaCanvas: "#f4f4f1",
+    /** Paper-like grain: multiply, not `soft-light` (reserved for dark canvases) */
+    workCardFigmaLightCanvas: true,
     workCardTeaserLead:
-      "One app for what the city owes you clarity on. InCity puts services, updates, and a reporting path in your hand.",
+      "Your all-in-one access to city services, updates, and support. InCity keeps the full stack in your pocket—not on a form behind a browser tab.",
     workCardStutters: [],
-    workCardFinale: "Start with a question—leave with a next step.",
+    workCardFinale: "One home for the questions that used to start with “where do I even…”.",
     summary:
-      "Civic mobile. Services, status, and a clearer line from seeing a problem to filing a report—without the desktop maze.",
-    alt: "InCity app mock: phone with welcome screen, tags, and floating civic prompts on a deep blue canvas",
+      "Civic app: welcome flow, “connected / support / updates” tags, and chat-style prompts for city problems, waiting on updates, and simpler reporting—mobile-first, same patterns as the Avance card (200:88, nav focus, case study).",
+    alt: "InCity marketing mock: hand holding phone with welcome screen, service tags, floating civic prompts, light background",
     featured: true,
     overlayTitle: "InCity",
-    overlaySubtitle: "City services in your pocket",
-    workCardNuggetsAriaLabel: "Clarity, cadence, and ownership",
+    overlaySubtitle: "Civic app · services + reporting",
+    workCardNuggetsAriaLabel: "In-app service tags and themes from the Figma artboard",
     nuggets: [
-      { label: "Civic UX", color: "#ea580c", icon: "Layout01Icon" },
-      { label: "Status & updates", color: "#22c55e", icon: "Calendar01Icon" },
-      { label: "Simpler reporting", color: "#eab308", icon: "Mail01Icon" },
-      { label: "Mobile-first", color: "#0f172a", icon: "Layers01Icon" },
+      { label: "Connected", color: "#f97316", icon: "GridViewIcon" },
+      { label: "Support", color: "#22c55e", icon: "QuoteUpIcon" },
+      { label: "Updates", color: "#eab308", icon: "Calendar01Icon" },
+      { label: "Right at hand", color: "#e7e5e4", icon: "Layers01Icon" },
     ],
   },
 ];

@@ -698,6 +698,7 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
     : { opacity: 0, y: NUGGET_ROW_MOTION.yFrom };
   const useFigma20088 = entry.workCardFigmaFrame === "200-88" && Boolean(bgUrl);
   const figmaCanvasHex = entry.workCardFigmaCanvas?.trim() || null;
+  const figmaLightCanvas = Boolean(entry.workCardFigmaLightCanvas);
   const workCardChromeTopInnards = (
     <>
       {nuggets.length > 0 ? (
@@ -842,6 +843,7 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
           "wx-work-card wx-work-card--figma group relative w-full max-w-full rounded-[var(--wx-radius-card)]",
           useFigma20088 ? "wx-work-card--figma-20088 overflow-visible" : "overflow-hidden",
           useWarmFooter && "wx-work-card--footer-warm",
+          figmaLightCanvas && useFigma20088 && "wx-work-card--figma-canvas-light",
           !useFigma20088 && workCardAspectClassName(entry),
           (isEmptyProjectSlot || isNavOnlyViewCard) && "cursor-pointer",
         )}

@@ -22,7 +22,7 @@ export const WORK_CASE_PAGES = {
     template: "hero",
     title: "InCity",
     kicker: "Civic · Mobile",
-    lede: "Services, status, and reporting that read as one system—designed for the phone in your pocket, not a desktop maze.",
+    lede: "All-in-one access to city services, updates, and support — with a calmer first screen and prompts for city problems, status, and reporting (Figma 458:10858).",
     heroImage: "/work/incity-hero.png",
     backLabel: "Index",
   },
