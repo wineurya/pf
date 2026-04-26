@@ -3,6 +3,24 @@
   color-scheme: light;
   background-color: var(--wx-page-bg);
   color: var(--wx-ink);
+  /**
+   * Figma: Testing, 200:88 — canvas; chip fills from `winnie-content.js` (tuned sienna / paper / warm ink on #E3DBD1).
+   * Hairline: brown–ink mix so borders aren’t cool gray. Shadow: rgb(47,32,14).
+   */
+  --wx-warm-figma-canvas: #e3dbd1;
+  --wx-warm-title-ink: #1a1a1a;
+  /* Muted subcopy on photo (Figma: brown-gray, not flat black) */
+  --wx-warm-body-ink: oklch(0.4 0.02 50 / 0.82);
+  /* Warm plan-summary chips: one border + one shadow (One Page Love–style: tight cluster, no mixed “elevation” styles). */
+  --wx-warm-nugget-pill-border: color-mix(in srgb, #2c2722 16%, #8f6b4e 14%);
+  --wx-warm-nugget-pill-shadow: 0 1px 2px color-mix(in srgb, #2c2722 9%, transparent);
+  --wx-warm-nugget-pill-shadow-ink: 0 1px 2px color-mix(in srgb, #1a1210 18%, transparent);
+  --wx-warm-nugget-hairline: color-mix(in srgb, #8f6b4e 22%, #2c2722 10%);
+  --wx-warm-nugget-shadow: color-mix(in srgb, #2c2722 10%, transparent);
+  /* Figma 200:109 (Frame 6) art — `drop-shadow` on <img> (alpha), rgb(47,32,14); sync from Effects panel on re-export */
+  --wx-figma-200109-shadow-1: 0 2px 4px rgba(47, 32, 14, 0.16);
+  --wx-figma-200109-shadow-2: 0 6px 18px rgba(47, 32, 14, 0.12);
+  --wx-figma-200109-shadow-3: 0 16px 40px rgba(47, 32, 14, 0.07);
   /* Must match AsideHeroHeadline word enter duration (motion) */
   --wx-headline-word-enter-duration: 0.26s;
   /* Sparkle rises just after the word (tiny delay); brief blur flash then opacity/transform fade */
@@ -11,6 +29,11 @@
   --wx-sparkle-rise-distance: -2.65rem;
   --wx-sparkle-rise-ease: cubic-bezier(0.22, 0.65, 0.28, 1);
   --wx-sparkle-blur-flash: 10px;
+}
+
+/* Work case routes — full-bleed top bar (Figma 165-53); `WorkCasePage.jsx` */
+.winnie-exploration.wx-work-case-chrome {
+  --wx-explore-top-nav-h: calc(max(0.5rem, env(safe-area-inset-top, 0px)) + 4rem);
 }
 
 /* Custom dot cursor — pointer-fine only; class toggled from JS when motion is allowed */
@@ -37,9 +60,12 @@
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-white) 70%, transparent);
 }
 
-/* Work panel — center supporting chrome; card overlay copy is centered in .wx-work-center-copy */
+/* Work — gallery cards (Figma 162-395/414, tuned to exploration surfaces) */
 .winnie-exploration .wx-work-section {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 4vw, 2.25rem);
 }
 
 .winnie-exploration ::selection {
@@ -95,141 +121,579 @@
   will-change: transform;
 }
 
-.winnie-exploration .wx-work-card {
+/* Work card — default 16:9; optional `workCardAspect` (`1/1`, `4/5`). Full-bleed bg, top chrome, sweep */
+.winnie-exploration .wx-work-card--figma {
   position: relative;
-  overflow: hidden;
-  border-radius: var(--wx-radius-card);
-  background-color: var(--wx-surface);
-  box-shadow: inset 0 0 0 1px var(--wx-work-card-ring);
+  width: 100%;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  box-shadow:
+    0 1px 2px var(--wx-shadow-ambient),
+    inset 0 0 0 1px var(--wx-border-soft);
+  transition: box-shadow 0.2s ease;
+  color: var(--wx-ink);
 }
 
-.winnie-exploration .wx-work-card .wx-gallery-frame {
-  border-radius: inherit;
+/* Figma 200:88 — canvas #E3DBD1 shows at rounded edge / before image loads */
+.winnie-exploration .wx-work-card--figma.wx-work-card--footer-warm {
+  background-color: var(--wx-warm-figma-canvas);
 }
 
-.winnie-exploration .wx-work-card:focus-visible {
-  outline: 2px solid var(--wx-primary);
-  outline-offset: 3px;
+/* 200:88 artboard: device shadow is CSS `drop-shadow` on the raster — need overflow + hover lift (see __figma-frame) */
+.winnie-exploration .wx-work-card--figma.wx-work-card--figma-20088 {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
 }
 
-/* Nugget lab pattern: clip media + scrim + copy; chips anchor at bottom center */
-.winnie-exploration .wx-work-card-surface {
+@media (hover: hover) and (pointer: fine) {
+  .winnie-exploration .wx-work-card--figma.wx-work-card--figma-20088:where(:hover, :focus-within) {
+    z-index: 1;
+  }
+}
+
+.winnie-exploration .wx-work-card--figma:has(.wx-work-card-v2__link:hover) {
+  box-shadow:
+    0 4px 18px -6px var(--wx-shadow-ambient),
+    0 1px 2px var(--wx-shadow-ambient),
+    inset 0 0 0 1px color-mix(in srgb, var(--wx-primary) 22%, var(--wx-border-soft));
+}
+
+.winnie-exploration .wx-work-card__shell {
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Background: div (empty gradient) or Figma-sourced <picture> / <img> (object-fit cover) */
+.winnie-exploration .wx-work-card__bg,
+.winnie-exploration picture.wx-work-card__bg {
   position: absolute;
   inset: 0;
   z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+.winnie-exploration .wx-work-card__bg--empty,
+.winnie-exploration div.wx-work-card__bg--empty {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.winnie-exploration picture.wx-work-card__bg {
+  display: block;
   overflow: hidden;
   border-radius: inherit;
 }
 
-.winnie-exploration .wx-work-card-media {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-.winnie-exploration .wx-work-card-media-img {
+.winnie-exploration picture.wx-work-card__bg img,
+.winnie-exploration img.wx-work-card__bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  max-width: none;
   object-fit: cover;
-  transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
-  will-change: transform;
-}
-
-.winnie-exploration .wx-work-card-media-fallback {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    var(--wx-surface) 0%,
-    var(--wx-work-fallback-mid) 45%,
-    var(--wx-work-fallback-end) 100%
-  );
-}
-
-.winnie-exploration .wx-work-card-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  pointer-events: none;
-  background: var(--wx-scrim-gradient);
-  opacity: 0;
-  transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.winnie-exploration .wx-work-card--active .wx-work-card-scrim {
-  opacity: 1;
-}
-
-.winnie-exploration .wx-work-center-copy {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+  object-position: center;
+  -webkit-user-drag: none;
   pointer-events: none;
 }
 
-/* True geometric center — flex + asymmetric bottom pad pulled copy upward; chips use their own anchor. */
-.winnie-exploration .wx-work-center-copy-inner {
+/* Figma `Testing/200:88` — Frame 4: 2400×2400; child 200:109 mock 1410.14×1490.18px, centered, object-fit: cover. */
+/* Raster: alpha around devices — `drop-shadow` on `img` (not a box on the media wrapper). */
+.winnie-exploration .wx-work-card__figma-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  /* Card fill is --wx-warm-figma-canvas; keep transparent so layout matches artboard. */
+  background-color: transparent;
+  pointer-events: none;
+}
+
+.winnie-exploration .wx-work-card__figma-mock {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
-  width: min(36rem, 100%);
-  max-width: calc(100% - 2 * var(--wx-work-overlay-pad-x));
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--wx-work-copy-gap);
-  text-align: center;
+  /* 1410.14/2400 × 100%  |  1490.18/2400 × 100% (Figma Frame 4 vs Frame 6) */
+  width: calc(100% * 1410.14 / 2400);
+  height: calc(100% * 1490.18 / 2400);
+  transform: translate3d(-50%, -50%, 0);
+  background-color: var(--wx-warm-figma-canvas, #e3dbd1);
 }
 
-.winnie-exploration .wx-work-center-copy-inner p {
-  text-align: center;
-  text-wrap: balance;
+.winnie-exploration .wx-work-card__figma-mock-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--wx-warm-figma-canvas, #e3dbd1);
+  overflow: visible;
 }
 
-.winnie-exploration .wx-work-nuggets-anchor {
+.winnie-exploration .wx-work-card__figma-mock-media picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
   pointer-events: none;
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  top: auto;
-  z-index: 4;
-  width: 0;
-  height: 0;
-  transform: translateX(-50%);
 }
 
-.winnie-exploration .wx-work-nugget-center {
+.winnie-exploration .wx-work-card__figma-mock-media picture img,
+.winnie-exploration .wx-work-card__figma-mock-media > img {
   position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  /* Shadow on alpha — values from 200:109 Effects; adjust vars in :root to match the file. */
+  filter: drop-shadow(var(--wx-figma-200109-shadow-1)) drop-shadow(var(--wx-figma-200109-shadow-2))
+    drop-shadow(var(--wx-figma-200109-shadow-3));
+}
+
+.winnie-exploration .wx-work-card__bg--empty {
+  background-image: linear-gradient(
+    98deg,
+    var(--wx-surface-soft) 0%,
+    var(--wx-surface) 48%,
+    var(--wx-surface-soft) 100%
+  );
+}
+
+.winnie-exploration .wx-work-card__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wx-black) 0%, transparent) 0%,
+    color-mix(in srgb, var(--wx-black) 0%, transparent) 40%,
+    color-mix(in srgb, var(--wx-black) 48%, transparent) 100%
+  );
+}
+
+.winnie-exploration .wx-work-card__shell--image-footer .wx-work-card__scrim {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wx-black) 2%, transparent) 0%,
+    color-mix(in srgb, var(--wx-black) 0%, transparent) 38%,
+    color-mix(in srgb, var(--wx-black) 55%, transparent) 100%
+  );
+}
+
+/* Warm image card: one inset ring (spacing-4/5) — top, left, right, bottom match Figma; footer `left:0; bottom:0` inside v2 */
+.winnie-exploration .wx-work-card__shell--footer-warm {
+  box-sizing: border-box;
+  padding: var(--spacing-4);
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .winnie-exploration .wx-work-card__shell--footer-warm {
+    padding: var(--spacing-5);
+  }
+}
+
+.winnie-exploration .wx-work-card-v2--footer-warm-pin {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.winnie-exploration .wx-work-card-v2__footer--warm-pin {
+  position: absolute;
+  /* Flush to v2 edges; bottom gap = same token as left via shell padding */
   left: 0;
-  top: 0;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  bottom: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  width: min(24rem, 100%);
+  margin: 0;
+  padding: 0;
+  padding-top: 0;
+  text-align: left;
 }
 
-.winnie-exploration .wx-work-nugget {
+/* Tighter type block — no reserved stutter/extend tower; quip is one line */
+.winnie-exploration .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary,
+.winnie-exploration .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary--stutter {
+  min-height: 0;
+}
+
+.winnie-exploration .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary-extend--slot {
+  min-height: 0;
+}
+
+.winnie-exploration .wx-work-card-v2__title--warm {
+  color: var(--wx-warm-title-ink);
+  text-shadow: none;
+  font-weight: 600;
+}
+
+.winnie-exploration .wx-work-card-v2__summary--warm-image {
+  color: var(--wx-warm-body-ink);
+  text-shadow: none;
+}
+
+.winnie-exploration .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-lead,
+.winnie-exploration .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-extend,
+.winnie-exploration .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-extend--stutter,
+.winnie-exploration .wx-work-card-v2__summary--warm-image .wx-work-card-v2__summary-extend--finale {
+  color: var(--wx-warm-body-ink);
+  font-style: normal;
+  font-weight: 400;
+  opacity: 1;
+}
+
+/* Hover quip: same type size as lead; no ellipsis — short copy is tuned to stay one line; wrap only if the viewport is very narrow. */
+.winnie-exploration .wx-work-card-v2__footer--warm-pin .wx-work-card-v2__summary-extend--finale {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 1lh; /* one line of this font/line-height; stable while typing */
+  line-height: inherit; /* same as .wx-work-card-v2__summary (1.5) */
+  box-sizing: border-box;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  text-wrap: pretty;
+  hyphens: auto;
+}
+
+/* Accent sweep — Figma 200:88 CTA / tan (#A67C52) on warm brown; align to shell gutters (1:1 with content) */
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card__sweep {
+  left: var(--spacing-4);
+  right: var(--spacing-4);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, #a67c52 32%, transparent),
+    color-mix(in srgb, #6b5344 36%, transparent),
+    color-mix(in srgb, #a67c52 32%, transparent)
+  );
+}
+
+@media (min-width: 640px) {
+  .winnie-exploration .wx-work-card--footer-warm .wx-work-card__sweep {
+    left: var(--spacing-5);
+    right: var(--spacing-5);
+  }
+}
+
+/* Accent sweep: slides in from bottom (creative chrome — not copy) */
+.winnie-exploration .wx-work-card__sweep {
+  position: absolute;
+  bottom: 0;
+  left: 8%;
+  right: 8%;
+  z-index: 2;
+  height: 2px;
+  border-radius: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--wx-primary) 45%, transparent),
+    color-mix(in srgb, var(--wx-accent-teal) 50%, transparent),
+    color-mix(in srgb, var(--wx-accent-violet) 50%, transparent),
+    color-mix(in srgb, var(--wx-primary) 40%, transparent)
+  );
+  transform: scaleX(0);
+  transform-origin: center bottom;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .winnie-exploration .wx-work-card--figma:where(:hover, :focus-within) .wx-work-card__sweep {
+    transform: scaleX(1);
+  }
+}
+
+/* Warm 200:88: no bottom “sweep” (2px line on hover) — it clashes with the full-bleed canvas; nuggets keep CTA color. */
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card__sweep {
+  display: none;
+}
+
+.winnie-exploration .wx-work-card-v2 {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Top nuggets + view more: enter from top on hover (fine pointer only) */
+.winnie-exploration .wx-work-card-v2__chrome-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 0.5rem;
+  will-change: transform, opacity;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+}
+
+/* Warm: Motion drives entrance slide; don’t add a second transform transition here. */
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__chrome-top {
+  transition: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .winnie-exploration .wx-work-card--figma .wx-work-card-v2__chrome-top {
+    transform: translateY(-0.75rem);
+    opacity: 0;
+  }
+  .winnie-exploration .wx-work-card--figma:where(:hover, :focus-within) .wx-work-card-v2__chrome-top {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  /* Figma 200:88 warm: chips stay in the composition; no empty strip before hover. */
+  .winnie-exploration .wx-work-card--figma.wx-work-card--footer-warm .wx-work-card-v2__chrome-top {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.winnie-exploration .wx-work-card-v2__nuggets {
+  display: flex;
+  flex: 1 1 0%;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.winnie-exploration .wx-work-card-v2__nuggets > li {
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .winnie-exploration .wx-work-card-v2__nuggets {
+    gap: 0.75rem;
+  }
+}
+
+.winnie-exploration .wx-work-card-v2__nugget {
   display: inline-flex;
   align-items: center;
-  gap: 0.32rem;
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  line-height: 1;
+  justify-content: center;
+  gap: 0.35rem;
+  box-sizing: border-box;
+  padding: 0.35rem 0.5rem 0.35rem 0.4rem;
+  border-radius: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
   white-space: nowrap;
-  will-change: transform, opacity;
+  text-transform: none;
+  border: 1px solid color-mix(in srgb, var(--wx-black) 6%, transparent);
+  box-shadow: 0 1px 1px var(--wx-shadow-ambient);
 }
 
-.winnie-exploration .wx-work-nugget--chip {
-  position: relative;
-  border-radius: 4px;
-  padding: 0.36rem 0.54rem;
-  border: none;
-  box-shadow: var(--wx-chip-float-shadow);
+/* Warm image card: Figma 200:88 + OPL-style tag row — one radius, one stroke system, even gaps, no full-width sprawl. */
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nuggets {
+  flex: 0 1 auto;
+  width: max-content;
+  max-width: 100%;
+  gap: 0.5rem;
+  row-gap: 0.5rem;
+}
+
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget {
+  min-height: 1.75rem;
+  box-sizing: border-box;
+  border-radius: 9999px;
+  padding: 0.3125rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--wx-warm-nugget-pill-border);
+  box-shadow: var(--wx-warm-nugget-pill-shadow);
+}
+
+/* Icon column: every chip same optical box (matches Lucide 12 in JSX). */
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget-ic,
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget-ic > div,
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget-icon-fallback,
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget-icon-fallback > svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget-label {
+  display: inline-block;
+  line-height: 1.15;
+}
+
+/* Ink: same family, slightly stronger rim + shadow; no “second style” of inset. */
+.winnie-exploration .wx-work-card--footer-warm .wx-work-card-v2__nugget--on-dark {
+  border: 1px solid color-mix(in srgb, #fff 14%, #2c2722 86%);
+  box-shadow: var(--wx-warm-nugget-pill-shadow-ink);
+}
+
+.winnie-exploration .wx-work-card-v2__view-pill {
+  -webkit-tap-highlight-color: transparent;
+  color: var(--wx-white);
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--wx-black) 35%, transparent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.winnie-exploration .wx-work-card__shell:not(.wx-work-card__shell--image-footer) .wx-work-card-v2__view-pill {
+  color: var(--wx-muted);
+  text-shadow: none;
+}
+
+.winnie-exploration .wx-work-card--figma:where(:hover, :focus-within) .wx-work-card-v2__view-pill,
+.winnie-exploration .wx-work-card--figma:has(.wx-work-card-v2__link:hover) .wx-work-card-v2__view-pill,
+.winnie-exploration .wx-work-card--figma:has(.wx-work-card-v2__link:focus-visible) .wx-work-card-v2__view-pill {
+  color: var(--wx-primary);
+}
+
+/* Footer: title + typing teaser — not involved in top slide */
+.winnie-exploration .wx-work-card-v2__footer {
+  z-index: 2;
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: 0.4rem;
+  text-align: left;
+  text-wrap: balance;
+  padding-top: 0.25rem;
+}
+
+/* Warm footer: 8px title↔summary gap; wins over default footer gap (declared after base). */
+.winnie-exploration .wx-work-card-v2__footer.wx-work-card-v2__footer--warm-pin {
+  gap: var(--spacing-2);
+  padding-top: 0;
+  /* `balance` on base footer can split the hover quip across two “even” lines — use normal wrap for lead, line lock on finale below */
+  text-wrap: wrap;
+}
+
+.winnie-exploration .wx-work-card-v2__title--on-image {
+  color: #fff;
+  text-shadow:
+    0 0.5px 0 color-mix(in srgb, var(--wx-black) 30%, transparent),
+    0 1px 2px color-mix(in srgb, var(--wx-black) 55%, transparent),
+    0 2px 14px color-mix(in srgb, var(--wx-black) 40%, transparent);
+}
+
+.winnie-exploration .wx-work-card-v2__title {
+  font-size: clamp(0.9875rem, 2.5vw, 1.125rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--wx-ink);
+}
+
+.winnie-exploration .wx-work-card-v2__summary {
+  min-height: 2.4em;
+  max-width: min(100%, 36rem);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--wx-muted);
+}
+
+/* Stable block: lead + typewriter area keeps height when extension empties. */
+.winnie-exploration .wx-work-card-v2__summary--has-extend,
+.winnie-exploration .wx-work-card-v2__summary--stutter {
+  min-height: max(4.2lh, 2.6em);
+}
+
+.winnie-exploration .wx-work-card-v2__summary-extend--slot {
+  display: inline-block;
+  width: 100%;
+  /* Reserve ~3 lines so clearing the typewriter doesn’t jump; content can grow taller. */
+  min-height: 4lh;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+.winnie-exploration .wx-work-card-v2__summary--on-image {
+  color: rgba(255, 255, 255, 0.84);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.38);
+}
+
+.winnie-exploration .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-lead {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.winnie-exploration .wx-work-card-v2__summary-extend {
+  color: color-mix(in srgb, var(--wx-muted) 100%, var(--wx-primary) 0%);
+  font-weight: 400;
+}
+
+.winnie-exploration .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-extend {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+/* No italic — same metrics as finale so line breaks don’t shift between beats. */
+.winnie-exploration .wx-work-card-v2__summary-extend--stutter {
+  color: color-mix(in srgb, var(--wx-muted) 94%, var(--wx-primary) 6%);
+  opacity: 0.95;
+}
+
+.winnie-exploration .wx-work-card-v2__summary-extend--finale {
+  color: color-mix(in srgb, var(--wx-ink) 90%, var(--wx-primary) 10%);
+  opacity: 1;
+}
+
+.winnie-exploration .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-extend--stutter {
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.winnie-exploration .wx-work-card-v2__summary--on-image .wx-work-card-v2__summary-extend--finale {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
 }
 
 /* Aside footer — stack nuggets + contact (left-aligned, full width) */
@@ -460,9 +924,7 @@
   letter-spacing: -0.01em;
 }
 
-/* =========================
-   Mobile-only: fixed logo + tab bar (always at viewport top), faded scrim
-   ========================= */
+/* Home exploration only: in-aside nav; fixed to viewport on small screens (spacer in layout) */
 @media (max-width: 639px) {
   .winnie-exploration .wx-mobile-nav-spacer {
     height: var(--wx-mobile-nav-h);
@@ -503,6 +965,42 @@
 
   @media (prefers-reduced-motion: reduce) {
     .winnie-exploration .wx-mobile-sticky-nav {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+}
+
+/* Work case: full-bleed top bar — sticky; mobile: frosted scrim; sm+ solid (border in JSX) */
+.winnie-exploration .wx-explore-top-header {
+  background-color: var(--wx-page-bg);
+}
+
+@media (max-width: 639px) {
+  .winnie-exploration .wx-explore-top-header {
+    background: linear-gradient(
+      180deg,
+      var(--wx-page-bg) 0%,
+      color-mix(in srgb, var(--wx-page-bg) 88%, transparent) 55%,
+      color-mix(in srgb, var(--wx-page-bg) 45%, transparent) 85%,
+      transparent 100%
+    );
+    -webkit-backdrop-filter: blur(14px) saturate(165%);
+    backdrop-filter: blur(14px) saturate(165%);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .winnie-exploration .wx-explore-top-header {
+      background: linear-gradient(
+        180deg,
+        var(--wx-page-bg) 0%,
+        color-mix(in srgb, var(--wx-page-bg) 96%, transparent) 100%
+      );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .winnie-exploration .wx-explore-top-header {
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
@@ -550,6 +1048,8 @@
 /* Smooth filter interpolation handled by the browser, not motion. */
 .winnie-exploration .wx-tab-label-text {
   transition: filter 0.34s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Tight tracking + subpixel width — avoid trimming the last glyph. */
+  padding-inline-end: 0.1em;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -571,23 +1071,11 @@
 /* One continuous line: real inline flow (not flex) so baselines match the h1 */
 .winnie-exploration .wx-headline-line {
   display: inline;
-  /* With tracking-tight, nudge word spaces so they match sentence rhythm */
-  word-spacing: 0.02em;
+  word-spacing: normal;
 }
 
 .winnie-exploration .wx-headline-static {
   display: inline;
-}
-
-/* Single word space between “feel” and the cyan word: body color + same metrics (no cyan bleed, no double space) */
-.winnie-exploration .wx-headline-gap {
-  display: inline;
-  font: inherit;
-  font-weight: inherit;
-  letter-spacing: inherit;
-  word-spacing: inherit;
-  color: var(--wx-ink);
-  white-space: pre;
 }
 
 .winnie-exploration .wx-alive {
@@ -1053,60 +1541,6 @@
 }
 
 /* =========================
-   Work-card caption — museum plaque under each image
-   Title left · meta right (Concept · Kind · Year · ↗)
-   ========================= */
-.winnie-exploration .wx-work-caption-link {
-  display: block;
-  margin-top: 0.625rem;
-  text-decoration: none;
-  color: inherit;
-}
-
-.winnie-exploration .wx-work-caption {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0 0.125rem;
-}
-
-.winnie-exploration .wx-work-caption__title {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  color: var(--wx-ink);
-  line-height: 1.3;
-}
-
-.winnie-exploration .wx-work-caption__meta {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  color: var(--wx-muted);
-  letter-spacing: 0.01em;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.winnie-exploration .wx-work-caption__arrow {
-  display: inline-block;
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.winnie-exploration .wx-work-caption-link:hover .wx-work-caption__title,
-.winnie-exploration .wx-work-caption-link:focus-visible .wx-work-caption__title {
-  color: var(--wx-primary);
-}
-
-.winnie-exploration .wx-work-caption-link:hover .wx-work-caption__arrow,
-.winnie-exploration .wx-work-caption-link:focus-visible .wx-work-caption__arrow {
-  transform: translate(2px, -2px);
-  color: var(--wx-primary);
-}
-
-/* =========================
    Services row — flat typographic list, no cards
    ========================= */
 .winnie-exploration .wx-service-row {
@@ -1120,13 +1554,11 @@
   .winnie-exploration .wx-btn-secondary,
   .winnie-exploration .wx-stack-nugget,
   .winnie-exploration .wx-faq-chevron,
-  .winnie-exploration .wx-work-card,
-  .winnie-exploration .wx-work-card-scrim,
-  .winnie-exploration .wx-work-nugget,
+  .winnie-exploration .wx-work-card--figma,
+  .winnie-exploration .wx-work-card-v2__view-pill,
   .winnie-exploration .wx-service-card,
   .winnie-exploration .wx-service-card::after,
-  .winnie-exploration .wx-form-input,
-  .winnie-exploration .wx-work-caption__arrow {
+  .winnie-exploration .wx-form-input {
     transition: none !important;
   }
 
@@ -1139,4 +1571,12 @@
     animation-play-state: paused !important;
   }
 
+  /* Figma work cards: show chrome and footer links without slide/sweep */
+  .winnie-exploration .wx-work-card-v2__chrome-top {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .winnie-exploration .wx-work-card__sweep {
+    transform: scaleX(0) !important;
+  }
 }

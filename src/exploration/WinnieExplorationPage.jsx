@@ -1,18 +1,5 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handler = (e) => setReduced(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-  return reduced;
-}
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   BookUserIcon,
@@ -34,15 +21,32 @@ import {
   PenTool01Icon,
   QuoteUpIcon,
 } from "@hugeicons/core-free-icons";
+import { ArrowUpRight } from "@phosphor-icons/react";
 import { Envelope } from "@phosphor-icons/react/dist/csr/Envelope";
 import { InstagramLogo } from "@phosphor-icons/react/dist/csr/InstagramLogo";
 import { LinkedinLogo } from "@phosphor-icons/react/dist/csr/LinkedinLogo";
 import { XLogo } from "@phosphor-icons/react/dist/csr/XLogo";
 import { clsx } from "clsx";
+import {
+  BookTextIcon,
+  CalendarDaysIcon,
+  FigmaIcon as LucideFigmaIcon,
+  GalleryThumbnailsIcon,
+  LaptopMinimalCheckIcon,
+  LayoutPanelTopIcon,
+  LayersIcon,
+  ListIcon,
+  LoaderPinwheelIcon,
+  MailCheckIcon,
+  MessageCircleIcon,
+  PenToolIcon,
+  SparklesIcon,
+  SquareStackIcon,
+  TerminalIcon,
+} from "lucide-animated";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
 import { ScrollTrigger } from "@/lib/gsap.js";
-import { navigateWithViewTransition } from "@/lib/navigateViewTransition.js";
 import { useLenis } from "@/providers/LenisProvider.jsx";
 import {
   WINNIE_AVAILABILITY,
@@ -62,9 +66,10 @@ import {
   WINNIE_WORK,
 } from "@/exploration/winnie-content.js";
 import { useWinnieSectionScroll } from "@/exploration/useWinnieSectionScroll.js";
+import { useReducedMotion } from "@/exploration/useReducedMotion.js";
+import { WinnieTopNav } from "@/exploration/WinnieTopNav.jsx";
+import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
 import "@/exploration/styles/winnie-exploration.css";
-
-const TAB_ICONS = [Briefcase01Icon, BookUserIcon, Layers01Icon, Mail01Icon];
 
 const NUGGET_ICON_MAP = {
   CodeCircleIcon,
@@ -80,21 +85,68 @@ const NUGGET_ICON_MAP = {
   GridTableIcon,
   LayoutThreeColumnIcon,
   LayoutTwoColumnIcon,
+  Calendar01Icon,
+  QuoteUpIcon,
+  Mail01Icon,
+  BookUserIcon,
 };
 
-/** Stack marquee logos: Simple Icons CDN embeds brand fill on `<svg>`. */
-function stackToolLogoUrl(tool) {
-  if (tool.logoUrl) return tool.logoUrl;
-  if (tool.brandSlug) return `https://cdn.simpleicons.org/${tool.brandSlug}`;
-  return null;
+/**
+ * Lucide Animated — https://lucide-animated.com (npm: `lucide-animated`). Icons animate on hover.
+ * Keys match `nuggets[].icon` in `winnie-content.js`; unmapped keys fall back to `NUGGET_ICON_MAP` + Hugeicons.
+ */
+const LUCIDE_NUGGET_MAP = {
+  BookUserIcon: BookTextIcon,
+  Calendar01Icon: CalendarDaysIcon,
+  CodeCircleIcon: TerminalIcon,
+  ComputerDesk01Icon: LaptopMinimalCheckIcon,
+  FallingStarIcon: SparklesIcon,
+  FigmaIcon: LucideFigmaIcon,
+  FramerIcon: LoaderPinwheelIcon,
+  GridTableIcon: GalleryThumbnailsIcon,
+  GridViewIcon: ListIcon,
+  Layout01Icon: LayoutPanelTopIcon,
+  LayoutThreeColumnIcon: GalleryThumbnailsIcon,
+  LayoutTwoColumnIcon: SquareStackIcon,
+  Layers01Icon: LayersIcon,
+  MagicWand01Icon: SparklesIcon,
+  Mail01Icon: MailCheckIcon,
+  PenTool01Icon: PenToolIcon,
+  QuoteUpIcon: MessageCircleIcon,
+};
+
+/**
+ * Work card nugget list: one timing model for show + hide (forward stagger in, reverse out).
+ * Easing: Emil Kowalski — strong ease-out cubic-bezier(0.23, 1, 0.32, 1) for transform + opacity; ~240ms
+ * for small UI; stagger 0.05s fits his 30–80ms list spacing. See emilkowal.ski, Motion easing docs.
+ */
+const NUGGET_ROW_MOTION = {
+  stagger: 0.05,
+  duration: 0.24,
+  ease: [0.23, 1, 0.32, 1],
+  /** Slide in from the top of the card / chrome row (px; negative = above final position) */
+  yFrom: -14,
+};
+
+/**
+ * `lucide-animated` icons: replay built-in path motion on an interval (ref disables their hover; see package).
+ * Stagger first tick per chip; tune if animations overlap.
+ */
+const NUGGET_LUCIDE_LOOP_MS = 3000;
+const NUGGET_LUCIDE_STAGGER_MS = 360;
+
+function useCoarsePointerOrNoHover() {
+  const [coarse, setCoarse] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(hover: none), (pointer: coarse)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none), (pointer: coarse)");
+    const h = () => setCoarse(mq.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+  return coarse;
 }
-
-const CONTACT_PHOSPHOR_ICONS = {
-  linkedin: LinkedinLogo,
-  x: XLogo,
-  instagram: InstagramLogo,
-  email: Envelope,
-};
 
 function hexToSrgb(hex) {
   const h = hex.replace("#", "");
@@ -110,39 +162,60 @@ function linearizeChannel(u) {
   return u <= 0.03928 ? u / 12.92 : ((u + 0.055) / 1.055) ** 2.4;
 }
 
-function relativeLuminanceHex(hex) {
+/** sRGB 0–1 → WCAG 2.1 relative luminance. */
+function relativeLuminanceFromHex(hex) {
   const { r, g, b } = hexToSrgb(hex);
   return (
     0.2126 * linearizeChannel(r) + 0.7152 * linearizeChannel(g) + 0.0722 * linearizeChannel(b)
   );
 }
 
-/** High-contrast label on chip fills from hex luminance. */
-function labelOnChipFill(fillHex) {
-  return relativeLuminanceHex(fillHex) > 0.5
-    ? "var(--color-neutral-1000)"
-    : "var(--color-neutral-0)";
+/** L1, L2 in [0,1]. Returns contrast ratio (≥1). */
+function contrastRatio(L1, L2) {
+  const hi = Math.max(L1, L2);
+  const lo = Math.min(L1, L2);
+  return (hi + 0.05) / (lo + 0.05);
 }
 
-/** Work-card chips: bottom row, y up / stagger down on engage; reverse on exit. */
-const WX_NUGGET_GAP_PREFERRED = 90;
-/** Floor for empty px between neighbouring chip edges once gap collapses on narrow cards. */
-const WX_NUGGET_GAP_EDGE_BUFFER = 8;
-/** Horizontal breathing room from card sides when fitting the row. */
-const WX_NUGGET_SIDE_PAD = 14;
-const WX_NUGGET_ROW_Y = -38;
-const WX_NUGGET_ENTER_LIFT = 48;
-const WX_NUGGET_ENTER_DURATION = 0.38;
-const WX_NUGGET_ENTER_STAGGER = 0.058;
-const WX_NUGGET_ENTER_EASE = [0.22, 1, 0.36, 1];
-const WX_NUGGET_EXIT_DURATION = 0.3;
-const WX_NUGGET_EXIT_STAGGER = 0.048;
-const WX_NUGGET_EXIT_EASE = [0.48, 0, 0.82, 1];
-const WX_NUGGET_EXIT_DROP = 52;
+/**
+ * Work card nugget: pick UI near-black vs near-white for **maximum** contrast against fill.
+ * (Luminance-threshold only fails in the “muddy mid” where both sides are weak; WCAG is target ≥4.5:1 for small type.)
+ * Returns CSS color tokens; Hugeicons can consume `currentColor` via the span.
+ */
+function nuggetTextColor(fillHex) {
+  const L = relativeLuminanceFromHex(fillHex);
+  const Lblack = relativeLuminanceFromHex("#000000");
+  const Lwhite = relativeLuminanceFromHex("#ffffff");
+  const cBlack = contrastRatio(L, Lblack);
+  const cWhite = contrastRatio(L, Lwhite);
+  return cWhite > cBlack ? "var(--color-neutral-0)" : "var(--color-neutral-1000)";
+}
+
+/** `true` when the fill is dark enough to use light ink (styling for ink chips in warm Figma). */
+function nuggetFillIsDeep(fillHex) {
+  const L = relativeLuminanceFromHex(fillHex);
+  const Lblack = relativeLuminanceFromHex("#000000");
+  const Lwhite = relativeLuminanceFromHex("#ffffff");
+  return contrastRatio(L, Lwhite) > contrastRatio(L, Lblack);
+}
+
+/** Stack marquee logos: Simple Icons CDN embeds brand fill on `<svg>`. */
+function stackToolLogoUrl(tool) {
+  if (tool.logoUrl) return tool.logoUrl;
+  if (tool.brandSlug) return `https://cdn.simpleicons.org/${tool.brandSlug}`;
+  return null;
+}
+
+const CONTACT_PHOSPHOR_ICONS = {
+  linkedin: LinkedinLogo,
+  x: XLogo,
+  instagram: InstagramLogo,
+  email: Envelope,
+};
 
 /** On-screen UI easing — Emil Kowalski flowchart (not entering viewport). */
 const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
-/** Sliding tab pill — out-expo so it glides without overshoot. */
+/** Tab label expand/collapse when a segment is selected. */
 const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
 const WX_TAB_PILL_DURATION = 0.36;
 const WX_TAB_MICRO_DURATION = 0.28;
@@ -192,305 +265,536 @@ function RevealCard({ children, className, reduceMotion, as = "article", ...rest
   );
 }
 
-function WorkNuggetChip({ label, fill, iconKey, engaged, index, reduceMotion, pos, chipRef }) {
-  const Icon = NUGGET_ICON_MAP[iconKey];
-  const ink = labelOnChipFill(fill);
-  const yHidden = pos.y + WX_NUGGET_ENTER_LIFT;
-  const yExit = pos.y + WX_NUGGET_EXIT_DROP;
+/**
+ * Figma 162-395 (showcase) / 162-414 (case study + View more). Defaults from `workCardVariant` + `caseStudyPath`.
+ */
+function getWorkCardVariant(entry) {
+  if (entry.workCardVariant) return entry.workCardVariant;
+  return entry.caseStudyPath ? "case-study" : "showcase";
+}
+
+/**
+ * `workCardNuggetsAriaLabel` optional in `winnie-content.js` per entry. Default names the list for SR without repeating every chip.
+ */
+function getWorkCardNuggetsListAriaLabel(entry) {
+  const custom = entry.workCardNuggetsAriaLabel?.trim();
+  if (custom) return custom;
+  return `${entry.title} at a glance`;
+}
+
+const WORK_CARD_TEASER_WORDS = 8;
+/** Mouse-leave: delete finale/stutter one char at a time (stutter teaser). */
+const WORK_CARD_STUTTER_UNTYPE_MS = 12;
+
+function splitWorkTeaserWords(summary) {
+  const t = summary.trim();
+  if (!t) return { teaser: "", rest: "" };
+  const words = t.split(/\s+/);
+  if (words.length <= WORK_CARD_TEASER_WORDS) return { teaser: t, rest: "" };
+  return {
+    teaser: words.slice(0, WORK_CARD_TEASER_WORDS).join(" "),
+    rest: " " + words.slice(WORK_CARD_TEASER_WORDS).join(" "),
+  };
+}
+
+function WorkCardTeaserSimple({ full, isActive, reduceMotion, useLightOnImage, useWarmImageFooter }) {
+  const { teaser, rest } = useMemo(() => splitWorkTeaserWords(full), [full]);
+  const [restLen, setRestLen] = useState(0);
+
+  useEffect(() => {
+    if (!rest) {
+      setRestLen(0);
+      return;
+    }
+    if (reduceMotion) {
+      setRestLen(isActive ? rest.length : 0);
+      return;
+    }
+    const target = isActive ? rest.length : 0;
+    if (restLen === target) return;
+    const id = window.setTimeout(
+      () => setRestLen((prev) => prev + (isActive ? 1 : -1)),
+      isActive ? 19 : 12,
+    );
+    return () => window.clearTimeout(id);
+  }, [isActive, rest, reduceMotion, restLen]);
 
   return (
-    <div className="wx-work-nugget-center">
-      <motion.div
-        ref={chipRef}
-        className="wx-work-nugget wx-work-nugget--chip"
-        style={{
-          color: ink,
-          backgroundColor: fill,
-          zIndex: engaged ? pos.z : index,
-        }}
-        initial={false}
-        animate={
-          engaged
-            ? reduceMotion
-              ? { x: pos.x, y: pos.y, scale: 1, opacity: 1, rotate: 0 }
-              : {
-                  x: pos.x,
-                  y: [yHidden, pos.y],
-                  scale: [0.96, 1],
-                  opacity: [0, 1],
-                  rotate: 0,
-                }
-            : reduceMotion
-              ? { x: pos.x, y: yExit, opacity: 0, rotate: 0, scale: 0.88 }
-              : { x: pos.x, y: yExit, opacity: 0, rotate: 0, scale: 0.88 }
+    <p
+      className={clsx(
+        "wx-work-card-v2__summary m-0 text-left",
+        useWarmImageFooter && "wx-work-card-v2__summary--warm-image",
+        useLightOnImage && !useWarmImageFooter && "wx-work-card-v2__summary--on-image",
+        rest && "wx-work-card-v2__summary--has-extend",
+      )}
+      aria-label={full}
+    >
+      <span className="wx-work-card-v2__summary-lead">{teaser}</span>
+      {rest ? (
+        <span
+          className="wx-work-card-v2__summary-extend wx-work-card-v2__summary-extend--slot"
+          aria-hidden={restLen === 0 && !isActive}
+        >
+          {rest.slice(0, restLen)}
+        </span>
+      ) : null}
+    </p>
+  );
+}
+
+/** Slight ragged typing: longer pauses on “phrase” boundaries (deterministic). */
+function typeCharDelay(i) {
+  return 16 + (i > 0 && i % 5 === 0 ? 28 : 0) + (i % 9 === 4 ? 16 : 0);
+}
+
+/**
+ * `workCardTeaserLead` stands alone. On hover: optional 0–2 stutter lines (e.g. “Try:” nudges), then `finale`.
+ * With no stutters, only the finale (e.g. a one-line quip) is typed in.
+ */
+function formatStutterSegment(s) {
+  const t = (s ?? "").trim();
+  if (!t) return "";
+  return t.startsWith(" ") ? t : ` ${t}`;
+}
+function WorkCardStutterTeaser({ lead, s0, s1, finale, isActive, reduceMotion, useLightOnImage, useWarmImageFooter }) {
+  const stutterParts = useMemo(() => {
+    return [formatStutterSegment(s0), formatStutterSegment(s1)].filter((p) => p.length > 0);
+  }, [s0, s1]);
+  const finSpaced = useMemo(() => {
+    const t = (finale.startsWith(" ") ? finale : ` ${finale}`).trimEnd();
+    return t.startsWith(" ") ? t : ` ${t}`;
+  }, [finale]);
+
+  const [ext, setExt] = useState("");
+  const [tone, setTone] = useState("finale");
+
+  useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+    if (reduceMotion) {
+      setExt(finSpaced);
+      setTone("finale");
+      return;
+    }
+    const sleep = (ms) => new Promise((resolve) => { window.setTimeout(resolve, ms); });
+    let gone = false;
+    const partDelMs = 11;
+
+    (async () => {
+      setExt("");
+      for (const [idx, part] of stutterParts.entries()) {
+        if (gone) return;
+        setTone(idx === 0 ? "s0" : "s1");
+        for (let i = 0; i <= part.length; i += 1) {
+          if (gone) return;
+          setExt(part.slice(0, i));
+          if (i < part.length) await sleep(typeCharDelay(i));
         }
-        transition={
-          reduceMotion
-            ? { duration: 0.12, ease: "easeOut" }
-            : engaged
-              ? {
-                  delay: index * WX_NUGGET_ENTER_STAGGER,
-                  duration: WX_NUGGET_ENTER_DURATION,
-                  ease: WX_NUGGET_ENTER_EASE,
-                }
-              : {
-                  type: "tween",
-                  duration: WX_NUGGET_EXIT_DURATION,
-                  ease: WX_NUGGET_EXIT_EASE,
-                  delay: index * WX_NUGGET_EXIT_STAGGER,
-                }
+        await sleep(400);
+        for (let i = part.length; i >= 0; i -= 1) {
+          if (gone) return;
+          setExt(part.slice(0, i));
+          if (i > 0) await sleep(partDelMs);
         }
+        await sleep(120);
+      }
+      if (gone) return;
+      setTone("finale");
+      for (let i = 0; i <= finSpaced.length; i += 1) {
+        if (gone) return;
+        setExt(finSpaced.slice(0, i));
+        if (i < finSpaced.length) await sleep(typeCharDelay(i));
+      }
+    })();
+
+    return () => {
+      gone = true;
+    };
+  }, [isActive, reduceMotion, stutterParts, finSpaced]);
+
+  useEffect(() => {
+    if (isActive) {
+      return;
+    }
+    if (reduceMotion) {
+      setExt("");
+      setTone("finale");
+      return;
+    }
+    if (ext.length === 0) {
+      setTone("finale");
+      return;
+    }
+    const id = window.setTimeout(() => {
+      setExt((prev) => prev.slice(0, -1));
+    }, WORK_CARD_STUTTER_UNTYPE_MS);
+    return () => window.clearTimeout(id);
+  }, [isActive, reduceMotion, ext]);
+
+  return (
+    <p
+      className={clsx(
+        "wx-work-card-v2__summary wx-work-card-v2__summary--stutter m-0 text-left",
+        useWarmImageFooter && "wx-work-card-v2__summary--warm-image",
+        useLightOnImage && !useWarmImageFooter && "wx-work-card-v2__summary--on-image",
+      )}
+    >
+      <span className="wx-work-card-v2__summary-lead">{lead}</span>
+      <span
+        className={clsx(
+          "wx-work-card-v2__summary-extend wx-work-card-v2__summary-extend--slot",
+          ext.length > 0 && tone !== "finale" && "wx-work-card-v2__summary-extend--stutter",
+          ext.length > 0 && tone === "finale" && "wx-work-card-v2__summary-extend--finale",
+        )}
+        aria-hidden={!isActive}
       >
-        {Icon ? (
-          <HugeiconsIcon icon={Icon} size={14} color={ink} strokeWidth={2.1} aria-hidden />
-        ) : null}
-        {label}
-      </motion.div>
+        {ext}
+      </span>
+    </p>
+  );
+}
+
+function workCardHasStutterTeaser(entry) {
+  return Boolean(entry.workCardTeaserLead && entry.workCardFinale);
+}
+
+function WorkCardTeaserText({ entry, isActive, reduceMotion, useLightOnImage, useWarmImageFooter }) {
+  if (workCardHasStutterTeaser(entry)) {
+    return (
+      <WorkCardStutterTeaser
+        lead={entry.workCardTeaserLead}
+        s0={entry.workCardStutters?.[0] ?? ""}
+        s1={entry.workCardStutters?.[1] ?? ""}
+        finale={entry.workCardFinale}
+        isActive={isActive}
+        reduceMotion={reduceMotion}
+        useLightOnImage={useLightOnImage}
+        useWarmImageFooter={useWarmImageFooter}
+      />
+    );
+  }
+  return (
+    <WorkCardTeaserSimple
+      full={entry.summary}
+      isActive={isActive}
+      reduceMotion={reduceMotion}
+      useLightOnImage={useLightOnImage}
+      useWarmImageFooter={useWarmImageFooter}
+    />
+  );
+}
+
+function workCardBackgroundUrl(entry) {
+  if (entry.workCardBackgroundImage) return entry.workCardBackgroundImage;
+  if (entry.image?.primary) {
+    return WINNIE_FIGMA_ASSETS[entry.image.primary] ?? WINNIE_IMAGE_FALLBACKS[entry.image.fallback];
+  }
+  return null;
+}
+
+/** Default 16:9; optional `workCardAspect` (`"1/1"`, `"4/5"`, …) on a work entry. */
+function workCardAspectClassName(entry) {
+  if (entry.workCardAspect === "1/1") return "aspect-square";
+  if (entry.workCardAspect === "4/5") return "aspect-[4/5]";
+  return "aspect-video";
+}
+
+function WorkNuggetPill({ label, color, iconKey, reduceMotion, nuggetsRevealed, nuggetIndex }) {
+  const LucideCmp = LUCIDE_NUGGET_MAP[iconKey];
+  const HugeIcon = NUGGET_ICON_MAP[iconKey];
+  const ink = nuggetTextColor(color);
+  const lucideRef = useRef(null);
+
+  useEffect(() => {
+    if (reduceMotion || !nuggetsRevealed || !LucideCmp) {
+      return;
+    }
+    const h = lucideRef.current;
+    if (!h?.startAnimation) {
+      return;
+    }
+    const stagger = (nuggetIndex ?? 0) * NUGGET_LUCIDE_STAGGER_MS;
+    let intervalId;
+    const startTimeout = window.setTimeout(() => {
+      h.startAnimation();
+      intervalId = window.setInterval(() => h.startAnimation(), NUGGET_LUCIDE_LOOP_MS);
+    }, stagger);
+    return () => {
+      window.clearTimeout(startTimeout);
+      if (intervalId) {
+        window.clearInterval(intervalId);
+      }
+      h?.stopAnimation?.();
+    };
+  }, [reduceMotion, nuggetsRevealed, LucideCmp, nuggetIndex]);
+
+  return (
+    <span
+      className={clsx("wx-work-card-v2__nugget", nuggetFillIsDeep(color) && "wx-work-card-v2__nugget--on-dark")}
+      style={{ color: ink, backgroundColor: color }}
+    >
+      {LucideCmp ? (
+        <span
+          className="wx-work-card-v2__nugget-ic inline-flex size-3 shrink-0 items-center justify-center [&>div]:!size-3"
+          aria-hidden
+        >
+          <LucideCmp ref={lucideRef} size={12} className="text-current" />
+        </span>
+      ) : HugeIcon ? (
+        <span className="wx-work-card-v2__nugget-icon-fallback inline-flex shrink-0" aria-hidden>
+          <HugeiconsIcon icon={HugeIcon} size={12} color={ink} strokeWidth={2} aria-hidden />
+        </span>
+      ) : null}
+      <span className="wx-work-card-v2__nugget-label">{label}</span>
+    </span>
+  );
+}
+
+/** `sizes` for 200:88 artboard: mock ≈0.6 card width, high-DPR — pair with 2560w/2000w `srcset` */
+const FIGMA_200_88_SIZES = "(min-width: 64rem) min(40vw, 32rem), min(100vw, 100vw)";
+
+/**
+ * Figma `Testing/200:88` (Frame 4): 2400×2400, canvas rgb(227,219,209); child `200:109` 1410.14×1490.18px, centered, img cover + warm shadow.
+ */
+function WorkCardFigma20088Artboard({ entry, bgUrl }) {
+  if (!bgUrl) {
+    return <div className="wx-work-card__bg wx-work-card__bg--empty" aria-hidden />;
+  }
+  const media = entry.workCardBackgroundWebp ? (
+    <picture>
+      <source
+        type="image/webp"
+        srcSet={`${entry.workCardBackgroundWebp} 2560w`}
+        sizes={FIGMA_200_88_SIZES}
+      />
+      <img
+        src={bgUrl}
+        srcSet={`${bgUrl} 2000w`}
+        sizes={FIGMA_200_88_SIZES}
+        alt=""
+        decoding="async"
+        fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
+        loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
+      />
+    </picture>
+  ) : (
+    <img
+      src={bgUrl}
+      srcSet={`${bgUrl} 2000w`}
+      sizes={FIGMA_200_88_SIZES}
+      alt=""
+      decoding="async"
+      fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
+      loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
+    />
+  );
+  return (
+    <div
+      className="wx-work-card__figma-frame"
+      data-figma-node="200-88"
+      data-figma-name="Frame 4"
+      aria-hidden
+    >
+      <div
+        className="wx-work-card__figma-mock"
+        data-figma-node="200-109"
+        data-figma-name="Frame 6 1"
+      >
+        <div className="wx-work-card__figma-mock-media">{media}</div>
+      </div>
     </div>
   );
 }
 
 function WorkCard({ entry, reduceMotion }) {
-  const [active, setActive] = useState(false);
-
-  const img = entry.image
-    ? {
-        primary: WINNIE_FIGMA_ASSETS[entry.image.primary],
-        fallback: WINNIE_IMAGE_FALLBACKS[entry.image.fallback],
-      }
-    : null;
-
-  const nuggets = entry.nuggets ?? [];
-  const n = nuggets.length;
-
+  const variant = getWorkCardVariant(entry);
+  const isCaseStudy = variant === "case-study" && Boolean(entry.caseStudyPath);
+  const [hovered, setHovered] = useState(false);
+  const bgUrl = workCardBackgroundUrl(entry);
+  const useWarmFooter = Boolean(entry.workCardFooterWarm);
+  const useLightText = Boolean(entry.workCardFooterOnDark) && !useWarmFooter;
+  const nuggets = (entry.nuggets ?? []).slice(0, 8);
+  const coarsePointer = useCoarsePointerOrNoHover();
   /**
-   * Dynamic chip gap — measure frame width + widest chip, then clamp so:
-   *   - gap never undercuts a no-overlap floor (`chipWidth + EDGE_BUFFER`)
-   *   - row always fits inside `(frameWidth - 2 * SIDE_PAD)`
-   * Removes the old `matchMedia` breakpoint guess; the row now self-fits at any width.
+   * Warm 200:88 nuggets get the same pill styling in CSS, but **motion** follows hover like other
+   * cards (always show on coarse / no-hover devices). Including `useWarmFooter` here used to
+   * pin opacity to 1 and removed stagger in/out.
    */
-  const frameRef = useRef(null);
-  const chipRefs = useRef([]);
-  const [frameWidth, setFrameWidth] = useState(0);
-  const [widestChip, setWidestChip] = useState(0);
-
-  const setChipRef = useCallback(
-    (i) => (node) => {
-      chipRefs.current[i] = node;
-    },
-    [],
+  const nuggetsRevealed = coarsePointer || hovered;
+  /**
+   * Start above the final row (reduced motion: no travel).
+   */
+  const nuggetMotionInitial = reduceMotion
+    ? { opacity: 1, y: 0 }
+    : { opacity: 0, y: NUGGET_ROW_MOTION.yFrom };
+  const useFigma20088 = entry.workCardFigmaFrame === "200-88" && Boolean(bgUrl);
+  const workCardChromeTopInnards = (
+    <>
+      {nuggets.length > 0 ? (
+        <ul className="wx-work-card-v2__nuggets" aria-label={getWorkCardNuggetsListAriaLabel(entry)}>
+          {nuggets.map((n, i) => (
+            <motion.li
+              key={`${entry.slug}-nug-${n.label}`}
+              className="m-0 p-0"
+              initial={nuggetMotionInitial}
+              animate={
+                reduceMotion
+                  ? { opacity: 1, y: 0 }
+                  : {
+                      opacity: nuggetsRevealed ? 1 : 0,
+                      y: nuggetsRevealed ? 0 : NUGGET_ROW_MOTION.yFrom,
+                    }
+              }
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : {
+                      delay: nuggetsRevealed
+                        ? i * NUGGET_ROW_MOTION.stagger
+                        : (nuggets.length - 1 - i) * NUGGET_ROW_MOTION.stagger,
+                      duration: NUGGET_ROW_MOTION.duration,
+                      ease: NUGGET_ROW_MOTION.ease,
+                    }
+              }
+            >
+              <WorkNuggetPill
+                label={n.label}
+                color={n.color}
+                iconKey={n.icon}
+                reduceMotion={reduceMotion}
+                nuggetsRevealed={nuggetsRevealed}
+                nuggetIndex={i}
+              />
+            </motion.li>
+          ))}
+        </ul>
+      ) : (
+        <span className="min-w-0 flex-1" />
+      )}
+      {isCaseStudy ? (
+        <span className="wx-work-card-v2__view-pill inline-flex shrink-0 items-center gap-2" aria-hidden>
+          View more
+          <ArrowUpRight className="size-5 shrink-0" weight="bold" aria-hidden />
+        </span>
+      ) : null}
+    </>
+  );
+  const shell = (
+    <div
+      className={clsx(
+        "wx-work-card__shell flex h-full min-h-0 flex-col justify-between",
+        !useWarmFooter && "gap-3 p-4 sm:p-5",
+        useWarmFooter && "wx-work-card__shell--footer-warm",
+        useLightText && "wx-work-card__shell--image-footer",
+      )}
+    >
+      {useFigma20088 ? (
+        <WorkCardFigma20088Artboard entry={entry} bgUrl={bgUrl} />
+      ) : bgUrl && entry.workCardBackgroundWebp ? (
+        <picture className="wx-work-card__bg" aria-hidden>
+          <source type="image/webp" srcSet={entry.workCardBackgroundWebp} />
+          <img
+            src={bgUrl}
+            alt=""
+            decoding="async"
+            fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
+            loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
+            sizes="(min-width: 64rem) min(50vw, 40rem), 100vw"
+          />
+        </picture>
+      ) : bgUrl ? (
+        <img
+          className="wx-work-card__bg"
+          src={bgUrl}
+          alt=""
+          decoding="async"
+          fetchPriority={entry.workCardImageHighPriority ? "high" : "auto"}
+          loading={entry.workCardImageHighPriority ? "eager" : "lazy"}
+          sizes="(min-width: 64rem) min(50vw, 40rem), 100vw"
+          aria-hidden
+        />
+      ) : (
+        <div className="wx-work-card__bg wx-work-card__bg--empty" aria-hidden />
+      )}
+      {!useWarmFooter ? <div className="wx-work-card__scrim" aria-hidden /> : null}
+      <div className="wx-work-card__sweep" aria-hidden />
+        <div
+          className={clsx(
+            "wx-work-card-v2 pointer-events-auto",
+            useWarmFooter && "wx-work-card-v2--footer-warm-pin",
+          )}
+        >
+        {useWarmFooter ? (
+          <motion.div
+            className="wx-work-card-v2__chrome-top"
+            initial={reduceMotion ? { y: 0, opacity: 1 } : { y: -18, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true, amount: 0.32, margin: "0px 0px -8% 0px" }}
+            transition={{
+              duration: reduceMotion ? 0.01 : 0.5,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            {workCardChromeTopInnards}
+          </motion.div>
+        ) : (
+          <div className="wx-work-card-v2__chrome-top">{workCardChromeTopInnards}</div>
+        )}
+        <div
+          className={clsx("wx-work-card-v2__footer", useWarmFooter && "wx-work-card-v2__footer--warm-pin")}
+        >
+          <h3
+            className={clsx(
+              "wx-work-card-v2__title m-0 max-w-[min(100%,20rem)] text-balance text-left font-medium tracking-tight",
+              useLightText && "wx-work-card-v2__title--on-image",
+              useWarmFooter && "wx-work-card-v2__title--warm",
+            )}
+          >
+            {entry.title}
+          </h3>
+          <WorkCardTeaserText
+            entry={entry}
+            isActive={hovered}
+            reduceMotion={reduceMotion}
+            useLightOnImage={useLightText}
+            useWarmImageFooter={useWarmFooter}
+          />
+        </div>
+      </div>
+    </div>
   );
 
-  useEffect(() => {
-    const el = frameRef.current;
-    if (!el || typeof ResizeObserver === "undefined") {
-      if (el) setFrameWidth(el.getBoundingClientRect().width);
-      return undefined;
-    }
-    const ro = new ResizeObserver((entries) => {
-      for (const entryItem of entries) {
-        const w = entryItem.contentRect?.width ?? 0;
-        setFrameWidth((prev) => (Math.abs(prev - w) > 0.5 ? w : prev));
-      }
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  useLayoutEffect(() => {
-    if (!n) return;
-    let max = 0;
-    for (const node of chipRefs.current) {
-      if (!node) continue;
-      const w = node.getBoundingClientRect().width;
-      if (w > max) max = w;
-    }
-    if (max > 0) {
-      setWidestChip((prev) => (Math.abs(prev - max) > 0.5 ? max : prev));
-    }
-  }, [n, frameWidth]);
-
-  const nuggetGap = useMemo(() => {
-    if (n <= 1) return WX_NUGGET_GAP_PREFERRED;
-    const chipW = widestChip || 72;
-    const floor = chipW + WX_NUGGET_GAP_EDGE_BUFFER;
-    if (!frameWidth) return Math.max(floor, WX_NUGGET_GAP_PREFERRED);
-    const fit = (frameWidth - 2 * WX_NUGGET_SIDE_PAD - chipW) / (n - 1);
-    const clamped = Math.min(WX_NUGGET_GAP_PREFERRED, fit);
-    return Math.round(Math.max(floor, clamped));
-  }, [frameWidth, widestChip, n]);
-
-  const nuggetLayout = useMemo(() => {
-    if (n <= 0) return [];
-    if (n <= 1) return [{ x: 0, y: WX_NUGGET_ROW_Y, z: 20 }];
-    const mid = (n - 1) / 2;
-    return nuggets.map((_, i) => ({
-      x: (i - mid) * nuggetGap,
-      y: WX_NUGGET_ROW_Y,
-      z: 20 + i,
-    }));
-  }, [n, nuggetGap, nuggets]);
-
-  const copyEase = [0.22, 1, 0.36, 1];
-  const copyTrans = (delay) =>
-    reduceMotion
-      ? { duration: 0.12, ease: "easeOut" }
-      : { duration: 0.4, ease: copyEase, delay };
-
   return (
-    <RevealCard
-      reduceMotion={reduceMotion}
-      className={clsx("wx-work-card group", active && "wx-work-card--active")}
-      tabIndex={0}
-      role="group"
-      aria-label={`${entry.overlayTitle}. ${entry.overlaySubtitle}. Hover or focus to see project details.`}
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
-      onFocus={() => setActive(true)}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) setActive(false);
-      }}
-    >
-      <div className="wx-gallery-frame" ref={frameRef}>
-        <div className="wx-work-card-surface">
-          <div className="wx-work-card-media" aria-hidden>
-            {img ? (
-              <FigmaImage
-                primary={img.primary}
-                fallback={img.fallback}
-                alt={entry.alt}
-                className="wx-work-card-media-img"
-              />
-            ) : (
-              <div className="wx-work-card-media-fallback" />
-            )}
-          </div>
-          <div className="wx-work-card-scrim" aria-hidden />
-
-          <div className="wx-work-center-copy">
-            <div className="wx-work-center-copy-inner">
-              <motion.p
-                className="w-full text-center text-lg font-medium tracking-tight text-[var(--wx-on-scrim)] sm:text-xl"
-                initial={false}
-                animate={active ? { opacity: 1 } : { opacity: 0 }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0.12, ease: "easeOut" }
-                    : active
-                      ? copyTrans(0)
-                      : { duration: 0.3, ease: [0.5, 0, 0.88, 1], delay: 0.06 }
-                }
-              >
-                {entry.overlayTitle}
-              </motion.p>
-              <motion.p
-                className="w-full text-center text-sm leading-relaxed text-[var(--wx-on-scrim-muted)] sm:text-[0.9375rem]"
-                initial={false}
-                animate={active ? { opacity: 1 } : { opacity: 0 }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0.12, ease: "easeOut" }
-                    : active
-                      ? copyTrans(0.14)
-                      : { duration: 0.3, ease: [0.5, 0, 0.88, 1], delay: 0 }
-                }
-              >
-                {entry.overlaySubtitle}
-              </motion.p>
-            </div>
-          </div>
-        </div>
-
-        {nuggets.length ? (
-          <div className="wx-work-nuggets-anchor" aria-hidden>
-            {nuggets.map((item, i) => (
-              <WorkNuggetChip
-                key={`${entry.slug}-${item.label}`}
-                label={item.label}
-                fill={item.color}
-                iconKey={item.icon}
-                engaged={active}
-                index={i}
-                reduceMotion={reduceMotion}
-                pos={nuggetLayout[i]}
-                chipRef={setChipRef(i)}
-              />
-            ))}
-          </div>
+    <RevealCard reduceMotion={reduceMotion} as="div" className="w-full">
+      <div
+        className={clsx(
+          "wx-work-card wx-work-card--figma group relative w-full max-w-full rounded-[var(--wx-radius-card)]",
+          useFigma20088 ? "wx-work-card--figma-20088 overflow-visible" : "overflow-hidden",
+          useWarmFooter && "wx-work-card--footer-warm",
+          workCardAspectClassName(entry),
+        )}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        role="group"
+        aria-label={`${entry.title}. ${entry.summary}`}
+      >
+        {isCaseStudy ? (
+          <ViewTransitionLink
+            to={entry.caseStudyPath}
+            className="wx-work-card-v2__link absolute inset-0 z-20 rounded-[var(--wx-radius-card)] text-inherit no-underline outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
+            aria-label={`${entry.title} — view case study`}
+          />
         ) : null}
-        <WorkCardCaption entry={entry} />
+        <div className="pointer-events-none relative z-10 h-full min-h-0">{shell}</div>
       </div>
     </RevealCard>
   );
 }
 
-/**
- * Museum-plaque caption — single line under each work image. Replaces the
- * persistent badges that used to sit on the image. Title left, metadata right
- * (Concept · Kind · Year). Whole row is a link if `caseStudyPath` exists.
- */
-function WorkCardCaption({ entry }) {
-  const meta = [
-    entry.concept ? "Concept" : null,
-    entry.kind,
-    entry.year,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-
-  const inner = (
-    <div className="wx-work-caption">
-      <span className="wx-work-caption__title">{entry.title}</span>
-      <span className="wx-work-caption__meta">
-        {meta}
-        {entry.caseStudyPath ? (
-          <span aria-hidden className="wx-work-caption__arrow">↗</span>
-        ) : null}
-      </span>
-    </div>
-  );
-
-  if (entry.caseStudyPath) {
-    return (
-      <ViewTransitionLink to={entry.caseStudyPath} className="wx-work-caption-link">
-        {inner}
-      </ViewTransitionLink>
-    );
-  }
-  return inner;
-}
-
 const HEADLINE_ROTATE_WORDS = ["clear", "human", "accessible", "intentional"];
 /** Keep in sync with `--wx-headline-word-enter-duration` in winnie-exploration.css */
 const HEADLINE_WORD_ENTER_DURATION = 0.26;
-
-/** Same order as `WINNIE_ACCENT_HEX` / capability cards — tints the wordmark via mask */
-const WX_WORDMARK_MARK_GRADIENT = `linear-gradient(135deg, var(--wx-primary) 0%, var(--wx-accent-teal) 32%, var(--wx-accent-violet) 64%, var(--wx-accent-amber) 100%)`;
-
-/**
- * Figma SVG as mask + `background` so fill tracks tokens (Figma files often ship fixed raster colors).
- */
-function MaskedFigmaIcon({ src, className, background = "var(--wx-primary)", style, ...rest }) {
-  return (
-    <div
-      className={className}
-      style={{
-        background,
-        WebkitMaskImage: `url(${src})`,
-        maskImage: `url(${src})`,
-        WebkitMaskSize: "contain",
-        maskSize: "contain",
-        WebkitMaskRepeat: "no-repeat",
-        maskRepeat: "no-repeat",
-        WebkitMaskPosition: "center",
-        maskPosition: "center",
-        ...style,
-      }}
-      aria-hidden
-      {...rest}
-    />
-  );
-}
 
 function AsideHeroHeadline({ reduceMotion }) {
   const [wordIndex, setWordIndex] = useState(0);
@@ -509,9 +813,7 @@ function AsideHeroHeadline({ reduceMotion }) {
   return (
     <h1 className="wx-headline relative block w-full max-w-full text-[1.625rem] font-medium leading-none tracking-tight text-[var(--wx-ink)] sm:text-[1.75rem]">
       <span className="wx-headline-line">
-        <span className="wx-headline-static">Designs that feel</span>
-        <span className="wx-headline-gap"> </span>
-        <span className="wx-alive">
+        <span className="wx-headline-static">Designs that feel </span><span className="wx-alive">
           <span className="wx-headline-word-wrap">
             <span className="wx-headline-rotate" aria-live="polite">
               <span className="wx-headline-rotate__mask">
@@ -1036,27 +1338,38 @@ export function WinnieExplorationPage() {
     return () => window.clearTimeout(t);
   }, []);
 
-  const scrollToSection = (sectionId, tabIndexOverride) => {
-    const tabIndex =
-      typeof tabIndexOverride === "number"
-        ? tabIndexOverride
-        : WINNIE_TABS.findIndex((t) => t.sectionId === sectionId);
-    if (tabIndex >= 0) setScrollIntentIndex(tabIndex);
+  const scrollToSection = useCallback(
+    (sectionId, tabIndexOverride) => {
+      const tabIndex =
+        typeof tabIndexOverride === "number"
+          ? tabIndexOverride
+          : WINNIE_TABS.findIndex((t) => t.sectionId === sectionId);
+      if (tabIndex >= 0) setScrollIntentIndex(tabIndex);
 
-    const el = document.getElementById(sectionId);
-    if (!el) return;
-    const offset = 0;
-    const duration = reduceMotion ? 0 : 1.35;
-    if (lenis) {
-      lenis.scrollTo(el, {
-        offset,
-        duration,
-        easing: reduceMotion ? undefined : WX_LENIS_EASE_IN_OUT,
-      });
-      return;
-    }
-    el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-  };
+      const el = document.getElementById(sectionId);
+      if (!el) return;
+      const offset = 0;
+      const duration = reduceMotion ? 0 : 1.35;
+      if (lenis) {
+        lenis.scrollTo(el, {
+          offset,
+          duration,
+          easing: reduceMotion ? undefined : WX_LENIS_EASE_IN_OUT,
+        });
+        return;
+      }
+      el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+    },
+    [lenis, reduceMotion],
+  );
+
+  useEffect(() => {
+    if (location.pathname !== "/") return;
+    const id = (location.hash || "").replace("#", "");
+    if (!id.startsWith("winnie-section-")) return;
+    const t = window.setTimeout(() => scrollToSection(id), 80);
+    return () => window.clearTimeout(t);
+  }, [location.hash, location.pathname, scrollToSection]);
 
   return (
     <div
@@ -1079,150 +1392,16 @@ export function WinnieExplorationPage() {
           <div className="flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12">
             <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
             <div className="wx-mobile-sticky-nav flex w-full min-w-0 shrink-0 flex-row flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
-              <a
-                href={location.pathname === "/" ? "#winnie-section-work" : "/"}
-                className="group relative inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
-                onClick={(e) => {
-                  if (location.pathname === "/") {
-                    e.preventDefault();
-                    scrollToSection("winnie-section-work", 0);
-                    return;
-                  }
-                  e.preventDefault();
-                  navigateWithViewTransition(navigate, "/");
-                }}
-              >
-                <span className="flex flex-col gap-0 text-[1rem] font-medium leading-[1.12] text-[var(--wx-ink)]">
-                  <span className="tracking-tight">wineury</span>
-                  <span className="-mt-px flex items-center gap-1">
-                    <MaskedFigmaIcon
-                      src={WINNIE_FIGMA_ASSETS.logoMark}
-                      className="size-3 shrink-0 translate-y-px select-none"
-                      background={WX_WORDMARK_MARK_GRADIENT}
-                    />
-                    <span className="tracking-tight">almonte</span>
-                  </span>
-                </span>
-              </a>
-
-              <div
-                className="wx-tab-track min-w-0 max-w-full shrink overflow-x-auto overflow-y-visible overscroll-x-contain [-webkit-overflow-scrolling:touch]"
-                role="tablist"
-                aria-label="Sections"
-                onKeyDown={(e) => {
-                  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-                  e.preventDefault();
-                  const dir = e.key === "ArrowRight" ? 1 : -1;
-                  const next = (selectedIndex + dir + WINNIE_TABS.length) % WINNIE_TABS.length;
-                  scrollToSection(WINNIE_TABS[next].sectionId, next);
-                  document.getElementById(`winnie-tab-${WINNIE_TABS[next].id}`)?.focus();
-                }}
-              >
-                <div
-                  ref={tabRowRef}
-                  className="relative inline-flex w-max min-w-0 flex-nowrap items-center gap-1 p-1.5"
-                >
-                  {WINNIE_TABS.map((tab, i) => {
-                    const selected = selectedIndex === i;
-                    return (
-                      <motion.button
-                        key={tab.id}
-                        type="button"
-                        role="tab"
-                        id={`winnie-tab-${tab.id}`}
-                        aria-selected={selected}
-                        aria-controls={tab.sectionId}
-                        aria-label={tab.label}
-                        tabIndex={selected ? 0 : -1}
-                        layout
-                        transition={tabPillTransition}
-                        whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-                        className={clsx(
-                          "wx-tab relative flex min-h-10 items-center justify-center rounded-[var(--wx-radius-segment)] text-sm outline-none",
-                          "text-[var(--wx-tab-idle-fg)] px-3 py-2",
-                          selected ? "font-semibold" : "min-w-10 font-medium",
-                        )}
-                        onClick={() => scrollToSection(tab.sectionId, i)}
-                      >
-                        {/* Idle background — static per-button. Hidden under the layoutId pill when selected. */}
-                        <span
-                          aria-hidden
-                          className="pointer-events-none absolute inset-0 -z-20 rounded-[var(--wx-radius-segment)]"
-                          style={{
-                            backgroundColor: "var(--wx-tab-idle)",
-                            boxShadow: "var(--wx-tab-shadow-idle)",
-                          }}
-                        />
-                        {/* Active pill — single instance, FLIPs between buttons via shared layoutId. */}
-                        {selected ? (
-                          <motion.span
-                            layoutId="wx-tab-pill"
-                            aria-hidden
-                            className="pointer-events-none absolute inset-0 -z-10 rounded-[var(--wx-radius-segment)]"
-                            style={{
-                              backgroundColor: "var(--wx-primary)",
-                              boxShadow: "var(--wx-tab-shadow-active)",
-                            }}
-                            transition={tabPillTransition}
-                          />
-                        ) : null}
-                        <motion.span
-                          layout="position"
-                          className="relative z-10 flex min-w-0 items-center justify-center"
-                          transition={tabPillTransition}
-                        >
-                          <motion.span
-                            className="flex shrink-0 items-center justify-center"
-                            initial={false}
-                            animate={
-                              reduceMotion
-                                ? { opacity: 1 }
-                                : { opacity: selected ? 1 : 0.82 }
-                            }
-                            transition={tabMicroTransition}
-                          >
-                            <HugeiconsIcon
-                              icon={TAB_ICONS[i]}
-                              size={17}
-                              color="currentColor"
-                              strokeWidth={1.6}
-                            />
-                          </motion.span>
-                          <AnimatePresence initial={false}>
-                            {selected ? (
-                              <motion.span
-                                key="label"
-                                layout
-                                className="wx-tab-label-text overflow-hidden whitespace-nowrap tracking-tight"
-                                style={{ display: "inline-block" }}
-                                initial={
-                                  reduceMotion
-                                    ? { opacity: 1, width: "auto", marginLeft: 8 }
-                                    : { opacity: 0, width: 0, marginLeft: 0, filter: `blur(${WX_TAB_LABEL_BLUR}px)` }
-                                }
-                                animate={{
-                                  opacity: 1,
-                                  width: "auto",
-                                  marginLeft: 8,
-                                  filter: "blur(0px)",
-                                }}
-                                exit={
-                                  reduceMotion
-                                    ? { opacity: 0, width: 0, marginLeft: 0 }
-                                    : { opacity: 0, width: 0, marginLeft: 0, filter: `blur(${WX_TAB_LABEL_BLUR}px)` }
-                                }
-                                transition={tabPillTransition}
-                              >
-                                {tab.label}
-                              </motion.span>
-                            ) : null}
-                          </AnimatePresence>
-                        </motion.span>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </div>
+              <WinnieTopNav
+                location={location}
+                navigate={navigate}
+                onSelectSection={scrollToSection}
+                selectedIndex={selectedIndex}
+                reduceMotion={reduceMotion}
+                tabPillTransition={tabPillTransition}
+                tabMicroTransition={tabMicroTransition}
+                tabRowRef={tabRowRef}
+              />
             </div>
 
             <div className="mt-9 flex w-full flex-1 flex-col items-start justify-center lg:mt-12 lg:min-h-0 lg:py-2">
@@ -1306,7 +1485,7 @@ export function WinnieExplorationPage() {
             id="winnie-section-work"
             role="tabpanel"
             aria-labelledby="winnie-tab-work"
-            className="wx-work-section min-h-0 space-y-[var(--wx-gallery-gap)] pb-[var(--wx-space-section)]"
+            className="wx-work-section min-h-0 pb-[var(--wx-space-section)]"
           >
             {WINNIE_WORK.filter((entry) => entry.status !== "incomplete").map((entry) => (
               <WorkCard key={entry.slug} entry={entry} reduceMotion={reduceMotion} />

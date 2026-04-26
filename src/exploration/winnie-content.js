@@ -72,11 +72,62 @@ export const WINNIE_HERO = {
  */
 export const WINNIE_WORK = [
   {
+    slug: "avance",
+    title: "Avance",
+    kind: "Coaching · Mobile",
+    year: "2025",
+    role: "Product Designer",
+    workCardVariant: "showcase",
+    /** Square mock (1:1). Other work cards default to 16:9. */
+    workCardAspect: "1/1",
+    /**
+     * Optional full-bleed background. `null` = neutral empty canvas (site-wide default).
+     * Figma `200:109` (two-phone mock) — `avance-hero.webp` (primary) + `avance-hero.png` (fallback), optimized from Figma MCP export.
+     * Layout: `200:88` (2400×2400) — canvas + centered mock (see `workCardFigmaFrame`).
+     * @see ./avance.md
+     */
+    workCardBackgroundImage: "/work/avance-hero.png",
+    workCardBackgroundWebp: "/work/avance-hero.webp",
+    workCardImageHighPriority: true,
+    /** Figma `Testing/200:88` — canvas #E3DBD1, mock 1410.14×1490.18px, centered, warm shadow. */
+    workCardFigmaFrame: "200-88",
+    /** No black scrim; warm title + rgba subcopy only (`wx-work-card__shell--footer-warm`). */
+    workCardFooterWarm: true,
+    /** Lead is always visible; hover types `workCardFinale` (optional 0–2 `workCardStutters` run first). */
+    workCardTeaserLead:
+      "Say your goal in plain language. Avance returns a plan, a deadline, and a coach in your corner when the search goes quiet.",
+    workCardStutters: [],
+    workCardFinale: "Said once—then the week holds the line.",
+    /** Card `aria-label` and non-stutter teasers: product fact; visible stutter = lead + typed finale. */
+    summary:
+      "Mobile coaching. Plain-language goals become a plan, a deadline, and a coach in your corner when progress slows.",
+    alt: "Avance app mockups: goal input and plan summary with goal, deadline, and coach nuggets",
+    featured: true,
+    overlayTitle: "Avance",
+    overlaySubtitle: "Goal → plan · mobile coaching flow",
+    /**
+     * Plan-summary chips: one warm family on #E3DBD1; ink chip softened so the row doesn’t “jump” in weight.
+     * Contrast: `nuggetTextColor()` in `WinnieExplorationPage.jsx`.
+     */
+    workCardNuggetsAriaLabel: "Plan summary at a glance",
+    nuggets: [
+      { label: "Goal", color: "#F0EAE0", icon: "Layout01Icon" },
+      { label: "Calendar", color: "#8F6B4E", icon: "Calendar01Icon" },
+      { label: "Rhythm", color: "#3A342F", icon: "FallingStarIcon" },
+      { label: "Coach", color: "#D9CEC2", icon: "QuoteUpIcon" },
+    ],
+  },
+  {
     slug: "incity",
     title: "InCity",
     kind: "Civic UX · Mobile",
     year: "2025",
     role: "Lead Product Designer",
+    /**
+     * Work card: `showcase` = Figma 162-395 (static); `case-study` = 162-414 (View more → /work/…)
+     * @see work-cases.js (WORK_CASE_PAGES) for case pages: incity, siren, resolutions
+     */
+    workCardVariant: "case-study",
     /** Image-led case study route (template: hero) */
     caseStudyPath: "/work/incity",
     concept: true,
@@ -99,6 +150,7 @@ export const WINNIE_WORK = [
     kind: "Safety UX · Mobile",
     year: "2025",
     role: "UX/UI Designer",
+    workCardVariant: "showcase",
     caseStudyPath: "/work/siren",
     concept: true,
     summary:
@@ -120,6 +172,7 @@ export const WINNIE_WORK = [
     kind: "Product UX · Web + App",
     year: "2024",
     role: "UX/UI Designer",
+    workCardVariant: "case-study",
     caseStudyPath: "/work/resolutions",
     concept: true,
     summary:

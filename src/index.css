@@ -21,6 +21,13 @@
     height: 100%;
   }
 
+  /* Firefox + standards; thin thumb / transparent track on every scrollport */
+  html,
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: gray transparent;
+  }
+
   /* Winnie mobile fixed nav — anchor scroll lands below the bar */
   @media (max-width: 639px) {
     html {

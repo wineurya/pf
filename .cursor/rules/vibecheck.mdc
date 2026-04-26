@@ -1,0 +1,17 @@
+---
+description: Run vibecheck (AI slop linter) on JS/TS changes in this app
+globs: "**/*.{js,jsx,ts,tsx}"
+alwaysApply: false
+---
+
+# Anti–AI-slop checks
+
+This project uses **[vibecheck](https://github.com/yuvrajangadsingh/vibecheck)** (`@yuvrajangadsingh/vibecheck`) — static rules for common AI-generated code smells (stubs, hedging comments, risky patterns).
+
+After substantive edits under `src/`, run:
+
+```bash
+npm run check:slop
+```
+
+Fix new findings at **error** severity before finishing. Use **warn** as signal; tune with `vibecheck --severity info` if needed.
