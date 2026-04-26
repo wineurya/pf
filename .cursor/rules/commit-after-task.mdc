@@ -1,0 +1,18 @@
+---
+description: After finishing a user task, commit and push the branch
+alwaysApply: true
+---
+
+# Commit and push after each task
+
+When a **user task** is **done** (goal met, build/tests you ran pass, and you are about to hand off the answer):
+
+1. **Stage** all files that belong to that task: `git add` with the paths you changed (or `git add -p` if mixed with unrelated edits—do not stuff unrelated work into the same commit).
+2. **Commit** with a **clear, complete-sentence** message describing what changed and why (conventional style is fine, e.g. `fix: …` / `feat: …`).
+3. **Push** the current branch: `git push` (or `git push -u origin <branch>` on first push).
+
+**Skip** commit/push only if `git status` is clean and there is nothing to record.
+
+**If push fails** (no remote, auth, network, or non-fast-forward), report the exact error, say what is still only local, and do not claim the work is on the server.
+
+This is **in addition to** any other end-of-task checks in this repo (e.g. `npm run check:slop` when the vibecheck rule applies). Order: run checks that apply, then **commit, then push**.
