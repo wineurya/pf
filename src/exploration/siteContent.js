@@ -136,11 +136,13 @@ export const SITE_WORK = [
     caseStudyPath: "/work/incity",
     workCardAspect: "1/1",
     /**
-     * Figma `InCity` node 458:10858 — hand + iPhone, welcome UI, three tilted service tags, floating bubbles
-     * + icon orbs. Light field; hero export via MCP to `public/work` (re-export when the frame changes).
+     * Figma `Frame 242` node 458:10858 — flat export (mock + orbs + glass pills). Figma size 1204×914; file may be
+     * scaled; `workCardFigmaMockAspect` matches the **raster** so the box matches the image. Re-export 2× from Figma if needed.
      * @see https://www.figma.com/design/zxOvL9r7aK2GqiBTUcgGei/InCity?node-id=458-10858
      */
     workCardBackgroundImage: "/work/incity-hero.png",
+    /** Pixels of the shipped `incity-hero` (width / height) — must match the bitmap for a tight frame fit. */
+    workCardFigmaMockAspect: "1024 / 778",
     workCardImageHighPriority: false,
     workCardFigmaFrame: "200-88",
     /** Figma artboard: clean light field around the mock (letterbox + load state) */
@@ -151,8 +153,7 @@ export const SITE_WORK = [
     workCardOmitTopChrome: true,
     workCardOmitScrim: true,
     workCardFooterMinimal: true,
-    /** Tweak if the 200:109 raster needs optical centering in the frame. */
-    workCardFigmaObjectPosition: "50% 42%",
+    workCardFigmaObjectPosition: "50% 50%",
     workCardTeaserLead: "All-in-one access to city services, updates, and support.",
     workCardStutters: [],
     workCardFinale: "Right when you need it.",

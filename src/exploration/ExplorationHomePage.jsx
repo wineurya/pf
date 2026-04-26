@@ -1049,15 +1049,19 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
           m.useFigma20088 ? "wx-work-card--figma-20088 overflow-visible" : "overflow-hidden",
           m.useWarmFooter && "wx-work-card--footer-warm",
           m.figmaLightCanvas && m.useFigma20088 && "wx-work-card--figma-canvas-light",
+          m.useFigma20088 && entry.workCardFigmaMockAspect && "wx-work-card--figma-mock-aspect",
           m.omitScrim && "wx-work-card--omit-scrim",
           m.footerMinimal && "wx-work-card--footer-minimal",
           !m.useFigma20088 && workCardAspectClassName(entry),
           (m.isEmptyProjectSlot || m.isNavOnlyViewCard) && "cursor-pointer",
         )}
-        {...(m.figmaCanvasHex
+        {...(m.figmaCanvasHex || entry.workCardFigmaMockAspect
           ? {
-              "data-figma-canvas": "",
-              style: { "--wx-figma-200-canvas": m.figmaCanvasHex },
+              ...(m.figmaCanvasHex ? { "data-figma-canvas": "" } : {}),
+              style: {
+                ...(m.figmaCanvasHex ? { "--wx-figma-200-canvas": m.figmaCanvasHex } : {}),
+                ...(entry.workCardFigmaMockAspect ? { "--wx-figma-mock-aspect": entry.workCardFigmaMockAspect } : {}),
+              },
             }
           : {})}
         onMouseEnter={() => m.setHovered(true)}

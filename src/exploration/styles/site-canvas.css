@@ -425,6 +425,16 @@
   background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas, #e3dbd1));
 }
 
+/* Per-entry: mock box matches a flat export’s aspect (e.g. InCity 458:10858) — set `--wx-figma-mock-aspect` on the card. */
+.site-canvas .wx-work-card--figma-mock-aspect .wx-work-card__figma-mock {
+  width: min(100%, 92%);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: var(--wx-figma-mock-aspect);
+  max-height: 96%;
+  transform: translate3d(-50%, -50%, 0);
+}
+
 .site-canvas .wx-work-card__figma-mock-media {
   position: relative;
   width: 100%;
