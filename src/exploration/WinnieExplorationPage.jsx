@@ -47,14 +47,11 @@ import { useLenis } from "@/providers/LenisProvider.jsx";
 import {
   WINNIE_AVAILABILITY,
   WINNIE_CONTACT_SOCIALS,
-  WINNIE_ENTRY_SERVICE,
   WINNIE_EXTRA_IMAGES,
   WINNIE_FAQ,
   WINNIE_FIGMA_ASSETS,
-  WINNIE_FINAL_CTA,
   WINNIE_HERO,
   WINNIE_IMAGE_FALLBACKS,
-  WINNIE_NEGATIVE_LIST,
   WINNIE_QUALIFICATION_FIELDS,
   WINNIE_SECTION_IDS,
   WINNIE_SERVICES,
@@ -370,19 +367,6 @@ function WorkCard({ entry, reduceMotion }) {
           </div>
           <div className="wx-work-card-scrim" aria-hidden />
 
-          {/* Persistent metadata corners — Concept badge + stack label */}
-          <div className="wx-work-card-meta wx-work-card-meta--top">
-            {entry.concept ? (
-              <span className="wx-work-card-badge" aria-label="Concept project">
-                <span className="wx-work-card-badge__dot" aria-hidden />
-                Concept
-              </span>
-            ) : null}
-            {entry.stackLabel ? (
-              <span className="wx-work-card-stacklabel">{entry.stackLabel}</span>
-            ) : null}
-          </div>
-
           <div className="wx-work-center-copy">
             <div className="wx-work-center-copy-inner">
               <motion.p
@@ -413,23 +397,6 @@ function WorkCard({ entry, reduceMotion }) {
               >
                 {entry.overlaySubtitle}
               </motion.p>
-              {entry.metric ? (
-                <motion.p
-                  className="wx-work-card-metric"
-                  initial={false}
-                  animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-                  transition={
-                    reduceMotion
-                      ? { duration: 0.12, ease: "easeOut" }
-                      : active
-                        ? copyTrans(0.22)
-                        : { duration: 0.24, ease: [0.5, 0, 0.88, 1] }
-                  }
-                >
-                  <span className="wx-work-card-metric__value">{entry.metric.value}</span>
-                  <span className="wx-work-card-metric__label">{entry.metric.label}</span>
-                </motion.p>
-              ) : null}
             </div>
           </div>
         </div>
@@ -451,20 +418,46 @@ function WorkCard({ entry, reduceMotion }) {
             ))}
           </div>
         ) : null}
-        {entry.caseStudyPath ? (
-          <ViewTransitionLink
-            to={entry.caseStudyPath}
-            className="mt-2 inline-flex w-full items-center justify-center text-[0.8125rem] font-medium text-[var(--wx-primary)] underline-offset-4 sm:justify-start hover:underline"
-          >
-            Case study
-            <span aria-hidden className="ml-0.5">
-              ↗
-            </span>
-          </ViewTransitionLink>
-        ) : null}
+        <WorkCardCaption entry={entry} />
       </div>
     </RevealCard>
   );
+}
+
+/**
+ * Museum-plaque caption — single line under each work image. Replaces the
+ * persistent badges that used to sit on the image. Title left, metadata right
+ * (Concept · Kind · Year). Whole row is a link if `caseStudyPath` exists.
+ */
+function WorkCardCaption({ entry }) {
+  const meta = [
+    entry.concept ? "Concept" : null,
+    entry.kind,
+    entry.year,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  const inner = (
+    <div className="wx-work-caption">
+      <span className="wx-work-caption__title">{entry.title}</span>
+      <span className="wx-work-caption__meta">
+        {meta}
+        {entry.caseStudyPath ? (
+          <span aria-hidden className="wx-work-caption__arrow">↗</span>
+        ) : null}
+      </span>
+    </div>
+  );
+
+  if (entry.caseStudyPath) {
+    return (
+      <ViewTransitionLink to={entry.caseStudyPath} className="wx-work-caption-link">
+        {inner}
+      </ViewTransitionLink>
+    );
+  }
+  return inner;
 }
 
 const HEADLINE_ROTATE_WORDS = ["clear", "human", "accessible", "intentional"];
@@ -841,301 +834,34 @@ function WinnieDotCursor({ reduceMotion }) {
      coherent across nuggets, icons, and hovers.
    ===================================================================== */
 
-const SERVICE_ICON_MAP = {
-  PenTool01Icon,
-  MagicWand01Icon,
-  Layers01Icon,
-  CodeCircleIcon,
-  FallingStarIcon,
-};
-
-function HeroProofRow({ proof }) {
-  if (!proof?.items?.length) return null;
-  return (
-    <dl className="wx-hero-proof grid grid-cols-3 gap-x-3 gap-y-1 text-left">
-      {proof.items.map((it) => (
-        <div key={it.label} className="wx-hero-proof__cell">
-          <dt className="wx-hero-proof__value">{it.value}</dt>
-          <dd className="wx-hero-proof__label">{it.label}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-function ServiceEntryCard({ svc, reduceMotion, onClick }) {
-  const Icon = SERVICE_ICON_MAP[svc.iconKey];
+/**
+ * ServicesList — calm typographic list. Title + a single sentence.
+ * No prices, no codes, no icons, no cards. Pricing lives in the FAQ.
+ * Pattern follows Reynolds / Rusli / Carignan.
+ */
+function ServicesList({ reduceMotion }) {
   return (
     <RevealCard
       reduceMotion={reduceMotion}
-      className="wx-service-entry overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6"
-      style={{ "--wx-cap-accent": svc.accent }}
+      as="section"
+      aria-labelledby="winnie-services-heading"
+      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-        <div className="flex items-center gap-3 sm:flex-1">
-          <span className="wx-capability-icon flex size-10 shrink-0 items-center justify-center rounded-full">
-            {Icon ? <HugeiconsIcon icon={Icon} size={18} strokeWidth={1.6} /> : null}
-          </span>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span
-                className="wx-service-code"
-                style={{ color: svc.accent, borderColor: "color-mix(in srgb, var(--wx-cap-accent) 36%, transparent)" }}
-              >
-                {svc.code}
-              </span>
-              <p className="font-medium text-[var(--wx-ink)]">{svc.title}</p>
-            </div>
-            <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--wx-muted)]">
-              {svc.tagline ?? svc.forWhom}
-            </p>
-          </div>
-        </div>
-        <div className="flex shrink-0 items-center justify-between gap-4 sm:justify-end sm:gap-5">
-          <p className="text-[0.8125rem] font-medium text-[var(--wx-ink)]">
-            from {svc.priceFrom}
-            <span className="block text-[0.75rem] font-normal text-[var(--wx-muted)]">
-              {svc.timeline}
-            </span>
-          </p>
-          <motion.button
-            type="button"
-            onClick={onClick}
-            className="wx-btn-secondary"
-            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-            transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-          >
-            Start here <span aria-hidden className="wx-btn-arrow">→</span>
-          </motion.button>
-        </div>
-      </div>
-    </RevealCard>
-  );
-}
-
-function RetainerAdjuster({ tiers, accent }) {
-  const [tierIdx, setTierIdx] = useState(1);
-  const tier = tiers[tierIdx];
-  return (
-    <div className="wx-retainer-adjuster mt-3 flex items-center justify-between gap-3 rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] px-3 py-2">
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setTierIdx((i) => Math.max(0, i - 1))}
-          disabled={tierIdx === 0}
-          aria-label="Fewer active tasks"
-          className="wx-stepper-btn"
-          style={{ "--wx-cap-accent": accent }}
-        >
-          −
-        </button>
-        <span className="wx-stepper-value tabular-nums">{tier.tasks}</span>
-        <button
-          type="button"
-          onClick={() => setTierIdx((i) => Math.min(tiers.length - 1, i + 1))}
-          disabled={tierIdx === tiers.length - 1}
-          aria-label="More active tasks"
-          className="wx-stepper-btn"
-          style={{ "--wx-cap-accent": accent }}
-        >
-          +
-        </button>
-      </div>
-      <div className="min-w-0 text-right">
-        <p className="text-[0.8125rem] font-medium text-[var(--wx-ink)]">{tier.priceFrom}</p>
-        <p className="truncate text-[0.6875rem] text-[var(--wx-muted)]">{tier.note}</p>
-      </div>
-    </div>
-  );
-}
-
-function ServicesGrid({ reduceMotion, onStart }) {
-  return (
-    <div className="space-y-[var(--wx-gallery-gap)]">
-      <ServiceEntryCard svc={WINNIE_ENTRY_SERVICE} reduceMotion={reduceMotion} onClick={onStart} />
-      <RevealCard
-        reduceMotion={reduceMotion}
-        className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] ring-1 ring-[color:var(--wx-border-soft)]"
+      <p
+        id="winnie-services-heading"
+        className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]"
       >
-        <div className="flex items-center justify-between gap-4 border-b border-[color:var(--wx-border-soft)] px-6 py-4 sm:px-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
-            Services
-          </p>
-          <p className="text-[0.75rem] text-[var(--wx-muted)]">Starting points · final scope in SOW</p>
-        </div>
-        <ul className="grid gap-px bg-[color:var(--wx-border-soft)] sm:grid-cols-2">
-          {WINNIE_SERVICES.map((svc) => {
-            const Icon = SERVICE_ICON_MAP[svc.iconKey];
-            return (
-              <li
-                key={svc.slug}
-                className="wx-service-card flex flex-col gap-4 bg-[var(--wx-page-bg)] p-5 sm:p-6"
-                style={{ "--wx-cap-accent": svc.accent }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="wx-capability-icon flex size-9 shrink-0 items-center justify-center rounded-full">
-                      {Icon ? <HugeiconsIcon icon={Icon} size={17} strokeWidth={1.6} /> : null}
-                    </span>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="wx-service-code"
-                          style={{ color: svc.accent, borderColor: "color-mix(in srgb, var(--wx-cap-accent) 36%, transparent)" }}
-                        >
-                          {svc.code}
-                        </span>
-                        <p
-                          className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em]"
-                          style={{ color: svc.accent }}
-                        >
-                          {svc.eyebrow}
-                        </p>
-                      </div>
-                      <p className="font-medium text-[var(--wx-ink)]">{svc.title}</p>
-                    </div>
-                  </div>
-                  <p className="shrink-0 text-right text-[0.8125rem] font-medium text-[var(--wx-ink)]">
-                    from {svc.priceFrom}
-                    <span className="block text-[0.75rem] font-normal text-[var(--wx-muted)]">
-                      {svc.timeline}
-                    </span>
-                  </p>
-                </div>
-                <p className="text-sm leading-relaxed text-[var(--wx-muted)]">
-                  <span className="font-medium text-[var(--wx-ink)]">For:</span> {svc.forWhom}
-                </p>
-                <ul className="space-y-1.5 text-[0.8125rem] leading-relaxed text-[var(--wx-ink)]">
-                  {svc.deliverables.map((d) => (
-                    <li key={d} className="flex items-start gap-2">
-                      <span
-                        aria-hidden
-                        className="mt-[0.55em] size-1.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: svc.accent }}
-                      />
-                      <span>{d}</span>
-                    </li>
-                  ))}
-                </ul>
-                {svc.adjusterTiers ? (
-                  <RetainerAdjuster tiers={svc.adjusterTiers} accent={svc.accent} />
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
-      </RevealCard>
-    </div>
-  );
-}
-
-function NegativeListCard({ reduceMotion }) {
-  return (
-    <RevealCard
-      reduceMotion={reduceMotion}
-      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6"
-    >
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
-        {WINNIE_NEGATIVE_LIST.eyebrow}
+        Services
       </p>
-      <ul className="mt-4 grid gap-px bg-[color:var(--wx-border-soft)] sm:grid-cols-1">
-        {WINNIE_NEGATIVE_LIST.items.map((item, i) => (
-          <li
-            key={item}
-            className="wx-negative-row flex items-baseline gap-4 bg-[var(--wx-page-bg)] py-3"
-          >
-            <span className="wx-negative-row__num tabular-nums">
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <span className="text-sm leading-relaxed text-[var(--wx-ink)]">{item}</span>
-          </li>
-        ))}
-      </ul>
-    </RevealCard>
-  );
-}
-
-function FinalCtaCard({ reduceMotion, onSendBrief }) {
-  return (
-    <RevealCard
-      reduceMotion={reduceMotion}
-      className="wx-final-cta overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8"
-    >
-      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-        <div className="space-y-2">
-          <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">
-            {WINNIE_FINAL_CTA.heading}
-          </h3>
-          <p className="max-w-xl text-[0.9375rem] leading-relaxed text-[var(--wx-muted)]">
-            {WINNIE_FINAL_CTA.body}
-          </p>
-        </div>
-        <motion.button
-          type="button"
-          onClick={onSendBrief}
-          className="wx-btn-primary shrink-0"
-          whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-          transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-        >
-          {WINNIE_FINAL_CTA.ctaLabel}
-          <span aria-hidden className="wx-btn-arrow">→</span>
-        </motion.button>
-      </div>
-    </RevealCard>
-  );
-}
-
-function HowIWorkCard({ reduceMotion }) {
-  const rows = [
-    {
-      label: "Kickoff",
-      text: "Short brief, written goals, first milestone agreed in week one.",
-      accent: "var(--wx-accent-violet)",
-    },
-    {
-      label: "Weekly rhythm",
-      text: "Async updates Mondays, shared Figma, prototype links you can click.",
-      accent: "var(--wx-accent-teal)",
-    },
-    {
-      label: "Decisions",
-      text: "Bigger calls go to a 30-minute review with options + rationale.",
-      accent: "var(--wx-primary)",
-    },
-    {
-      label: "Handoff",
-      text: "Build-ready spec or shipped front-end — your team isn't left guessing.",
-      accent: "var(--wx-accent-amber)",
-    },
-  ];
-  return (
-    <RevealCard
-      reduceMotion={reduceMotion}
-      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-10"
-    >
-      <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--wx-muted)]">
-          How I work
-        </p>
-        <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">
-          You&apos;ll always know what happens next.
-        </h3>
-      </div>
-      <ul className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5">
-        {rows.map((row) => (
-          <li
-            key={row.label}
-            className="flex items-start gap-3 rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] p-4"
-          >
-            <span
-              aria-hidden
-              className="mt-1.5 size-2 shrink-0 rounded-full"
-              style={{ backgroundColor: row.accent }}
-            />
-            <div>
-              <p className="font-medium text-[var(--wx-ink)]">{row.label}</p>
-              <p className="mt-1 text-sm leading-relaxed text-[var(--wx-muted)]">{row.text}</p>
-            </div>
+      <ul className="mt-6 divide-y divide-[color:var(--wx-border-soft)]">
+        {WINNIE_SERVICES.map((svc) => (
+          <li key={svc.slug} className="wx-service-row py-4 first:pt-2 last:pb-2 sm:py-5">
+            <p className="text-[1rem] font-medium leading-snug text-[var(--wx-ink)] sm:text-[1.0625rem]">
+              {svc.title}
+            </p>
+            <p className="mt-1 text-[0.875rem] leading-relaxed text-[var(--wx-muted)]">
+              {svc.body}
+            </p>
           </li>
         ))}
       </ul>
@@ -1518,8 +1244,6 @@ export function WinnieExplorationPage() {
                     </p>
                   </div>
 
-                  <HeroProofRow proof={WINNIE_HERO.proof} />
-
                   <div className="flex flex-wrap gap-3 sm:gap-4">
                     <motion.button
                       type="button"
@@ -1529,22 +1253,17 @@ export function WinnieExplorationPage() {
                       onClick={() => scrollToSection("winnie-section-contact", 3)}
                     >
                       {WINNIE_HERO.primaryCta.label}
-                      <span aria-hidden className="wx-btn-arrow">→</span>
                     </motion.button>
                     <motion.button
                       type="button"
                       className="wx-btn-secondary"
                       whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                       transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-                      onClick={() => scrollToSection("winnie-section-approach", 2)}
+                      onClick={() => scrollToSection("winnie-section-work", 0)}
                     >
                       {WINNIE_HERO.secondaryCta.label}
                     </motion.button>
                   </div>
-
-                  <p className="text-[0.8125rem] leading-relaxed text-[var(--wx-muted)]">
-                    {WINNIE_HERO.microtrust}
-                  </p>
 
                   <dl className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.8125rem] text-[var(--wx-muted)]">
                     <div className="flex items-center gap-1.5">
@@ -1626,11 +1345,7 @@ export function WinnieExplorationPage() {
               </div>
             </RevealCard>
 
-            {/* Productized services — what to scope, how long, what it costs to start. */}
-            <ServicesGrid
-              reduceMotion={reduceMotion}
-              onStart={() => scrollToSection("winnie-section-contact", 3)}
-            />
+            <ServicesList reduceMotion={reduceMotion} />
 
             {WINNIE_TESTIMONIALS.length > 0 ? (
               <RevealCard
@@ -1657,11 +1372,7 @@ export function WinnieExplorationPage() {
                   </figcaption>
                 </figure>
               </RevealCard>
-            ) : (
-              <HowIWorkCard reduceMotion={reduceMotion} />
-            )}
-
-            <NegativeListCard reduceMotion={reduceMotion} />
+            ) : null}
           </section>
 
           {/* ============================== APPROACH ============================== */}
@@ -1750,13 +1461,6 @@ export function WinnieExplorationPage() {
             aria-labelledby="winnie-tab-contact"
             className="space-y-[var(--wx-gallery-gap)]"
           >
-            <FinalCtaCard
-              reduceMotion={reduceMotion}
-              onSendBrief={() => {
-                const first = document.getElementById("wx-qf-name");
-                if (first) first.focus();
-              }}
-            />
             <RevealCard
               reduceMotion={reduceMotion}
               className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] ring-1 ring-[color:var(--wx-ring-subtle)]"

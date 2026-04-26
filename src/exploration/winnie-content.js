@@ -56,24 +56,14 @@ export const WINNIE_EXTRA_IMAGES = {
   workshop: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&w=1600&q=85",
 };
 
-/** Hero copy — buyer-clear: who I help, what they get, how fast. */
+/** Hero copy — calm baseline. One promise, one CTA, one secondary anchor. */
 export const WINNIE_HERO = {
   eyebrow: "Available for projects",
   headline: "Designs that feel",
   subhead:
-    "I'm Wineury — a product designer in Atlanta. I help early-stage teams turn messy flows into shipped, accessible interfaces in 4–8 weeks.",
-  primaryCta: { label: "Book a Discovery Sprint — from $3.8k", href: "#winnie-section-contact" },
-  secondaryCta: { label: "See outcomes", href: "#winnie-section-approach" },
-  microtrust: "Replies within two business days · 2 engagements available this quarter",
-  /** Honest test-validated metrics, framed as concept-research outcomes (not production). */
-  proof: {
-    eyebrow: "Concept work, real research",
-    items: [
-      { value: "−50%", label: "task completion time", source: "InCity, A/B usability test" },
-      { value: "+45%", label: "onboarding completion", source: "Resolution, prototype testing" },
-      { value: "−25%", label: "onboarding drop-off", source: "Siren, 20+ test participants" },
-    ],
-  },
+    "I'm Wineury — a product designer in Atlanta. I help early-stage teams turn messy flows into accessible, shipped interfaces.",
+  primaryCta: { label: "Get in touch", href: "#winnie-section-contact" },
+  secondaryCta: { label: "View work", href: "#winnie-section-work" },
 };
 
 /**
@@ -90,8 +80,6 @@ export const WINNIE_WORK = [
     /** Image-led case study route (template: hero) */
     caseStudyPath: "/work/incity",
     concept: true,
-    stackLabel: "Stack of 8 screens",
-    metric: { value: "−50%", label: "task completion time" },
     summary:
       "Redesigned ATL311 into a mobile-first civic reporting flow — fewer steps, live case tracking, and clearer confirmation for Atlanta residents.",
     image: { primary: "heroMountain", fallback: "heroMountain" },
@@ -113,8 +101,6 @@ export const WINNIE_WORK = [
     role: "UX/UI Designer",
     caseStudyPath: "/work/siren",
     concept: true,
-    stackLabel: "Stack of 6 flows",
-    metric: { value: "−25%", label: "onboarding drop-off" },
     summary:
       "Safety-first dating app exploring trust signals, behavior reporting, and required video verification — refined through iterative usability testing.",
     image: { primary: "heroOcean", fallback: "heroOcean" },
@@ -136,8 +122,6 @@ export const WINNIE_WORK = [
     role: "UX/UI Designer",
     caseStudyPath: "/work/resolutions",
     concept: true,
-    stackLabel: "Stack of 5 prototypes",
-    metric: { value: "+45%", label: "onboarding completion" },
     summary:
       "Habit-tracking experience helping users organize goals, routines, and progress in one place — designed to cut setup friction.",
     image: null,
@@ -306,132 +290,33 @@ export const WINNIE_CONTACT_SOCIALS = [
 ];
 
 /**
- * Entry product — paid intro that converts to credit on any larger engagement
- * booked within 30 days. Sits above the main service grid as the low-friction
- * conversion path.
- */
-export const WINNIE_ENTRY_SERVICE = {
-  slug: "audit-direction",
-  code: "AUD",
-  title: "Audit & Direction",
-  tagline: "Paid intro · credit applies to any larger engagement within 30 days",
-  iconKey: "FallingStarIcon",
-  accent: "var(--wx-accent-amber)",
-  timeline: "1 week",
-  priceFrom: "$1.2k",
-  forWhom:
-    "You suspect a flow is broken, want a senior eye on it, and aren't ready to commit to a full sprint yet.",
-  deliverables: [
-    "Heuristic walkthrough of your top 3 flows",
-    "Prioritized friction list with rationale",
-    "30-min Loom walkthrough you can share with your team",
-    "Credit toward DSC, LND, RVP, or DPR within 30 days",
-  ],
-};
-
-/**
- * Productized services — what to scope, how long, what it costs to start.
- * Pricing calibrated to a senior-junior product designer who ships front-end code.
- * Final scope written in an SOW. Three-letter codes (DSC/LND/RVP/DPR) become tier mnemonics.
+ * Services — a flat list, not a sales menu. One line each. No prices, no codes,
+ * no icons, no timelines on the surface. Buyers who care about scope or budget
+ * email and ask. The references (Reynolds, Rusli, Carignan) all do this.
+ * Pricing lives in the FAQ; scope lives in the SOW.
  */
 export const WINNIE_SERVICES = [
   {
-    slug: "discovery-sprint",
-    code: "DSC",
-    eyebrow: "01",
-    title: "Discovery Sprint",
-    iconKey: "PenTool01Icon",
-    accent: "var(--wx-accent-violet)",
-    forWhom: "Founders who suspect their product has the wrong flow but can't prove it.",
-    timeline: "2 weeks",
-    priceFrom: "$3.8k",
-    deliverables: [
-      "5–7 user interviews",
-      "Usability test of current build",
-      "Friction map + prioritized fix list",
-      "Annotated Figma of recommended changes",
-    ],
+    slug: "discovery",
+    title: "Discovery sprints",
+    body: "Interviews, usability tests, friction maps. Two weeks.",
   },
   {
-    slug: "landing-system",
-    code: "LND",
-    eyebrow: "02",
-    title: "Conversion Landing System",
-    iconKey: "MagicWand01Icon",
-    accent: "var(--wx-accent-teal)",
-    forWhom: "Pre-seed and seed startups whose marketing site isn't converting.",
-    timeline: "3 weeks",
-    priceFrom: "$6.5k",
-    deliverables: [
-      "Audit + copy direction",
-      "Hero + 4 supporting sections",
-      "Responsive build in React + Tailwind",
-      "Analytics events wired",
-    ],
+    slug: "landing",
+    title: "Conversion landing systems",
+    body: "Designed and built in React. Three weeks.",
   },
   {
-    slug: "ux-revamp",
-    code: "RVP",
-    eyebrow: "03",
-    title: "Product UX Revamp",
-    iconKey: "Layers01Icon",
-    accent: "var(--wx-primary)",
-    forWhom: "Product teams whose activation, retention, or trust is blocked by one flow.",
-    timeline: "4–8 weeks",
-    priceFrom: "$11k",
-    deliverables: [
-      "Research + redesign of one critical flow (3–8 screens)",
-      "Clickable prototype",
-      "Two rounds of usability testing",
-      "Build-ready spec — or shipped front-end (+$6.5k add-on)",
-    ],
+    slug: "revamp",
+    title: "Product UX revamps",
+    body: "Research, prototype, validate, ship. Four to eight weeks.",
   },
   {
-    slug: "design-partner",
-    code: "DPR",
-    eyebrow: "04",
-    title: "Design Partner Retainer",
-    iconKey: "CodeCircleIcon",
-    accent: "var(--wx-accent-amber)",
-    forWhom: "Founder-led teams without a design hire, shipping weekly.",
-    timeline: "Monthly · 3-month minimum",
-    priceFrom: "$5.5k/mo",
-    deliverables: [
-      "Standing weekly design slots",
-      "Research, UI, motion, and design QA",
-      "Front-end help in React + Tailwind",
-      "Shared Figma + GitHub access",
-    ],
-    /** kree8-style +/− adjuster: adjust active task count → tier price scales. */
-    adjusterTiers: [
-      { tasks: 1, priceFrom: "$5.5k/mo", note: "1 active task" },
-      { tasks: 2, priceFrom: "$8.5k/mo", note: "2 active tasks · most picked" },
-      { tasks: 3, priceFrom: "$11.5k/mo", note: "3 active tasks · weekly shipping" },
-    ],
+    slug: "retainer",
+    title: "Design partner retainers",
+    body: "Embedded weekly. Monthly. Three-month minimum.",
   },
 ];
-
-/**
- * Numbered "what you won't get from me" — sharp positioning, lifted from
- * kree8's negative-space framing rendered as a numbered list.
- */
-export const WINNIE_NEGATIVE_LIST = {
-  eyebrow: "What you won't get from me",
-  items: [
-    "A 60-page strategy deck before any pixels",
-    "A junior designer assigned to 'execute' my work",
-    "Proposals that take a week to land",
-    "Process for the sake of process",
-    "Designs that can't actually be built",
-  ],
-};
-
-/** Final CTA — single sentence + one button before the qualification form. */
-export const WINNIE_FINAL_CTA = {
-  heading: "Ready to make one flow work harder?",
-  body: "Send a five-minute brief. I'll reply within two business days with whether we're a fit and what comes next.",
-  ctaLabel: "Send a brief",
-};
 
 /**
  * Empty until a real, attributable quote is captured. Rendering code should
@@ -462,7 +347,11 @@ export const WINNIE_STATS = [
 export const WINNIE_FAQ = [
   {
     q: "What does a project cost?",
-    a: "$1.2k for a one-week Audit & Direction (credit applies to any larger engagement). $3.8k for a two-week Discovery Sprint. $6.5k for a Conversion Landing System with shipped React build. $11k+ for a Product UX Revamp, with a $6.5k add-on if you want me to ship the front-end too. Retainers start at $5.5k/month, three-month minimum. Every project ships with a written SOW before kickoff.",
+    a: "Engagements range from $1.2k for a one-week audit to $11k+ for a full product UX revamp with shipped front-end. Retainers from $5.5k/month, three-month minimum. Email me with what you're working on and I'll send a fitted scope.",
+  },
+  {
+    q: "What won't you take on?",
+    a: "Sixty-page strategy decks before any pixels. Process for the sake of process. Work where research isn't welcome. Designs that can't actually be built. If we're not a fit, I'll say so quickly.",
   },
   {
     q: "What if I don't know my outcome metrics yet?",
@@ -497,46 +386,17 @@ export const WINNIE_AVAILABILITY = {
 };
 
 /**
- * Contact qualification — short brief beats raw mailto.
- * Field schema is consumed by `WinnieQualificationForm` to render selects/textareas.
+ * Contact form — minimal. Three fields. Email is the parallel option.
+ * Anything more belongs in the email itself.
  */
 export const WINNIE_QUALIFICATION_FIELDS = [
   { id: "name", label: "Your name", type: "text", required: true, placeholder: "First and last" },
-  { id: "company", label: "Company or project", type: "text", required: true, placeholder: "What it's called today" },
-  {
-    id: "stage",
-    label: "Stage",
-    type: "select",
-    required: true,
-    options: [
-      "Idea",
-      "Prototype",
-      "Live · under 1k users",
-      "Live · 1k–10k users",
-      "Live · 10k+ users",
-      "In-house team",
-    ],
-  },
   {
     id: "focus",
-    label: "What flow or surface needs work?",
+    label: "What are you working on?",
     type: "textarea",
     required: true,
-    placeholder: "Two or three sentences — what's broken, what good looks like.",
+    placeholder: "A few sentences. What it is, what's stuck, when you'd like to start.",
   },
-  {
-    id: "timeline",
-    label: "Timeline",
-    type: "select",
-    required: true,
-    options: ["Under 4 weeks", "1–2 months", "2–4 months", "Flexible"],
-  },
-  {
-    id: "budget",
-    label: "Budget range",
-    type: "select",
-    required: true,
-    options: ["Under $5k", "$5–10k", "$10–25k", "$25k+", "Not sure yet"],
-  },
-  { id: "links", label: "Links (optional)", type: "text", placeholder: "Figma, staging, repo, anything we should see" },
+  { id: "links", label: "Links (optional)", type: "text", placeholder: "Figma, staging, repo, anything I should see" },
 ];
