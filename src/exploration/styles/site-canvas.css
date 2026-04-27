@@ -4,19 +4,12 @@
   background-color: var(--wx-page-bg);
   color: var(--wx-ink);
   /**
-   * Figma: Testing, 200:88 — canvas; chip fills from `siteContent.js` (tuned sienna / paper / warm ink on #E3DBD1).
-   * Hairline: brown–ink mix so borders aren’t cool gray. Shadow: rgb(47,32,14).
+   * Figma: Testing, 200:88 — canvas (`--wx-warm-figma-canvas`); nugget row uses site neutrals (see `.wx-work-card-v2__nugget`).
    */
   --wx-warm-figma-canvas: #e3dbd1;
   --wx-warm-title-ink: #1a1a1a;
   /* Muted subcopy on photo (Figma: brown-gray, not flat black) */
   --wx-warm-body-ink: oklch(0.4 0.02 50 / 0.82);
-  /* Warm plan-summary chips: one border + one shadow (One Page Love–style: tight cluster, no mixed “elevation” styles). */
-  --wx-warm-nugget-pill-border: color-mix(in srgb, #2c2722 16%, #8f6b4e 14%);
-  --wx-warm-nugget-pill-shadow: 0 1px 2px color-mix(in srgb, #2c2722 9%, transparent);
-  --wx-warm-nugget-pill-shadow-ink: 0 1px 2px color-mix(in srgb, #1a1210 18%, transparent);
-  --wx-warm-nugget-hairline: color-mix(in srgb, #8f6b4e 22%, #2c2722 10%);
-  --wx-warm-nugget-shadow: color-mix(in srgb, #2c2722 10%, transparent);
   /* Figma 200:109 (Frame 6) art — `drop-shadow` on <img> (alpha), rgb(47,32,14); sync from Effects panel on re-export */
   --wx-figma-200109-shadow-1: 0 2px 4px rgba(47, 32, 14, 0.16);
   --wx-figma-200109-shadow-2: 0 6px 18px rgba(47, 32, 14, 0.12);
@@ -687,7 +680,7 @@
   }
 }
 
-/* Warm 200:88: no bottom “sweep” (2px line on hover) — it clashes with the full-bleed canvas; nuggets keep CTA color. */
+/* Warm 200:88: no bottom “sweep” (2px line on hover) — it clashes with the full-bleed canvas; nuggets use neutral ink-on-white. */
 .site-canvas .wx-work-card--footer-warm .wx-work-card__sweep {
   display: none;
 }
@@ -783,7 +776,9 @@
   line-height: 1.2;
   white-space: nowrap;
   text-transform: none;
-  border: 1px solid color-mix(in srgb, var(--wx-black) 6%, transparent);
+  color: var(--wx-ink);
+  background-color: var(--wx-white);
+  border: 1px solid var(--wx-border-muted);
   box-shadow: 0 1px 1px var(--wx-shadow-ambient);
 }
 
@@ -808,8 +803,10 @@
   justify-content: flex-start;
   align-items: center;
   gap: 0.4rem;
-  border: 1px solid var(--wx-warm-nugget-pill-border);
-  box-shadow: var(--wx-warm-nugget-pill-shadow);
+  color: var(--wx-ink);
+  background-color: var(--wx-white);
+  border: 1px solid var(--wx-border-muted);
+  box-shadow: 0 1px 2px var(--wx-shadow-ambient);
 }
 
 /* Icon column: every chip same optical box (matches Lucide 12 in JSX). */
@@ -833,21 +830,12 @@
   line-height: 1.15;
 }
 
-/* Ink: same family, slightly stronger rim + shadow; no “second style” of inset. */
+/* Optional: dark chip (e.g. future contrast tweak); same neutral system as the site. */
 .site-canvas .wx-work-card--footer-warm .wx-work-card-v2__nugget--on-dark {
-  border: 1px solid color-mix(in srgb, #fff 14%, #2c2722 86%);
-  box-shadow: var(--wx-warm-nugget-pill-shadow-ink);
-}
-
-/* Grayscale nugget row: neutral hairlines (no warm brown on borders). */
-.site-canvas .wx-work-card--nuggets-mono.wx-work-card--footer-warm .wx-work-card-v2__nugget {
-  border: 1px solid color-mix(in srgb, #0a0a0a 10%, #ffffff 25%);
-  box-shadow: 0 1px 2px color-mix(in srgb, #0a0a0a 7%, transparent);
-}
-
-.site-canvas .wx-work-card--nuggets-mono.wx-work-card--footer-warm .wx-work-card-v2__nugget--on-dark {
-  border: 1px solid color-mix(in srgb, #fff 10%, #0a0a0a 90%);
-  box-shadow: 0 1px 2px color-mix(in srgb, #000 24%, transparent);
+  color: var(--wx-white);
+  background-color: var(--wx-black);
+  border: 1px solid color-mix(in srgb, var(--wx-white) 16%, var(--wx-black) 84%);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--wx-black) 28%, transparent);
 }
 
 .site-canvas .wx-work-card-v2__view-pill {

@@ -154,57 +154,6 @@ function useCoarsePointerOrNoHover() {
   return coarse;
 }
 
-function hexToSrgb(hex) {
-  const h = hex.replace("#", "");
-  const v = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
-  return {
-    r: parseInt(v.slice(0, 2), 16) / 255,
-    g: parseInt(v.slice(2, 4), 16) / 255,
-    b: parseInt(v.slice(4, 6), 16) / 255,
-  };
-}
-
-function linearizeChannel(u) {
-  return u <= 0.03928 ? u / 12.92 : ((u + 0.055) / 1.055) ** 2.4;
-}
-
-/** sRGB 0â€“1 â†’ WCAG 2.1 relative luminance. */
-function relativeLuminanceFromHex(hex) {
-  const { r, g, b } = hexToSrgb(hex);
-  return (
-    0.2126 * linearizeChannel(r) + 0.7152 * linearizeChannel(g) + 0.0722 * linearizeChannel(b)
-  );
-}
-
-/** L1, L2 in [0,1]. Returns contrast ratio (â‰¥1). */
-function contrastRatio(L1, L2) {
-  const hi = Math.max(L1, L2);
-  const lo = Math.min(L1, L2);
-  return (hi + 0.05) / (lo + 0.05);
-}
-
-/**
- * Work card nugget: pick UI near-black vs near-white for **maximum** contrast against fill.
- * (Luminance-threshold only fails in the â€œmuddy midâ€ where both sides are weak; WCAG is target â‰¥4.5:1 for small type.)
- * Returns CSS color tokens; Hugeicons can consume `currentColor` via the span.
- */
-function nuggetTextColor(fillHex) {
-  const L = relativeLuminanceFromHex(fillHex);
-  const Lblack = relativeLuminanceFromHex("#000000");
-  const Lwhite = relativeLuminanceFromHex("#ffffff");
-  const cBlack = contrastRatio(L, Lblack);
-  const cWhite = contrastRatio(L, Lwhite);
-  return cWhite > cBlack ? "var(--color-neutral-0)" : "var(--color-neutral-1000)";
-}
-
-/** `true` when the fill is dark enough to use light ink (styling for ink chips in warm Figma). */
-function nuggetFillIsDeep(fillHex) {
-  const L = relativeLuminanceFromHex(fillHex);
-  const Lblack = relativeLuminanceFromHex("#000000");
-  const Lwhite = relativeLuminanceFromHex("#ffffff");
-  return contrastRatio(L, Lwhite) > contrastRatio(L, Lblack);
-}
-
 /** Stack marquee logos: Simple Icons CDN embeds brand fill on `<svg>`. */
 function stackToolLogoUrl(tool) {
   if (tool.logoUrl) return tool.logoUrl;
@@ -550,10 +499,9 @@ function workCardAspectClassName(entry) {
   return "aspect-video";
 }
 
-function WorkNuggetPill({ label, color, iconKey, reduceMotion, nuggetsRevealed, nuggetIndex }) {
+function WorkNuggetPill({ label, iconKey, reduceMotion, nuggetsRevealed, nuggetIndex }) {
   const LucideCmp = LUCIDE_NUGGET_MAP[iconKey];
   const HugeIcon = NUGGET_ICON_MAP[iconKey];
-  const ink = nuggetTextColor(color);
   const lucideRef = useRef(null);
 
   useEffect(() => {
@@ -580,10 +528,7 @@ function WorkNuggetPill({ label, color, iconKey, reduceMotion, nuggetsRevealed, 
   }, [reduceMotion, nuggetsRevealed, LucideCmp, nuggetIndex]);
 
   return (
-    <span
-      className={clsx("wx-work-card-v2__nugget", nuggetFillIsDeep(color) && "wx-work-card-v2__nugget--on-dark")}
-      style={{ color: ink, backgroundColor: color }}
-    >
+    <span className="wx-work-card-v2__nugget">
       {LucideCmp ? (
         <span
           className="wx-work-card-v2__nugget-ic inline-flex size-3 shrink-0 items-center justify-center [&>div]:!size-3"
@@ -593,7 +538,7 @@ function WorkNuggetPill({ label, color, iconKey, reduceMotion, nuggetsRevealed, 
         </span>
       ) : HugeIcon ? (
         <span className="wx-work-card-v2__nugget-icon-fallback inline-flex shrink-0" aria-hidden>
-          <HugeiconsIcon icon={HugeIcon} size={12} color={ink} strokeWidth={2} aria-hidden />
+          <HugeiconsIcon icon={HugeIcon} size={12} color="currentColor" strokeWidth={2} aria-hidden />
         </span>
       ) : null}
       <span className="wx-work-card-v2__nugget-label">{label}</span>
@@ -694,7 +639,6 @@ function WorkNuggetMotionLi({ n, i, entry, nuggets, nuggetMotionInitial, reduceM
     >
       <WorkNuggetPill
         label={n.label}
-        color={n.color}
         iconKey={n.icon}
         reduceMotion={reduceMotion}
         nuggetsRevealed={nuggetsRevealed}
