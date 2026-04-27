@@ -223,15 +223,17 @@
   height: 100%;
   border-radius: max(calc(var(--wx-radius-card) - 2px), 0.5rem);
   border: 1px solid var(--wx-border-soft);
-  background: var(--wx-surface);
+  background: var(--wx-white);
   box-shadow: 0 1px 2px color-mix(in srgb, var(--wx-ink) 5%, transparent);
-  padding: 1.25rem 1.25rem 1.35rem 1.25rem;
+  /* No left padding — accent bar sits flush to the inner left; index & lede use --wx-approach-align */
+  padding: 1.25rem 1.25rem 1.35rem 0;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
 @media (min-width: 40rem) {
   .site-canvas .wx-approach-step-card {
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 1.5rem 0;
   }
 }
 
@@ -257,7 +259,8 @@
 .site-canvas .wx-approach-step-card__accent {
   width: 0.25rem;
   flex-shrink: 0;
-  border-radius: 0.125rem;
+  /* Square on the left so the stroke meets the card edge cleanly */
+  border-radius: 0 0.125rem 0.125rem 0;
   background: var(--wx-approach-accent, #ea580c);
 }
 
