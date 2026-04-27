@@ -839,6 +839,17 @@
   box-shadow: var(--wx-warm-nugget-pill-shadow-ink);
 }
 
+/* Grayscale nugget row: neutral hairlines (no warm brown on borders). */
+.site-canvas .wx-work-card--nuggets-mono.wx-work-card--footer-warm .wx-work-card-v2__nugget {
+  border: 1px solid color-mix(in srgb, #0a0a0a 10%, #ffffff 25%);
+  box-shadow: 0 1px 2px color-mix(in srgb, #0a0a0a 7%, transparent);
+}
+
+.site-canvas .wx-work-card--nuggets-mono.wx-work-card--footer-warm .wx-work-card-v2__nugget--on-dark {
+  border: 1px solid color-mix(in srgb, #fff 10%, #0a0a0a 90%);
+  box-shadow: 0 1px 2px color-mix(in srgb, #000 24%, transparent);
+}
+
 .site-canvas .wx-work-card-v2__view-pill {
   -webkit-tap-highlight-color: transparent;
   color: var(--wx-white);

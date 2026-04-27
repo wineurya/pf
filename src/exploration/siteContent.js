@@ -112,16 +112,14 @@ export const SITE_WORK = [
     featured: true,
     overlayTitle: "Avance",
     overlaySubtitle: "Goal → plan · mobile coaching flow",
-    /**
-     * Plan-summary chips: one warm family on #E3DBD1; ink chip softened so the row doesn’t “jump” in weight.
-     * Contrast: `nuggetTextColor()` in `ExplorationHomePage.jsx`.
-     */
+    /** Monochrome nuggets (see `workCardNuggetsMonochrome` + `site-canvas.css`). */
     workCardNuggetsAriaLabel: "Outcomes and ways of working",
+    workCardNuggetsMonochrome: true,
     nuggets: [
-      { label: "Outcome clarity", color: "#F0EAE0", icon: "Layout01Icon" },
-      { label: "Structured cadence", color: "#8F6B4E", icon: "Calendar01Icon" },
-      { label: "Progress habits", color: "#3A342F", icon: "FallingStarIcon" },
-      { label: "1:1 coaching", color: "#D9CEC2", icon: "QuoteUpIcon" },
+      { label: "Outcome clarity", color: "#ffffff", icon: "Layout01Icon" },
+      { label: "Structured cadence", color: "#e5e5e5", icon: "Calendar01Icon" },
+      { label: "Progress habits", color: "#404040", icon: "FallingStarIcon" },
+      { label: "1:1 coaching", color: "#0a0a0a", icon: "QuoteUpIcon" },
     ],
   },
   {

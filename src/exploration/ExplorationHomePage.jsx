@@ -1078,6 +1078,7 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
           "wx-work-card wx-work-card--figma group relative w-full max-w-full rounded-[var(--wx-radius-card)]",
           m.useFigma20088 ? "wx-work-card--figma-20088 overflow-visible" : "overflow-hidden",
           m.useWarmFooter && "wx-work-card--footer-warm",
+          m.useWarmFooter && entry.workCardNuggetsMonochrome && "wx-work-card--nuggets-mono",
           m.figmaLightCanvas && m.useFigma20088 && "wx-work-card--figma-canvas-light",
           m.useFigma20088 && entry.workCardFigmaMockAspect && "wx-work-card--figma-mock-aspect",
           m.useFigma20088 && m.workCardImageOnly && "wx-work-card--image-only",
