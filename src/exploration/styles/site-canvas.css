@@ -360,6 +360,12 @@
   width: 100%;
 }
 
+/* No in-card copy or nuggets: full-bleed art inside the card radius. */
+.site-canvas .wx-work-card__shell--image-only {
+  padding: 0;
+  gap: 0;
+}
+
 /* Background: div (empty gradient) or Figma-sourced <picture> / <img> (object-fit cover) */
 .site-canvas .wx-work-card__bg,
 .site-canvas picture.wx-work-card__bg {

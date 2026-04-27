@@ -768,11 +768,17 @@ function WorkCardChromeAndFooterBlock({
   hovered,
   reduceMotion,
   omitTopChrome,
+  omitFooter,
   footerMinimal,
 }) {
+  const showChrome = !omitTopChrome;
+  const showFooter = !omitFooter;
+  if (!showChrome && !showFooter) {
+    return null;
+  }
   return (
     <>
-      {!omitTopChrome &&
+      {showChrome &&
         (useWarmFooter ? (
           <motion.div
             className="wx-work-card-v2__chrome-top"
@@ -789,32 +795,34 @@ function WorkCardChromeAndFooterBlock({
         ) : (
           <div className="wx-work-card-v2__chrome-top">{workCardChromeTopInnards}</div>
         ))}
-      <div
-        className={clsx(
-          "wx-work-card-v2__footer",
-          useWarmFooter && "wx-work-card-v2__footer--warm-pin",
-          footerMinimal && "wx-work-card-v2__footer--minimal",
-        )}
-      >
-        <h3
+      {showFooter ? (
+        <div
           className={clsx(
-            "wx-work-card-v2__title m-0 text-balance text-left font-medium tracking-tight",
-            useWarmFooter ? "max-w-[min(100%,40rem)]" : !footerMinimal && "max-w-[min(100%,20rem)]",
-            footerMinimal && "max-w-[min(100%,26rem)]",
-            useLightText && "wx-work-card-v2__title--on-image",
-            useWarmFooter && "wx-work-card-v2__title--warm",
+            "wx-work-card-v2__footer",
+            useWarmFooter && "wx-work-card-v2__footer--warm-pin",
+            footerMinimal && "wx-work-card-v2__footer--minimal",
           )}
         >
-          {entry.title}
-        </h3>
-        <WorkCardTeaserText
-          entry={entry}
-          isActive={hovered}
-          reduceMotion={reduceMotion}
-          useLightOnImage={useLightText}
-          useWarmImageFooter={useWarmFooter}
-        />
-      </div>
+          <h3
+            className={clsx(
+              "wx-work-card-v2__title m-0 text-balance text-left font-medium tracking-tight",
+              useWarmFooter ? "max-w-[min(100%,40rem)]" : !footerMinimal && "max-w-[min(100%,20rem)]",
+              footerMinimal && "max-w-[min(100%,26rem)]",
+              useLightText && "wx-work-card-v2__title--on-image",
+              useWarmFooter && "wx-work-card-v2__title--warm",
+            )}
+          >
+            {entry.title}
+          </h3>
+          <WorkCardTeaserText
+            entry={entry}
+            isActive={hovered}
+            reduceMotion={reduceMotion}
+            useLightOnImage={useLightText}
+            useWarmImageFooter={useWarmFooter}
+          />
+        </div>
+      ) : null}
     </>
   );
 }
@@ -829,14 +837,17 @@ function WorkCardShellBlock({
   reduceMotion,
   workCardChromeTopInnards,
   omitTopChrome,
+  omitFooter,
   omitScrim,
   footerMinimal,
 }) {
+  const hasChromeOrFooter = !omitTopChrome || !omitFooter;
   return (
     <div
       className={clsx(
         "wx-work-card__shell flex h-full min-h-0 flex-col justify-between",
-        !useWarmFooter && "gap-3 p-4 sm:p-5",
+        !useWarmFooter && hasChromeOrFooter && "gap-3 p-4 sm:p-5",
+        !useWarmFooter && !hasChromeOrFooter && "wx-work-card__shell--image-only",
         useWarmFooter && "wx-work-card__shell--footer-warm",
         useLightText && "wx-work-card__shell--image-footer",
         footerMinimal && "wx-work-card__shell--footer-minimal",
@@ -850,24 +861,27 @@ function WorkCardShellBlock({
       />
       {!useWarmFooter && !omitScrim ? <div className="wx-work-card__scrim" aria-hidden /> : null}
       <div className="wx-work-card__sweep" aria-hidden />
-      <div
-        className={clsx(
-          "wx-work-card-v2 pointer-events-auto",
-          useWarmFooter && "wx-work-card-v2--footer-warm-pin",
-          omitTopChrome && "wx-work-card-v2--no-chrome",
-        )}
-      >
-        <WorkCardChromeAndFooterBlock
-          entry={entry}
-          workCardChromeTopInnards={workCardChromeTopInnards}
-          useWarmFooter={useWarmFooter}
-          useLightText={useLightText}
-          hovered={hovered}
-          reduceMotion={reduceMotion}
-          omitTopChrome={omitTopChrome}
-          footerMinimal={footerMinimal}
-        />
-      </div>
+      {hasChromeOrFooter ? (
+        <div
+          className={clsx(
+            "wx-work-card-v2 pointer-events-auto",
+            useWarmFooter && "wx-work-card-v2--footer-warm-pin",
+            omitTopChrome && "wx-work-card-v2--no-chrome",
+          )}
+        >
+          <WorkCardChromeAndFooterBlock
+            entry={entry}
+            workCardChromeTopInnards={workCardChromeTopInnards}
+            useWarmFooter={useWarmFooter}
+            useLightText={useLightText}
+            hovered={hovered}
+            reduceMotion={reduceMotion}
+            omitTopChrome={omitTopChrome}
+            omitFooter={omitFooter}
+            footerMinimal={footerMinimal}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1011,6 +1025,7 @@ function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavO
       reduceMotion={reduceMotion}
       workCardChromeTopInnards={workCardChromeTopInnards}
       omitTopChrome={Boolean(entry.workCardOmitTopChrome)}
+      omitFooter={Boolean(entry.workCardOmitFooter)}
       omitScrim={Boolean(entry.workCardOmitScrim)}
       footerMinimal={Boolean(entry.workCardFooterMinimal)}
     />
@@ -1036,6 +1051,7 @@ function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavO
     shell,
     omitScrim: Boolean(entry.workCardOmitScrim),
     footerMinimal: Boolean(entry.workCardFooterMinimal),
+    workCardImageOnly: Boolean(entry.workCardOmitTopChrome && entry.workCardOmitFooter),
   };
 }
 
@@ -1050,6 +1066,7 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
           m.useWarmFooter && "wx-work-card--footer-warm",
           m.figmaLightCanvas && m.useFigma20088 && "wx-work-card--figma-canvas-light",
           m.useFigma20088 && entry.workCardFigmaMockAspect && "wx-work-card--figma-mock-aspect",
+          m.useFigma20088 && m.workCardImageOnly && "wx-work-card--image-only",
           m.omitScrim && "wx-work-card--omit-scrim",
           m.footerMinimal && "wx-work-card--footer-minimal",
           !m.useFigma20088 && workCardAspectClassName(entry),

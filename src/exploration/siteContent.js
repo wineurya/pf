@@ -149,18 +149,18 @@ export const SITE_WORK = [
     workCardFigmaCanvas: "#f4f4f1",
     /** Paper-like grain: multiply, not `soft-light` (reserved for dark canvases) */
     workCardFigmaLightCanvas: true,
-    /** Figma 458:10858 — let the export carry tags/bubbles; no duplicate chrome row. */
+    /** Figma 458:10858 — hero-only: no in-card title/teaser; copy is in the mock. */
     workCardOmitTopChrome: true,
+    workCardOmitFooter: true,
     workCardOmitScrim: true,
-    workCardFooterMinimal: true,
     workCardFigmaObjectPosition: "50% 50%",
+    workCardCaseStudyConnector: false,
+    /** Not shown when footer is omitted; kept for search/case page metadata. */
     workCardTeaserLead: "All-in-one access to city services, updates, and support.",
     workCardStutters: [],
     workCardFinale: "Right when you need it.",
-    /** Short: card `aria-label` and nav; hero copy lives in the mock. */
     summary: "Civic app: welcome flow, service tags, and chat prompts for city issues, updates, and reporting.",
-    workCardAccessibleLabel:
-      "InCity. Civic app for city services, updates, and reporting. Click for focused view; Case Study link opens the write-up.",
+    workCardAccessibleLabel: "InCity. Click for focused project view.",
     alt: "InCity marketing mock: hand holding phone with welcome screen, service tags, floating civic prompts, light background",
     featured: true,
     overlayTitle: "InCity",
