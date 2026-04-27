@@ -136,13 +136,11 @@ export const SITE_WORK = [
     caseStudyPath: "/work/incity",
     workCardAspect: "1/1",
     /**
-     * Figma `Frame 242` node 458:10858 — flat export (mock + orbs + glass pills). Figma size 1204×914; file may be
-     * scaled; `workCardFigmaMockAspect` matches the **raster** so the box matches the image. Re-export 2× from Figma if needed.
+     * Gallery: no hero bitmap — 200:88 field + default mock slot only (see `workCardFigmaNoImage`). Case page may still use
+     * `/work/incity-hero.png` in `work-cases` data.
      * @see https://www.figma.com/design/zxOvL9r7aK2GqiBTUcgGei/InCity?node-id=458-10858
      */
-    workCardBackgroundImage: "/work/incity-hero.png",
-    /** Pixels of the shipped `incity-hero` (width / height) — must match the bitmap for a tight frame fit. */
-    workCardFigmaMockAspect: "1024 / 778",
+    workCardFigmaNoImage: true,
     workCardImageHighPriority: false,
     workCardFigmaFrame: "200-88",
     /** Figma artboard: clean light field around the mock (letterbox + load state) */
@@ -153,7 +151,6 @@ export const SITE_WORK = [
     workCardOmitTopChrome: true,
     workCardOmitFooter: true,
     workCardOmitScrim: true,
-    workCardFigmaObjectPosition: "50% 50%",
     workCardCaseStudyConnector: false,
     /** Not shown when footer is omitted; kept for search/case page metadata. */
     workCardTeaserLead: "All-in-one access to city services, updates, and support.",
@@ -161,7 +158,7 @@ export const SITE_WORK = [
     workCardFinale: "Right when you need it.",
     summary: "Civic app: welcome flow, service tags, and chat prompts for city issues, updates, and reporting.",
     workCardAccessibleLabel: "InCity. Click for focused project view.",
-    alt: "InCity marketing mock: hand holding phone with welcome screen, service tags, floating civic prompts, light background",
+    alt: "InCity project (gallery preview uses canvas only, no art)",
     featured: true,
     overlayTitle: "InCity",
     overlaySubtitle: "Civic app · services + reporting",

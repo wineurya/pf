@@ -449,6 +449,13 @@
   overflow: visible;
 }
 
+/* 200:88 with no `workCardBackgroundImage` — keep slot, no <img> or drop-shadow on missing asset. */
+.site-canvas .wx-work-card__figma-mock-media--no-image {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+}
+
 .site-canvas .wx-work-card__figma-mock-media picture {
   position: absolute;
   inset: 0;

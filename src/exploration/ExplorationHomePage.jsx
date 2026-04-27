@@ -606,9 +606,23 @@ const FIGMA_200_88_SIZES = "(min-width: 64rem) min(40vw, 32rem), min(100vw, 100v
 
 /**
  * Figma `Testing/200:88` (Frame 4): 2400Ã—2400, canvas rgb(227,219,209); child `200:109` 1410.14Ã—1490.18px, centered, img cover + warm shadow.
+ * With `workCardFigmaNoImage` and no `workCardBackgroundImage`, render the same frame with a solid slot (no raster).
  */
 function WorkCardFigma20088Artboard({ entry, bgUrl }) {
   if (!bgUrl) {
+    if (entry.workCardFigmaNoImage) {
+      return (
+        <div className="wx-work-card__figma-frame" data-figma-node="200-88" data-figma-name="Frame 4" aria-hidden>
+          <div
+            className="wx-work-card__figma-mock"
+            data-figma-node="200-109"
+            data-figma-name="Frame 6 1"
+          >
+            <div className="wx-work-card__figma-mock-media wx-work-card__figma-mock-media--no-image" aria-hidden />
+          </div>
+        </div>
+      );
+    }
     return <div className="wx-work-card__bg wx-work-card__bg--empty" aria-hidden />;
   }
   const objectPos = entry.workCardFigmaObjectPosition?.trim();
@@ -995,7 +1009,7 @@ function useWorkCardModel({ entry, reduceMotion, onEmptyProjectClick, onOpenNavO
     duration: reduceMotion ? 0.01 : 0.3,
     ease: [0.22, 1, 0.36, 1],
   };
-  const useFigma20088 = entry.workCardFigmaFrame === "200-88" && Boolean(bgUrl);
+  const useFigma20088 = entry.workCardFigmaFrame === "200-88" && (Boolean(bgUrl) || Boolean(entry.workCardFigmaNoImage));
   const figmaCanvasHex = entry.workCardFigmaCanvas?.trim() || null;
   const figmaLightCanvas = Boolean(entry.workCardFigmaLightCanvas);
   const workCardChromeTopInnards = (
