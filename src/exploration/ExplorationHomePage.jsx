@@ -1984,9 +1984,21 @@ function ExplorationMainStudioSection({ reduceMotion }) {
 }
 
 const APPROACH_STEPS = [
-  { title: "Research", body: "User interviews, usability testing, affinity mapping, and competitive audits before touching a wireframe." },
-  { title: "Structure and prototype", body: "Flows, wireframes, and high-fidelity prototypes that trace decisions back to research findings." },
-  { title: "Test and refine", body: "Usability testing, iteration, and accessibility validation through to handoff or build." },
+  {
+    title: "Research",
+    body: "User interviews, usability testing, affinity mapping, and competitive audits before touching a wireframe.",
+    accent: "#ea580c",
+  },
+  {
+    title: "Structure and prototype",
+    body: "Flows, wireframes, and high-fidelity prototypes that trace decisions back to research findings.",
+    accent: "var(--wx-primary)",
+  },
+  {
+    title: "Test and refine",
+    body: "Usability testing, iteration, and accessibility validation through to handoff or build.",
+    accent: "var(--wx-accent-teal)",
+  },
 ];
 
 function ExplorationMainApproachSection({ reduceMotion }) {
@@ -1999,7 +2011,7 @@ function ExplorationMainApproachSection({ reduceMotion }) {
     >
       <RevealCard
         reduceMotion={reduceMotion}
-        className="space-y-6 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:space-y-7 lg:space-y-8 lg:p-10"
+        className="space-y-8 overflow-visible sm:space-y-10 lg:space-y-12"
       >
         <div className="max-w-2xl space-y-2 lg:space-y-3">
           <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
@@ -2007,18 +2019,25 @@ function ExplorationMainApproachSection({ reduceMotion }) {
         </div>
         <ol className="grid list-none gap-5 pl-0 sm:grid-cols-3 sm:gap-6">
           {APPROACH_STEPS.map((step, idx) => (
-            <li key={step.title} className="wx-approach-step-card">
-              <div className="wx-approach-step-card__row">
+            <li
+              key={step.title}
+              className="wx-approach-step-card"
+              style={{ "--wx-approach-accent": step.accent }}
+            >
+              <p className="wx-approach-step-card__index">0{idx + 1}</p>
+              <div className="wx-approach-step-card__title-row">
                 <span className="wx-approach-step-card__accent" aria-hidden />
-                <div className="wx-approach-step-card__body">
-                  <p className="wx-approach-step-card__index">0{idx + 1}</p>
-                  <h3 className="wx-approach-step-card__title">{step.title}</h3>
-                  <p className="wx-approach-step-card__lede">{step.body}</p>
-                </div>
+                <h3 className="wx-approach-step-card__title">{step.title}</h3>
               </div>
+              <p className="wx-approach-step-card__lede">{step.body}</p>
             </li>
           ))}
         </ol>
+        <div
+          className="wx-approach-figure-slot w-full"
+          data-placeholder="approach-visual"
+          aria-hidden
+        />
       </RevealCard>
       <RevealCard
         reduceMotion={reduceMotion}

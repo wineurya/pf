@@ -213,8 +213,11 @@
   font-synthesis: none;
 }
 
-/* Approach section — light SaaS index card: left accent + headline + lede (no product mock) */
+/* Per-step: --wx-approach-accent (hex or var) on the <li> */
+/* Approach — index card: accent only beside title; index + lede align with title text */
 .site-canvas .wx-approach-step-card {
+  --wx-approach-align: calc(0.25rem + 1rem);
+
   display: block;
   box-sizing: border-box;
   height: 100%;
@@ -232,28 +235,9 @@
   }
 }
 
-.site-canvas .wx-approach-step-card__row {
-  display: flex;
-  align-items: stretch;
-  gap: 1rem;
-}
-
-.site-canvas .wx-approach-step-card__accent {
-  width: 0.25rem;
-  flex-shrink: 0;
-  border-radius: 0.125rem;
-  background: #ea580c;
-  align-self: stretch;
-  min-height: 2.75rem;
-}
-
-.site-canvas .wx-approach-step-card__body {
-  min-width: 0;
-  flex: 1 1 0%;
-}
-
 .site-canvas .wx-approach-step-card__index {
   margin: 0;
+  padding-left: var(--wx-approach-align);
   font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
   font-size: var(--wx-text-overline-size);
   line-height: var(--wx-text-overline-leading);
@@ -263,8 +247,24 @@
   font-synthesis: none;
 }
 
+.site-canvas .wx-approach-step-card__title-row {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.site-canvas .wx-approach-step-card__accent {
+  width: 0.25rem;
+  flex-shrink: 0;
+  border-radius: 0.125rem;
+  background: var(--wx-approach-accent, #ea580c);
+}
+
 .site-canvas .wx-approach-step-card__title {
-  margin: 0.25rem 0 0;
+  margin: 0;
+  flex: 1 1 0%;
+  min-width: 0;
   font-size: 1.0625rem;
   line-height: 1.3;
   font-weight: 600;
@@ -282,12 +282,21 @@
 
 .site-canvas .wx-approach-step-card__lede {
   margin: 0.5rem 0 0;
+  padding-left: var(--wx-approach-align);
   font-size: var(--wx-text-sm-size);
   line-height: var(--wx-text-sm-leading-snug);
   font-weight: 400;
   color: var(--wx-muted);
   text-wrap: pretty;
   font-synthesis: none;
+}
+
+/* Reserves space for a full-width approach visual; drop `aria-hidden` when adding real content */
+.site-canvas .wx-approach-figure-slot {
+  min-height: min(12rem, 30vh);
+  max-width: 100%;
+  border-radius: var(--wx-radius-card);
+  box-sizing: border-box;
 }
 
 .wx-headline {
