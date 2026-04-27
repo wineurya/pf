@@ -874,7 +874,7 @@ function WorkCardShellBlock({
         useWarmFooter={useWarmFooter}
       />
       {!useWarmFooter && !omitScrim ? <div className="wx-work-card__scrim" aria-hidden /> : null}
-      <div className="wx-work-card__sweep" aria-hidden />
+      {hasChromeOrFooter || useWarmFooter ? <div className="wx-work-card__sweep" aria-hidden /> : null}
       {hasChromeOrFooter ? (
         <div
           className={clsx(
