@@ -31,6 +31,7 @@ import { clsx } from "clsx";
 import {
   BookTextIcon,
   CalendarDaysIcon,
+  ClipboardCheckIcon,
   FigmaIcon as LucideFigmaIcon,
   GalleryThumbnailsIcon,
   LaptopMinimalCheckIcon,
@@ -41,6 +42,7 @@ import {
   MailCheckIcon,
   MessageCircleIcon,
   PenToolIcon,
+  SearchIcon,
   SparklesIcon,
   SquareStackIcon,
   TerminalIcon,
@@ -1988,18 +1990,65 @@ const APPROACH_STEPS = [
     title: "Research",
     body: "User interviews, usability testing, affinity mapping, and competitive audits before touching a wireframe.",
     accent: "#ea580c",
+    LucideIcon: SearchIcon,
   },
   {
     title: "Structure and prototype",
     body: "Flows, wireframes, and high-fidelity prototypes that trace decisions back to research findings.",
     accent: "var(--wx-primary)",
+    LucideIcon: LayersIcon,
   },
   {
     title: "Test and refine",
     body: "Usability testing, iteration, and accessibility validation through to handoff or build.",
     accent: "var(--wx-accent-teal)",
+    LucideIcon: ClipboardCheckIcon,
   },
 ];
+
+function ApproachStepAnimatedIcon({ Icon, isActive, reduceMotion }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (reduceMotion || !isActive) {
+      return;
+    }
+    const h = ref.current;
+    if (!h?.startAnimation) {
+      return;
+    }
+    h.startAnimation();
+  }, [Icon, isActive, reduceMotion]);
+  return (
+    <span
+      className="wx-approach-step-card__lucide inline-flex size-5 shrink-0 items-center justify-center [&>div]:!size-5"
+      aria-hidden
+    >
+      <Icon ref={ref} size={20} />
+    </span>
+  );
+}
+
+function ApproachStepListItem({ step, reduceMotion }) {
+  const [hovered, setHovered] = useState(false);
+  const LucideIcon = step.LucideIcon;
+  return (
+    <li
+      className="wx-approach-step-card"
+      style={{ "--wx-approach-accent": step.accent }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="wx-approach-step-card__icon-line">
+        <ApproachStepAnimatedIcon Icon={LucideIcon} isActive={hovered} reduceMotion={reduceMotion} />
+      </div>
+      <div className="wx-approach-step-card__title-row">
+        <span className="wx-approach-step-card__accent" aria-hidden />
+        <h3 className="wx-approach-step-card__title">{step.title}</h3>
+      </div>
+      <p className="wx-approach-step-card__lede">{step.body}</p>
+    </li>
+  );
+}
 
 function ExplorationMainApproachSection({ reduceMotion }) {
   return (
@@ -2018,19 +2067,8 @@ function ExplorationMainApproachSection({ reduceMotion }) {
           <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">Research first, every time.</h2>
         </div>
         <ol className="grid list-none gap-5 pl-0 sm:grid-cols-3 sm:gap-6">
-          {APPROACH_STEPS.map((step, idx) => (
-            <li
-              key={step.title}
-              className="wx-approach-step-card"
-              style={{ "--wx-approach-accent": step.accent }}
-            >
-              <p className="wx-approach-step-card__index">0{idx + 1}</p>
-              <div className="wx-approach-step-card__title-row">
-                <span className="wx-approach-step-card__accent" aria-hidden />
-                <h3 className="wx-approach-step-card__title">{step.title}</h3>
-              </div>
-              <p className="wx-approach-step-card__lede">{step.body}</p>
-            </li>
+          {APPROACH_STEPS.map((step) => (
+            <ApproachStepListItem key={step.title} step={step} reduceMotion={reduceMotion} />
           ))}
         </ol>
         <div

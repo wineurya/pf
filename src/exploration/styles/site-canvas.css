@@ -225,9 +225,9 @@
   border: 1px solid var(--wx-border-soft);
   background: var(--wx-white);
   box-shadow: 0 1px 2px color-mix(in srgb, var(--wx-ink) 5%, transparent);
-  /* No left padding — accent bar sits flush to the inner left; index & lede use --wx-approach-align */
+  /* No left padding — accent bar sits flush to the inner left; icon line & lede use --wx-approach-align */
   padding: 1.25rem 1.25rem 1.35rem 0;
-  overflow: hidden;
+  overflow: visible;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -237,23 +237,23 @@
   }
 }
 
-.site-canvas .wx-approach-step-card__index {
-  margin: 0;
+.site-canvas .wx-approach-step-card__icon-line {
+  display: flex;
+  align-items: center;
+  min-height: 1.5rem;
   padding-left: var(--wx-approach-align);
-  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
-  font-size: var(--wx-text-overline-size);
-  line-height: var(--wx-text-overline-leading);
-  font-weight: 500;
+  margin: 0 0 0.5rem;
+}
+
+.site-canvas .wx-approach-step-card__lucide {
   color: var(--wx-muted);
-  letter-spacing: 0.02em;
-  font-synthesis: none;
 }
 
 .site-canvas .wx-approach-step-card__title-row {
   display: flex;
   align-items: stretch;
   gap: 1rem;
-  margin-top: 0.25rem;
+  margin-top: 0;
 }
 
 .site-canvas .wx-approach-step-card__accent {
@@ -296,7 +296,8 @@
 
 /* Reserves space for a full-width approach visual; drop `aria-hidden` when adding real content */
 .site-canvas .wx-approach-figure-slot {
-  min-height: min(12rem, 30vh);
+  margin-top: 0.5rem;
+  min-height: min(20rem, 45vh);
   max-width: 100%;
   border-radius: var(--wx-radius-card);
   box-sizing: border-box;
