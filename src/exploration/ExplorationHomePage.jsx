@@ -2062,20 +2062,25 @@ function ExplorationMainApproachSection({ reduceMotion }) {
         reduceMotion={reduceMotion}
         className="space-y-8 overflow-visible sm:space-y-10 lg:space-y-12"
       >
-        <div className="max-w-2xl space-y-2 lg:space-y-3">
-          <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
-          <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">Research first, every time.</h2>
-        </div>
-        <ol className="grid list-none gap-5 pl-0 sm:grid-cols-3 sm:gap-6">
-          {APPROACH_STEPS.map((step) => (
-            <ApproachStepListItem key={step.title} step={step} reduceMotion={reduceMotion} />
-          ))}
-        </ol>
         <div
-          className="wx-approach-figure-slot w-full"
-          data-placeholder="approach-visual"
-          aria-hidden
-        />
+          className="wx-approach-3up-with-visual space-y-6 sm:space-y-8"
+          data-approach="research-3up"
+        >
+          <div className="max-w-2xl space-y-2 lg:space-y-3">
+            <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
+            <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">Research first, every time.</h2>
+          </div>
+          <ol className="wx-approach-3up-ol m-0 grid list-none gap-5 p-0 sm:grid-cols-3 sm:gap-6">
+            {APPROACH_STEPS.map((step) => (
+              <ApproachStepListItem key={step.title} step={step} reduceMotion={reduceMotion} />
+            ))}
+          </ol>
+          <div
+            className="wx-approach-figure-slot w-full"
+            data-placeholder="approach-visual"
+            aria-hidden
+          />
+        </div>
       </RevealCard>
       <RevealCard
         reduceMotion={reduceMotion}

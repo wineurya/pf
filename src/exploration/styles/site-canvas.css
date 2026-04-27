@@ -294,9 +294,16 @@
   font-synthesis: none;
 }
 
+/* Groups heading + 3 step cards + figure; spacing between rows from parent .wx-approach-3up-with-visual */
+.site-canvas .wx-approach-3up-with-visual {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
 /* Reserves space for a full-width approach visual; drop `aria-hidden` when adding real content */
 .site-canvas .wx-approach-figure-slot {
-  margin-top: 0.5rem;
+  margin-top: 0;
   min-height: min(20rem, 45vh);
   max-width: 100%;
   border-radius: var(--wx-radius-card);
