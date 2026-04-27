@@ -2005,15 +2005,17 @@ function ExplorationMainApproachSection({ reduceMotion }) {
           <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
           <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">Research first, every time.</h2>
         </div>
-        <ol className="grid gap-5 sm:grid-cols-3 sm:gap-6">
+        <ol className="grid list-none gap-5 pl-0 sm:grid-cols-3 sm:gap-6">
           {APPROACH_STEPS.map((step, idx) => (
-            <li
-              key={step.title}
-              className="rounded-[calc(var(--wx-radius-card)-2px)] border border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] p-5"
-            >
-              <p className="wx-text-step-index text-[var(--wx-primary)]">0{idx + 1}</p>
-              <p className="mt-2 font-medium text-[var(--wx-ink)]">{step.title}</p>
-              <p className="mt-2 wx-text-sm text-[var(--wx-muted)]">{step.body}</p>
+            <li key={step.title} className="wx-approach-step-card">
+              <div className="wx-approach-step-card__row">
+                <span className="wx-approach-step-card__accent" aria-hidden />
+                <div className="wx-approach-step-card__body">
+                  <p className="wx-approach-step-card__index">0{idx + 1}</p>
+                  <h3 className="wx-approach-step-card__title">{step.title}</h3>
+                  <p className="wx-approach-step-card__lede">{step.body}</p>
+                </div>
+              </div>
             </li>
           ))}
         </ol>
