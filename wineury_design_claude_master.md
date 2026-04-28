@@ -45,7 +45,7 @@ Keep the tone human, sharp, confident, and not overly corporate. Avoid em dashes
 
 **Name:** Wineury Almonte  
 **Preferred name:** Wineury  
-**Nickname options:** Winnie, Ex  
+**Nickname / short name:** Ex  
 **Public role:** UX/Product Designer  
 **Secondary role phrasing:** UX/UI Designer, Product Designer, Interaction Designer  
 **Location:** Atlanta metro area / Georgia  
@@ -233,7 +233,7 @@ Potential framing:
 - Concrete design decisions.
 - “I” when writing personal/about copy.
 - “We” only when describing team project work.
-- First person for freelance identity, not “Winnie Studio helps...”
+- First person for freelance identity, not “the studio helps...”
 
 ### Preferred phrasing style
 
@@ -2219,7 +2219,7 @@ Do not rewrite everything unless asked.
 - Confirm exact public name:
   - Wineury?
   - Wineury Almonte?
-  - Wineury “Winnie” Almonte?
+  - Wineury Almonte (legal / formal contexts)?
 
 - Confirm public title:
   - UX/Product Designer?

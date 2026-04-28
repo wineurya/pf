@@ -22,9 +22,9 @@ export class ErrorBoundary extends Component {
           role="alert"
           className="min-h-dvh p-6 font-body bg-[var(--color-bg)] text-[var(--color-fg)]"
         >
-          <p className="text-sm font-medium">Something went wrong.</p>
+          <p className="wx-text-sm font-medium">Something went wrong.</p>
           {isDev ? (
-            <pre className="mt-4 max-h-[50vh] overflow-auto rounded-md bg-[var(--color-bg)] p-4 text-xs leading-relaxed whitespace-pre-wrap text-[var(--color-fg-secondary)]">
+            <pre className="wx-text-meta mt-4 max-h-[50vh] overflow-auto rounded-md bg-[var(--color-bg)] p-4 leading-relaxed whitespace-pre-wrap text-[var(--color-fg-secondary)]">
               {String(this.state.error)}
             </pre>
           ) : null}

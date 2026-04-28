@@ -1,14 +1,16 @@
 /* Case study templates — use site tokens; view-transition tuning pairs with `navigateViewTransition` */
 @supports (view-transition-name: none) {
+  /* Default root: shorter when view-transition / canvas vars (below) are not present. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 0.38s;
-    animation-timing-function: cubic-bezier(0.32, 0, 0.24, 1);
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
 
 .wc {
   min-height: 100%;
+  font-family: var(--font-body, system-ui, sans-serif);
   background-color: var(--wx-page-bg, var(--color-bg));
   color: var(--wx-ink, var(--color-fg));
 }
@@ -25,7 +27,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.8125rem;
+  font-size: var(--wx-text-meta-size);
+  line-height: var(--wx-text-meta-leading);
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--wx-muted, var(--color-fg-secondary));
@@ -43,7 +46,8 @@
 }
 
 .wc-kicker {
-  font-size: 0.75rem;
+  font-size: var(--wx-text-overline-size);
+  line-height: var(--wx-text-overline-leading);
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -61,11 +65,18 @@
 }
 
 .wc-lede {
-  font-size: 0.9375rem;
-  line-height: 1.55;
+  font-size: var(--wx-text-body-secondary-size);
+  line-height: var(--wx-text-body-secondary-leading);
   color: var(--wx-muted, var(--color-fg-secondary));
   max-width: 36rem;
   margin: 0 0 1.5rem;
+}
+
+@media (width >= 40rem) {
+  .wc-lede {
+    font-size: var(--wx-text-body-secondary-size-sm);
+    line-height: var(--wx-text-body-secondary-leading-sm);
+  }
 }
 
 /* Template: hero + single visual */
@@ -95,15 +106,21 @@
 }
 
 .wc-step h3 {
-  font-size: 0.9375rem;
+  font-size: var(--wx-text-body-secondary-size);
   font-weight: 500;
   letter-spacing: -0.02em;
   margin: 0 0 0.5rem;
 }
 
+@media (width >= 40rem) {
+  .wc-step h3 {
+    font-size: var(--wx-text-body-secondary-size-sm);
+  }
+}
+
 .wc-step p {
-  font-size: 0.875rem;
-  line-height: 1.5;
+  font-size: var(--wx-text-sm-size);
+  line-height: var(--wx-text-sm-leading-snug);
   color: var(--wx-muted, var(--color-fg-secondary));
   margin: 0 0 1.25rem;
   max-width: 40rem;
@@ -134,7 +151,8 @@
 }
 
 .wc-strip figcaption {
-  font-size: 0.7rem;
+  font-size: var(--wx-text-strip-caption);
+  line-height: var(--wx-text-overline-leading);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -158,7 +176,103 @@
   display: block;
 }
 
+/*
+ * Site: staged route transition (MPA View Transitions). Layout intentionally differs between
+ * routes — on `/`, the nav lives in the left aside column; on `/work/:slug`, it lives in a
+ * full-bleed top header — so the chrome group has a real geometry delta to morph through.
+ *
+ *   A. (out) Aside + main panels + root fade OUT in place. Chrome holds (delayed past phase A).
+ *   B. (nav) Chrome group morphs from aside-slot to top-header. Cross-fade old→new is synced
+ *           with the morph (normal blend, no plus-lighter glow). Panels/aside group ALSO morphs
+ *           in this window — invisibly, since both sides are at opacity 0 — so when phase C
+ *           reveals them they are already at the destination rect (no visible jump).
+ *   C. (in)  Panels + aside + root fade IN at the destination layout.
+ *
+ * Do not add Motion `layoutId` on the same chrome; it competes with the group morph.
+ */
+@supports (view-transition-name: none) {
+  :root {
+    --wx-vt-staged-out: 0.30s;
+    --wx-vt-staged-nav: 0.42s;
+    --wx-vt-staged-in: 0.30s;
+  }
+
+  .site-vt--nav    { view-transition-name: site-chrome; }
+  .site-vt--aside  { view-transition-name: site-fade-aside; }
+  .site-vt--panels { view-transition-name: site-fade-panels; }
+
+  @keyframes site-vt-canvas-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes site-vt-canvas-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+  /* A. Old aside / panels / root fade out at OLD rect. */
+  ::view-transition-old(site-fade-panels),
+  ::view-transition-old(site-fade-aside),
+  ::view-transition-old(root) {
+    animation: site-vt-canvas-fade-out var(--wx-vt-staged-out) cubic-bezier(0.4, 0, 1, 1) 0s both;
+  }
+
+  /* B (silent). Panels + aside groups morph during phase B while both layers are invisible. */
+  ::view-transition-group(site-fade-panels),
+  ::view-transition-group(site-fade-aside) {
+    animation-delay: var(--wx-vt-staged-out);
+    animation-duration: var(--wx-vt-staged-nav) !important;
+  }
+
+  /* B (visible). Chrome morphs aside → top header, with a clean cross-fade (normal blend). */
+  ::view-transition-group(site-chrome) {
+    z-index: 3;
+    animation-delay: var(--wx-vt-staged-out);
+    animation-duration: var(--wx-vt-staged-nav) !important;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  ::view-transition-old(site-chrome) {
+    animation: site-vt-canvas-fade-out var(--wx-vt-staged-nav) cubic-bezier(0.4, 0, 1, 1) both;
+    animation-delay: var(--wx-vt-staged-out);
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(site-chrome) {
+    animation: site-vt-canvas-fade-in var(--wx-vt-staged-nav) cubic-bezier(0, 0, 0.2, 1) both;
+    animation-delay: var(--wx-vt-staged-out);
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-image-pair(site-chrome) {
+    isolation: isolate;
+  }
+
+  /* C. New aside / panels / root fade in at the destination rect. */
+  ::view-transition-new(site-fade-panels),
+  ::view-transition-new(site-fade-aside),
+  ::view-transition-new(root) {
+    animation: site-vt-canvas-fade-in var(--wx-vt-staged-in) cubic-bezier(0, 0, 0.2, 1) both;
+    animation-delay: calc(var(--wx-vt-staged-out) + var(--wx-vt-staged-nav));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --wx-vt-staged-out: 0.001s;
+    --wx-vt-staged-nav: 0.001s;
+    --wx-vt-staged-in: 0.001s;
+  }
+
+  @supports (view-transition-name: none) {
+    .site-vt--nav,
+    .site-vt--aside,
+    .site-vt--panels {
+      view-transition-name: none !important;
+    }
+
+    ::view-transition-old(*),
+    ::view-transition-new(*),
+    ::view-transition-group(*) {
+      animation-duration: 0s !important;
+      animation-delay: 0s !important;
+    }
+  }
+
   .wc-back,
   .wc-hero__figure,
   .wc-step-figure,

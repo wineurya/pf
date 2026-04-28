@@ -166,6 +166,13 @@
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --ease-expo-out: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-back-out: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /**
+   * emil-design-eng / animations.dev: avoid weak built-in easings on choreographed UI.
+   * --ease-out above is a soft default; use these for intentional full-screen or layout motion.
+   */
+  --ease-ui-strong-out: cubic-bezier(0.23, 1, 0.32, 1);
+  /* On-screen layout morph, crossfades, drawer-like moves */
+  --ease-morph-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 /* :root — semantics + fluid (no extra utilities) */
@@ -231,7 +238,7 @@
   --gsap-ease-bounce: "0.68, -0.55, 0.265, 1.55";
 
   /*
-   * Winnie exploration (Figma 146) — light marketing surface; inherits on :root
+   * One-page / marketing surface (Figma 146) — light marketing surface; inherits on :root
    * so Tailwind arbitrary values and Framer Motion can use var(--wx-*).
    * Darks/whites: derive from --color-neutral-* only (no raw #000/#fff in wx-*).
    */
@@ -282,13 +289,66 @@
   --wx-radius-track: 16px;
   --wx-radius-card: 8px;
   --wx-gallery-gap: 12px;
-  /* Aside vs work column: capped rail + fluid gallery (see WinnieExplorationPage) */
+  /* Aside vs work column: capped rail + fluid gallery (see ExplorationHomePage) */
   --wx-explore-aside-basis: min(42%, 36rem);
   --wx-gallery-aspect: 16 / 10;
   --wx-work-overlay-pad-x: clamp(1rem, 3.5vw, 1.5rem);
   --wx-work-overlay-pad-y: clamp(1rem, 3vw, 1.375rem);
   --wx-work-copy-gap: 0.5rem;
   --wx-max-copy: 31.3125rem;
+  /**
+   * Site UI type (sans = `--font-body` from @theme; mono = `--font-mono` where used).
+   * - body secondary: 15px → 16px @ sm; subhead, card summary, case lede, FAQ answer, studio intro.
+   * - eyebrow: same sizes, different line-height (status row, section kickers that pair with 15/16).
+   * - meta: 13px; availability, captions, back links, contact pills, fine print.
+   */
+  --wx-text-body-secondary-size: 0.9375rem;
+  --wx-text-body-secondary-size-sm: 1rem;
+  --wx-text-body-secondary-leading: 1.625;
+  --wx-text-body-secondary-leading-sm: 1.5;
+  --wx-text-eyebrow-leading: 1.5;
+  --wx-text-eyebrow-leading-sm: 1.75;
+  --wx-text-meta-size: 0.8125rem;
+  --wx-text-meta-leading: 1.5;
+  /* 14px — dense body, stat labels, tabs, form success, case steps */
+  --wx-text-sm-size: 0.875rem;
+  --wx-text-sm-leading: 1.625;
+  --wx-text-sm-leading-snug: 1.5;
+  /* 12px — section kickers, form labels, step index */
+  --wx-text-overline-size: 0.75rem;
+  --wx-text-overline-leading: 1.5;
+  /* Work card chips */
+  --wx-text-nugget: 0.75rem;
+  --wx-text-nugget-warm: 0.7rem;
+  /* 14/20 — primary/secondary controls, stack row labels */
+  --wx-text-ui-14: 0.875rem;
+  --wx-text-ui-14-lh: 1.25rem;
+  /* Aside hero h1, pull quote, wordmark, service row titles */
+  --wx-text-hero-line-size: 1.625rem;
+  --wx-text-hero-line-size-sm: 1.75rem;
+  --wx-text-pullquote-size: 1.0625rem;
+  --wx-text-pullquote-size-sm: 1.25rem;
+  --wx-text-pullquote-leading: 1.625;
+  --wx-text-pullquote-leading-sm: 1.5;
+  /* Decorative “ — Georgia (serif) only */
+  --wx-text-quote-mark-size: 3rem;
+  --wx-text-wordmark-size: 1rem;
+  --wx-text-wordmark-leading: 1.12;
+  --wx-text-service-title-size: 1rem;
+  --wx-text-service-title-size-sm: 1.0625rem;
+  --wx-text-service-title-leading: 1.375;
+  /* Stats, FAQ, editorial */
+  --wx-stat-value-size: 2.25rem;
+  --wx-stat-value-size-sm: 2.75rem;
+  --wx-text-faq-summary-size: 1rem;
+  --wx-text-faq-summary-leading: 1.5;
+  --wx-text-faq-bubble-line-size: 0.875rem;
+  --wx-text-faq-bubble-line-leading: 1.45;
+  --wx-text-strip-caption: 0.7rem;
+  /* “Stack” column header — aside + micro UI */
+  --wx-text-aside-footer-size: 0.625rem;
+  /* Form fields — 14px to match `wx-text-sm` / controls */
+  --wx-text-form-input-leading: 1.45;
   --wx-pad-x: clamp(1.25rem, 4vw, 3.75rem);
   --wx-space-section: clamp(1.75rem, 4vw, 2.5rem);
   --wx-selection-bg: color-mix(in srgb, var(--wx-primary) 22%, transparent);

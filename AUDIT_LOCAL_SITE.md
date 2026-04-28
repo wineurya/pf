@@ -8,16 +8,16 @@
 
 ## Executive Summary
 
-The local development environment contains a **critical React hook error** that prevents the main application from rendering. The WinnieExplorationPage component is calling `useReducedMotion` outside of proper React context, causing repeated runtime failures. The build process works correctly (production build succeeds), but the dev server is currently broken.
+The local development environment contains a **critical React hook error** that prevents the main application from rendering. The ExplorationHomePage component is calling `useReducedMotion` outside of proper React context, causing repeated runtime failures. The build process works correctly (production build succeeds), but the dev server is currently broken.
 
 ---
 
 ## Critical Issues
 
-### 🔴 **CRITICAL: Invalid Hook Call in WinnieExplorationPage**
+### 🔴 **CRITICAL: Invalid Hook Call in ExplorationHomePage**
 
 **Severity:** BLOCKER  
-**Location:** `src/exploration/WinnieExplorationPage.jsx:965` (line ~964-965)  
+**Location:** `src/exploration/ExplorationHomePage.jsx:965` (line ~964-965)  
 **Error:** `TypeError: Cannot read properties of null (reading 'useState')`
 
 **Root Cause:**
@@ -28,7 +28,7 @@ The local development environment contains a **critical React hook error** that 
 **Evidence:**
 ```
 at useReducedMotion (motion_react.js:10993:60)
-at WinnieExplorationPage (WinnieExplorationPage.jsx:965:24)
+at ExplorationHomePage (ExplorationHomePage.jsx:965:24)
 at renderWithHooks (react-dom_client.js:5654:24)
 ```
 
@@ -36,7 +36,7 @@ at renderWithHooks (react-dom_client.js:5654:24)
 - Page displays error message instead of portfolio content
 - First load visible briefly, then error crashes UI
 - Production build unaffected (build succeeds with no errors)
-- Affects all routes since WinnieExplorationPage is the main component
+- Affects all routes since ExplorationHomePage is the main component
 
 **Recommended Fix:**
 - Check if `useReducedMotion` is being called conditionally or outside function component scope
@@ -81,10 +81,10 @@ src/
 │   ├── LenisProvider.jsx (smooth scroll context)
 │   ├── MotionProvider.jsx (motion/react config)
 ├── exploration/
-│   ├── WinnieExplorationPage.jsx (main component) ❌ BROKEN
-│   ├── winnie-content.js (data)
-│   ├── useWinnieSectionScroll.js (custom hook)
-│   └── styles/winnie-exploration.css
+│   ├── ExplorationHomePage.jsx (main component) ❌ BROKEN
+│   ├── siteContent.js (data)
+│   ├── useSectionScroll.js (custom hook)
+│   └── styles/site-canvas.css
 ├── components/
 │   └── ErrorBoundary.jsx (error handling)
 ├── lib/
@@ -169,7 +169,7 @@ src/
 ### React Patterns ✅
 - Proper use of hooks in providers (useState, useEffect)
 - useLayoutEffect for DOM measurements (appropriate for scroll triggers)
-- Custom hooks for reusable logic (useWinnieSectionScroll)
+- Custom hooks for reusable logic (useSectionScroll)
 - Proper dependency arrays where visible
 
 ### CSS & Styling ✅
@@ -227,7 +227,7 @@ src/
 ## Recommendations (Priority Order)
 
 ### P0 — Fix Critical Error
-1. **Resolve useReducedMotion hook error** in WinnieExplorationPage
+1. **Resolve useReducedMotion hook error** in ExplorationHomePage
    - Check if hook is being called conditionally
    - Verify motion provider context is wrapping component
    - Review motion/react version compatibility
@@ -268,4 +268,4 @@ src/
 The site has a **solid foundation** with proper architecture, good performance, and accessibility-conscious design choices. However, a **critical React error in the main component** must be resolved before any user-facing functionality can be tested. Once the hook error is fixed, comprehensive accessibility and performance testing should follow.
 
 **Current Status:** Development environment broken, production build healthy.  
-**Blocker:** Invalid hook call in WinnieExplorationPage component.
+**Blocker:** Invalid hook call in ExplorationHomePage component.

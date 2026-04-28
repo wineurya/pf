@@ -1,0 +1,50 @@
+/**
+ * Siren — stepped case layout (safety / trust narrative).
+ * @param {{ kicker: string; title: string; lede: string; steps?: { title: string; blurb: string; image: string }[] }} props.def
+ */
+export function SirenCaseStudy({ def }) {
+  const steps = def.steps ?? [];
+  return (
+    <article className="flex flex-col gap-12">
+      <header className="max-w-2xl">
+        <p className="wx-text-sm font-medium tracking-wide text-[color-mix(in_srgb,var(--wx-ink)_55%,var(--wx-page-bg))] uppercase">
+          {def.kicker}
+        </p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{def.title}</h1>
+        <p className="mt-4 wx-text-body-secondary text-[color-mix(in_srgb,var(--wx-ink)_78%,var(--wx-page-bg))]">
+          {def.lede}
+        </p>
+      </header>
+      <ol className="flex list-none flex-col gap-12 p-0">
+        {steps.map((step, i) => (
+          <li
+            key={step.title}
+            className="grid gap-6 border-t border-[color:var(--wx-border-soft)] pt-10 sm:grid-cols-2 sm:items-start sm:gap-10"
+          >
+            <div className="sm:pt-1">
+              <p className="wx-text-overline font-mono text-[color-mix(in_srgb,var(--wx-ink)_45%,var(--wx-page-bg))]">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h2 className="mt-1 text-xl font-semibold tracking-tight">{step.title}</h2>
+              <p className="mt-2 wx-text-sm text-[color-mix(in_srgb,var(--wx-ink)_80%,var(--wx-page-bg))]">
+                {step.blurb}
+              </p>
+            </div>
+            <div className="overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
+              <img
+                src={step.image}
+                alt=""
+                className="aspect-[4/3] w-full object-cover"
+                width={800}
+                height={600}
+                sizes="(min-width: 900px) 50vw, 100vw"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </li>
+        ))}
+      </ol>
+    </article>
+  );
+}

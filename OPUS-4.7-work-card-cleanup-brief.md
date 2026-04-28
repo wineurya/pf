@@ -1,4 +1,4 @@
-# Handoff: Figma work cards (Winnie exploration) — cleanup for Opus 4.7
+# Handoff: Figma work cards (one-page home) — cleanup for Opus 4.7
 
 Use this to align refactors, dedupe, and polish without re‑discovering intent. `npm run build` was last verified passing on this work.
 
@@ -26,11 +26,11 @@ Use this to align refactors, dedupe, and polish without re‑discovering intent.
 |------|------|
 | `public/work/avance-hero.png` | Hero mock for Avance work card. |
 | `src/exploration/avance.md` | Short project blurb (copy / context for Avance). |
-| `src/exploration/winnie-content.js` | **`WINNIE_WORK`**: new **`avance`** item first; fields `workCardVariant`, `workCardBackgroundImage`, `workCardFooterOnDark`, `nuggets[]` with `{ label, color, icon }`, etc. Other entries gained explicit `workCardVariant` where needed. |
-| `src/exploration/WinnieExplorationPage.jsx` | `NUGGET_ICON_MAP`, `hexToSrgb` / luma helpers, `WorkNuggetPill`, `WorkCardTeaserText`, `workCardBackgroundUrl`, **`WorkCard`** restructure (shell, bg, scrim, sweep, v2 chrome + footer, link overlay for case study). |
-| `src/exploration/styles/winnie-exploration.css` | New **BEM-ish** `wx-work-card*` / `wx-work-card-v2*` rules for 2:1 layout, empty bg, scrim, sweep, nugget chips, view pill, summary typography, hover/fine-pointer gates, and reduced-motion overrides at end of file. |
+| `src/exploration/siteContent.js` | **`SITE_WORK`**: new **`avance`** item first; fields `workCardVariant`, `workCardBackgroundImage`, `workCardFooterOnDark`, `nuggets[]` with `{ label, color, icon }`, etc. Other entries gained explicit `workCardVariant` where needed. |
+| `src/exploration/ExplorationHomePage.jsx` | `NUGGET_ICON_MAP`, `hexToSrgb` / luma helpers, `WorkNuggetPill`, `WorkCardTeaserText`, `workCardBackgroundUrl`, **`WorkCard`** restructure (shell, bg, scrim, sweep, v2 chrome + footer, link overlay for case study). |
+| `src/exploration/styles/site-canvas.css` | New **BEM-ish** `wx-work-card*` / `wx-work-card-v2*` rules for 2:1 layout, empty bg, scrim, sweep, nugget chips, view pill, summary typography, hover/fine-pointer gates, and reduced-motion overrides at end of file. |
 
-## Data contract (`WINNIE_WORK` entries)
+## Data contract (`SITE_WORK` entries)
 
 Relevant optional fields:
 
