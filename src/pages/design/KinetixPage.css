@@ -56,10 +56,6 @@
 
   --kx-ease:          cubic-bezier(0.32, 0.72, 0, 1);
 
-  --kx-font: 'Geist Variable', 'Geist', system-ui, -apple-system, sans-serif;
-  --kx-weight-regular: 500;
-  --kx-weight-strong:  700;
-
   /* Line-height tokens — fix font height, not font size */
   --kx-leading-none:    1;
   --kx-leading-tight:   1.2;
@@ -67,34 +63,38 @@
   --kx-leading-normal:  1.5;
   --kx-leading-relaxed: 1.6;
 
-  /* ── Display typography (Figma → header.kx-topbar, node 218:184) ──────────────
-     SF Pro stack used by the topbar chrome. Not a body font — only applied
-     to header surfaces that mirror native macOS app bars. */
+  /* ── Display typography (Figma node 218:184 + page-wide application) ──────────
+     SF Pro stack for the entire Kinetix surface (.kx-root). System-font first;
+     Inter/system-ui fallback (no web font fetch). */
   --kx-font-display:
     -apple-system, BlinkMacSystemFont,
     'SF Pro Display', 'SF Pro Text', 'SF Pro',
     'Inter var', 'Inter', system-ui, sans-serif;
 
-  /* SF Pro variable-axis weights (matches Figma's font-[590] / font-bold). */
+  --kx-font: var(--kx-font-display);
+
+  /* SF Pro variable-axis weights (Figma font-[590] / font-bold). The page keeps
+     only two semantic weights; they alias to the display axis values. */
   --kx-weight-display:        590; /* SF Pro Semibold */
   --kx-weight-display-strong: 700; /* SF Pro Bold      */
+  --kx-weight-regular: var(--kx-weight-display);
+  --kx-weight-strong:  var(--kx-weight-display-strong);
 
-  /* Display tracking — small letter-spacing nudges that match the Figma
-     spec (e.g. 0.1px on 12.5px = 0.008em). Use these on display surfaces
-     only, never on body copy. */
-  --kx-tracking-display:        0.008em; /* 0.1px on 12.5px      */
-  --kx-tracking-display-tight:  0.005em; /* 0.063px on 12.5px    */
-  --kx-tracking-display-tag:    0.01em;  /* 0.1px on 10px chips  */
+  /* Tracking tokens — em-relative, maps Figma px tracking at typical sizes */
+  --kx-tracking-display:        0.008em; /* ~0.1px on 12.5px   */
+  --kx-tracking-display-tight:  0.005em; /* ~0.063px on 12.5px */
+  --kx-tracking-display-tag:    0.01em;  /* ~0.1px on 10px chips */
 
   display: flex;
   height: 100vh;
   overflow: hidden;
   background: var(--kx-bg);
-  font-family: var(--kx-font);
+  font-family: var(--kx-font-display);
   color: var(--kx-text);
   font-size: 13px;
   font-weight: var(--kx-weight-regular);
   line-height: var(--kx-leading-normal);
+  font-feature-settings: 'ss01', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -366,9 +366,8 @@
   overflow: hidden;
 }
 
-/* ── Top bar ──────────────────────────────────────────────────────────────────
-   Figma source: node 218:184 (header.kx-topbar) — uses SF Pro display tokens.
-   Display surface only: font-family + display weights cascade to all children. */
+/* ── Top bar (Figma node 218:184) ──────────────────────────────────────────────
+   Inherits SF Pro stack + display weights from .kx-root. */
 .kx-topbar {
   height: 56px;
   flex-shrink: 0;
@@ -378,10 +377,6 @@
   align-items: center;
   padding: 0 18px;
   gap: 10px;
-
-  font-family: var(--kx-font-display);
-  font-weight: var(--kx-weight-display);
-  font-feature-settings: 'ss01', 'cv11';
 }
 
 .kx-breadcrumb {
@@ -844,7 +839,7 @@
   border-radius: var(--kx-radius-sm);
   border: none;
   background: transparent;
-  font-family: var(--kx-font);
+  font-family: inherit;
   font-size: 12px;
   font-weight: var(--kx-weight-regular);
   color: var(--kx-text-muted);
@@ -1458,7 +1453,7 @@
   font-size: 11px;
   font-weight: var(--kx-weight-regular);
   cursor: pointer;
-  font-family: var(--kx-font);
+  font-family: inherit;
   transition: border-color 0.14s var(--kx-ease), color 0.14s var(--kx-ease), background 0.14s var(--kx-ease);
 }
 
@@ -1553,7 +1548,7 @@
   border: none;
   border-radius: var(--kx-radius-sm);
   cursor: pointer;
-  font-family: var(--kx-font);
+  font-family: inherit;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1711,7 +1706,7 @@
   border: none;
   cursor: pointer;
   text-align: left;
-  font-family: var(--kx-font);
+  font-family: inherit;
   transition: background 0.14s var(--kx-ease);
 }
 
@@ -1731,7 +1726,7 @@
   font-weight: var(--kx-weight-strong);
   padding: 2px 7px;
   border-radius: var(--kx-radius-xs);
-  letter-spacing: 0.005em;
+  letter-spacing: var(--kx-tracking-display-tight);
   margin-left: auto;
   color: var(--kx-chip-fg);
   box-shadow: 0 0 12px rgba(71, 85, 105, 0.16);
@@ -1803,7 +1798,7 @@
   font-size: 11.5px;
   font-weight: var(--kx-weight-strong);
   cursor: pointer;
-  font-family: var(--kx-font);
+  font-family: inherit;
   transition: background 0.14s var(--kx-ease);
 }
 
@@ -1870,7 +1865,7 @@
   cursor: pointer;
   color: var(--kx-text-muted);
   transition: background 0.14s var(--kx-ease), color 0.14s var(--kx-ease);
-  font-family: var(--kx-font);
+  font-family: inherit;
 }
 
 .kx-modal-close:hover { background: var(--kx-surface-soft); color: var(--kx-text); }
@@ -1989,7 +1984,7 @@
   font-weight: var(--kx-weight-regular);
   color: var(--kx-text-2);
   cursor: pointer;
-  font-family: var(--kx-font);
+  font-family: inherit;
   transition: background 0.14s var(--kx-ease), border-color 0.14s var(--kx-ease);
 }
 
@@ -2006,7 +2001,7 @@
   font-weight: var(--kx-weight-strong);
   border: none;
   cursor: pointer;
-  font-family: var(--kx-font);
+  font-family: inherit;
   transition: background 0.14s var(--kx-ease);
 }
 

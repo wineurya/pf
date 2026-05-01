@@ -1,27 +1,32 @@
-# Kinetix — Topbar Display Tokens (SF Pro)
+# Kinetix — Figma display tokens (SF Pro)
 
-> Figma source: [Testing → header.kx-topbar (218:184)](https://www.figma.com/design/ehQYOquLYoGBReIO32iya0/Testing?node-id=218-184&m=dev)
+> Figma source (topbar reference): [Testing → header.kx-topbar (218:184)](https://www.figma.com/design/ehQYOquLYoGBReIO32iya0/Testing?node-id=218-184&m=dev)
 >
 > This document is the contract for Cursor / Composer when applying display-font
-> tokens introduced in **`src/pages/design/KinetixPage.css`**. It exists so the
-> agent never silently re-introduces hard-coded font stacks, weights, or
-> letter-spacing values when editing the Kinetix topbar. **Read this before
-> touching `.kx-topbar` or any of its descendants.**
+> tokens in **`src/pages/design/KinetixPage.css`**. **Read this before adding
+> typography to anything under `.kx-root` (the entire Kinetix page).**
 
 ---
 
 ## TL;DR
 
 ```css
-.kx-topbar {
+.kx-root {
   font-family: var(--kx-font-display);
-  font-weight: var(--kx-weight-display);   /* SF Pro Semibold (590) */
+  font-weight: var(--kx-weight-regular); /* aliases to 590 */
+  font-feature-settings: 'ss01', 'cv11';
 }
 ```
 
-The topbar is the **only** Kinetix surface that opts into SF Pro. Body content
-keeps `--kx-font` (Geist Variable) with the existing two-weight system
-(`--kx-weight-regular` 500, `--kx-weight-strong` 700).
+The **whole** Kinetix surface (`.kx-root`) uses the SF Pro display stack. The
+semantic two-weight system remains **`--kx-weight-regular`** and
+**`--kx-weight-strong`**, but they **alias** to Figma’s axis values (**590** /
+**700**), not Geist’s 500 / 700. **`--kx-font`** is an alias of
+`--kx-font-display` for token compatibility only.
+
+`--kx-weight-display` / `--kx-weight-display-strong` remain available for
+rules that want to mirror Figma naming explicitly (e.g. topbar controls); they
+match `--kx-weight-regular` / `--kx-weight-strong`.
 
 ---
 
@@ -37,6 +42,11 @@ Kinetix design page — they do not leak into the rest of the portfolio.
   -apple-system, BlinkMacSystemFont,
   'SF Pro Display', 'SF Pro Text', 'SF Pro',
   'Inter var', 'Inter', system-ui, sans-serif;
+--kx-font: var(--kx-font-display);
+--kx-weight-display: 590;
+--kx-weight-display-strong: 700;
+--kx-weight-regular: var(--kx-weight-display);
+--kx-weight-strong: var(--kx-weight-display-strong);
 ```
 
 **Why this stack:** macOS / iOS users get the real SF Pro through `-apple-system`
@@ -48,17 +58,17 @@ network request is required — this is a system-font-first stack.
 ### Display weights
 
 The Figma exports use SF Pro's variable-axis values (`font-[590]`,
-`font-bold`). We expose those as tokens to keep the topbar pixel-faithful
-without polluting the body's two-weight rule.
+`font-bold`). On the Kinetix page, those values are the **only** two weights
+in use: semantic tokens alias to them.
 
 | Token                          | Value | Figma equivalent | Use for                                 |
 | ------------------------------ | :---: | ---------------- | --------------------------------------- |
-| `--kx-weight-display`          | `590` | `font-[590]`     | Topbar default — labels, links, status. |
-| `--kx-weight-display-strong`   | `700` | `font-bold`      | Version tag, `+4` chip, run button.     |
+| `--kx-weight-display`          | `590` | `font-[590]`     | Default UI labels (also `--kx-weight-regular`). |
+| `--kx-weight-display-strong`   | `700` | `font-bold`      | Emphasis, chips, titles (`--kx-weight-strong`). |
 
-**Rule:** these two weights are **only** valid inside `.kx-topbar` (or any
-display-class surface that opts in via `font-family: var(--kx-font-display)`).
-Outside of the topbar, keep using `--kx-weight-regular` / `--kx-weight-strong`.
+**Rule:** Inside `.kx-root`, always use `--kx-weight-regular` / `--kx-weight-strong`
+or the equivalent `--kx-weight-display*` — never hard-code `500` / `600` as
+substitutes for “regular”; 590 is intentional for SF Pro.
 
 ### Display tracking
 
@@ -68,14 +78,17 @@ following em-relative tokens so they survive font-size changes:
 
 | Token                            | Value     | Apply to                                     |
 | -------------------------------- | --------- | -------------------------------------------- |
-| `--kx-tracking-display`          | `0.008em` | Body display copy at 12.5px (e.g. labels).   |
-| `--kx-tracking-display-tight`    | `0.005em` | Run button text (Bold 12.5px).               |
+| `--kx-tracking-display`          | `0.008em` | Labels ~12.5px where Figma used +0.1px.      |
+| `--kx-tracking-display-tight`    | `0.005em` | Bold 12.5px actions (e.g. run / impact chip).|
 | `--kx-tracking-display-tag`      | `0.01em`  | Small chips: `v4.2.1`, `+4`, `2 min ago`.    |
+
+Prefer these over raw `letter-spacing: 0.00Npx` when the intent matches Figma
+display chrome. Uppercase section titles may keep explicit `em` tracking
+(e.g. `0.09em`) where they are not yet tokenized.
 
 ### Line height
 
-The topbar reuses the existing leading tokens introduced in the previous
-refactor — **do not invent new px line-heights**:
+The page reuses the existing leading tokens — **do not invent new px line-heights**:
 
 | Figma leading       | Math (Figma)    | Token to use            |
 | ------------------- | --------------- | ----------------------- |
@@ -92,63 +105,53 @@ a fixed-height capsule and needs to flush to its dot.
 
 ## How to apply (Cursor / Composer rules)
 
-When editing the Kinetix topbar, follow these rules in order. They are
-deliberately strict — break them only with a comment justifying why.
+When editing Kinetix (`KinetixPage.css` / `KinetixPage.jsx`), follow these rules.
 
 ### 1) Inherit, don't restate
 
-`.kx-topbar` already sets the display font + weight. Children must inherit.
+`.kx-root` sets the display font stack. Prefer **`font-family: inherit`** on
+buttons, inputs, and tabs instead of duplicating stacks or reintroducing Geist.
 
 ```css
 /* ✅ Good */
-.kx-project-selector {
+.kx-tab {
   font-family: inherit;
-  font-weight: var(--kx-weight-display);
+  font-weight: var(--kx-weight-regular);
 }
 
-/* ❌ Bad — duplicates the stack and locks future migrations */
-.kx-project-selector {
-  font-family: 'SF Pro', system-ui, sans-serif;
-  font-weight: 590;
+/* ❌ Bad */
+.kx-tab {
+  font-family: 'Geist Variable', sans-serif;
 }
 ```
 
-### 2) Always pair display weight with display family
+### 2) Two weights only — they are 590 and 700 here
 
-Never use `--kx-weight-display` (590) on a Geist surface — Geist doesn't have
-a 590 variable axis and the browser will round it to 600, losing the rhythm.
-The pairing is binary:
+Use **`--kx-weight-regular`** (590) and **`--kx-weight-strong`** (700). Do not
+use `500` on this page for “regular” — it was removed in favor of the Figma /
+SF Pro semibold axis.
 
-```
-font-family: var(--kx-font-display)  →  --kx-weight-display(*)
-font-family: var(--kx-font)          →  --kx-weight-regular | --kx-weight-strong
-```
+### 3) Optional explicit Figma names
 
-### 3) Use the leading tokens
+Use **`--kx-weight-display`** / **`--kx-weight-display-strong`** when mirroring
+Figma layer names in new topbar-adjacent rules; they must stay equal to
+regular / strong.
 
-Convert any Figma `leading-[XYZ.Zpx]` to the matching `--kx-leading-*` token.
-The page is already 100% on leading tokens (see the previous refactor). Keep
-it that way.
+### 4) Always pair axis weight with the display stack
 
-### 4) Use the tracking tokens
+The 590 value is meaningful when paired with **`var(--kx-font-display)`** (set
+on `.kx-root`). Do not copy 590 into other routes that still use Geist without
+checking `tokens.css`.
 
-Convert Figma `tracking-[0.NNpx]` to the matching `--kx-tracking-display*`
-token. Don't introduce raw `letter-spacing: 0.1px;` — it breaks at any
-non-default font size.
+### 5) Leading tokens
 
-### 5) Never apply SF Pro outside the topbar
+Use **`--kx-leading-*`** for line-height; do not add raw `line-height: 15px`
+for new rules.
 
-The whole point of these tokens is that they're isolated. If a different
-surface needs a "native app chrome" feel, refactor it into a *display surface*
-class (e.g. `.kx-statusbar`) and have it set `font-family: var(--kx-font-display);`
-once, the same way `.kx-topbar` does. Do not sprinkle the stack inline.
+### 6) Tracking tokens
 
-### 6) Two-weight rule still holds elsewhere
-
-Outside the topbar, the page still obeys "no more than two weights":
-`--kx-weight-regular` (500) and `--kx-weight-strong` (700). Do not import
-`--kx-weight-display` into a body card just because it looks heavier — pick
-between regular and strong.
+Prefer **`--kx-tracking-display*`** over ad-hoc px letter-spacing when matching
+Figma display chrome.
 
 ---
 
