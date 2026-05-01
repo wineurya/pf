@@ -211,7 +211,6 @@ function TopBar({ simState, onRunSim, onViewReport }) {
     <header className="kx-topbar">
       <span className="kx-breadcrumb">
         <span>Kinetix</span>
-        <span className="kx-breadcrumb-sep">/</span>
       </span>
 
       <button className="kx-project-selector">
