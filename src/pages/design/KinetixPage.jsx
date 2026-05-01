@@ -221,12 +221,12 @@ function TopBar({ simState, onRunSim, onViewReport }) {
         <ChevronDown size={12} style={{ opacity: 0.45 }} />
       </button>
 
-      <span className="kx-topbar-status" aria-label="Simulation complete 2 minutes ago">
-        <span className="kx-topbar-status-time">2 min ago</span>
+      <span className="kx-topbar-status" aria-label="Complete, 2 minutes ago">
         <span className="kx-pill kx-pill-success" style={{ fontSize: 11 }}>
           <span className="kx-pill-dot" />
           Complete
         </span>
+        <span className="kx-topbar-status-time">2 min ago</span>
       </span>
 
       <div className="kx-topbar-gap" />
