@@ -78,12 +78,15 @@
   width: 1px;
   height: 1px;
   transform: translate(-50%, -50%);
+  --wx-dot-cursor-morph-duration: var(--duration-moderate, 300ms);
+  --wx-dot-cursor-morph-ease: var(--ease-ui-strong-out, cubic-bezier(0.23, 1, 0.32, 1));
 }
 
 .site-canvas .wx-dot-cursor__dot {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 1;
   width: 7px;
   height: 7px;
   margin: -3.5px 0 0 -3.5px;
@@ -91,9 +94,11 @@
   background-color: var(--wx-ink);
   opacity: 0.82;
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-white) 70%, transparent);
+  transform: scale(1);
+  transform-origin: 50% 50%;
   transition:
-    transform var(--duration-normal, 200ms) var(--ease-out, cubic-bezier(0, 0, 0.2, 1)),
-    opacity var(--duration-normal, 200ms) var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+    transform var(--wx-dot-cursor-morph-duration) var(--wx-dot-cursor-morph-ease),
+    opacity var(--wx-dot-cursor-morph-duration) var(--wx-dot-cursor-morph-ease);
 }
 
 .site-canvas .wx-dot-cursor__plus {
@@ -102,6 +107,7 @@
   top: 50%;
   width: 0;
   height: 0;
+  z-index: 0;
 }
 
 .site-canvas .wx-dot-cursor__plus-bar {
@@ -111,7 +117,7 @@
   border-radius: 1px;
   background-color: var(--wx-ink);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-white) 65%, transparent);
-  transition: transform var(--duration-moderate, 300ms) var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+  transition: transform var(--wx-dot-cursor-morph-duration) var(--wx-dot-cursor-morph-ease);
 }
 
 .site-canvas .wx-dot-cursor__plus-bar--h {
@@ -130,9 +136,10 @@
   transform-origin: 50% 50%;
 }
 
+/* Same motion layer: hub shrinks to the junction while arms extend — one crosshair, not a swap */
 .site-canvas .wx-dot-cursor--interactive .wx-dot-cursor__dot {
-  transform: scale(0);
-  opacity: 0;
+  transform: scale(0.38);
+  opacity: 0.88;
 }
 
 .site-canvas .wx-dot-cursor--interactive .wx-dot-cursor__plus-bar--h {
