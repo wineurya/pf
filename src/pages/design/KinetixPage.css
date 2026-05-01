@@ -73,10 +73,9 @@
 
   --kx-font: var(--kx-font-display);
 
-  /* SF Pro variable-axis weights (Figma font-[590] / font-bold). The page keeps
-     only two semantic weights; they alias to the display axis values. */
-  --kx-weight-display:        590; /* SF Pro Semibold */
-  --kx-weight-display-strong: 700; /* SF Pro Bold      */
+  /* Two weights only (topbar + page): Medium + Semibold — no Bold (700). */
+  --kx-weight-display:        500; /* Medium    */
+  --kx-weight-display-strong: 600; /* Semibold  */
   --kx-weight-regular: var(--kx-weight-display);
   --kx-weight-strong:  var(--kx-weight-display-strong);
 

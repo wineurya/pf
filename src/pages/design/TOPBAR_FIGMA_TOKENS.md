@@ -13,16 +13,19 @@
 ```css
 .kx-root {
   font-family: var(--kx-font-display);
-  font-weight: var(--kx-weight-regular); /* aliases to 590 */
+  font-weight: var(--kx-weight-regular); /* Medium (500) */
   font-feature-settings: 'ss01', 'cv11';
 }
 ```
 
 The **whole** Kinetix surface (`.kx-root`) uses the SF Pro display stack. The
-semantic two-weight system remains **`--kx-weight-regular`** and
-**`--kx-weight-strong`**, but they **alias** to Figma’s axis values (**590** /
-**700**), not Geist’s 500 / 700. **`--kx-font`** is an alias of
-`--kx-font-display` for token compatibility only.
+semantic two-weight system is **`--kx-weight-regular`** and **`--kx-weight-strong`**,
+which alias to **Medium (500)** and **Semibold (600)** only — no Bold (700).
+This matches the topbar rule: two weights, no heavier step. **`--kx-font`** is
+an alias of `--kx-font-display` for token compatibility only.
+
+*(Figma node 218:184 may export `590` / Bold; the implemented product rule
+supersedes that for weights only.)*
 
 `--kx-weight-display` / `--kx-weight-display-strong` remain available for
 rules that want to mirror Figma naming explicitly (e.g. topbar controls); they
@@ -43,8 +46,8 @@ Kinetix design page — they do not leak into the rest of the portfolio.
   'SF Pro Display', 'SF Pro Text', 'SF Pro',
   'Inter var', 'Inter', system-ui, sans-serif;
 --kx-font: var(--kx-font-display);
---kx-weight-display: 590;
---kx-weight-display-strong: 700;
+--kx-weight-display: 500;
+--kx-weight-display-strong: 600;
 --kx-weight-regular: var(--kx-weight-display);
 --kx-weight-strong: var(--kx-weight-display-strong);
 ```
@@ -57,18 +60,15 @@ network request is required — this is a system-font-first stack.
 
 ### Display weights
 
-The Figma exports use SF Pro's variable-axis values (`font-[590]`,
-`font-bold`). On the Kinetix page, those values are the **only** two weights
-in use: semantic tokens alias to them.
+Exactly **two** CSS weights across the Kinetix page (aligned with the topbar):
 
-| Token                          | Value | Figma equivalent | Use for                                 |
-| ------------------------------ | :---: | ---------------- | --------------------------------------- |
-| `--kx-weight-display`          | `590` | `font-[590]`     | Default UI labels (also `--kx-weight-regular`). |
-| `--kx-weight-display-strong`   | `700` | `font-bold`      | Emphasis, chips, titles (`--kx-weight-strong`). |
+| Token                          | Value | Name       | Use for                                        |
+| ------------------------------ | :---: | ---------- | ---------------------------------------------- |
+| `--kx-weight-display`          | `500` | Medium     | Default UI copy (also `--kx-weight-regular`).  |
+| `--kx-weight-display-strong`   | `600` | Semibold   | Emphasis, chips, titles (`--kx-weight-strong`). |
 
-**Rule:** Inside `.kx-root`, always use `--kx-weight-regular` / `--kx-weight-strong`
-or the equivalent `--kx-weight-display*` — never hard-code `500` / `600` as
-substitutes for “regular”; 590 is intentional for SF Pro.
+**Rule:** Use only `--kx-weight-regular` / `--kx-weight-strong` or the equivalent
+`--kx-weight-display*`. Do not use **`700`** (Bold) or ad-hoc **`590`** on this page.
 
 ### Display tracking
 
@@ -79,7 +79,7 @@ following em-relative tokens so they survive font-size changes:
 | Token                            | Value     | Apply to                                     |
 | -------------------------------- | --------- | -------------------------------------------- |
 | `--kx-tracking-display`          | `0.008em` | Labels ~12.5px where Figma used +0.1px.      |
-| `--kx-tracking-display-tight`    | `0.005em` | Bold 12.5px actions (e.g. run / impact chip).|
+| `--kx-tracking-display-tight`    | `0.005em` | Semibold 12.5px actions (e.g. run / impact).|
 | `--kx-tracking-display-tag`      | `0.01em`  | Small chips: `v4.2.1`, `+4`, `2 min ago`.    |
 
 Prefer these over raw `letter-spacing: 0.00Npx` when the intent matches Figma
@@ -137,11 +137,11 @@ Use **`--kx-weight-display`** / **`--kx-weight-display-strong`** when mirroring
 Figma layer names in new topbar-adjacent rules; they must stay equal to
 regular / strong.
 
-### 4) Always pair axis weight with the display stack
+### 4) Pair these weights with the display stack only on Kinetix
 
-The 590 value is meaningful when paired with **`var(--kx-font-display)`** (set
-on `.kx-root`). Do not copy 590 into other routes that still use Geist without
-checking `tokens.css`.
+Medium/Semibold (**500** / **600**) are defined for **`var(--kx-font-display)`**
+on `.kx-root`. Do not assume the same numeric weights on other routes that use
+Geist without checking `tokens.css`.
 
 ### 5) Leading tokens
 
