@@ -19,6 +19,8 @@ const INTERACTIVE_SELECTOR = [
   ".wx-btn-primary",
   ".wx-btn-secondary",
   ".wx-faq-summary",
+  /** Full card is interactive when nav-only / showcase — often no inset `<a>` overlay (see `WorkCardLinkOverlays`). */
+  ".wx-work-card",
 ].join(", ");
 
 const TEXT_FIELD_SELECTOR = [
