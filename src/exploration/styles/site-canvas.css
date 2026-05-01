@@ -48,9 +48,24 @@
 /* Custom dot cursor — pointer-fine only; class toggled from JS when motion is allowed */
 @media (pointer: fine) {
   .site-canvas.wx-exploration-root--custom-cursor,
-  .site-canvas.wx-exploration-root--custom-cursor a,
-  .site-canvas.wx-exploration-root--custom-cursor button {
-    cursor: none;
+  .site-canvas.wx-exploration-root--custom-cursor * {
+    cursor: none !important;
+  }
+
+  .site-canvas.wx-exploration-root--custom-cursor textarea,
+  .site-canvas.wx-exploration-root--custom-cursor [contenteditable="true"],
+  .site-canvas.wx-exploration-root--custom-cursor input:not([type]),
+  .site-canvas.wx-exploration-root--custom-cursor input[type="text"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="search"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="email"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="url"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="tel"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="password"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="number"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="date"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="time"],
+  .site-canvas.wx-exploration-root--custom-cursor input[type="datetime-local"] {
+    cursor: text !important;
   }
 }
 
@@ -60,6 +75,15 @@
   left: 0;
   top: 0;
   z-index: 9998;
+  width: 1px;
+  height: 1px;
+  transform: translate(-50%, -50%);
+}
+
+.site-canvas .wx-dot-cursor__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 7px;
   height: 7px;
   margin: -3.5px 0 0 -3.5px;
@@ -67,6 +91,56 @@
   background-color: var(--wx-ink);
   opacity: 0.82;
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-white) 70%, transparent);
+  transition:
+    transform var(--duration-normal, 200ms) var(--ease-out, cubic-bezier(0, 0, 0.2, 1)),
+    opacity var(--duration-normal, 200ms) var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+.site-canvas .wx-dot-cursor__plus {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+}
+
+.site-canvas .wx-dot-cursor__plus-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 1px;
+  background-color: var(--wx-ink);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-white) 65%, transparent);
+  transition: transform var(--duration-moderate, 300ms) var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+.site-canvas .wx-dot-cursor__plus-bar--h {
+  width: 10px;
+  height: 2px;
+  margin: -1px 0 0 -5px;
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+}
+
+.site-canvas .wx-dot-cursor__plus-bar--v {
+  width: 2px;
+  height: 10px;
+  margin: -5px 0 0 -1px;
+  transform: scaleY(0);
+  transform-origin: 50% 50%;
+}
+
+.site-canvas .wx-dot-cursor--interactive .wx-dot-cursor__dot {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.site-canvas .wx-dot-cursor--interactive .wx-dot-cursor__plus-bar--h {
+  transform: scaleX(1);
+}
+
+.site-canvas .wx-dot-cursor--interactive .wx-dot-cursor__plus-bar--v {
+  transform: scaleY(1);
 }
 
 /* Work — gallery cards (Figma 162-395/414, tuned to exploration surfaces) */
