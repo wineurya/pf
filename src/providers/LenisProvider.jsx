@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { initLenis } from "@/lib/lenis.js";
-import { ScrollTrigger } from "@/lib/gsap.js";
+import { queueScrollTriggerRefresh } from "@/lib/gsap.js";
 
 const LenisContext = createContext(null);
 
@@ -30,7 +30,7 @@ export function LenisProvider({ children }) {
     const onPageShow = (e) => {
       if (!e.persisted) return;
       tryLenisResize(lenis);
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+      requestAnimationFrame(() => queueScrollTriggerRefresh());
     };
     window.addEventListener("pageshow", onPageShow);
     return () => window.removeEventListener("pageshow", onPageShow);

@@ -15,13 +15,16 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "motion", "motion/react"],
+    include: ["react", "react-dom", "motion", "motion/react", "lucide-react"],
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
+          if (id.includes("lucide-animated")) return "lucide-animated";
+          if (id.includes("@hugeicons")) return "hugeicons";
+          if (id.includes("@phosphor-icons")) return "phosphor-icons";
           if (id.includes("gsap")) return "gsap";
           if (id.includes("lenis")) return "lenis";
           if (id.includes("framer-motion") || id.includes("node_modules/motion/")) {

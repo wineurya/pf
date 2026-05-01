@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -49,7 +49,7 @@ import {
 } from "lucide-animated";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
-import { ScrollTrigger } from "@/lib/gsap.js";
+import { queueScrollTriggerRefresh } from "@/lib/gsap.js";
 import { useLenis } from "@/providers/LenisProvider.jsx";
 import {
   SITE_AVAILABILITY,
@@ -460,6 +460,120 @@ function workCardHasStutterTeaser(entry) {
   return Boolean(entry.workCardTeaserLead && entry.workCardFinale);
 }
 
+function workCardUsesFooterOneLiner(entry) {
+  const lines = entry.workCardFooterRotatingLines;
+  return Array.isArray(lines) && lines.some((s) => String(s ?? "").trim().length > 0);
+}
+
+const WORK_CARD_AVANCE_FOOTER_MARK_PATH = "/work/avance-footer-mark.svg";
+
+/** Figma Testing 77:486 / 77:487 — inline SVG so the mark always paints (no broken external SVG / CSP). */
+function AvanceWarmFooterMarkSvg({ className }) {
+  const raw = useId();
+  const uid = raw.replace(/[^a-zA-Z0-9_-]/g, "") || "m";
+  const frameGradId = `avance-foot-frame-${uid}`;
+  const orbGradId = `avance-foot-orb-${uid}`;
+  return (
+    <svg
+      className={className}
+      width={18}
+      height={18}
+      viewBox="0 0 18 18"
+      aria-hidden
+      focusable="false"
+    >
+      <defs>
+        <linearGradient id={frameGradId} x1={9} y1={0} x2={9} y2={18} gradientUnits="userSpaceOnUse">
+          <stop stopColor="#f0e4d0" />
+          <stop offset={1} stopColor="#d4a574" />
+        </linearGradient>
+        <linearGradient id={orbGradId} x1={9} y1={3} x2={9} y2={15} gradientUnits="userSpaceOnUse">
+          <stop stopColor="#d4a574" />
+          <stop offset={1} stopColor="#eedfc9" />
+        </linearGradient>
+      </defs>
+      <rect width={18} height={18} rx={4} fill={`url(#${frameGradId})`} />
+      <circle cx={9} cy={9} r={6} fill={`url(#${orbGradId})`} />
+    </svg>
+  );
+}
+
+const WORK_CARD_FOOTER_ROTATE_MS = 4200;
+
+function WorkCardFooterOneLiner({ entry, reduceMotion, useLightText, useWarmFooter, footerMinimal }) {
+  const safeLines = useMemo(
+    () => (entry.workCardFooterRotatingLines ?? []).map((s) => String(s ?? "").trim()).filter(Boolean),
+    [entry.workCardFooterRotatingLines],
+  );
+  const [idx, setIdx] = useState(0);
+  const markSrc = (entry.workCardFooterMark ?? "").trim() || SITE_FIGMA_ASSETS.logoMark;
+  const count = safeLines.length;
+  const displayIdx = count ? idx % count : 0;
+  const currentLine = safeLines[displayIdx] ?? "";
+
+  useEffect(() => {
+    if (reduceMotion || count <= 1) return undefined;
+    const id = window.setInterval(() => {
+      if (document.visibilityState === "hidden") return;
+      setIdx((i) => (i + 1) % count);
+    }, WORK_CARD_FOOTER_ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [reduceMotion, count]);
+
+  return (
+    <p
+      className={clsx(
+        "wx-work-card-v2__footer-line",
+        footerMinimal && "wx-work-card-v2__footer-line--minimal",
+        useWarmFooter && "wx-work-card-v2__footer-line--warm",
+        useLightText && !useWarmFooter && "wx-work-card-v2__footer-line--on-image",
+      )}
+    >
+      {markSrc === WORK_CARD_AVANCE_FOOTER_MARK_PATH || markSrc.endsWith("avance-footer-mark.svg") ? (
+        <AvanceWarmFooterMarkSvg className="wx-work-card-v2__footer-mark select-none" />
+      ) : (
+        <img
+          className="wx-work-card-v2__footer-mark select-none"
+          src={markSrc}
+          alt=""
+          decoding="async"
+          width={18}
+          height={18}
+        />
+      )}
+      <span
+        className={clsx(
+          "wx-work-card-v2__title wx-work-card-v2__footer-line-title m-0 shrink-0 tracking-tight",
+          !footerMinimal && !useWarmFooter && "max-w-[min(100%,20rem)]",
+          footerMinimal && "max-w-[min(100%,26rem)]",
+          useLightText && !useWarmFooter && "wx-work-card-v2__title--on-image",
+          useWarmFooter && "wx-work-card-v2__title--warm",
+        )}
+      >
+        {entry.title}
+      </span>
+      <span className="wx-work-card-v2__footer-line-cycle-clip">
+        {reduceMotion || count <= 1 ? (
+          <span className="wx-work-card-v2__footer-line-cycle block">{currentLine}</span>
+        ) : (
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={displayIdx}
+              className="wx-work-card-v2__footer-line-cycle block"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {currentLine}
+            </motion.span>
+          </AnimatePresence>
+        )}
+      </span>
+    </p>
+  );
+}
+
 function WorkCardTeaserText({ entry, isActive, reduceMotion, useLightOnImage, useWarmImageFooter }) {
   if (workCardHasStutterTeaser(entry)) {
     return (
@@ -518,7 +632,10 @@ function WorkNuggetPill({ label, iconKey, reduceMotion, nuggetsRevealed, nuggetI
     let intervalId;
     const startTimeout = window.setTimeout(() => {
       h.startAnimation();
-      intervalId = window.setInterval(() => h.startAnimation(), NUGGET_LUCIDE_LOOP_MS);
+      intervalId = window.setInterval(() => {
+        if (document.visibilityState === "hidden") return;
+        h.startAnimation();
+      }, NUGGET_LUCIDE_LOOP_MS);
     }, stagger);
     return () => {
       window.clearTimeout(startTimeout);
@@ -763,24 +880,36 @@ function WorkCardChromeAndFooterBlock({
             footerMinimal && "wx-work-card-v2__footer--minimal",
           )}
         >
-          <h3
-            className={clsx(
-              "wx-work-card-v2__title m-0 text-balance text-left font-medium tracking-tight",
-              useWarmFooter ? "max-w-[min(100%,40rem)]" : !footerMinimal && "max-w-[min(100%,20rem)]",
-              footerMinimal && "max-w-[min(100%,26rem)]",
-              useLightText && "wx-work-card-v2__title--on-image",
-              useWarmFooter && "wx-work-card-v2__title--warm",
-            )}
-          >
-            {entry.title}
-          </h3>
-          <WorkCardTeaserText
-            entry={entry}
-            isActive={hovered}
-            reduceMotion={reduceMotion}
-            useLightOnImage={useLightText}
-            useWarmImageFooter={useWarmFooter}
-          />
+          {workCardUsesFooterOneLiner(entry) ? (
+            <WorkCardFooterOneLiner
+              entry={entry}
+              reduceMotion={reduceMotion}
+              useLightText={useLightText}
+              useWarmFooter={useWarmFooter}
+              footerMinimal={footerMinimal}
+            />
+          ) : (
+            <>
+              <h3
+                className={clsx(
+                  "wx-work-card-v2__title m-0 text-balance text-left font-medium tracking-tight",
+                  useWarmFooter ? "max-w-[min(100%,40rem)]" : !footerMinimal && "max-w-[min(100%,20rem)]",
+                  footerMinimal && "max-w-[min(100%,26rem)]",
+                  useLightText && "wx-work-card-v2__title--on-image",
+                  useWarmFooter && "wx-work-card-v2__title--warm",
+                )}
+              >
+                {entry.title}
+              </h3>
+              <WorkCardTeaserText
+                entry={entry}
+                isActive={hovered}
+                reduceMotion={reduceMotion}
+                useLightOnImage={useLightText}
+                useWarmImageFooter={useWarmFooter}
+              />
+            </>
+          )}
         </div>
       ) : null}
     </>
@@ -914,7 +1043,7 @@ function WorkCardLinkOverlays({
       ) : null}
       {showCaseStudyConnector ? (
         <motion.div
-          className="absolute bottom-[var(--spacing-4)] right-[var(--spacing-4)] z-30 sm:bottom-[var(--spacing-5)] sm:right-[var(--spacing-5)]"
+          className="absolute bottom-[var(--spacing-5)] right-[var(--spacing-5)] z-30 sm:bottom-[var(--spacing-6)] sm:right-[var(--spacing-6)]"
           initial={reduceMotion || coarsePointer ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
           animate={caseStudyConnectorTargetMotion({ reduceMotion, coarsePointer, caseStudyRevealed })}
           transition={caseStudyLabelTransition}
@@ -1565,7 +1694,7 @@ function useScrollIntentIndex(activeIndex, scrollIntentIndex, setScrollIntentInd
 
 function useImageLoadScrollTriggerRefresh() {
   useEffect(() => {
-    const onRefresh = () => ScrollTrigger.refresh();
+    const onRefresh = () => queueScrollTriggerRefresh();
     const imgs = document.querySelectorAll(".site-canvas img");
     let remaining = imgs.length;
     const done = () => {
@@ -1643,16 +1772,16 @@ function useEscapeClosesEmptyCanvas(emptyProjectFocus, setEmptyProjectFocus) {
 
 function useStRefreshOnEmptyCanvasTransition(emptyProjectFocus, emptyCanvasSettled) {
   useEffect(() => {
-    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
+    const id = requestAnimationFrame(() => queueScrollTriggerRefresh());
     const span = !emptyProjectFocus
       ? EMPTY_CANVAS_EXIT_MS
       : !emptyCanvasSettled
         ? EMPTY_CANVAS_ENTER_MS
         : 50;
     const mid = Math.round(span / 2);
-    const t1 = window.setTimeout(() => ScrollTrigger.refresh(), mid);
-    const t2 = window.setTimeout(() => ScrollTrigger.refresh(), span + 100);
-    const t3 = window.setTimeout(() => ScrollTrigger.refresh(), span + 300);
+    const t1 = window.setTimeout(() => queueScrollTriggerRefresh(), mid);
+    const t2 = window.setTimeout(() => queueScrollTriggerRefresh(), span + 100);
+    const t3 = window.setTimeout(() => queueScrollTriggerRefresh(), span + 300);
     return () => {
       cancelAnimationFrame(id);
       clearTimeout(t1);

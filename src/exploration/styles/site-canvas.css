@@ -3,11 +3,15 @@
   color-scheme: light;
   background-color: var(--wx-page-bg);
   color: var(--wx-ink);
-  /**
-   * Figma: Testing, 200:88 — canvas (`--wx-warm-figma-canvas`); nugget row uses site neutrals (see `.wx-work-card-v2__nugget`).
-   */
-  --wx-warm-figma-canvas: #e3dbd1;
   --wx-warm-title-ink: #1a1a1a;
+  /**
+   * 200:88 outer field: 2% #1a1a1a on page, then 2% primary blue on that mix.
+   */
+  --wx-warm-figma-canvas: color-mix(
+    in srgb,
+    var(--wx-primary) 2%,
+    color-mix(in srgb, var(--wx-warm-title-ink) 2%, var(--wx-page-bg) 98%) 98%
+  );
   /* Muted subcopy on photo (Figma: brown-gray, not flat black) */
   --wx-warm-body-ink: oklch(0.4 0.02 50 / 0.82);
   /* Figma 200:109 (Frame 6) art — `drop-shadow` on <img> (alpha), rgb(47,32,14); sync from Effects panel on re-export */
@@ -25,6 +29,8 @@
   /* Work cards: `min(80dvb, 720px)` = tested 80dvb cap, ~80% of 900px dynamic viewport; px bounds tall screens */
   --wx-work-card-vb-px: 720px;
   --wx-work-card-vb-cap: min(80dvb, var(--wx-work-card-vb-px, 720px));
+  /* Work card footer title + one-liner: same max rail as `.wx-work-card-v2__footer--warm-pin` */
+  --wx-work-card-footer-rail: 40rem;
 }
 
 /* Home `#site-panels`: no `site-fade-panels` VT group (see work-case.css). */
@@ -518,7 +524,7 @@
   width: calc(100% * 1410.14 / 2400);
   height: calc(100% * 1490.18 / 2400);
   transform: translate3d(-50%, -50%, 0);
-  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas, #e3dbd1));
+  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas));
 }
 
 /* Per-entry: mock box matches a flat export’s aspect (e.g. InCity 458:10858) — set `--wx-figma-mock-aspect` on the card. */
@@ -535,7 +541,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas, #e3dbd1));
+  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas));
   overflow: visible;
 }
 
@@ -612,16 +618,16 @@
   );
 }
 
-/* Warm image card: one inset ring (spacing-4/5) — top, left, right, bottom match Figma; footer `left:0; bottom:0` inside v2 */
+/* Warm image card: inset ring — top/left/right/bottom; footer `left:0; bottom:0` inside v2 */
 .site-canvas .wx-work-card__shell--footer-warm {
   box-sizing: border-box;
-  padding: var(--spacing-4);
+  padding: var(--spacing-5);
   margin: 0;
 }
 
 @media (min-width: 640px) {
   .site-canvas .wx-work-card__shell--footer-warm {
-    padding: var(--spacing-5);
+    padding: var(--spacing-6);
   }
 }
 
@@ -681,11 +687,53 @@
   box-sizing: border-box;
   /* Use the column: two-line + finale read cleaner than 24rem cap; still bounded for very wide cards */
   width: 100%;
-  max-width: min(100%, 40rem);
+  max-width: min(100%, var(--wx-work-card-footer-rail));
   margin: 0;
   padding: 0;
   padding-top: 0;
   text-align: left;
+}
+
+/* One-line footer: mark + title + rotating microcopy */
+.site-canvas .wx-work-card-v2__footer-line {
+  box-sizing: border-box;
+  margin: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  width: 100%;
+  max-width: min(100%, var(--wx-work-card-footer-rail));
+  text-align: left;
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: clamp(0.9875rem, 2.5vw, 1.125rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  font-synthesis: none;
+}
+
+.site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__title {
+  font-size: 1em;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  align-self: center;
+}
+
+.site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__footer-line-cycle-clip {
+  position: relative;
+  align-self: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 1.25em;
+  display: flex;
+  align-items: center;
+  line-height: 1.25;
+}
+
+.site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__footer-line-cycle-clip > .block {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* Tighter type block — no reserved stutter/extend tower; quip is one line */
@@ -698,6 +746,38 @@
   color: var(--wx-warm-title-ink);
   text-shadow: none;
   font-weight: 600;
+}
+
+.site-canvas .wx-work-card-v2__footer-mark {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  align-self: center;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.site-canvas .wx-work-card-v2__footer-line-cycle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: inherit;
+  font-size: 1em;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-weight: 400;
+  color: var(--wx-muted);
+  font-synthesis: none;
+}
+
+.site-canvas .wx-work-card-v2__footer-line--warm .wx-work-card-v2__footer-line-cycle {
+  color: var(--wx-warm-body-ink);
+}
+
+.site-canvas .wx-work-card-v2__footer-line--on-image .wx-work-card-v2__footer-line-cycle {
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.38);
 }
 
 .site-canvas .wx-work-card-v2__summary--warm-image {
@@ -732,8 +812,8 @@
 
 /* Accent sweep — Figma 200:88 CTA / tan (#A67C52) on warm brown; align to shell gutters (1:1 with content) */
 .site-canvas .wx-work-card--footer-warm .wx-work-card__sweep {
-  left: var(--spacing-4);
-  right: var(--spacing-4);
+  left: var(--spacing-5);
+  right: var(--spacing-5);
   background: linear-gradient(
     90deg,
     color-mix(in srgb, #a67c52 32%, transparent),
@@ -744,8 +824,8 @@
 
 @media (min-width: 640px) {
   .site-canvas .wx-work-card--footer-warm .wx-work-card__sweep {
-    left: var(--spacing-5);
-    right: var(--spacing-5);
+    left: var(--spacing-6);
+    right: var(--spacing-6);
   }
 }
 
@@ -1759,33 +1839,26 @@
 .site-canvas .wx-faq-answer-row {
   display: flex;
   align-items: flex-end;
+  justify-content: flex-end;
   gap: 0.5rem;
+  margin-inline-start: auto;
   max-width: min(36rem, 100%);
 }
 
+/* Sent-thread layout: bubble reads as “outgoing” like iMessage (no avatar column). */
 .site-canvas .wx-faq-avatar-placeholder {
-  flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9999px;
-  background: linear-gradient(
-    145deg,
-    color-mix(in srgb, var(--wx-primary) 35%, var(--wx-surface-soft)),
-    var(--wx-surface-soft)
-  );
-  box-shadow:
-    0 0 0 1px var(--wx-imessage-bubble-ring),
-    0 2px 6px color-mix(in srgb, var(--wx-black) 8%, transparent);
+  display: none;
 }
 
 .site-canvas .wx-faq-bubble {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
-  border-radius: 1.125rem 1.125rem 1.125rem 0.25rem;
+  /* Tail on bottom-right — iOS “sent” bubble */
+  border-radius: 1.125rem 1.125rem 0.25rem 1.125rem;
   background-color: var(--wx-imessage-bubble);
   box-shadow:
     0 0 0 1px var(--wx-imessage-bubble-ring),
-    0 4px 14px color-mix(in srgb, var(--wx-black) 7%, transparent);
+    0 3px 12px color-mix(in srgb, #0066d6 28%, transparent);
   padding: 0.65rem 0.85rem 0.7rem;
 }
 
@@ -1793,13 +1866,13 @@
   margin: 0;
   font-size: var(--wx-text-faq-bubble-line-size);
   line-height: var(--wx-text-faq-bubble-line-leading);
-  color: var(--wx-ink);
+  color: var(--wx-imessage-bubble-text);
   letter-spacing: -0.01em;
 }
 
 .site-canvas .wx-faq-bubble__answer {
   font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
-  color: var(--wx-muted);
+  color: var(--wx-imessage-bubble-text-soft);
   font-size: var(--wx-text-body-secondary-size);
   line-height: var(--wx-text-body-secondary-leading);
   font-synthesis: none;

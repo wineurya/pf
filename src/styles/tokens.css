@@ -261,8 +261,11 @@
   --wx-accent-teal: #0d9488;
   --wx-accent-violet: #7c3aed;
   --wx-accent-amber: #d97706;
-  --wx-imessage-bubble: color-mix(in srgb, var(--wx-black) 6%, var(--wx-page-bg));
-  --wx-imessage-bubble-ring: color-mix(in srgb, var(--wx-black) 8%, transparent);
+  /* FAQ / chat — sent-style iMessage blue + legible fg (WCAG on white mix). */
+  --wx-imessage-bubble: #0a84ff;
+  --wx-imessage-bubble-ring: color-mix(in srgb, #0066d6 55%, var(--wx-imessage-bubble));
+  --wx-imessage-bubble-text: var(--wx-white);
+  --wx-imessage-bubble-text-soft: color-mix(in srgb, var(--wx-white) 90%, var(--wx-imessage-bubble));
   --wx-surface: var(--color-neutral-100);
   --wx-surface-soft: var(--color-neutral-50);
   --wx-ink: var(--color-neutral-900);

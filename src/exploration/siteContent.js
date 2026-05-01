@@ -71,6 +71,9 @@ export const SITE_HERO = {
  * Work grid — image-first; hover/focus overlays show **role-relevant highlights** (short chips
  * recruiters and hiring managers scan: outcomes, rigor, ownership). Order: flagship first.
  * Deprecated / placeholder entries can use `status: "incomplete"` for the empty-canvas interaction; shipped work should not.
+ *
+ * **Template / imprint:** use the first entry (Avance) as the guide for new flagship cards — see
+ * `src/exploration/WORK_CARD_TEMPLATE.md` for fields, DOM classes, and assets.
  */
 export const SITE_WORK = [
   {
@@ -100,7 +103,18 @@ export const SITE_WORK = [
     workCardFigmaFrame: "200-88",
     /** No black scrim; warm title + rgba subcopy only (`wx-work-card__shell--footer-warm`). */
     workCardFooterWarm: true,
-    /** Lead is always visible; hover types `workCardFinale` (optional 0–2 `workCardStutters` run first). */
+    /**
+     * Footer mark — Figma Testing `77:486` (frame) + `77:487` (12px orb); local SVG matches dev gradients.
+     * @see https://www.figma.com/design/ehQYOquLYoGBReIO32iya0/Testing?node-id=77-486&m=dev
+     */
+    workCardFooterMark: "/work/avance-footer-mark.svg",
+    workCardFooterRotatingLines: [
+      "Plan, deadline, real coach.",
+      "Plain language → momentum.",
+      "Your week holds the line.",
+      "Coaching when you slow down.",
+    ],
+    /** Legacy teaser metadata + non–one-liner cards: hover stutter uses these when footer line is off. */
     workCardTeaserLead:
       "Say your goal in plain language. Avance returns a plan, a deadline, and a coach in your corner.",
     workCardStutters: [],
