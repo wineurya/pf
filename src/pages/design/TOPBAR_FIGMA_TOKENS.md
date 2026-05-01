@@ -86,6 +86,20 @@ Prefer these over raw `letter-spacing: 0.00Npx` when the intent matches Figma
 display chrome. Uppercase section titles may keep explicit `em` tracking
 (e.g. `0.09em`) where they are not yet tokenized.
 
+### Extended tokens (page-wide application)
+
+These live next to the core tokens on `.kx-root`. Use them anywhere under
+`.kx-root` instead of duplicating hex/rgba/`letter-spacing`:
+
+| Group | Tokens (examples) | Role |
+| ----- | ----------------- | ---- |
+| Caps / numerics | `--kx-tracking-caps-sm` … `--kx-tracking-caps-xl`, `--kx-tracking-num-display`, `--kx-tracking-num-hero`, `--kx-tracking-ui-tabular`, `--kx-tracking-ui-heading`, `--kx-tracking-modal-title`, `--kx-tracking-modal-overline`, `--kx-tracking-cta`, `--kx-tracking-accent-line`, `--kx-tracking-pill-label` | All `letter-spacing` for labels, overlines, large numbers, modals. |
+| Surfaces | `--kx-surface-warm`, `--kx-blue-loading`, `--kx-blue-tint-hover`, `--kx-text-hint` | Hover paper, loading CTA, tinted buttons, muted link text. |
+| Phone chrome | `--kx-battery-*`, `--kx-phone-notch-*`, `--kx-visa-navy`, `--kx-green-complete-ring` | Mini-UI inside the device frame; card chip gradient uses `--kx-gradient-visa-chip`. |
+| Ink (alpha on text) | `--kx-ink-04`, `--kx-ink-06`, `--kx-ink-18`, `--kx-ink-28`, `--kx-ink-32`, `--kx-ink-72` | Borders, shadows, fills using ink at fixed opacities. |
+| Blue washes | `--kx-blue-wash-page`, `--kx-blue-focus-ring`, `--kx-blue-scan-*`, `--kx-blue-chip-glow`, `--kx-amber-wash-page` | Grid preview background, focus ring, scan line, pill glow. |
+| Gradients | `--kx-gradient-blue-diag`, `--kx-gradient-blue-down`, `--kx-gradient-visa-chip` | Shared angled / vertical brand fills. |
+
 ### Line height
 
 The page reuses the existing leading tokens — **do not invent new px line-heights**:
