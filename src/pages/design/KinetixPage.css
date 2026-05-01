@@ -710,7 +710,7 @@
 
 .kx-metric-label {
   font-size: 10.5px;
-  font-weight: var(--kx-weight-strong);
+  font-weight: var(--kx-weight-regular);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--kx-text-faint);
@@ -718,7 +718,7 @@
 
 .kx-metric-trend {
   font-size: 10px;
-  font-weight: var(--kx-weight-strong);
+  font-weight: var(--kx-weight-regular);
   padding: 1.5px 6px;
   border-radius: var(--kx-radius-xs);
   display: inline-flex;
