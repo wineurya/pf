@@ -1622,8 +1622,9 @@
   overflow: hidden;
   /* Outer shell matches segment controls (.wx-btn-secondary, active tab chip) */
   border-radius: var(--wx-radius-segment);
-  background-color: var(--wx-tab-track);
-  border: 1px solid var(--wx-tab-track-border);
+  /* Tint + blur so the rounded rail reads against the page (glass alone was near-invisible). */
+  background-color: color-mix(in srgb, var(--wx-tab-track-solid) 78%, transparent);
+  border: 1px solid var(--wx-border-soft);
   backdrop-filter: blur(14px) saturate(180%);
   -webkit-backdrop-filter: blur(14px) saturate(180%);
   box-shadow:
@@ -1635,13 +1636,15 @@
 
 /** Scroll lives inside so outer radius clips cleanly (avoid oval / broken caps). */
 .site-canvas .wx-tab-track__scroll {
-  --wx-tab-rail-inset: 4px;
+  --wx-tab-rail-inset: 6px;
   display: inline-flex;
   max-width: 100%;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   padding: var(--wx-tab-rail-inset);
+  /* Same curvature as the inset area inside the shell (helps the rounded “well” read). */
+  border-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
