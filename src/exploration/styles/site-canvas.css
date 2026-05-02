@@ -40,11 +40,6 @@
   }
 }
 
-/* Work case routes — full-bleed top bar (Figma 165-53); `WorkCasePage.jsx` */
-.site-canvas.wx-work-case-chrome {
-  --wx-explore-top-nav-h: calc(max(0.5rem, env(safe-area-inset-top, 0px)) + 4rem);
-}
-
 /* Custom dot cursor — pointer-fine only; class toggled from JS when motion is allowed */
 @media (pointer: fine) {
   .site-canvas.wx-exploration-root--custom-cursor,
@@ -1551,42 +1546,6 @@
 
   @media (prefers-reduced-motion: reduce) {
     .site-canvas .wx-mobile-sticky-nav {
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
-    }
-  }
-}
-
-/* Work case: full-bleed top bar — sticky; mobile: frosted scrim; sm+ solid (border in JSX) */
-.site-canvas .wx-explore-top-header {
-  background-color: var(--wx-page-bg);
-}
-
-@media (max-width: 639px) {
-  .site-canvas .wx-explore-top-header {
-    background: linear-gradient(
-      180deg,
-      var(--wx-page-bg) 0%,
-      color-mix(in srgb, var(--wx-page-bg) 88%, transparent) 55%,
-      color-mix(in srgb, var(--wx-page-bg) 45%, transparent) 85%,
-      transparent 100%
-    );
-    -webkit-backdrop-filter: blur(14px) saturate(165%);
-    backdrop-filter: blur(14px) saturate(165%);
-  }
-
-  @supports not (backdrop-filter: blur(1px)) {
-    .site-canvas .wx-explore-top-header {
-      background: linear-gradient(
-        180deg,
-        var(--wx-page-bg) 0%,
-        color-mix(in srgb, var(--wx-page-bg) 96%, transparent) 100%
-      );
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .site-canvas .wx-explore-top-header {
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }

@@ -3,57 +3,44 @@ import { motion } from "motion/react";
 const SECTION_REVEAL_T = { duration: 0.55, ease: [0.19, 1, 0.22, 1] };
 
 /**
- * Chapter section block — keyed by `chapter.id` so `useCaseStudyScrollSpy` can
- * read the active range via `getElementById`. Body copy intentionally minimal
- * (lorem) per repo policy; designs that feel come from the rhythm, not the wall.
+ * Image-only chapter frame — copy lives in `CaseStudyAside` / scroll ticker.
+ * Section id must match `work-cases` chapter ids for `useCaseStudyScrollSpy`.
  */
 function CaseChapterSection({ chapter, index }) {
+  const label = `${chapter.eyebrow}: ${chapter.title}`;
+
   return (
     <motion.section
       id={chapter.id}
       data-case-chapter-index={index}
-      className="wx-case-section relative flex min-h-[80svh] flex-col gap-6 rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:gap-7 sm:p-8 lg:gap-8 lg:p-10"
-      aria-labelledby={`${chapter.id}-heading`}
+      aria-label={label}
+      className="wx-case-section relative flex min-h-[min(76svh,48rem)] flex-col items-center justify-center py-[var(--wx-gallery-gap)] sm:py-10 lg:py-12"
       initial={{ opacity: 0.94 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.28, margin: "0px 0px -8% 0px" }}
       transition={SECTION_REVEAL_T}
     >
       {chapter.image ? (
-        <figure className="wx-case-section__figure relative overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] bg-[var(--wx-surface-soft)] ring-1 ring-[color:var(--wx-border-soft)]">
-          <img
-            src={chapter.image}
-            alt={chapter.imageAlt || ""}
-            className="block h-auto w-full select-none object-cover"
-            loading={index === 0 ? "eager" : "lazy"}
-            decoding="async"
-            sizes="(min-width: 1024px) 56vw, 100vw"
-          />
+        <figure className="wx-case-section__figure relative w-full max-w-[min(52rem,94vw)] px-4 sm:px-5 lg:px-6">
+          <div className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface-soft)] p-4 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6 lg:p-8">
+            <img
+              src={chapter.image}
+              alt={chapter.imageAlt || ""}
+              className="block h-auto w-full select-none rounded-[calc(var(--wx-radius-card)-6px)] object-cover"
+              loading={index === 0 ? "eager" : "lazy"}
+              decoding="async"
+              sizes="(min-width: 1024px) 52rem, 94vw"
+            />
+          </div>
         </figure>
       ) : null}
-
-      <div className="space-y-3 lg:space-y-4">
-        <p className="wx-text-meta uppercase tracking-[0.18em] text-[var(--wx-muted)]">{chapter.eyebrow}</p>
-        <h2
-          id={`${chapter.id}-heading`}
-          className="text-balance text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl"
-        >
-          {chapter.title}
-        </h2>
-        {chapter.bodyParts?.map((p, i) => (
-          <p key={i} className="wx-text-body-secondary text-[var(--wx-muted)]">
-            {p}
-          </p>
-        ))}
-      </div>
     </motion.section>
   );
 }
 
 /**
  * Avance case study — long-form chapter stack. Pairs with `CaseStudyAside`
- * for the scroll-driven left rail. Falls back to a single hero block when
- * `def.chapters` is absent (legacy callers).
+ * for the scroll-driven left rail.
  *
  * @param {{ def: { kicker: string; title: string; lede: string; heroImage?: string; chapters?: any[] } }} props
  */
