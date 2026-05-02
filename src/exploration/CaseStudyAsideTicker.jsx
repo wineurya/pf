@@ -10,10 +10,7 @@ function CarouselSlide({ chapter, isActive, slideHeightPx, reduceMotion }) {
 
   return (
     <motion.div
-      className={clsx(
-        "flex w-full shrink-0 flex-col justify-start gap-3 px-0 py-3 text-left sm:gap-4 sm:py-4",
-        isActive && "overflow-y-auto overflow-x-hidden overscroll-contain [-webkit-overflow-scrolling:touch]",
-      )}
+      className="flex w-full shrink-0 flex-col justify-start gap-3 overflow-hidden px-0 py-3 text-left sm:gap-4 sm:py-4"
       style={hStyle}
       animate={
         reduceMotion
