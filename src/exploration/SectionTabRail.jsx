@@ -43,12 +43,12 @@ function iconAnimateState({ selected, hovered, reduceMotion, tiltDir }) {
     return { rotate: 0, scale: selected ? 1.05 : 1, opacity: selected ? 1 : 0.85 };
   }
   if (selected) {
-    return { rotate: 0, scale: 1.12, opacity: 1, y: 0 };
+    return { rotate: 0, scale: 1.12, opacity: 1 };
   }
   if (hovered) {
-    return { rotate: tiltDir * TILT_DEGREES, scale: 1.06, opacity: 1, y: -1 };
+    return { rotate: tiltDir * TILT_DEGREES, scale: 1.06, opacity: 1 };
   }
-  return { rotate: 0, scale: 1, opacity: 0.8, y: 0 };
+  return { rotate: 0, scale: 1, opacity: 0.8 };
 }
 
 function SectionTabPillButton({
@@ -73,7 +73,6 @@ function SectionTabPillButton({
       tabIndex={selected ? 0 : -1}
       transition={pillT}
       whileTap={reduceMotion ? undefined : { scale: 0.94 }}
-      whileHover={reduceMotion ? undefined : { y: -1 }}
       className={clsx(
         "wx-tab wx-text-sm group relative flex min-h-10 shrink-0 items-center justify-center rounded-[var(--wx-radius-segment)] outline-none",
         "text-[var(--wx-tab-idle-fg)] px-3 py-2",
