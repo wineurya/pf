@@ -10,8 +10,7 @@ const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
 const WX_TAB_PILL_DURATION = 0.36;
 const WX_TAB_LABEL_BLUR = 4;
 
-/** Bouncy spring shared by tap, icon scale, icon tilt — keep close to underdamped. */
-const WX_TAB_BOUNCE_SPRING = { type: "spring", stiffness: 520, damping: 16, mass: 0.6 };
+/** Bouncy spring shared by icon scale + tilt — keep close to underdamped. */
 const WX_TAB_TILT_SPRING = { type: "spring", stiffness: 360, damping: 14, mass: 0.5 };
 /** Tilt direction alternates per index so the row reads as a playful row, not a parade. */
 const TILT_DEGREES = 9;
@@ -88,18 +87,17 @@ function SectionTabPillButton({
           boxShadow: "var(--wx-tab-shadow-idle)",
         }}
       />
-      {selected ? (
-        <motion.span
-          layoutId="wx-tab-active-bg"
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 rounded-[var(--wx-radius-segment)]"
-          style={{
-            backgroundColor: "var(--wx-primary)",
-            boxShadow: "var(--wx-tab-shadow-active)",
-          }}
-          transition={reduceMotion ? { duration: 0.01 } : WX_TAB_BOUNCE_SPRING}
-        />
-      ) : null}
+      <motion.span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 rounded-[var(--wx-radius-segment)]"
+        style={{
+          backgroundColor: "var(--wx-primary)",
+          boxShadow: "var(--wx-tab-shadow-active)",
+        }}
+        initial={false}
+        animate={{ opacity: selected ? 1 : 0 }}
+        transition={reduceMotion ? { duration: 0.01 } : { duration: 0.2, ease: WX_TAB_PILL_EASE }}
+      />
       <span className="relative z-10 flex min-w-min items-center justify-center">
         <motion.span
           className="flex shrink-0 items-center justify-center will-change-transform"
