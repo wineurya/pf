@@ -1,7 +1,8 @@
 import { clsx } from "clsx";
 import { AnimatePresence, motion } from "motion/react";
-import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
+import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
 import { CaseStudyAsideTicker } from "@/exploration/CaseStudyAsideTicker.jsx";
+import { CaseStudyTableOfContents } from "@/exploration/CaseStudyTableOfContents.jsx";
 
 const META_T = { duration: 0.24, ease: [0.22, 1, 0.36, 1] };
 
@@ -42,9 +43,9 @@ function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
 }
 
 /**
- * Sticky case-study aside — nav matches home; chapter copy is a 3-row scroll ticker.
+ * Sticky case-study aside — wordmark + chapter TOC (no section tabs); carousel copy below.
  *
- * @param {{ def: { title: string; kicker: string }, chapters: Array<{ id: string; eyebrow: string; title: string; lede: string }>, activeIndex: number, reduceMotion: boolean, location: object, navigate: function, onSelectSection: function, selectedIndex: number }} props
+ * @param {{ def: { title: string; kicker: string }, chapters: Array<{ id: string; eyebrow?: string; title: string; lede: string }>, activeIndex: number, reduceMotion: boolean, location: object, navigate: function, onSelectSection: function }} props
  */
 export function CaseStudyAside({
   def,
@@ -54,7 +55,6 @@ export function CaseStudyAside({
   location,
   navigate,
   onSelectSection,
-  selectedIndex,
 }) {
   const safeIndex = Math.min(Math.max(activeIndex, 0), chapters.length - 1);
   const indexLabel = String(safeIndex + 1).padStart(2, "0");
@@ -72,15 +72,17 @@ export function CaseStudyAside({
     >
       <div className="flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12">
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
-        <ExplorationNavRow
-          location={location}
-          navigate={navigate}
-          onSelectSection={onSelectSection}
-          selectedIndex={selectedIndex}
-          reduceMotion={reduceMotion}
-        />
+        <div className="wx-mobile-sticky-nav flex w-full min-w-0 shrink-0 flex-row flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
+          <div className="site-vt--nav flex w-full min-w-0 flex-nowrap items-center justify-start gap-3 min-h-14 sm:gap-4">
+            <WordmarkLink location={location} navigate={navigate} onSelectSection={onSelectSection} />
+          </div>
+        </div>
 
-        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col items-stretch gap-10 pt-10 text-left lg:gap-12 lg:pt-14">
+        <div className="mt-5 w-full shrink-0 sm:mt-6" data-site-region="case-toc">
+          <CaseStudyTableOfContents chapters={chapters} activeIndex={activeIndex} reduceMotion={reduceMotion} />
+        </div>
+
+        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col items-stretch gap-10 pt-8 text-left lg:gap-12 lg:pt-10">
           <CaseStudyKicker def={def} />
           <CaseStudyAsideTicker chapters={chapters} activeIndex={activeIndex} reduceMotion={reduceMotion} />
           <CaseStudyProgress indexLabel={indexLabel} totalLabel={totalLabel} reduceMotion={reduceMotion} />

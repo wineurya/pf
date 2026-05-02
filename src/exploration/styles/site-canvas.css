@@ -417,6 +417,11 @@
   scroll-margin-top: 0.75rem;
 }
 
+/** Case study chapter anchors (`AvanceCaseStudy` sections) — match mobile sticky nav offset */
+.site-canvas .wx-case-section {
+  scroll-margin-top: 0.75rem;
+}
+
 @media (max-width: 639px) {
   .site-canvas {
     --wx-mobile-nav-h: calc(env(safe-area-inset-top, 0px) + 5.5rem);
@@ -425,10 +430,18 @@
   .site-canvas [id^="section-"] {
     scroll-margin-top: calc(var(--wx-mobile-nav-h) + 0.35rem);
   }
+
+  .site-canvas .wx-case-section {
+    scroll-margin-top: calc(var(--wx-mobile-nav-h) + 0.35rem);
+  }
 }
 
 @media (width >= 64rem) {
   .site-canvas [id^="section-"] {
+    scroll-margin-top: 0;
+  }
+
+  .site-canvas .wx-case-section {
     scroll-margin-top: 0;
   }
 }
