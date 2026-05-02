@@ -36,7 +36,6 @@ export const SITE_FIGMA_ASSETS = {
   heroOcean: "https://www.figma.com/api/mcp/asset/3c8a4aa9-c288-4b68-bd5d-8bffdce84853",
   /** Same path as `public/favicon.svg` (Figma mark + token gradient) */
   logoMark: "/favicon.svg",
-  statusDot: "https://www.figma.com/api/mcp/asset/7ffad080-da58-444b-aa73-1a9edcddd2b5",
   /** Headline sparkle (SVG) — tint via CSS mask + `--wx-primary` in `ExplorationHomePage` */
   headlineSparkle: "https://www.figma.com/api/mcp/asset/abd085fc-42a7-4771-9064-a14f55e15d8c",
 };

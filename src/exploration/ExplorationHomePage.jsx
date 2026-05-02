@@ -1895,16 +1895,26 @@ function useExplorationLayoutModel() {
   };
 }
 
+function AsideAvailabilityDot({ reduceMotion }) {
+  return (
+    <span
+      className={clsx(
+        "wx-aside-availability-dot inline-flex size-2 shrink-0 select-none",
+        !reduceMotion && "wx-aside-availability-dot--pulse",
+      )}
+      aria-hidden
+    >
+      <span className="wx-aside-availability-dot__fill" />
+    </span>
+  );
+}
+
 function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
   return (
     <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
       <div className="relative w-full space-y-5 text-left">
         <div className="wx-text-eyebrow flex items-center gap-2 text-[var(--wx-muted)]">
-          <MaskedFigmaIcon
-            src={SITE_FIGMA_ASSETS.statusDot}
-            className="size-2 shrink-0 select-none"
-            background="var(--wx-accent-teal)"
-          />
+          <AsideAvailabilityDot reduceMotion={reduceMotion} />
           <p>{SITE_HERO.eyebrow}</p>
         </div>
         <div className="w-full space-y-5">

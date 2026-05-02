@@ -191,6 +191,55 @@
   }
 }
 
+/* Aside eyebrow availability dot — token fill + soft ring (no expiring mask URL). */
+.site-canvas .wx-aside-availability-dot {
+  position: relative;
+  isolation: isolate;
+}
+
+.site-canvas .wx-aside-availability-dot__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--wx-accent-teal);
+}
+
+.site-canvas .wx-aside-availability-dot--pulse .wx-aside-availability-dot__fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--wx-accent-teal);
+  opacity: 0.48;
+  transform: scale(1);
+  transform-origin: center center;
+  animation: wx-aside-avail-dot-ring 2.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@keyframes wx-aside-avail-dot-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.46;
+  }
+  62% {
+    transform: scale(2.35);
+    opacity: 0;
+  }
+  63%,
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-canvas .wx-aside-availability-dot--pulse .wx-aside-availability-dot__fill::after {
+    animation: none;
+    opacity: 0;
+    transform: none;
+  }
+}
+
 .wx-text-meta {
   font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
   font-size: var(--wx-text-meta-size);
