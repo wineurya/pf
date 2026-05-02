@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   LayoutDashboard, Zap, Map, ShieldCheck, FileText, Settings,
-  ChevronDown, ChevronsLeft, Bell, RotateCcw, Check, Loader2,
+  ChevronDown, ChevronsLeft, ChevronsRight, Bell, RotateCcw, Check, Loader2,
   ChevronRight, X, Download, FileBarChart2,
   Search, Smartphone, Tablet, Monitor,
   TrendingUp, TrendingDown, MessageSquare, Plus,
@@ -149,7 +149,6 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
       id="kx-sidebar"
       className="kx-sidebar"
       aria-label="Workspace navigation"
-      aria-hidden={!expanded}
     >
       <div className="kx-logo">
         <div className="kx-logo-mark" aria-hidden="true">
@@ -164,10 +163,14 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
           type="button"
           className="kx-sidebar-collapse-btn"
           onClick={onToggle}
-          aria-label="Collapse navigation"
-          title="Collapse navigation"
+          aria-label={expanded ? 'Show icon bar only' : 'Expand sidebar'}
+          title={expanded ? 'Show icon bar only' : 'Expand sidebar'}
         >
-          <ChevronsLeft size={15} strokeWidth={2.2} aria-hidden />
+          {expanded ? (
+            <ChevronsLeft size={15} strokeWidth={2.2} aria-hidden />
+          ) : (
+            <ChevronsRight size={15} strokeWidth={2.2} aria-hidden />
+          )}
         </button>
       </div>
 
@@ -182,25 +185,27 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
         {NAV_ITEMS.map(({ id, label, Icon, badge }) => (
           <button
             key={id}
+            type="button"
             className={`kx-nav-item${active === id ? ' kx-active' : ''}`}
             onClick={() => setActive(id)}
             aria-current={active === id ? 'page' : undefined}
+            title={badge != null ? `${label} · ${badge} notifications` : label}
           >
             <Icon size={15} />
             <span>{label}</span>
-            {badge && <span className="kx-nav-badge">{badge}</span>}
+            {badge != null && <span className="kx-nav-badge">{badge}</span>}
           </button>
         ))}
 
         <div className="kx-nav-section" style={{ marginTop: 8 }}>General</div>
-        <button className="kx-nav-item">
+        <button type="button" className="kx-nav-item" title="Settings">
           <Settings size={15} />
           <span>Settings</span>
         </button>
       </nav>
 
       <div className="kx-sidebar-footer">
-        <button className="kx-team-card">
+        <button type="button" className="kx-team-card" title="Acme Studio · Pro · 12 seats">
           <img className="kx-avatar kx-avatar-md" src={AVATARS.team} alt="" />
           <div className="kx-team-card-text">
             <div className="kx-team-card-name">Acme Studio</div>
@@ -819,7 +824,7 @@ export default function KinetixPage() {
         active={activeNav}
         setActive={setActiveNav}
         expanded={sidebarOpen}
-        onToggle={() => setSidebarOpen(false)}
+        onToggle={() => setSidebarOpen((o) => !o)}
       />
 
       <div className="kx-main">

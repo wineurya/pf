@@ -210,16 +210,59 @@
   overflow: hidden;
   transition:
     width 0.26s var(--kx-ease),
-    opacity 0.22s ease,
     min-width 0.26s var(--kx-ease);
 }
 
+/* Narrow icon rail — nav stays usable when “collapsed” (desktop). */
 .kx-root--sidebar-collapsed .kx-sidebar {
-  width: 0 !important;
-  min-width: 0 !important;
-  opacity: 0;
-  pointer-events: none;
-  overflow: hidden;
+  width: 60px !important;
+  min-width: 60px !important;
+  opacity: 1;
+  pointer-events: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.kx-root--sidebar-collapsed .kx-logo {
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 8px 10px;
+  align-items: center;
+}
+
+.kx-root--sidebar-collapsed .kx-sidebar-collapse-btn {
+  margin-left: 0;
+}
+
+.kx-root--sidebar-collapsed .kx-logo-text,
+.kx-root--sidebar-collapsed .kx-logo-version {
+  display: none;
+}
+
+.kx-root--sidebar-collapsed .kx-search {
+  display: none;
+}
+
+.kx-root--sidebar-collapsed .kx-nav-section {
+  display: none;
+}
+
+.kx-root--sidebar-collapsed .kx-nav-item {
+  justify-content: center;
+  padding: 8px;
+}
+
+.kx-root--sidebar-collapsed .kx-nav-item span {
+  display: none;
+}
+
+.kx-root--sidebar-collapsed .kx-team-card-text,
+.kx-root--sidebar-collapsed .kx-team-card svg {
+  display: none;
+}
+
+.kx-root--sidebar-collapsed .kx-team-card {
+  justify-content: center;
 }
 
 .kx-logo {
