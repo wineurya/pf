@@ -1,24 +1,27 @@
 import { clsx } from "clsx";
 import { AnimatePresence, motion } from "motion/react";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
-import { CaseStudyAsideTicker } from "@/exploration/CaseStudyAsideTicker.jsx";
 import { CaseStudyTableOfContents } from "@/exploration/CaseStudyTableOfContents.jsx";
 
 const META_T = { duration: 0.24, ease: [0.22, 1, 0.36, 1] };
 
-function CaseStudyKicker({ def }) {
+function CaseStudyHeading({ def }) {
   return (
-    <p className="wx-text-meta text-left uppercase tracking-[0.18em] text-[var(--wx-muted)]">
-      <span>{def.kicker}</span>
-      <span className="mx-2 text-[color-mix(in_srgb,var(--wx-muted)_60%,transparent)]">/</span>
-      <span className="text-[var(--wx-ink)]">{def.title}</span>
-    </p>
+    <div className="flex flex-col items-start gap-2 text-left">
+      <p className="wx-text-meta uppercase tracking-[0.18em] text-[var(--wx-muted)]">{def.kicker}</p>
+      <h1 className="font-medium tracking-tight text-[var(--wx-ink)] text-3xl leading-[1.05] sm:text-4xl">
+        {def.title}
+      </h1>
+      {def.lede ? (
+        <p className="mt-1 max-w-md wx-text-body-secondary text-[var(--wx-muted)]">{def.lede}</p>
+      ) : null}
+    </div>
   );
 }
 
 function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
   return (
-    <div className="mt-auto flex flex-col items-start gap-3 border-t border-[color:var(--wx-border-soft)] pt-8 text-left">
+    <div className="mt-auto flex flex-col items-start gap-2 border-t border-[color:var(--wx-border-soft)] pt-6 text-left">
       <p className="wx-text-meta tabular-nums text-[var(--wx-muted)]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -36,16 +39,17 @@ function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
           {" / "}
           {totalLabel}
         </span>
+        <span className="ml-3 uppercase tracking-[0.18em]">Case study</span>
       </p>
-      <p className="wx-text-meta uppercase tracking-[0.18em] text-[var(--wx-muted)]">Case study</p>
     </div>
   );
 }
 
 /**
- * Sticky case-study aside — wordmark + chapter TOC (no section tabs); carousel copy below.
+ * Sticky case-study aside — wordmark + heading + chapter list (active row expands with lede).
+ * One chapter system replaces the prior TOC + ticker stack.
  *
- * @param {{ def: { title: string; kicker: string }, chapters: Array<{ id: string; eyebrow?: string; title: string; lede: string }>, activeIndex: number, reduceMotion: boolean, location: object, navigate: function, onSelectSection: function }} props
+ * @param {{ def: { title: string; kicker: string; lede?: string }, chapters: Array<{ id: string; eyebrow?: string; title: string; lede?: string }>, activeIndex: number, reduceMotion: boolean, location: object, navigate: function, onSelectSection: function }} props
  */
 export function CaseStudyAside({
   def,
@@ -78,13 +82,9 @@ export function CaseStudyAside({
           </div>
         </div>
 
-        <div className="mt-5 w-full shrink-0 sm:mt-6" data-site-region="case-toc">
+        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col gap-10 pt-10 text-left lg:gap-12 lg:pt-12">
+          <CaseStudyHeading def={def} />
           <CaseStudyTableOfContents chapters={chapters} activeIndex={activeIndex} reduceMotion={reduceMotion} />
-        </div>
-
-        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col items-stretch gap-10 pt-8 text-left lg:gap-12 lg:pt-10">
-          <CaseStudyKicker def={def} />
-          <CaseStudyAsideTicker chapters={chapters} activeIndex={activeIndex} reduceMotion={reduceMotion} />
           <CaseStudyProgress indexLabel={indexLabel} totalLabel={totalLabel} reduceMotion={reduceMotion} />
         </div>
       </div>
