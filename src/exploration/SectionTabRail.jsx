@@ -11,10 +11,11 @@ const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
 const WX_TAB_PILL_DURATION = 0.36;
 const WX_TAB_LABEL_BLUR = 4;
 
-/** Side-to-side keyframe wiggle for the icon (px). Damped — last entry returns to 0. */
-const ICON_WIGGLE_X = [0, -3, 3, -2, 2, 0];
+/** Subtle horizontal wobble for the icon (px) + paired tilt (deg). Both damp back to 0. */
+const ICON_WIGGLE_X = [0, -1.4, 1.2, -0.8, 0.6, 0];
+const ICON_WIGGLE_ROTATE = [0, -3, 2.4, -1.6, 1.1, 0];
 const ICON_WIGGLE_TIMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
-const ICON_WIGGLE_DURATION = 0.5;
+const ICON_WIGGLE_DURATION = 0.42;
 
 function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
   if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -39,8 +40,8 @@ function labelMotionPresets(reduceMotion) {
 }
 
 function iconRestTarget({ selected, reduceMotion }) {
-  if (reduceMotion) return { x: 0, scale: selected ? 1.05 : 1, opacity: selected ? 1 : 0.85 };
-  return { x: 0, scale: selected ? 1.12 : 1, opacity: selected ? 1 : 0.8 };
+  if (reduceMotion) return { x: 0, rotate: 0, scale: selected ? 1.04 : 1, opacity: selected ? 1 : 0.85 };
+  return { x: 0, rotate: 0, scale: selected ? 1.08 : 1, opacity: selected ? 1 : 0.82 };
 }
 
 /** Plays a one-shot horizontal wiggle on the icon when the tab transitions to selected. */
@@ -62,11 +63,14 @@ function useIconActivationWiggle({ selected, dir, reduceMotion }) {
 
     if (becameSelected) {
       const wiggleX = dir < 0 ? ICON_WIGGLE_X : ICON_WIGGLE_X.map((v) => -v);
+      const wiggleRotate = dir < 0 ? ICON_WIGGLE_ROTATE : ICON_WIGGLE_ROTATE.map((v) => -v);
       controls.start({
         ...rest,
         x: wiggleX,
+        rotate: wiggleRotate,
         transition: {
           x: { duration: ICON_WIGGLE_DURATION, ease: "easeOut", times: ICON_WIGGLE_TIMES },
+          rotate: { duration: ICON_WIGGLE_DURATION, ease: "easeOut", times: ICON_WIGGLE_TIMES },
           scale: { duration: 0.25, ease: WX_TAB_PILL_EASE },
           opacity: { duration: 0.25 },
         },
