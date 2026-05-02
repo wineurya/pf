@@ -81,22 +81,22 @@ const METRICS = [
   {
     label: 'Friction Score', value: '82', sub: '/ 100',
     trend: 'warn', trendLabel: '-4.2%', trendSuffix: 'in friction', trendIcon: TrendingDown,
-    spark: [0.78, 0.41, 0.92, 0.36, 0.88, 0.52, 0.95, 0.44, 0.71, 0.39, 0.85, 0.8], color: '#D97706',
+    spark: [0.52, 0.56, 0.51, 0.62, 0.58, 0.68, 0.64, 0.72, 0.69, 0.76, 0.74, 0.8], color: '#D97706',
   },
   {
     label: 'Confidence', value: '98%', sub: 'model accuracy',
     trend: 'good', trendLabel: '2.1%', trendIcon: null,
-    spark: [0.9, 0.58, 0.94, 0.49, 0.87, 0.62, 0.91, 0.55, 0.96, 0.68, 0.83, 0.98], color: '#16A34A',
+    spark: [0.82, 0.84, 0.83, 0.87, 0.86, 0.89, 0.88, 0.91, 0.93, 0.92, 0.95, 0.98], color: '#16A34A',
   },
   {
     label: 'Conversion Risk', value: 'Med', sub: 'funnel · step 3',
     trend: 'warn', trendLabel: 'Flagged', trendIcon: null,
-    spark: [0.48, 0.72, 0.38, 0.65, 0.44, 0.81, 0.52, 0.68, 0.41, 0.77, 0.62], color: '#D97706',
+    spark: [0.5, 0.48, 0.52, 0.5, 0.54, 0.53, 0.56, 0.55, 0.58, 0.59, 0.62], color: '#D97706',
   },
   {
     label: 'Sessions Simulated', value: '10K', sub: 'synthetic users',
     trend: 'mute', trendLabel: 'Apr 28', trendIcon: null,
-    spark: [0.22, 0.09, 0.35, 0.18, 0.52, 0.41, 0.28, 0.67, 0.59, 0.81, 0.74, 1.0], color: '#2563EB',
+    spark: [0.18, 0.23, 0.26, 0.34, 0.38, 0.45, 0.5, 0.57, 0.64, 0.74, 0.86, 1.0], color: '#2563EB',
   },
 ]
 
@@ -113,12 +113,32 @@ function SeverityPill({ s }) {
   )
 }
 
+/** Smooth cubic path through spark points (Catmull-Rom → Bézier). */
+function sparkPointsToSmoothPath(points, w, h) {
+  const n = points.length
+  if (n < 2) return ''
+  const stepX = w / (n - 1)
+  const yAt = (p) => h - p * (h - 2) - 1
+  const xy = (i) => ({ x: i * stepX, y: yAt(points[i]) })
+
+  let d = `M ${xy(0).x.toFixed(2)} ${xy(0).y.toFixed(2)}`
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = xy(Math.max(0, i - 1))
+    const p1 = xy(i)
+    const p2 = xy(i + 1)
+    const p3 = xy(Math.min(n - 1, i + 2))
+    const cp1x = p1.x + (p2.x - p0.x) / 6
+    const cp1y = p1.y + (p2.y - p0.y) / 6
+    const cp2x = p2.x - (p3.x - p1.x) / 6
+    const cp2y = p2.y - (p3.y - p1.y) / 6
+    d += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`
+  }
+  return d
+}
+
 function Sparkline({ points, color, idSuffix, width = 64, height = 22, className = '' }) {
   const w = width, h = height
-  const stepX = w / (points.length - 1)
-  const linePath = points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${(i * stepX).toFixed(1)} ${(h - p * (h - 2) - 1).toFixed(1)}`)
-    .join(' ')
+  const linePath = sparkPointsToSmoothPath(points, w, h)
   const areaPath = `${linePath} L ${w} ${h} L 0 ${h} Z`
   const last = points[points.length - 1]
   const lastX = w
