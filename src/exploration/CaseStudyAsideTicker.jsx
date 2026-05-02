@@ -2,39 +2,42 @@ import { AnimatePresence, motion } from "motion/react";
 import { clsx } from "clsx";
 
 const EASE = [0.22, 1, 0.36, 1];
-const DURATION = 0.44;
+const DURATION = 0.52;
 
 function restingMotion(phase, isActive, reduceMotion) {
   if (reduceMotion) {
-    return { opacity: isActive ? 1 : 0.42, scale: isActive ? 1 : 0.94, y: 0 };
+    return { opacity: isActive ? 1 : 0.45, scale: isActive ? 1 : 0.94, y: 0 };
   }
   if (isActive) {
     return { scale: 1, opacity: 1, y: 0 };
   }
   const dir = phase === "prev" ? -1 : 1;
-  return { scale: 0.88, opacity: 0.34, y: dir * 12 };
+  /** Adjacent rows stay legible; motion reads mostly as slide + scale, not a wipe fade. */
+  return { scale: 0.88, opacity: 0.62, y: dir * 10 };
 }
 
 function enterInitial(phase, reduceMotion) {
   if (reduceMotion) return false;
-  if (phase === "prev") return { opacity: 0.55, y: -18, scale: 0.86 };
-  if (phase === "next") return { opacity: 0.55, y: 18, scale: 0.86 };
-  return { opacity: 0.85, y: 22, scale: 0.94 };
+  /** Enter fully opaque — slot clips overflow so slide carries the transition. */
+  if (phase === "prev") return { y: -92, opacity: 1, scale: 0.9 };
+  if (phase === "next") return { y: 92, opacity: 1, scale: 0.9 };
+  return { y: 104, opacity: 1, scale: 0.96 };
 }
 
 function exitTarget(phase, reduceMotion) {
   if (reduceMotion) return { opacity: 0 };
-  if (phase === "prev") return { y: -36, scale: 0.82, opacity: 0 };
-  if (phase === "next") return { y: 36, scale: 0.82, opacity: 0 };
-  return { y: -28, scale: 0.88, opacity: 0 };
+  if (phase === "prev") return { y: -104, opacity: 1, scale: 0.86 };
+  if (phase === "next") return { y: 104, opacity: 1, scale: 0.86 };
+  /** Former active chapter exits upward (reads as ticker advancing). */
+  return { y: -112, opacity: 1, scale: 0.9 };
 }
 
 function TickerSlot({ phase, chapter, reduceMotion, minHeightClass }) {
   const isActive = phase === "active";
 
   return (
-    <div className={clsx("flex w-full max-w-md flex-col justify-center", minHeightClass)}>
-      <AnimatePresence mode="wait" initial={false}>
+    <div className={clsx("flex w-full max-w-md flex-col justify-center overflow-hidden", minHeightClass)}>
+      <AnimatePresence initial={false}>
         {chapter ? (
           <motion.div
             key={chapter.id}
@@ -43,10 +46,8 @@ function TickerSlot({ phase, chapter, reduceMotion, minHeightClass }) {
             initial={enterInitial(phase, reduceMotion)}
             animate={restingMotion(phase, isActive, reduceMotion)}
             exit={exitTarget(phase, reduceMotion)}
-            transition={
-              reduceMotion ? { duration: 0.01 } : { duration: DURATION, ease: EASE }
-            }
-            className="mx-auto w-full space-y-2 px-1 text-center"
+            transition={reduceMotion ? { duration: 0.01 } : { duration: DURATION, ease: EASE }}
+            className="mx-auto w-full space-y-2 px-1 text-center will-change-transform"
           >
             <p
               className={clsx(
@@ -85,7 +86,8 @@ function TickerSlot({ phase, chapter, reduceMotion, minHeightClass }) {
 
 /**
  * Scroll-synced rail: up to three chapter summaries (previous / active / next).
- * Active row is full size and opaque; adjacent rows are scaled down and dim until promoted.
+ * Active row is full size; adjacent rows are scaled down until promoted.
+ * Chapter changes animate as vertical slides (clipped per slot), not opacity wipes.
  *
  * @param {{ chapters: Array<{ id: string; eyebrow: string; title: string; lede: string }>, activeIndex: number, reduceMotion: boolean }} props
  */
@@ -101,7 +103,7 @@ export function CaseStudyAsideTicker({ chapters, activeIndex, reduceMotion }) {
         {active ? `${active.eyebrow}. ${active.title}. ${active.lede}` : ""}
       </p>
       <div
-        className="wx-case-aside-ticker flex min-h-[min(52vh,26rem)] w-full max-w-md flex-col items-center justify-center gap-2 py-1 sm:gap-3 sm:py-2"
+        className="wx-case-aside-ticker flex min-h-[min(52vh,26rem)] w-full max-w-md flex-col items-center justify-center gap-2 overflow-hidden py-1 sm:gap-3 sm:py-2"
         aria-hidden
       >
         <TickerSlot
