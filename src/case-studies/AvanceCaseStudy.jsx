@@ -14,19 +14,19 @@ function CaseChapterSection({ chapter, index }) {
       id={chapter.id}
       data-case-chapter-index={index}
       aria-label={label}
-      className="wx-case-section relative flex min-h-[min(76svh,48rem)] flex-col items-center justify-center py-[var(--wx-gallery-gap)] sm:py-10 lg:py-12"
+      className="wx-case-section relative flex min-h-[min(72svh,46rem)] flex-col items-center justify-center py-12 sm:py-16 lg:py-24"
       initial={{ opacity: 0.94 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.28, margin: "0px 0px -8% 0px" }}
       transition={SECTION_REVEAL_T}
     >
       {chapter.image ? (
-        <figure className="wx-case-section__figure relative w-full max-w-[min(52rem,94vw)] px-4 sm:px-5 lg:px-6">
-          <div className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface-soft)] p-4 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6 lg:p-8">
+        <figure className="wx-case-section__figure relative w-full max-w-[min(52rem,94vw)] px-5 sm:px-8 lg:px-10">
+          <div className="overflow-hidden rounded-[var(--wx-radius-card)] p-5 sm:p-8 lg:p-10">
             <img
               src={chapter.image}
               alt={chapter.imageAlt || ""}
-              className="block h-auto w-full select-none rounded-[calc(var(--wx-radius-card)-6px)] object-cover"
+              className="block h-auto w-full max-h-[min(78svh,52rem)] select-none object-contain"
               loading={index === 0 ? "eager" : "lazy"}
               decoding="async"
               sizes="(min-width: 1024px) 52rem, 94vw"
@@ -77,7 +77,7 @@ export function AvanceCaseStudy({ def }) {
   }
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-[var(--wx-gallery-gap)]" data-case-stack="chapters">
+    <div className="flex w-full min-w-0 flex-col gap-16 sm:gap-20 lg:gap-28" data-case-stack="chapters">
       {chapters.map((chapter, i) => (
         <CaseChapterSection key={chapter.id} chapter={chapter} index={i} />
       ))}

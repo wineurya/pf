@@ -7,7 +7,7 @@ const META_T = { duration: 0.24, ease: [0.22, 1, 0.36, 1] };
 
 function CaseStudyKicker({ def }) {
   return (
-    <p className="wx-text-meta text-center uppercase tracking-[0.18em] text-[var(--wx-muted)]">
+    <p className="wx-text-meta text-left uppercase tracking-[0.18em] text-[var(--wx-muted)]">
       <span>{def.kicker}</span>
       <span className="mx-2 text-[color-mix(in_srgb,var(--wx-muted)_60%,transparent)]">/</span>
       <span className="text-[var(--wx-ink)]">{def.title}</span>
@@ -17,7 +17,7 @@ function CaseStudyKicker({ def }) {
 
 function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
   return (
-    <div className="mt-auto flex flex-col items-center gap-3 border-t border-[color:var(--wx-border-soft)] pt-6 text-center">
+    <div className="mt-auto flex flex-col items-start gap-3 border-t border-[color:var(--wx-border-soft)] pt-8 text-left">
       <p className="wx-text-meta tabular-nums text-[var(--wx-muted)]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -80,7 +80,7 @@ export function CaseStudyAside({
           reduceMotion={reduceMotion}
         />
 
-        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col items-center gap-7 pt-9 text-center lg:gap-8 lg:pt-12">
+        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col items-stretch gap-10 pt-10 text-left lg:gap-12 lg:pt-14">
           <CaseStudyKicker def={def} />
           <CaseStudyAsideTicker chapters={chapters} activeIndex={activeIndex} reduceMotion={reduceMotion} />
           <CaseStudyProgress indexLabel={indexLabel} totalLabel={totalLabel} reduceMotion={reduceMotion} />

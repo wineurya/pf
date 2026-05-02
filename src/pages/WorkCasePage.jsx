@@ -42,7 +42,7 @@ function CaseStudySplitBody({ def, CaseStudy, reduceMotion, location, navigate, 
         selectedIndex={0}
       />
       <div
-        className="site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-[var(--wx-gallery-gap)] px-[var(--wx-pad-x)] pb-24 pt-10 lg:min-w-0 lg:flex-1 lg:basis-0 lg:px-3 lg:pl-3 lg:pr-[var(--wx-pad-x)] lg:pt-12"
+        className="site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-12 px-[var(--wx-pad-x)] pb-28 pt-12 sm:gap-14 lg:min-w-0 lg:flex-1 lg:basis-0 lg:gap-16 lg:px-3 lg:pl-3 lg:pr-[var(--wx-pad-x)] lg:pb-32 lg:pt-14"
         data-site-region="case-panels"
       >
         <CaseStudy def={def} />
