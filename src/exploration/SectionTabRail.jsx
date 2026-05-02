@@ -119,15 +119,15 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
       transition={pillT}
       whileTap={reduceMotion ? undefined : { scale: 0.97 }}
       className={clsx(
-        "wx-tab wx-text-sm group relative inline-flex h-10 shrink-0 items-center justify-center overflow-hidden rounded-full outline-none",
-        "text-[var(--wx-tab-idle-fg)] px-3.5",
-        selected ? "font-semibold" : "min-w-[3.125rem] font-medium",
+        "wx-tab wx-text-sm group relative inline-flex shrink-0 items-center justify-center outline-none",
+        "text-[var(--wx-tab-idle-fg)]",
+        selected ? "font-semibold" : "font-medium",
       )}
       onClick={() => onSelectSection(tab.sectionId, i)}
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-20 rounded-full"
+        className="wx-tab__fill pointer-events-none absolute inset-0 -z-20"
         style={{
           backgroundColor: "var(--wx-tab-idle)",
           boxShadow: "var(--wx-tab-shadow-idle)",
@@ -135,7 +135,7 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
       />
       <motion.span
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 rounded-full"
+        className="wx-tab__fill pointer-events-none absolute inset-0 -z-10"
         style={{
           backgroundColor: "var(--wx-primary)",
           boxShadow: "var(--wx-tab-shadow-active)",
@@ -192,15 +192,12 @@ export function SectionTabRail({
 
   return (
     <div
-      className="wx-tab-track min-w-0 max-w-full shrink overflow-x-auto overflow-y-visible overscroll-x-contain rounded-full [-webkit-overflow-scrolling:touch]"
+      className="wx-tab-track min-w-0 max-w-full shrink"
       role="tablist"
       aria-label="Sections"
       onKeyDown={(e) => handleTabListKeyDown(e, selectedIndex, onSelectSection)}
     >
-      <div
-        ref={tabRowRef}
-        className="relative inline-flex w-max min-w-0 flex-nowrap items-center gap-0.5 py-1 pl-1 pr-1 sm:gap-1 sm:py-1 sm:pl-1 sm:pr-1.5"
-      >
+      <div ref={tabRowRef} className="wx-tab-track__scroll relative min-w-0">
         {SECTION_TABS.map((tab, i) => {
           const selected = selectedIndex === i;
           return (
