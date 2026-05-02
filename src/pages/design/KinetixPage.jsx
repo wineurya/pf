@@ -82,7 +82,6 @@ const METRICS = [
     label: 'Friction Score', value: '82', sub: '/ 100',
     trend: 'warn', trendLabel: '-4.2%', trendSuffix: 'in friction', trendIcon: TrendingDown,
     spark: [0.36, 0.42, 0.39, 0.66, 0.78, 0.72, 0.8], color: '#D97706',
-    subInline: true, trendInBottom: true, largeSpark: true,
   },
   {
     label: 'Confidence', value: '98%', sub: 'model accuracy',
@@ -279,42 +278,35 @@ function MetricCards() {
             {trendSuffix && <span className="kx-metric-trend-suffix">{trendSuffix}</span>}
           </span>
         ) : null
+        const slug = label.replace(/\s+/g, '-').toLowerCase()
 
         return (
-        <motion.div
-          key={label}
-          className={`kx-metric-card${metric.largeSpark ? ' kx-metric-card-large-spark' : ''}`}
-          role="listitem"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.34, delay: i * 0.06, ease: [0.32, 0.72, 0, 1] }}
-        >
-          <div className="kx-metric-top">
-            <span className="kx-metric-label">{label}</span>
-            {!metric.trendInBottom && trendPill}
-          </div>
-          <div className="kx-metric-value">
-            <span>{value}</span>
-            {metric.subInline && <span className="kx-metric-sub kx-metric-sub-inline">{sub}</span>}
-          </div>
-          <div className="kx-metric-bottom">
-            {metric.trendInBottom ? trendPill : <span className="kx-metric-sub">{sub}</span>}
-            {!metric.largeSpark && (
-              <Sparkline points={spark} color={color} idSuffix={label.replace(/\s+/g, '-').toLowerCase()} />
-            )}
-          </div>
-          {metric.largeSpark && (
+          <motion.div
+            key={label}
+            className="kx-metric-card kx-metric-card-large-spark"
+            role="listitem"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.34, delay: i * 0.06, ease: [0.32, 0.72, 0, 1] }}
+          >
+            <div className="kx-metric-top">
+              <span className="kx-metric-label">{label}</span>
+            </div>
+            <div className="kx-metric-value">
+              <span>{value}</span>
+              <span className="kx-metric-sub kx-metric-sub-inline">{sub}</span>
+            </div>
+            <div className="kx-metric-bottom">{trendPill}</div>
             <div className="kx-metric-spark-large" aria-hidden="true">
               <Sparkline
                 points={spark}
                 color={color}
-                idSuffix={`${label.replace(/\s+/g, '-').toLowerCase()}-large`}
+                idSuffix={`${slug}-large`}
                 width={137}
                 height={70}
               />
             </div>
-          )}
-        </motion.div>
+          </motion.div>
         )
       })}
     </div>
