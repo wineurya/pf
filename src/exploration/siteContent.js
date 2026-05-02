@@ -83,8 +83,8 @@ export const SITE_WORK = [
     year: "2025",
     role: "Product Designer",
     workCardVariant: "showcase",
-    /** Card click: hide all but top nav; “Case Study” is the route to the write-up. */
-    workCardOpenNavOnlyView: true,
+    /** Full-card link to case study (`WorkCardLinkOverlays`); bottom “Case Study” remains as secondary affordance. */
+    workCardOpenNavOnlyView: false,
     /** Bottom-right Case Study + arrow (separate from card click / nav-only mode). */
     workCardCaseStudyConnector: true,
     caseStudyPath: "/work/avance",
