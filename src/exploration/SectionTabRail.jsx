@@ -119,9 +119,9 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
       transition={pillT}
       whileTap={reduceMotion ? undefined : { scale: 0.97 }}
       className={clsx(
-        "wx-tab wx-text-sm group relative flex min-h-10 shrink-0 items-center justify-center rounded-full outline-none",
-        "text-[var(--wx-tab-idle-fg)] px-3.5 py-2",
-        selected ? "font-semibold" : "min-w-10 font-medium",
+        "wx-tab wx-text-sm group relative inline-flex h-10 shrink-0 items-center justify-center overflow-hidden rounded-full outline-none",
+        "text-[var(--wx-tab-idle-fg)] px-3.5",
+        selected ? "font-semibold" : "min-w-[3.125rem] font-medium",
       )}
       onClick={() => onSelectSection(tab.sectionId, i)}
     >

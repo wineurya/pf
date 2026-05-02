@@ -1641,6 +1641,8 @@
 .site-canvas .wx-tab {
   position: relative;
   isolation: isolate;
+  /* Stadium silhouette: fixed height + rounded-full gives semicircular caps, not circles */
+  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
 }
 
