@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef } from "react";
+import { AnimatePresence, motion, useAnimationControls } from "motion/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
@@ -37,35 +38,56 @@ function labelMotionPresets(reduceMotion) {
   };
 }
 
-function iconRestState({ selected, reduceMotion }) {
+function iconRestTarget({ selected, reduceMotion }) {
   if (reduceMotion) return { x: 0, scale: selected ? 1.05 : 1, opacity: selected ? 1 : 0.85 };
   return { x: 0, scale: selected ? 1.12 : 1, opacity: selected ? 1 : 0.8 };
 }
 
-function iconHoverState({ selected, dir }) {
-  return {
-    x: dir < 0 ? ICON_WIGGLE_X : ICON_WIGGLE_X.map((v) => -v),
-    scale: selected ? 1.14 : 1.06,
-    opacity: 1,
-    transition: {
-      x: { duration: ICON_WIGGLE_DURATION, ease: "easeOut", times: ICON_WIGGLE_TIMES },
-      scale: { duration: 0.2, ease: WX_TAB_PILL_EASE },
-      opacity: { duration: 0.2 },
-    },
-  };
+/** Plays a one-shot horizontal wiggle on the icon when the tab transitions to selected. */
+function useIconActivationWiggle({ selected, dir, reduceMotion }) {
+  const controls = useAnimationControls();
+  const wasSelectedRef = useRef(selected);
+
+  useEffect(() => {
+    const rest = iconRestTarget({ selected, reduceMotion });
+
+    if (reduceMotion) {
+      controls.set(rest);
+      wasSelectedRef.current = selected;
+      return;
+    }
+
+    const becameSelected = selected && !wasSelectedRef.current;
+    wasSelectedRef.current = selected;
+
+    if (becameSelected) {
+      const wiggleX = dir < 0 ? ICON_WIGGLE_X : ICON_WIGGLE_X.map((v) => -v);
+      controls.start({
+        ...rest,
+        x: wiggleX,
+        transition: {
+          x: { duration: ICON_WIGGLE_DURATION, ease: "easeOut", times: ICON_WIGGLE_TIMES },
+          scale: { duration: 0.25, ease: WX_TAB_PILL_EASE },
+          opacity: { duration: 0.25 },
+        },
+      });
+      return;
+    }
+
+    controls.start({
+      ...rest,
+      transition: { duration: 0.25, ease: WX_TAB_PILL_EASE },
+    });
+  }, [selected, dir, reduceMotion, controls]);
+
+  return controls;
 }
 
-function SectionTabPillButton({
-  tab,
-  i,
-  selected,
-  reduceMotion,
-  pillT,
-  onSelectSection,
-}) {
+function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectSection }) {
   const labelPreset = labelMotionPresets(reduceMotion);
-  /** Alternate wiggle direction per tab so the row reads as playful, not in lockstep. */
+  /** Alternate wiggle start direction per tab so the row reads playful, not in lockstep. */
   const dir = i % 2 === 0 ? -1 : 1;
+  const iconControls = useIconActivationWiggle({ selected, dir, reduceMotion });
 
   return (
     <motion.button
@@ -107,10 +129,8 @@ function SectionTabPillButton({
       <span className="relative z-10 flex min-w-min items-center justify-center">
         <motion.span
           className="flex shrink-0 items-center justify-center will-change-transform"
-          initial={false}
-          animate={iconRestState({ selected, reduceMotion })}
-          whileHover={reduceMotion ? undefined : iconHoverState({ selected, dir })}
-          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.25, ease: WX_TAB_PILL_EASE }}
+          initial={iconRestTarget({ selected, reduceMotion })}
+          animate={iconControls}
         >
           <HugeiconsIcon icon={TAB_ICONS[i]} size={17} color="currentColor" strokeWidth={1.6} />
         </motion.span>
