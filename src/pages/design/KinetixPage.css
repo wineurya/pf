@@ -135,8 +135,10 @@
 
   display: flex;
   height: 100vh;
+  box-sizing: border-box;
   overflow: hidden;
-  background: var(--kx-bg);
+  padding: 8px;
+  background: #FBFBFB;
   font-family: var(--kx-font-display);
   color: var(--kx-text);
   font-size: 13px;
@@ -200,11 +202,11 @@
 .kx-sidebar {
   width: 224px;
   flex-shrink: 0;
-  background: var(--kx-surface);
-  border-right: 1px solid var(--kx-border);
+  background: transparent;
+  border-right: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -410,8 +412,11 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
+  background: var(--kx-surface);
+  border: 1px solid var(--kx-border);
+  border-radius: 16px;
 }
 
 /* ── Top bar (Figma node 218:184) ──────────────────────────────────────────────
@@ -725,7 +730,7 @@
   padding: 16px 18px 26px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 /* ── Card base ──────────────────────────────────────────────────────────────── */
@@ -774,14 +779,23 @@
 .kx-metrics-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 106px;
   gap: 10px;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .kx-metric-card {
   background: var(--kx-surface);
   border: 1px solid var(--kx-border);
   border-radius: var(--kx-radius);
-  padding: 13px 14px 11px;
+  padding: 14px 15px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
   cursor: default;
   transition: border-color 0.16s var(--kx-ease), background 0.16s var(--kx-ease);
 }
@@ -795,29 +809,37 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  width: 100%;
+  min-height: 16px;
 }
 
 .kx-metric-label {
   font-size: 10.5px;
-  font-weight: var(--kx-weight-regular);
+  font-weight: var(--kx-weight-strong);
   letter-spacing: var(--kx-tracking-caps-md);
   text-transform: uppercase;
   color: var(--kx-text-faint);
+  line-height: var(--kx-leading-normal);
 }
 
 .kx-metric-trend {
   font-size: 10px;
-  font-weight: var(--kx-weight-regular);
+  font-weight: var(--kx-weight-strong);
   padding: 1.5px 6px;
   border-radius: var(--kx-radius-xs);
   display: inline-flex;
   align-items: center;
   gap: 3px;
   letter-spacing: var(--kx-tracking-display-tag);
-  color: var(--kx-chip-fg);
-  box-shadow: 0 0 12px rgba(71, 85, 105, 0.14);
+  line-height: var(--kx-leading-normal);
+  color: var(--kx-text-muted);
+  box-shadow: 0 0 6px rgba(71, 85, 105, 0.14);
   transition: transform 0.18s var(--kx-ease), filter 0.18s var(--kx-ease);
+}
+
+.kx-metric-trend-suffix {
+  color: var(--kx-text-faint);
+  letter-spacing: 0;
 }
 
 .kx-metric-card:hover .kx-metric-trend {
@@ -825,18 +847,21 @@
   transform: translateY(-1px);
 }
 
-.kx-trend-warn { background: var(--kx-chip-amber); }
-.kx-trend-bad  { background: var(--kx-chip-red);   }
-.kx-trend-good { background: var(--kx-chip-green); }
+.kx-trend-warn { color: var(--kx-chip-amber); }
+.kx-trend-bad  { color: var(--kx-chip-red);   }
+.kx-trend-good { color: var(--kx-chip-green); }
 .kx-trend-mute { background: var(--kx-chip-gray); color: var(--kx-chip-fg); }
 
 .kx-metric-value {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  width: 100%;
   font-size: 26px;
   font-weight: var(--kx-weight-strong);
   letter-spacing: var(--kx-tracking-num-display);
   color: var(--kx-text);
   line-height: var(--kx-leading-none);
-  margin-bottom: 8px;
 }
 
 .kx-metric-bottom {
@@ -844,16 +869,52 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 8px;
+  width: 100%;
+  padding-top: 2px;
 }
 
 .kx-metric-sub {
   font-size: 11px;
   color: var(--kx-text-faint);
-  font-weight: var(--kx-weight-regular);
+  font-weight: var(--kx-weight-strong);
+  line-height: var(--kx-leading-snug);
+}
+
+.kx-metric-sub-inline {
+  padding-bottom: 1px;
   line-height: var(--kx-leading-snug);
 }
 
 .kx-spark { display: block; flex-shrink: 0; }
+
+.kx-metric-card-large-spark {
+  padding-right: 132px;
+}
+
+.kx-metric-spark-large {
+  position: absolute;
+  right: -1px;
+  top: 12.5px;
+  width: 137px;
+  height: 92px;
+  overflow: hidden;
+  background: var(--kx-surface);
+  pointer-events: none;
+}
+
+.kx-metric-spark-large .kx-spark {
+  position: absolute;
+  left: 0;
+  top: 22px;
+}
+
+.kx-metric-spark-large::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 13px 0 16.7px 8px var(--kx-surface);
+  pointer-events: none;
+}
 
 /* ── Center two-column grid ─────────────────────────────────────────────────── */
 .kx-center-grid {

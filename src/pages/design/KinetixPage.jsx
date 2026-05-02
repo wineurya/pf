@@ -79,9 +79,10 @@ const NAV_ITEMS = [
 
 const METRICS = [
   {
-    label: 'Friction Score', value: '82', sub: 'out of 100',
-    trend: 'warn', trendLabel: '↓ 4', trendIcon: TrendingDown,
-    spark: [0.55, 0.58, 0.52, 0.66, 0.71, 0.76, 0.82], color: '#D97706',
+    label: 'Friction Score', value: '82', sub: '/ 100',
+    trend: 'warn', trendLabel: '-4.2%', trendSuffix: 'in friction', trendIcon: TrendingDown,
+    spark: [0.36, 0.42, 0.39, 0.66, 0.78, 0.72, 0.8], color: '#D97706',
+    subInline: true, trendInBottom: true, largeSpark: true,
   },
   {
     label: 'Confidence', value: '98%', sub: 'model accuracy',
@@ -113,8 +114,8 @@ function SeverityPill({ s }) {
   )
 }
 
-function Sparkline({ points, color, idSuffix }) {
-  const w = 64, h = 22
+function Sparkline({ points, color, idSuffix, width = 64, height = 22, className = '' }) {
+  const w = width, h = height
   const stepX = w / (points.length - 1)
   const linePath = points
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${(i * stepX).toFixed(1)} ${(h - p * (h - 2) - 1).toFixed(1)}`)
@@ -126,7 +127,7 @@ function Sparkline({ points, color, idSuffix }) {
   const gid = `kxg-${idSuffix}`.replace(/[^a-zA-Z0-9_-]/g, '')
 
   return (
-    <svg width={w} height={h} className="kx-spark" aria-hidden="true">
+    <svg width={w} height={h} className={`kx-spark${className ? ` ${className}` : ''}`} aria-hidden="true">
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%"   stopColor={color} stopOpacity="0.22" />
@@ -269,10 +270,20 @@ function TopBar({ simState, onRunSim, onViewReport }) {
 function MetricCards() {
   return (
     <div className="kx-metrics-row" role="list" aria-label="Simulation metrics">
-      {METRICS.map(({ label, value, sub, trend, trendLabel, trendIcon: Icon, spark, color }, i) => (
+      {METRICS.map((metric, i) => {
+        const { label, value, sub, trend, trendLabel, trendSuffix, trendIcon: Icon, spark, color } = metric
+        const trendPill = trend ? (
+          <span className={`kx-metric-trend kx-trend-${trend}`}>
+            {Icon && <Icon size={10} strokeWidth={2.4} />}
+            <span>{trendLabel}</span>
+            {trendSuffix && <span className="kx-metric-trend-suffix">{trendSuffix}</span>}
+          </span>
+        ) : null
+
+        return (
         <motion.div
           key={label}
-          className="kx-metric-card"
+          className={`kx-metric-card${metric.largeSpark ? ' kx-metric-card-large-spark' : ''}`}
           role="listitem"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -280,20 +291,32 @@ function MetricCards() {
         >
           <div className="kx-metric-top">
             <span className="kx-metric-label">{label}</span>
-            {trend && (
-              <span className={`kx-metric-trend kx-trend-${trend}`}>
-                {Icon && <Icon size={10} strokeWidth={2.4} />}
-                {trendLabel}
-              </span>
+            {!metric.trendInBottom && trendPill}
+          </div>
+          <div className="kx-metric-value">
+            <span>{value}</span>
+            {metric.subInline && <span className="kx-metric-sub kx-metric-sub-inline">{sub}</span>}
+          </div>
+          <div className="kx-metric-bottom">
+            {metric.trendInBottom ? trendPill : <span className="kx-metric-sub">{sub}</span>}
+            {!metric.largeSpark && (
+              <Sparkline points={spark} color={color} idSuffix={label.replace(/\s+/g, '-').toLowerCase()} />
             )}
           </div>
-          <div className="kx-metric-value">{value}</div>
-          <div className="kx-metric-bottom">
-            <span className="kx-metric-sub">{sub}</span>
-            <Sparkline points={spark} color={color} idSuffix={label.replace(/\s+/g, '-').toLowerCase()} />
-          </div>
+          {metric.largeSpark && (
+            <div className="kx-metric-spark-large" aria-hidden="true">
+              <Sparkline
+                points={spark}
+                color={color}
+                idSuffix={`${label.replace(/\s+/g, '-').toLowerCase()}-large`}
+                width={137}
+                height={70}
+              />
+            </div>
+          )}
         </motion.div>
-      ))}
+        )
+      })}
     </div>
   )
 }
