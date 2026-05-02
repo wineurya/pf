@@ -1620,8 +1620,8 @@
 .site-canvas .wx-tab-track {
   position: relative;
   overflow: hidden;
-  /* Stadium shell: radius = half total height (pill + vertical padding) */
-  border-radius: calc((var(--wx-tab-pill-height) + 2 * var(--wx-tab-track-pad-y)) / 2);
+  /* Match .wx-btn-secondary (rounded rect, not full pill) */
+  border-radius: 12px;
   background-color: var(--wx-tab-track);
   border: 1px solid var(--wx-tab-track-border);
   backdrop-filter: blur(14px) saturate(180%);
@@ -1667,8 +1667,7 @@
   height: var(--wx-tab-pill-height);
   min-width: max(var(--wx-tab-pill-min-width), var(--wx-tab-pill-height));
   padding-inline: 0.875rem;
-  /* True stadium ends (half-height radius), not elliptical % rounding */
-  border-radius: calc(var(--wx-tab-pill-height) / 2);
+  border-radius: 12px;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
 }
