@@ -1099,7 +1099,7 @@
 .kx-metric-body {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: flex-start;
   align-self: stretch;
   min-width: 0;
