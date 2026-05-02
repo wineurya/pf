@@ -33,7 +33,7 @@
   --wx-work-card-footer-rail: 40rem;
 }
 
-/* Home `#site-panels`: no `site-fade-panels` VT group (see work-case.css). */
+/* Defensive: home `#site-panels` opts out of any future named view-transition group. */
 @supports (view-transition-name: none) {
   .site-canvas.wx-exploration-root .site-vt--panels#site-panels {
     view-transition-name: none;

@@ -1,13 +1,4 @@
-/* Case study templates — use site tokens; view-transition tuning pairs with `navigateViewTransition` */
-@supports (view-transition-name: none) {
-  /* Default root: shorter when view-transition / canvas vars (below) are not present. */
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 0.3s;
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  }
-}
-
+/* Case study templates — use site tokens; route view-transition lives further down. */
 .wc {
   min-height: 100%;
   font-family: var(--font-body, system-ui, sans-serif);
@@ -177,94 +168,34 @@
 }
 
 /*
- * Site: staged route transition (MPA View Transitions). Layout intentionally differs between
- * routes — on `/`, the nav lives in the left aside column; on `/work/:slug`, it lives in a
- * full-bleed top header — so the chrome group has a real geometry delta to morph through.
- *
- *   A. (out) Aside + main panels + root fade OUT in place. Chrome holds (delayed past phase A).
- *   B. (nav) Chrome group morphs from aside-slot to top-header. Cross-fade old→new is synced
- *           with the morph (normal blend, no plus-lighter glow). Panels/aside group ALSO morphs
- *           in this window — invisibly, since both sides are at opacity 0 — so when phase C
- *           reveals them they are already at the destination rect (no visible jump).
- *   C. (in)  Panels + aside + root fade IN at the destination layout.
- *
- * Do not add Motion `layoutId` on the same chrome; it competes with the group morph.
+ * Site route transition: home and case-study share the same shell (left aside + right panels),
+ * so there is no chrome geometry delta to morph. Use a quick, overlapping root cross-fade.
+ * The `site-vt--*` hooks are kept on the layout for future targeted morphs, but they no
+ * longer name view-transitions (which previously ran a staged ~1s sequence).
  */
 @supports (view-transition-name: none) {
   :root {
-    --wx-vt-staged-out: 0.30s;
-    --wx-vt-staged-nav: 0.42s;
-    --wx-vt-staged-in: 0.30s;
+    --wx-vt-route: 0.28s;
   }
 
-  .site-vt--nav    { view-transition-name: site-chrome; }
-  .site-vt--aside  { view-transition-name: site-fade-aside; }
-  .site-vt--panels { view-transition-name: site-fade-panels; }
+  @keyframes site-vt-route-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes site-vt-route-fade-out { from { opacity: 1; } to { opacity: 0; } }
 
-  @keyframes site-vt-canvas-fade-in  { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes site-vt-canvas-fade-out { from { opacity: 1; } to { opacity: 0; } }
-
-  /* A. Old aside / panels / root fade out at OLD rect. */
-  ::view-transition-old(site-fade-panels),
-  ::view-transition-old(site-fade-aside),
   ::view-transition-old(root) {
-    animation: site-vt-canvas-fade-out var(--wx-vt-staged-out) cubic-bezier(0.4, 0, 1, 1) 0s both;
+    animation: site-vt-route-fade-out var(--wx-vt-route) cubic-bezier(0.4, 0, 1, 1) both;
   }
 
-  /* B (silent). Panels + aside groups morph during phase B while both layers are invisible. */
-  ::view-transition-group(site-fade-panels),
-  ::view-transition-group(site-fade-aside) {
-    animation-delay: var(--wx-vt-staged-out);
-    animation-duration: var(--wx-vt-staged-nav) !important;
-  }
-
-  /* B (visible). Chrome morphs aside → top header, with a clean cross-fade (normal blend). */
-  ::view-transition-group(site-chrome) {
-    z-index: 3;
-    animation-delay: var(--wx-vt-staged-out);
-    animation-duration: var(--wx-vt-staged-nav) !important;
-    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
-  }
-
-  ::view-transition-old(site-chrome) {
-    animation: site-vt-canvas-fade-out var(--wx-vt-staged-nav) cubic-bezier(0.4, 0, 1, 1) both;
-    animation-delay: var(--wx-vt-staged-out);
-    mix-blend-mode: normal;
-  }
-
-  ::view-transition-new(site-chrome) {
-    animation: site-vt-canvas-fade-in var(--wx-vt-staged-nav) cubic-bezier(0, 0, 0.2, 1) both;
-    animation-delay: var(--wx-vt-staged-out);
-    mix-blend-mode: normal;
-  }
-
-  ::view-transition-image-pair(site-chrome) {
-    isolation: isolate;
-  }
-
-  /* C. New aside / panels / root fade in at the destination rect. */
-  ::view-transition-new(site-fade-panels),
-  ::view-transition-new(site-fade-aside),
   ::view-transition-new(root) {
-    animation: site-vt-canvas-fade-in var(--wx-vt-staged-in) cubic-bezier(0, 0, 0.2, 1) both;
-    animation-delay: calc(var(--wx-vt-staged-out) + var(--wx-vt-staged-nav));
+    animation: site-vt-route-fade-in var(--wx-vt-route) cubic-bezier(0, 0, 0.2, 1) both;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --wx-vt-staged-out: 0.001s;
-    --wx-vt-staged-nav: 0.001s;
-    --wx-vt-staged-in: 0.001s;
+    --wx-vt-route: 0.001s;
   }
 
   @supports (view-transition-name: none) {
-    .site-vt--nav,
-    .site-vt--aside,
-    .site-vt--panels {
-      view-transition-name: none !important;
-    }
-
     ::view-transition-old(*),
     ::view-transition-new(*),
     ::view-transition-group(*) {
