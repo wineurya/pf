@@ -1615,33 +1615,33 @@
 }
 
 /* =========================
-   Nav / tablist (premium glass)
+   Nav / tablist (segmented rail)
+   Inspired by design-tool segmented controls: neutral well, hairline, inset chip —
+   not a literal recreation of any one file.
    ========================= */
 .site-canvas .wx-tab-track {
   position: relative;
   overflow: hidden;
-  /* Outer shell matches segment controls (.wx-btn-secondary, active tab chip) */
   border-radius: var(--wx-radius-segment);
-  /* Tint + blur so the rounded rail reads against the page (glass alone was near-invisible). */
-  background-color: color-mix(in srgb, var(--wx-tab-track-solid) 78%, transparent);
-  border: 1px solid var(--wx-border-soft);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  /* Mostly flat fill; light blur reads as UI chrome, not heavy glass. */
+  background-color: color-mix(in srgb, var(--wx-tab-track-solid) 90%, var(--wx-page-bg));
+  border: 1px solid var(--wx-border-faint);
+  backdrop-filter: blur(8px) saturate(130%);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
   box-shadow:
-    0 1px 0 var(--wx-tab-glass-highlight) inset,
-    0 1px 2px var(--wx-tab-glass-shadow),
-    0 10px 30px -18px var(--wx-track-shadow-color);
+    inset 0 1px 0 color-mix(in srgb, var(--wx-white) 55%, transparent),
+    0 1px 2px color-mix(in srgb, var(--wx-black) 5%, transparent);
   transition: box-shadow 320ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /** Scroll lives inside so outer radius clips cleanly (avoid oval / broken caps). */
 .site-canvas .wx-tab-track__scroll {
-  --wx-tab-rail-inset: 6px;
+  --wx-tab-rail-inset: 4px;
   display: inline-flex;
   max-width: 100%;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   padding: var(--wx-tab-rail-inset);
   /* Same curvature as the inset area inside the shell (helps the rounded “well” read). */
   border-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
