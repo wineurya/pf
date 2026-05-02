@@ -81,22 +81,22 @@ const METRICS = [
   {
     label: 'Friction Score', value: '82', sub: '/ 100',
     trend: 'warn', trendLabel: '-4.2%', trendSuffix: 'in friction', trendIcon: TrendingDown,
-    spark: [0.36, 0.42, 0.39, 0.66, 0.78, 0.72, 0.8], color: '#D97706',
+    spark: [0.78, 0.41, 0.92, 0.36, 0.88, 0.52, 0.95, 0.44, 0.71, 0.39, 0.85, 0.8], color: '#D97706',
   },
   {
     label: 'Confidence', value: '98%', sub: 'model accuracy',
-    trend: 'good', trendLabel: '↑ 2.1%', trendIcon: TrendingUp,
-    spark: [0.78, 0.82, 0.85, 0.84, 0.91, 0.95, 0.98], color: '#16A34A',
+    trend: 'good', trendLabel: '2.1%', trendIcon: null,
+    spark: [0.9, 0.58, 0.94, 0.49, 0.87, 0.62, 0.91, 0.55, 0.96, 0.68, 0.83, 0.98], color: '#16A34A',
   },
   {
     label: 'Conversion Risk', value: 'Med', sub: 'funnel · step 3',
     trend: 'warn', trendLabel: 'Flagged', trendIcon: null,
-    spark: [0.4, 0.38, 0.42, 0.5, 0.55, 0.58, 0.62], color: '#D97706',
+    spark: [0.48, 0.72, 0.38, 0.65, 0.44, 0.81, 0.52, 0.68, 0.41, 0.77, 0.62], color: '#D97706',
   },
   {
     label: 'Sessions Simulated', value: '10K', sub: 'synthetic users',
     trend: 'mute', trendLabel: 'Apr 28', trendIcon: null,
-    spark: [0.15, 0.28, 0.38, 0.55, 0.7, 0.85, 1.0], color: '#2563EB',
+    spark: [0.22, 0.09, 0.35, 0.18, 0.52, 0.41, 0.28, 0.67, 0.59, 0.81, 0.74, 1.0], color: '#2563EB',
   },
 ]
 
@@ -126,7 +126,14 @@ function Sparkline({ points, color, idSuffix, width = 64, height = 22, className
   const gid = `kxg-${idSuffix}`.replace(/[^a-zA-Z0-9_-]/g, '')
 
   return (
-    <svg width={w} height={h} className={`kx-spark${className ? ` ${className}` : ''}`} aria-hidden="true">
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      preserveAspectRatio="none"
+      width="100%"
+      height="100%"
+      className={`kx-spark${className ? ` ${className}` : ''}`}
+      aria-hidden="true"
+    >
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%"   stopColor={color} stopOpacity="0.22" />
@@ -308,21 +315,23 @@ function MetricCards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.34, delay: i * 0.06, ease: [0.32, 0.72, 0, 1] }}
           >
-            <div className="kx-metric-top">
-              <span className="kx-metric-label">{label}</span>
+            <div className="kx-metric-body">
+              <div className="kx-metric-top">
+                <span className="kx-metric-label">{label}</span>
+              </div>
+              <div className="kx-metric-value">
+                <span>{value}</span>
+                <span className="kx-metric-sub kx-metric-sub-inline">{sub}</span>
+              </div>
+              <div className="kx-metric-bottom">{trendPill}</div>
             </div>
-            <div className="kx-metric-value">
-              <span>{value}</span>
-              <span className="kx-metric-sub kx-metric-sub-inline">{sub}</span>
-            </div>
-            <div className="kx-metric-bottom">{trendPill}</div>
             <div className="kx-metric-spark-large" aria-hidden="true">
               <Sparkline
                 points={spark}
                 color={color}
                 idSuffix={`${slug}-large`}
-                width={137}
-                height={70}
+                width={200}
+                height={72}
               />
             </div>
           </motion.div>
