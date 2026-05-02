@@ -412,6 +412,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
   height: 100%;
   overflow: hidden;
   background: var(--kx-surface);
@@ -430,6 +431,7 @@
   align-items: center;
   padding: 0 18px;
   gap: 10px;
+  min-width: 0;
 }
 
 .kx-breadcrumb {
@@ -459,6 +461,10 @@
   cursor: pointer;
   transition: border-color 0.14s var(--kx-ease), background 0.14s var(--kx-ease);
   font-family: inherit;
+  min-width: 0;
+  max-width: min(290px, 42vw);
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .kx-project-selector:hover {
@@ -500,6 +506,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .kx-divider-v {
@@ -590,6 +597,7 @@
   letter-spacing: var(--kx-tracking-display-tight);
   flex-shrink: 0;
   position: relative;
+  white-space: nowrap;
 }
 
 .kx-run-btn:active { transform: scale(0.97); }
@@ -731,6 +739,7 @@
   display: flex;
   flex-direction: column;
   gap: 11px;
+  min-height: 0;
 }
 
 /* ── Card base ──────────────────────────────────────────────────────────────── */
@@ -834,17 +843,11 @@
   line-height: var(--kx-leading-normal);
   color: var(--kx-text-muted);
   box-shadow: 0 0 6px rgba(71, 85, 105, 0.14);
-  transition: transform 0.18s var(--kx-ease), filter 0.18s var(--kx-ease);
 }
 
 .kx-metric-trend-suffix {
   color: var(--kx-text-faint);
   letter-spacing: 0;
-}
-
-.kx-metric-card:hover .kx-metric-trend {
-  filter: saturate(1.05);
-  transform: translateY(-1px);
 }
 
 .kx-trend-warn { color: var(--kx-chip-amber); }
@@ -888,14 +891,14 @@
 .kx-spark { display: block; flex-shrink: 0; }
 
 .kx-metric-card-large-spark {
-  padding-right: 132px;
+  padding-right: clamp(92px, 38%, 132px);
 }
 
 .kx-metric-spark-large {
   position: absolute;
   right: -1px;
   top: 12.5px;
-  width: 137px;
+  width: clamp(96px, 40%, 137px);
   height: 92px;
   overflow: hidden;
   background: var(--kx-surface);
@@ -1007,7 +1010,7 @@
 /* ── Prototype preview body ─────────────────────────────────────────────────── */
 .kx-preview-body {
   flex: 1;
-  min-height: 0;
+  min-height: min(460px, 62vh);
   padding: 22px 18px 40px;
   display: flex;
   align-items: center;
@@ -2132,20 +2135,55 @@
   .kx-nav-badge { display: none; }
   .kx-team-card-text, .kx-team-card svg { display: none; }
   .kx-team-card { justify-content: center; }
-  .kx-metrics-row { grid-template-columns: repeat(2, 1fr); }
-  .kx-center-grid { grid-template-columns: 1fr; }
+  .kx-breadcrumb { display: none; }
+  .kx-project-selector { max-width: min(260px, 38vw); }
+  .kx-topbar-status-time { display: none; }
+  .kx-view-report-btn span { display: none; }
+  .kx-metrics-row {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  }
+  .kx-center-grid {
+    grid-template-columns: 1fr;
+    flex: 0 0 auto;
+    min-height: 0;
+    align-items: start;
+  }
+  .kx-preview-card {
+    height: auto;
+    min-height: 520px;
+  }
+  .kx-insights-card {
+    height: auto;
+    min-height: 430px;
+  }
   .kx-phone-annotations { display: none; }
+  .kx-recs-row {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  }
 }
 
 @media (max-width: 680px) {
   .kx-recs-row { grid-template-columns: 1fr; }
   .kx-topbar { padding: 0 12px; gap: 6px; }
   .kx-content { padding: 12px 12px 20px; }
-  .kx-view-report-btn span { display: none; }
+  .kx-project-selector { max-width: min(220px, 46vw); }
+  .kx-view-report-btn { display: none; }
+  .kx-run-btn {
+    max-width: 44px;
+    padding-inline: 9px;
+    overflow: hidden;
+  }
+  .kx-run-btn svg { flex-shrink: 0; }
   .kx-preview-tabs { flex-wrap: wrap; }
 }
 
 @media (max-width: 480px) {
-  .kx-metrics-row { grid-template-columns: 1fr 1fr; }
+  .kx-metrics-row { grid-template-columns: 1fr; }
+  .kx-metric-card-large-spark {
+    padding-right: 15px;
+  }
+  .kx-metric-spark-large {
+    display: none;
+  }
   .kx-sidebar { display: none; }
 }
