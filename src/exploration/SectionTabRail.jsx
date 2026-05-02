@@ -10,10 +10,10 @@ const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
 const WX_TAB_PILL_DURATION = 0.36;
 const WX_TAB_LABEL_BLUR = 4;
 
-/** Bouncy spring shared by icon scale + tilt — keep close to underdamped. */
-const WX_TAB_TILT_SPRING = { type: "spring", stiffness: 360, damping: 14, mass: 0.5 };
-/** Tilt direction alternates per index so the row reads as a playful row, not a parade. */
-const TILT_DEGREES = 9;
+/** Side-to-side keyframe wiggle for the icon (px). Damped — last entry returns to 0. */
+const ICON_WIGGLE_X = [0, -3, 3, -2, 2, 0];
+const ICON_WIGGLE_TIMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
+const ICON_WIGGLE_DURATION = 0.5;
 
 function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
   if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -37,17 +37,22 @@ function labelMotionPresets(reduceMotion) {
   };
 }
 
-function iconAnimateState({ selected, hovered, reduceMotion, tiltDir }) {
-  if (reduceMotion) {
-    return { rotate: 0, scale: selected ? 1.05 : 1, opacity: selected ? 1 : 0.85 };
-  }
-  if (selected) {
-    return { rotate: 0, scale: 1.12, opacity: 1 };
-  }
-  if (hovered) {
-    return { rotate: tiltDir * TILT_DEGREES, scale: 1.06, opacity: 1 };
-  }
-  return { rotate: 0, scale: 1, opacity: 0.8 };
+function iconRestState({ selected, reduceMotion }) {
+  if (reduceMotion) return { x: 0, scale: selected ? 1.05 : 1, opacity: selected ? 1 : 0.85 };
+  return { x: 0, scale: selected ? 1.12 : 1, opacity: selected ? 1 : 0.8 };
+}
+
+function iconHoverState({ selected, dir }) {
+  return {
+    x: dir < 0 ? ICON_WIGGLE_X : ICON_WIGGLE_X.map((v) => -v),
+    scale: selected ? 1.14 : 1.06,
+    opacity: 1,
+    transition: {
+      x: { duration: ICON_WIGGLE_DURATION, ease: "easeOut", times: ICON_WIGGLE_TIMES },
+      scale: { duration: 0.2, ease: WX_TAB_PILL_EASE },
+      opacity: { duration: 0.2 },
+    },
+  };
 }
 
 function SectionTabPillButton({
@@ -59,7 +64,8 @@ function SectionTabPillButton({
   onSelectSection,
 }) {
   const labelPreset = labelMotionPresets(reduceMotion);
-  const tiltDir = i % 2 === 0 ? -1 : 1;
+  /** Alternate wiggle direction per tab so the row reads as playful, not in lockstep. */
+  const dir = i % 2 === 0 ? -1 : 1;
 
   return (
     <motion.button
@@ -102,13 +108,9 @@ function SectionTabPillButton({
         <motion.span
           className="flex shrink-0 items-center justify-center will-change-transform"
           initial={false}
-          /** `whileHover` on the parent button propagates so each child reads `groupHover` cleanly via animate state. */
-          animate={iconAnimateState({ selected, hovered: false, reduceMotion, tiltDir })}
-          whileHover={
-            reduceMotion ? undefined : iconAnimateState({ selected, hovered: true, reduceMotion, tiltDir })
-          }
-          transition={reduceMotion ? { duration: 0.01 } : WX_TAB_TILT_SPRING}
-          style={{ originX: 0.5, originY: 0.55 }}
+          animate={iconRestState({ selected, reduceMotion })}
+          whileHover={reduceMotion ? undefined : iconHoverState({ selected, dir })}
+          transition={reduceMotion ? { duration: 0.01 } : { duration: 0.25, ease: WX_TAB_PILL_EASE }}
         >
           <HugeiconsIcon icon={TAB_ICONS[i]} size={17} color="currentColor" strokeWidth={1.6} />
         </motion.span>
