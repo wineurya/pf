@@ -787,7 +787,7 @@
 /* ── Metric cards ───────────────────────────────────────────────────────────── */
 .kx-metrics-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: 106px;
   gap: 10px;
   width: 100%;
@@ -838,11 +838,15 @@
   border-radius: var(--kx-radius-xs);
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 3px;
   letter-spacing: var(--kx-tracking-display-tag);
   line-height: var(--kx-leading-normal);
   color: var(--kx-text-muted);
-  box-shadow: 0 0 6px rgba(71, 85, 105, 0.14);
+  flex-shrink: 0;
+  min-width: max-content;
+  max-width: 100%;
+  box-shadow: none;
 }
 
 .kx-metric-trend-suffix {
@@ -2125,6 +2129,13 @@
   .kx-divider-v { display: none; }
 }
 
+/* Four metric cards won’t meaningfully fit in one row below this — use a stable 2×2 with a floor width. */
+@media (max-width: 1220px) {
+  .kx-metrics-row {
+    grid-template-columns: repeat(2, minmax(min(100%, 288px), 1fr));
+  }
+}
+
 @media (max-width: 960px) {
   .kx-sidebar { width: 60px; }
   .kx-logo-text, .kx-logo-version { display: none; }
@@ -2140,7 +2151,7 @@
   .kx-topbar-status-time { display: none; }
   .kx-view-report-btn span { display: none; }
   .kx-metrics-row {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    grid-template-columns: repeat(2, minmax(min(100%, 260px), 1fr));
   }
   .kx-center-grid {
     grid-template-columns: 1fr;
