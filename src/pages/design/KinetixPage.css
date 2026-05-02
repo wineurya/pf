@@ -208,6 +208,18 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  transition:
+    width 0.26s var(--kx-ease),
+    opacity 0.22s ease,
+    min-width 0.26s var(--kx-ease);
+}
+
+.kx-root--sidebar-collapsed .kx-sidebar {
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 .kx-logo {
@@ -238,7 +250,6 @@
 }
 
 .kx-logo-version {
-  margin-left: auto;
   font-size: 9.5px;
   font-weight: var(--kx-weight-strong);
   letter-spacing: var(--kx-tracking-caps-sm);
@@ -248,6 +259,36 @@
   padding: 2px 5px;
   border-radius: var(--kx-radius-xs);
   text-transform: uppercase;
+}
+
+.kx-sidebar-collapse-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: var(--kx-radius-sm);
+  border: 1px solid var(--kx-border);
+  background: var(--kx-surface);
+  color: var(--kx-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: background 0.14s var(--kx-ease), color 0.14s var(--kx-ease), border-color 0.14s var(--kx-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kx-sidebar-collapse-btn:hover {
+  background: var(--kx-surface-soft);
+  color: var(--kx-text-2);
+  border-color: var(--kx-border-strong);
+}
+
+.kx-sidebar-collapse-btn:focus-visible {
+  outline: 2px solid var(--kx-blue-focus-ring);
+  outline-offset: 2px;
 }
 
 .kx-search {
@@ -432,6 +473,35 @@
   padding: 0 18px;
   gap: 10px;
   min-width: 0;
+}
+
+.kx-sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: var(--kx-radius-sm);
+  border: 1px solid var(--kx-border);
+  background: var(--kx-surface);
+  color: var(--kx-text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.14s var(--kx-ease), color 0.14s var(--kx-ease), border-color 0.14s var(--kx-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kx-sidebar-toggle:hover {
+  background: var(--kx-surface-soft);
+  color: var(--kx-text-2);
+  border-color: var(--kx-border-strong);
+}
+
+.kx-sidebar-toggle:focus-visible {
+  outline: 2px solid var(--kx-blue-focus-ring);
+  outline-offset: 2px;
 }
 
 .kx-breadcrumb {
@@ -2196,5 +2266,6 @@
   .kx-metric-spark-large {
     display: none;
   }
-  .kx-sidebar { display: none; }
+  .kx-sidebar { display: none !important; }
+  .kx-sidebar-toggle { display: none; }
 }

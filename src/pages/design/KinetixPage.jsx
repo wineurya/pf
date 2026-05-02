@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   LayoutDashboard, Zap, Map, ShieldCheck, FileText, Settings,
-  ChevronDown, Bell, RotateCcw, Check, Loader2,
+  ChevronDown, ChevronsLeft, Bell, RotateCcw, Check, Loader2,
   ChevronRight, X, Download, FileBarChart2,
   Search, Smartphone, Tablet, Monitor,
   TrendingUp, TrendingDown, MessageSquare, Plus,
-  Eye, Terminal, Sparkles,
+  Eye, Terminal, Sparkles, PanelLeft,
 } from 'lucide-react'
 import './KinetixPage.css'
 
@@ -143,9 +143,14 @@ function Sparkline({ points, color, idSuffix, width = 64, height = 22, className
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
-function Sidebar({ active, setActive }) {
+function Sidebar({ active, setActive, expanded, onToggle }) {
   return (
-    <aside className="kx-sidebar">
+    <aside
+      id="kx-sidebar"
+      className="kx-sidebar"
+      aria-label="Workspace navigation"
+      aria-hidden={!expanded}
+    >
       <div className="kx-logo">
         <div className="kx-logo-mark" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -155,6 +160,15 @@ function Sidebar({ active, setActive }) {
         </div>
         <span className="kx-logo-text">Kinetix</span>
         <span className="kx-logo-version">Beta</span>
+        <button
+          type="button"
+          className="kx-sidebar-collapse-btn"
+          onClick={onToggle}
+          aria-label="Collapse navigation"
+          title="Collapse navigation"
+        >
+          <ChevronsLeft size={15} strokeWidth={2.2} aria-hidden />
+        </button>
       </div>
 
       <div className="kx-search">
@@ -201,7 +215,7 @@ function Sidebar({ active, setActive }) {
 
 // ─── Top bar ──────────────────────────────────────────────────────────────────
 
-function TopBar({ simState, onRunSim, onViewReport }) {
+function TopBar({ simState, onRunSim, onViewReport, sidebarOpen, onToggleSidebar }) {
   const btnClass =
     simState === 'idle'     ? 'kx-run-btn kx-run-btn-idle' :
     simState === 'loading'  ? 'kx-run-btn kx-run-btn-loading' :
@@ -209,6 +223,18 @@ function TopBar({ simState, onRunSim, onViewReport }) {
 
   return (
     <header className="kx-topbar">
+      <button
+        type="button"
+        className="kx-sidebar-toggle"
+        onClick={onToggleSidebar}
+        aria-expanded={sidebarOpen}
+        aria-controls="kx-sidebar"
+        aria-label={sidebarOpen ? 'Collapse navigation panel' : 'Expand navigation panel'}
+        title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+      >
+        <PanelLeft size={17} strokeWidth={2} aria-hidden />
+      </button>
+
       <span className="kx-breadcrumb">
         <span>Kinetix</span>
       </span>
@@ -772,6 +798,7 @@ function ReportModal({ onClose }) {
 
 export default function KinetixPage() {
   const [activeNav,  setActiveNav]  = useState('overview')
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [simState,   setSimState]   = useState('complete')
   const [showReport, setShowReport] = useState(false)
   const [expandedRec, setExpandedRec] = useState(null)
@@ -787,14 +814,21 @@ export default function KinetixPage() {
   }
 
   return (
-    <div className="kx-root">
-      <Sidebar active={activeNav} setActive={setActiveNav} />
+    <div className={`kx-root${sidebarOpen ? '' : ' kx-root--sidebar-collapsed'}`}>
+      <Sidebar
+        active={activeNav}
+        setActive={setActiveNav}
+        expanded={sidebarOpen}
+        onToggle={() => setSidebarOpen(false)}
+      />
 
       <div className="kx-main">
         <TopBar
           simState={simState}
           onRunSim={handleRunSim}
           onViewReport={() => setShowReport(true)}
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={() => setSidebarOpen((o) => !o)}
         />
 
         <main className="kx-content" id="kx-main-content">
