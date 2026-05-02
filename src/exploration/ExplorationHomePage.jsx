@@ -76,6 +76,7 @@ import {
   ExplorationRoot,
 } from "@/exploration/layout/ExplorationLayout.jsx";
 import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
+import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
 import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
@@ -170,14 +171,8 @@ const CONTACT_PHOSPHOR_ICONS = {
   email: Envelope,
 };
 
-/** On-screen UI easing â€” Emil Kowalski flowchart (not entering viewport). */
+/** Contact-row pills (aside footer) — gentle in/out tween. */
 const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
-/** Tab label expand/collapse when a segment is selected. */
-const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
-const WX_TAB_PILL_DURATION = 0.36;
-const WX_TAB_MICRO_DURATION = 0.28;
-/** Resting blur on inactive labels â€” they crossfade through this on (de)select. */
-const WX_TAB_LABEL_BLUR = 4;
 /** Lenis scroll-to-section â€” smoother than linear. */
 const WX_LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
 
@@ -1791,15 +1786,9 @@ function useStRefreshOnEmptyCanvasTransition(emptyProjectFocus, emptyCanvasSettl
   }, [emptyProjectFocus, emptyCanvasSettled]);
 }
 
-function useExplorationTabTransitions(reduceMotion, emptyProjectFocus) {
-  const tabPillTransition = useMemo(
-    () => (reduceMotion ? { duration: 0 } : { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE }),
-    [reduceMotion],
-  );
-  const tabMicroTransition = useMemo(
-    () => (reduceMotion ? { duration: 0.01 } : { duration: WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT }),
-    [reduceMotion],
-  );
+function useExplorationNavMotion(reduceMotion, emptyProjectFocus) {
+  const tabPillTransition = useMemo(() => wxNavTabTransition(reduceMotion), [reduceMotion]);
+  const tabRailFadeTransition = useMemo(() => wxNavRailFadeTransition(reduceMotion), [reduceMotion]);
   const emptyCanvasOpacityTransition = useMemo(
     () =>
       reduceMotion
@@ -1807,7 +1796,7 @@ function useExplorationTabTransitions(reduceMotion, emptyProjectFocus) {
         : { duration: emptyProjectFocus ? EMPTY_CANVAS_ENTER_S : EMPTY_CANVAS_EXIT_S, ease: EASE_EMPTY_CANVAS_FADE },
     [reduceMotion, emptyProjectFocus],
   );
-  return { tabPillTransition, tabMicroTransition, emptyCanvasOpacityTransition };
+  return { tabPillTransition, tabRailFadeTransition, emptyCanvasOpacityTransition };
 }
 
 function useScrollToSectionForExploration(lenis, reduceMotion, setEmptyProjectFocus, setScrollIntentIndex) {
@@ -1847,7 +1836,7 @@ function useExplorationLayoutModel() {
   emptyProjectFocusRef.current = emptyProjectFocus;
   const selectedIndex = scrollIntentIndex ?? activeIndex;
   const tabRowRef = useRef(null);
-  const { tabPillTransition, tabMicroTransition, emptyCanvasOpacityTransition } = useExplorationTabTransitions(
+  const { tabPillTransition, tabRailFadeTransition, emptyCanvasOpacityTransition } = useExplorationNavMotion(
     reduceMotion,
     emptyProjectFocus,
   );
@@ -1888,7 +1877,7 @@ function useExplorationLayoutModel() {
     selectedIndex,
     tabRowRef,
     tabPillTransition,
-    tabMicroTransition,
+    tabRailFadeTransition,
     emptyCanvasOpacityTransition,
     scrollToSection,
     onMainPanelsOpacityComplete,
@@ -1988,7 +1977,7 @@ function ExplorationPageAside(p) {
     selectedIndex,
     reduceMotion,
     tabPillTransition,
-    tabMicroTransition,
+    tabRailFadeTransition,
     tabRowRef,
     emptyCanvasOpacityTransition,
   } = p;
@@ -2019,10 +2008,9 @@ function ExplorationPageAside(p) {
           selectedIndex={selectedIndex}
           reduceMotion={reduceMotion}
           tabPillTransition={tabPillTransition}
-          tabMicroTransition={tabMicroTransition}
           tabRowRef={tabRowRef}
           tabRailHidden={emptyProjectFocus}
-          tabRailFadeTransition={emptyCanvasOpacityTransition}
+          tabRailFadeTransition={tabRailFadeTransition}
         />
         <motion.div
           className={clsx(
@@ -2362,7 +2350,7 @@ export function ExplorationHomePage() {
           selectedIndex={m.selectedIndex}
           reduceMotion={m.reduceMotion}
           tabPillTransition={m.tabPillTransition}
-          tabMicroTransition={m.tabMicroTransition}
+          tabRailFadeTransition={m.tabRailFadeTransition}
           tabRowRef={m.tabRowRef}
           emptyCanvasOpacityTransition={m.emptyCanvasOpacityTransition}
         />

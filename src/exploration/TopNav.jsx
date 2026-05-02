@@ -1,13 +1,8 @@
-import { useMemo } from "react";
 import { motion } from "motion/react";
 import { clsx } from "clsx";
 import { SectionTabRail } from "@/exploration/SectionTabRail.jsx";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
-
-const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
-const WX_TAB_PILL_DURATION = 0.36;
-const WX_TAB_MICRO_DURATION = 0.28;
-const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
+import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
 
 export function TopNav({
   location,
@@ -16,29 +11,13 @@ export function TopNav({
   selectedIndex,
   reduceMotion,
   tabPillTransition,
-  tabMicroTransition,
   tabRowRef,
   tabRailHidden,
   tabRailFadeTransition,
 }) {
-  const defaultPill = useMemo(
-    () =>
-      reduceMotion
-        ? { duration: 0 }
-        : { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE },
-    [reduceMotion],
-  );
-  const defaultMicro = useMemo(
-    () =>
-      reduceMotion
-        ? { duration: 0.01 }
-        : { duration: WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT },
-    [reduceMotion],
-  );
-  const pillT = tabPillTransition ?? defaultPill;
-  const microT = tabMicroTransition ?? defaultMicro;
+  const pillT = tabPillTransition ?? wxNavTabTransition(reduceMotion);
   const hideRail = Boolean(tabRailHidden);
-  const railFadeT = tabRailFadeTransition ?? { duration: 0.35, ease: WX_TAB_EASE_IN_OUT };
+  const railFadeT = tabRailFadeTransition ?? wxNavRailFadeTransition(reduceMotion);
 
   const rail = (
     <SectionTabRail
@@ -46,7 +25,6 @@ export function TopNav({
       selectedIndex={selectedIndex}
       reduceMotion={reduceMotion}
       tabPillTransition={pillT}
-      tabMicroTransition={microT}
       tabRowRef={tabRowRef}
     />
   );

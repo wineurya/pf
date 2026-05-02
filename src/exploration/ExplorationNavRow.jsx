@@ -7,7 +7,6 @@ export function ExplorationNavRow({
   selectedIndex,
   reduceMotion,
   tabPillTransition,
-  tabMicroTransition,
   tabRowRef,
   tabRailHidden,
   tabRailFadeTransition,
@@ -24,7 +23,6 @@ export function ExplorationNavRow({
         selectedIndex={selectedIndex}
         reduceMotion={reduceMotion}
         tabPillTransition={tabPillTransition}
-        tabMicroTransition={tabMicroTransition}
         tabRowRef={tabRowRef}
         tabRailHidden={tabRailHidden}
         tabRailFadeTransition={tabRailFadeTransition}
