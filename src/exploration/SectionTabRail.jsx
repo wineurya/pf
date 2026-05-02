@@ -1,16 +1,20 @@
 import { AnimatePresence, motion } from "motion/react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Briefcase01Icon, BookUserIcon, Layers01Icon, Mail01Icon } from "@hugeicons/core-free-icons";
+import { PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
 import { SECTION_TABS } from "@/exploration/siteContent.js";
 
-const TAB_ICONS = [Briefcase01Icon, BookUserIcon, Layers01Icon, Mail01Icon];
+const TAB_ICONS = [PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon];
 
 const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
 const WX_TAB_PILL_DURATION = 0.36;
-const WX_TAB_MICRO_DURATION = 0.28;
-const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
 const WX_TAB_LABEL_BLUR = 4;
+
+/** Bouncy spring shared by tap, icon scale, icon tilt — keep close to underdamped. */
+const WX_TAB_BOUNCE_SPRING = { type: "spring", stiffness: 520, damping: 16, mass: 0.6 };
+const WX_TAB_TILT_SPRING = { type: "spring", stiffness: 360, damping: 14, mass: 0.5 };
+/** Tilt direction alternates per index so the row reads as a playful row, not a parade. */
+const TILT_DEGREES = 9;
 
 function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
   if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -34,16 +38,30 @@ function labelMotionPresets(reduceMotion) {
   };
 }
 
+function iconAnimateState({ selected, hovered, reduceMotion, tiltDir }) {
+  if (reduceMotion) {
+    return { rotate: 0, scale: selected ? 1.05 : 1, opacity: selected ? 1 : 0.85 };
+  }
+  if (selected) {
+    return { rotate: 0, scale: 1.12, opacity: 1, y: 0 };
+  }
+  if (hovered) {
+    return { rotate: tiltDir * TILT_DEGREES, scale: 1.06, opacity: 1, y: -1 };
+  }
+  return { rotate: 0, scale: 1, opacity: 0.8, y: 0 };
+}
+
 function SectionTabPillButton({
   tab,
   i,
   selected,
   reduceMotion,
   pillT,
-  microT,
   onSelectSection,
 }) {
   const labelPreset = labelMotionPresets(reduceMotion);
+  const tiltDir = i % 2 === 0 ? -1 : 1;
+
   return (
     <motion.button
       type="button"
@@ -54,9 +72,10 @@ function SectionTabPillButton({
       aria-label={tab.label}
       tabIndex={selected ? 0 : -1}
       transition={pillT}
-      whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.94 }}
+      whileHover={reduceMotion ? undefined : { y: -1 }}
       className={clsx(
-        "wx-tab wx-text-sm relative flex min-h-10 shrink-0 items-center justify-center rounded-[var(--wx-radius-segment)] outline-none",
+        "wx-tab wx-text-sm group relative flex min-h-10 shrink-0 items-center justify-center rounded-[var(--wx-radius-segment)] outline-none",
         "text-[var(--wx-tab-idle-fg)] px-3 py-2",
         selected ? "font-semibold" : "min-w-10 font-medium",
       )}
@@ -71,21 +90,28 @@ function SectionTabPillButton({
         }}
       />
       {selected ? (
-        <span
+        <motion.span
+          layoutId="wx-tab-active-bg"
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 rounded-[var(--wx-radius-segment)]"
           style={{
             backgroundColor: "var(--wx-primary)",
             boxShadow: "var(--wx-tab-shadow-active)",
           }}
+          transition={reduceMotion ? { duration: 0.01 } : WX_TAB_BOUNCE_SPRING}
         />
       ) : null}
       <span className="relative z-10 flex min-w-min items-center justify-center">
         <motion.span
-          className="flex shrink-0 items-center justify-center"
+          className="flex shrink-0 items-center justify-center will-change-transform"
           initial={false}
-          animate={reduceMotion ? { opacity: 1 } : { opacity: selected ? 1 : 0.82 }}
-          transition={microT}
+          /** `whileHover` on the parent button propagates so each child reads `groupHover` cleanly via animate state. */
+          animate={iconAnimateState({ selected, hovered: false, reduceMotion, tiltDir })}
+          whileHover={
+            reduceMotion ? undefined : iconAnimateState({ selected, hovered: true, reduceMotion, tiltDir })
+          }
+          transition={reduceMotion ? { duration: 0.01 } : WX_TAB_TILT_SPRING}
+          style={{ originX: 0.5, originY: 0.55 }}
         >
           <HugeiconsIcon icon={TAB_ICONS[i]} size={17} color="currentColor" strokeWidth={1.6} />
         </motion.span>
@@ -123,12 +149,9 @@ export function SectionTabRail({
   selectedIndex,
   reduceMotion,
   tabPillTransition,
-  tabMicroTransition,
   tabRowRef,
 }) {
   const pillT = tabPillTransition ?? { duration: reduceMotion ? 0 : WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE };
-  const microT =
-    tabMicroTransition ?? { duration: reduceMotion ? 0.01 : WX_TAB_MICRO_DURATION, ease: WX_TAB_EASE_IN_OUT };
 
   return (
     <div
@@ -151,7 +174,6 @@ export function SectionTabRail({
               selected={selected}
               reduceMotion={reduceMotion}
               pillT={pillT}
-              microT={microT}
               onSelectSection={onSelectSection}
             />
           );
