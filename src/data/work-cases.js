@@ -17,6 +17,61 @@ export const WORK_CASE_PAGES = {
     lede: "Plain-language goals become a plan, a deadline, and a coach in your corner when the search goes quiet or progress slows.",
     heroImage: "/work/avance-hero.png",
     backLabel: "Index",
+    /**
+     * Long-form chapters. ScrollTrigger spy in `useCaseStudyScrollSpy` updates the
+     * left aside (eyebrow / title / lede) as each section enters viewport center.
+     * Body copy is intentionally minimal lorem per repo policy — replace as content lands.
+     */
+    chapters: [
+      {
+        id: "ch-overview",
+        eyebrow: "Avance — overview",
+        title: "Coaching that meets you where momentum stops.",
+        lede: "Plain-language goals become a plan, a deadline, and a coach in your corner — without the demo-day overhead.",
+        bodyParts: [
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus a turpis vehicula, hendrerit risus quis, dictum lectus.",
+          "Praesent fringilla, justo a tincidunt convallis, sapien dolor cursus magna, vitae viverra magna massa nec libero.",
+        ],
+        image: "/work/avance-hero.png",
+        imageAlt: "Avance app — goal capture and plan summary",
+      },
+      {
+        id: "ch-discovery",
+        eyebrow: "01 — Discovery",
+        title: "Where the week stops holding.",
+        lede: "Interviews, ride-alongs, and quiet observation. The pattern shows up in plain language, not in analytics.",
+        bodyParts: [
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus rhoncus, mauris vel ultricies aliquam.",
+          "Maecenas faucibus, urna eu fringilla bibendum, sapien magna placerat odio, in tristique nibh est non lectus.",
+        ],
+        image: SITE_EXTRA_IMAGES.studioDesk,
+        imageAlt: "Discovery — research artifacts on a studio desk",
+      },
+      {
+        id: "ch-craft",
+        eyebrow: "02 — Craft",
+        title: "Plain language. Then a real plan.",
+        lede: "From flow to ship: small stages, real coaches, and copy that names what happens next.",
+        bodyParts: [
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget velit at urna luctus aliquet.",
+          "Suspendisse potenti. Etiam vitae enim sed sapien condimentum sodales, vitae rutrum lectus volutpat.",
+        ],
+        image: SITE_EXTRA_IMAGES.typography,
+        imageAlt: "Craft — content stage and typographic system",
+      },
+      {
+        id: "ch-outcome",
+        eyebrow: "03 — Outcome",
+        title: "Said once. The week holds the line.",
+        lede: "Coaching that doesn't shout — it shows up when the search goes quiet and the plan is at risk.",
+        bodyParts: [
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. Curabitur scelerisque vehicula nibh.",
+          "Integer nec dui sed odio luctus volutpat. Nam vitae justo eget magna fermentum iaculis eu non.",
+        ],
+        image: SITE_EXTRA_IMAGES.workshop,
+        imageAlt: "Outcome — coaching artifacts in a workshop",
+      },
+    ],
   },
   incity: {
     template: "hero",
