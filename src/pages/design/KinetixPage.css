@@ -58,6 +58,9 @@
   --kx-radius-full:   9999px;
 
   --kx-ease:          cubic-bezier(0.32, 0.72, 0, 1);
+  /* Sidebar expand/collapse: one column width animates; inner copy fades/collapses in sync */
+  --kx-sidebar-t:     0.42s;
+  --kx-sidebar-ease:  cubic-bezier(0.33, 1, 0.68, 1);
 
   /* Line-height tokens — fix font height, not font size */
   --kx-leading-none:    1;
@@ -209,68 +212,99 @@
   height: 100%;
   overflow: hidden;
   transition:
-    width 0.26s var(--kx-ease),
-    min-width 0.26s var(--kx-ease);
+    width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    min-width var(--kx-sidebar-t) var(--kx-sidebar-ease);
 }
 
-/* Narrow icon rail — nav stays usable when “collapsed” (desktop). */
+/* Icon rail: same column, narrower width — labels clip/fade rather than display toggling. */
 .kx-root--sidebar-collapsed .kx-sidebar {
-  width: 60px !important;
-  min-width: 60px !important;
-  opacity: 1;
+  width: 60px;
+  min-width: 60px;
   pointer-events: auto;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .kx-root--sidebar-collapsed .kx-logo {
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 8px 10px;
-  align-items: center;
+  gap: 2px;
+  padding: 12px 2px;
 }
 
-.kx-root--sidebar-collapsed .kx-sidebar-collapse-btn {
-  margin-left: 0;
+.kx-root--sidebar-collapsed .kx-logo-mark {
+  width: 24px;
+  height: 24px;
 }
 
 .kx-root--sidebar-collapsed .kx-logo-text,
 .kx-root--sidebar-collapsed .kx-logo-version {
-  display: none;
+  max-width: 0;
+  opacity: 0;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-width: 0;
 }
 
 .kx-root--sidebar-collapsed .kx-search {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  pointer-events: none;
 }
 
 .kx-root--sidebar-collapsed .kx-nav-section {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .kx-root--sidebar-collapsed .kx-nav-item {
   justify-content: center;
-  padding: 8px;
+  gap: 0;
+  padding: 8px 6px;
 }
 
-.kx-root--sidebar-collapsed .kx-nav-item span {
-  display: none;
+.kx-root--sidebar-collapsed .kx-nav-item > span {
+  max-width: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
 }
 
-.kx-root--sidebar-collapsed .kx-team-card-text,
+.kx-root--sidebar-collapsed .kx-nav-badge {
+  margin-left: 0;
+}
+
+.kx-root--sidebar-collapsed .kx-team-card-text {
+  max-width: 0;
+  opacity: 0;
+  flex: 0 0 auto;
+}
+
 .kx-root--sidebar-collapsed .kx-team-card svg {
-  display: none;
+  max-width: 0;
+  opacity: 0;
+  margin: 0;
 }
 
 .kx-root--sidebar-collapsed .kx-team-card {
   justify-content: center;
+  gap: 0;
+  padding: 7px 4px;
 }
 
 .kx-logo {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 9px;
   padding: 16px 14px 12px;
   flex-shrink: 0;
+  transition:
+    gap var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    padding var(--kx-sidebar-t) var(--kx-sidebar-ease);
 }
 
 .kx-logo-mark {
@@ -282,6 +316,9 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition:
+    width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    height var(--kx-sidebar-t) var(--kx-sidebar-ease);
 }
 
 .kx-logo-text {
@@ -290,6 +327,13 @@
   letter-spacing: var(--kx-tracking-caps-sm);
   color: var(--kx-text);
   text-transform: uppercase;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 9em;
+  opacity: 1;
+  transition:
+    max-width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    opacity calc(var(--kx-sidebar-t) * 0.55) ease;
 }
 
 .kx-logo-version {
@@ -302,6 +346,16 @@
   padding: 2px 5px;
   border-radius: var(--kx-radius-xs);
   text-transform: uppercase;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 6em;
+  opacity: 1;
+  flex-shrink: 0;
+  transition:
+    max-width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    opacity calc(var(--kx-sidebar-t) * 0.55) ease,
+    padding var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    border-width var(--kx-sidebar-t) var(--kx-sidebar-ease);
 }
 
 .kx-sidebar-collapse-btn {
@@ -343,7 +397,17 @@
   background: var(--kx-surface-soft);
   border: 1px solid var(--kx-border);
   border-radius: var(--kx-radius-sm);
-  transition: border-color 0.16s var(--kx-ease), background 0.16s var(--kx-ease);
+  max-height: 80px;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    max-height var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    opacity calc(var(--kx-sidebar-t) * 0.5) ease,
+    margin var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    padding var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    border-width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    border-color 0.16s var(--kx-ease),
+    background 0.16s var(--kx-ease);
 }
 
 .kx-search:focus-within {
@@ -393,6 +457,14 @@
   letter-spacing: var(--kx-tracking-caps-xl);
   text-transform: uppercase;
   color: var(--kx-text-faint);
+  max-height: 48px;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    max-height var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    opacity calc(var(--kx-sidebar-t) * 0.45) ease,
+    padding var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    margin var(--kx-sidebar-t) var(--kx-sidebar-ease);
 }
 
 .kx-nav-item {
@@ -405,12 +477,28 @@
   font-weight: var(--kx-weight-regular);
   color: var(--kx-text-muted);
   cursor: pointer;
-  transition: background 0.14s var(--kx-ease), color 0.14s var(--kx-ease);
+  transition:
+    background 0.14s var(--kx-ease), color 0.14s var(--kx-ease),
+    gap var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    padding var(--kx-sidebar-t) var(--kx-sidebar-ease);
   user-select: none;
   border: none;
   background: transparent;
   width: 100%;
   text-align: left;
+  overflow: hidden;
+}
+
+.kx-nav-item > span {
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 11em;
+  opacity: 1;
+  transition:
+    max-width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    opacity calc(var(--kx-sidebar-t) * 0.5) ease,
+    margin var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    padding var(--kx-sidebar-t) var(--kx-sidebar-ease);
 }
 
 .kx-nav-item:hover {
@@ -466,7 +554,10 @@
   text-align: left;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.14s var(--kx-ease), border-color 0.14s var(--kx-ease);
+  transition:
+    background 0.14s var(--kx-ease), border-color 0.14s var(--kx-ease),
+    gap var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    padding var(--kx-sidebar-t) var(--kx-sidebar-ease);
 }
 
 .kx-team-card:hover {
@@ -474,7 +565,16 @@
   border-color: var(--kx-border);
 }
 
-.kx-team-card-text { flex: 1; min-width: 0; }
+.kx-team-card-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  max-width: 200px;
+  opacity: 1;
+  transition:
+    max-width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    opacity calc(var(--kx-sidebar-t) * 0.55) ease;
+}
 .kx-team-card-name {
   font-size: 12px;
   font-weight: var(--kx-weight-strong);
@@ -488,7 +588,17 @@
   color: var(--kx-text-faint);
   margin-top: 1px;
 }
-.kx-team-card svg { color: var(--kx-text-faint); flex-shrink: 0; }
+.kx-team-card svg {
+  color: var(--kx-text-faint);
+  flex-shrink: 0;
+  max-width: 16px;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    max-width var(--kx-sidebar-t) var(--kx-sidebar-ease),
+    opacity calc(var(--kx-sidebar-t) * 0.45) ease,
+    margin var(--kx-sidebar-t) var(--kx-sidebar-ease);
+}
 
 /* ── Main shell ─────────────────────────────────────────────────────────────── */
 .kx-main {
@@ -516,35 +626,6 @@
   padding: 0 18px;
   gap: 10px;
   min-width: 0;
-}
-
-.kx-sidebar-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  flex-shrink: 0;
-  border-radius: var(--kx-radius-sm);
-  border: 1px solid var(--kx-border);
-  background: var(--kx-surface);
-  color: var(--kx-text-muted);
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.14s var(--kx-ease), color 0.14s var(--kx-ease), border-color 0.14s var(--kx-ease);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.kx-sidebar-toggle:hover {
-  background: var(--kx-surface-soft);
-  color: var(--kx-text-2);
-  border-color: var(--kx-border-strong);
-}
-
-.kx-sidebar-toggle:focus-visible {
-  outline: 2px solid var(--kx-blue-focus-ring);
-  outline-offset: 2px;
 }
 
 .kx-breadcrumb {
@@ -2310,5 +2391,4 @@
     display: none;
   }
   .kx-sidebar { display: none !important; }
-  .kx-sidebar-toggle { display: none; }
 }

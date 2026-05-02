@@ -6,7 +6,7 @@ import {
   ChevronRight, X, Download, FileBarChart2,
   Search, Smartphone, Tablet, Monitor,
   TrendingUp, TrendingDown, MessageSquare, Plus,
-  Eye, Terminal, Sparkles, PanelLeft,
+  Eye, Terminal, Sparkles,
 } from 'lucide-react'
 import './KinetixPage.css'
 
@@ -220,7 +220,7 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
 
 // ─── Top bar ──────────────────────────────────────────────────────────────────
 
-function TopBar({ simState, onRunSim, onViewReport, sidebarOpen, onToggleSidebar }) {
+function TopBar({ simState, onRunSim, onViewReport }) {
   const btnClass =
     simState === 'idle'     ? 'kx-run-btn kx-run-btn-idle' :
     simState === 'loading'  ? 'kx-run-btn kx-run-btn-loading' :
@@ -228,18 +228,6 @@ function TopBar({ simState, onRunSim, onViewReport, sidebarOpen, onToggleSidebar
 
   return (
     <header className="kx-topbar">
-      <button
-        type="button"
-        className="kx-sidebar-toggle"
-        onClick={onToggleSidebar}
-        aria-expanded={sidebarOpen}
-        aria-controls="kx-sidebar"
-        aria-label={sidebarOpen ? 'Collapse navigation panel' : 'Expand navigation panel'}
-        title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-      >
-        <PanelLeft size={17} strokeWidth={2} aria-hidden />
-      </button>
-
       <span className="kx-breadcrumb">
         <span>Kinetix</span>
       </span>
@@ -832,8 +820,6 @@ export default function KinetixPage() {
           simState={simState}
           onRunSim={handleRunSim}
           onViewReport={() => setShowReport(true)}
-          sidebarOpen={sidebarOpen}
-          onToggleSidebar={() => setSidebarOpen((o) => !o)}
         />
 
         <main className="kx-content" id="kx-main-content">
