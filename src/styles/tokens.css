@@ -275,7 +275,7 @@
   --wx-tab-idle-fg: var(--color-neutral-0);
   --wx-tab-track: color-mix(in srgb, var(--color-neutral-100) 72%, transparent);
   --wx-tab-track-solid: var(--color-neutral-100);
-  /** Section tabs — stadium pills (caps = half height); track pads vertically around pill */
+  /** Section tabs — track shell + square idle slots; active tab uses --wx-radius-segment */
   --wx-tab-pill-height: 2.375rem;
   --wx-tab-pill-min-width: 3.375rem;
   --wx-tab-track-pad-y: 0.25rem;
