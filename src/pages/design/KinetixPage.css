@@ -1071,7 +1071,7 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  padding-top: 2px;
+  padding-top: 0;
 }
 
 .kx-metric-sub {
@@ -1099,9 +1099,12 @@
 .kx-metric-body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: space-evenly;
   align-items: flex-start;
+  align-self: stretch;
   min-width: 0;
+  min-height: 0;
+  gap: 0;
 }
 
 .kx-metric-spark-large {
