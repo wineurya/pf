@@ -1570,7 +1570,8 @@
    ========================= */
 .site-canvas .wx-tab-track {
   position: relative;
-  border-radius: var(--wx-radius-track);
+  /* Capsule rail — pairs with rounded-full tabs inside */
+  border-radius: 9999px;
   background-color: var(--wx-tab-track);
   border: 1px solid var(--wx-tab-track-border);
   backdrop-filter: blur(14px) saturate(180%);
@@ -1603,9 +1604,9 @@
   outline-offset: 2px;
 }
 
-/* Smooth filter interpolation handled by the browser, not motion. */
+/* Fallback if JS is late; Motion drives the label reveal. */
 .site-canvas .wx-tab-label-text {
-  transition: filter 0.34s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1);
   /* Tight tracking + subpixel width — avoid trimming the last glyph. */
   padding-inline-end: 0.1em;
 }

@@ -7,15 +7,16 @@ import { SECTION_TABS } from "@/exploration/siteContent.js";
 
 const TAB_ICONS = [PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon];
 
+/** ease-out exit from rest — responsive for small UI (interaction-design ~200–300ms band) */
 const WX_TAB_PILL_EASE = [0.22, 1, 0.36, 1];
-const WX_TAB_PILL_DURATION = 0.36;
-const WX_TAB_LABEL_BLUR = 4;
+const WX_TAB_PILL_DURATION = 0.26;
+const WX_TAB_LABEL_MAX_W = 200;
 
-/** Subtle horizontal wobble for the icon (px) + paired tilt (deg). Both damp back to 0. */
-const ICON_WIGGLE_X = [0, -1.4, 1.2, -0.8, 0.6, 0];
-const ICON_WIGGLE_ROTATE = [0, -3, 2.4, -1.6, 1.1, 0];
-const ICON_WIGGLE_TIMES = [0, 0.2, 0.4, 0.6, 0.8, 1];
-const ICON_WIGGLE_DURATION = 0.42;
+/** One short rotate settle when a tab becomes selected (no lateral wobble — reads calmer). */
+const ICON_ACTIVATE_ROT_L = [0, -2.1, 0.65, 0];
+const ICON_ACTIVATE_ROT_R = [0, 2.1, -0.65, 0];
+const ICON_ACTIVATE_TIMES = [0, 0.32, 0.68, 1];
+const ICON_ACTIVATE_DURATION = 0.32;
 
 function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
   if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -29,23 +30,48 @@ function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
 function labelMotionPresets(reduceMotion) {
   if (reduceMotion) {
     return {
-      initial: { opacity: 1, width: "auto", marginLeft: 8 },
-      exit: { opacity: 0, width: 0, marginLeft: 0 },
+      initial: { opacity: 1, maxWidth: WX_TAB_LABEL_MAX_W, marginLeft: 8 },
+      exit: { opacity: 0, maxWidth: 0, marginLeft: 0 },
     };
   }
   return {
-    initial: { opacity: 0, width: 0, marginLeft: 0, filter: `blur(${WX_TAB_LABEL_BLUR}px)` },
-    exit: { opacity: 0, width: 0, marginLeft: 0, filter: `blur(${WX_TAB_LABEL_BLUR}px)` },
+    initial: { opacity: 0, maxWidth: 0, marginLeft: 0 },
+    exit: { opacity: 0, maxWidth: 0, marginLeft: 0 },
   };
 }
 
 function iconRestTarget({ selected, reduceMotion }) {
-  if (reduceMotion) return { x: 0, rotate: 0, scale: selected ? 1.04 : 1, opacity: selected ? 1 : 0.85 };
-  return { x: 0, rotate: 0, scale: selected ? 1.08 : 1, opacity: selected ? 1 : 0.82 };
+  if (reduceMotion) return { rotate: 0, scale: selected ? 1.03 : 1, opacity: selected ? 1 : 0.86 };
+  return { rotate: 0, scale: selected ? 1.06 : 1, opacity: selected ? 1 : 0.84 };
 }
 
-/** Plays a one-shot horizontal wiggle on the icon when the tab transitions to selected. */
-function useIconActivationWiggle({ selected, dir, reduceMotion }) {
+function iconActivationKeyframesTransition() {
+  return {
+    rotate: {
+      duration: ICON_ACTIVATE_DURATION,
+      ease: WX_TAB_PILL_EASE,
+      times: ICON_ACTIVATE_TIMES,
+    },
+    scale: { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE },
+    opacity: { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE },
+  };
+}
+
+function iconRestOnlyTransition() {
+  return { duration: WX_TAB_PILL_DURATION, ease: WX_TAB_PILL_EASE };
+}
+
+function startIconActivationSettle(controls, rest, dir) {
+  const rotKf = dir < 0 ? ICON_ACTIVATE_ROT_L : ICON_ACTIVATE_ROT_R;
+  return controls.start({
+    ...rest,
+    rotate: rotKf,
+    transition: iconActivationKeyframesTransition(),
+  });
+}
+
+/** Brief rotate settle when the tab becomes selected — aligned easing, no x jitter. */
+function useIconActivationSettle({ selected, dir, reduceMotion }) {
   const controls = useAnimationControls();
   const wasSelectedRef = useRef(selected);
 
@@ -62,25 +88,13 @@ function useIconActivationWiggle({ selected, dir, reduceMotion }) {
     wasSelectedRef.current = selected;
 
     if (becameSelected) {
-      const wiggleX = dir < 0 ? ICON_WIGGLE_X : ICON_WIGGLE_X.map((v) => -v);
-      const wiggleRotate = dir < 0 ? ICON_WIGGLE_ROTATE : ICON_WIGGLE_ROTATE.map((v) => -v);
-      controls.start({
-        ...rest,
-        x: wiggleX,
-        rotate: wiggleRotate,
-        transition: {
-          x: { duration: ICON_WIGGLE_DURATION, ease: "easeOut", times: ICON_WIGGLE_TIMES },
-          rotate: { duration: ICON_WIGGLE_DURATION, ease: "easeOut", times: ICON_WIGGLE_TIMES },
-          scale: { duration: 0.25, ease: WX_TAB_PILL_EASE },
-          opacity: { duration: 0.25 },
-        },
-      });
+      void startIconActivationSettle(controls, rest, dir);
       return;
     }
 
     controls.start({
       ...rest,
-      transition: { duration: 0.25, ease: WX_TAB_PILL_EASE },
+      transition: iconRestOnlyTransition(),
     });
   }, [selected, dir, reduceMotion, controls]);
 
@@ -91,7 +105,7 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
   const labelPreset = labelMotionPresets(reduceMotion);
   /** Alternate wiggle start direction per tab so the row reads playful, not in lockstep. */
   const dir = i % 2 === 0 ? -1 : 1;
-  const iconControls = useIconActivationWiggle({ selected, dir, reduceMotion });
+  const iconControls = useIconActivationSettle({ selected, dir, reduceMotion });
 
   return (
     <motion.button
@@ -103,17 +117,17 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
       aria-label={tab.label}
       tabIndex={selected ? 0 : -1}
       transition={pillT}
-      whileTap={reduceMotion ? undefined : { scale: 0.94 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.97 }}
       className={clsx(
-        "wx-tab wx-text-sm group relative flex min-h-10 shrink-0 items-center justify-center rounded-[var(--wx-radius-segment)] outline-none",
-        "text-[var(--wx-tab-idle-fg)] px-3 py-2",
+        "wx-tab wx-text-sm group relative flex min-h-10 shrink-0 items-center justify-center rounded-full outline-none",
+        "text-[var(--wx-tab-idle-fg)] px-3.5 py-2",
         selected ? "font-semibold" : "min-w-10 font-medium",
       )}
       onClick={() => onSelectSection(tab.sectionId, i)}
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-20 rounded-[var(--wx-radius-segment)]"
+        className="pointer-events-none absolute inset-0 -z-20 rounded-full"
         style={{
           backgroundColor: "var(--wx-tab-idle)",
           boxShadow: "var(--wx-tab-shadow-idle)",
@@ -121,18 +135,19 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
       />
       <motion.span
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 rounded-[var(--wx-radius-segment)]"
+        className="pointer-events-none absolute inset-0 -z-10 rounded-full"
         style={{
           backgroundColor: "var(--wx-primary)",
           boxShadow: "var(--wx-tab-shadow-active)",
         }}
         initial={false}
         animate={{ opacity: selected ? 1 : 0 }}
-        transition={reduceMotion ? { duration: 0.01 } : { duration: 0.2, ease: WX_TAB_PILL_EASE }}
+        transition={reduceMotion ? { duration: 0.01 } : { duration: 0.22, ease: WX_TAB_PILL_EASE }}
       />
       <span className="relative z-10 flex min-w-min items-center justify-center">
         <motion.span
           className="flex shrink-0 items-center justify-center will-change-transform"
+          style={{ transformOrigin: "50% 50%" }}
           initial={iconRestTarget({ selected, reduceMotion })}
           animate={iconControls}
         >
@@ -147,9 +162,8 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
               initial={labelPreset.initial}
               animate={{
                 opacity: 1,
-                width: "auto",
+                maxWidth: WX_TAB_LABEL_MAX_W,
                 marginLeft: 8,
-                filter: "blur(0px)",
               }}
               exit={labelPreset.exit}
               transition={pillT}
@@ -178,14 +192,14 @@ export function SectionTabRail({
 
   return (
     <div
-      className="wx-tab-track min-w-0 max-w-full shrink overflow-x-auto overflow-y-visible overscroll-x-contain [-webkit-overflow-scrolling:touch]"
+      className="wx-tab-track min-w-0 max-w-full shrink overflow-x-auto overflow-y-visible overscroll-x-contain rounded-full [-webkit-overflow-scrolling:touch]"
       role="tablist"
       aria-label="Sections"
       onKeyDown={(e) => handleTabListKeyDown(e, selectedIndex, onSelectSection)}
     >
       <div
         ref={tabRowRef}
-        className="relative inline-flex w-max min-w-0 flex-nowrap items-center gap-1 py-1.5 pl-1.5 pr-2"
+        className="relative inline-flex w-max min-w-0 flex-nowrap items-center gap-0.5 py-1 pl-1 pr-1 sm:gap-1 sm:py-1 sm:pl-1 sm:pr-1.5"
       >
         {SECTION_TABS.map((tab, i) => {
           const selected = selectedIndex === i;
