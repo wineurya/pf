@@ -632,20 +632,44 @@ function PrototypePreview() {
             { num: 1, color: '#DC2626', label: 'CTA drop-off',     sub: 'Below thumb zone' },
             { num: 2, color: '#D97706', label: 'Form hesitation',  sub: 'Payment section' },
             { num: 3, color: '#D97706', label: 'Contrast risk',    sub: 'Secondary action' },
-          ].map(({ num, color, label, sub }) => (
-            <button key={num} type="button" className="kx-annotation">
+          ].map(({ num, color, label, sub }, i) => (
+            <motion.button
+              key={num}
+              type="button"
+              className="kx-annotation"
+              initial={reduce ? false : { opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                duration: reduce ? 0 : 0.28,
+                ease: KX_EASE,
+                delay: reduce ? 0 : 0.04 + i * 0.055,
+              }}
+            >
               <div className="kx-annotation-num" style={{ background: color }}>{num}</div>
               <div className="kx-annotation-body">
                 <div className="kx-annotation-label">{label}</div>
                 <div className="kx-annotation-sub">{sub}</div>
               </div>
-              <ChevronRight size={11} className="kx-annotation-arrow" />
-            </button>
+              <ChevronRight size={11} strokeWidth={2.2} className="kx-annotation-arrow" aria-hidden />
+            </motion.button>
           ))}
 
-          <button type="button" className="kx-add-annotation">
-            <Plus size={11} strokeWidth={2.5} /> Add annotation
-          </button>
+          <motion.button
+            type="button"
+            className="kx-add-annotation"
+            initial={reduce ? false : { opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{
+              duration: reduce ? 0 : 0.28,
+              ease: KX_EASE,
+              delay: reduce ? 0 : 0.04 + 3 * 0.055,
+            }}
+          >
+            <span className="kx-add-annotation-icon" aria-hidden="true">
+              <Plus size={15} strokeWidth={2.2} />
+            </span>
+            Add annotation
+          </motion.button>
         </motion.div>
 
         <motion.div className="kx-analysis-bar" aria-live="polite" variants={bodyPiece}>
