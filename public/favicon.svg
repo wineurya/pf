@@ -14,12 +14,9 @@
       <stop offset="100%" stop-color="#d97706" />
     </linearGradient>
   </defs>
-  <!-- Four spokes, hollow center; works as mask + tab icon -->
+  <!-- Eight radial ticks, hollow center (busy / loading read); mask + tab icon -->
   <path
     fill="url(#favicon-grad)"
-    d="M 5.35 0 L 6.65 0 L 6.22 4.05 L 5.78 4.05 Z
-       M 5.78 7.95 L 6.22 7.95 L 6.65 12 L 5.35 12 Z
-       M 0 5.35 L 0 6.65 L 4.05 6.22 L 4.05 5.78 Z
-       M 7.95 5.78 L 7.95 6.22 L 12 6.65 L 12 5.35 Z"
+    d="M 8.06 5.49 L 8.06 6.51 L 11.36 7.34 L 11.36 4.66 Z M 7.82 7.09 L 7.09 7.82 L 8.84 10.73 L 10.73 8.84 Z M 6.51 8.06 L 5.49 8.06 L 4.66 11.36 L 7.34 11.36 Z M 4.91 7.82 L 4.18 7.09 L 1.27 8.84 L 3.16 10.73 Z M 3.94 6.51 L 3.94 5.49 L 0.64 4.66 L 0.64 7.34 Z M 4.18 4.91 L 4.91 4.18 L 3.16 1.27 L 1.27 3.16 Z M 5.49 3.94 L 6.51 3.94 L 7.34 0.64 L 4.66 0.64 Z M 7.09 4.18 L 7.82 4.91 L 10.73 3.16 L 8.84 1.27 Z"
   />
 </svg>
