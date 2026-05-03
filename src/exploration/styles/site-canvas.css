@@ -451,7 +451,11 @@
 
 .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__text-clip {
   overflow: hidden;
-  border-radius: inherit;
+  /* Don’t inherit top-left radius: it clips the flush-left accent bar. */
+  border-top-left-radius: 0;
+  border-top-right-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 @media (min-width: 40rem) {
