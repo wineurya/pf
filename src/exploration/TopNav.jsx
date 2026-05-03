@@ -8,6 +8,7 @@ export function TopNav({
   location,
   navigate,
   onSelectSection,
+  onHomeWordmarkClick,
   selectedIndex,
   reduceMotion,
   tabPillTransition,
@@ -34,7 +35,7 @@ export function TopNav({
       <WordmarkLink
         location={location}
         navigate={navigate}
-        onSelectSection={onSelectSection}
+        onHomeWordmarkClick={onHomeWordmarkClick}
       />
       {reduceMotion ? (
         <div

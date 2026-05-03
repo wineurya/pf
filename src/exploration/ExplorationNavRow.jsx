@@ -4,6 +4,7 @@ export function ExplorationNavRow({
   location,
   navigate,
   onSelectSection,
+  onHomeWordmarkClick,
   selectedIndex,
   reduceMotion,
   tabPillTransition,
@@ -20,6 +21,7 @@ export function ExplorationNavRow({
         location={location}
         navigate={navigate}
         onSelectSection={onSelectSection}
+        onHomeWordmarkClick={onHomeWordmarkClick}
         selectedIndex={selectedIndex}
         reduceMotion={reduceMotion}
         tabPillTransition={tabPillTransition}

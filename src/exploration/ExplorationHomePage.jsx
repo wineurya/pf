@@ -75,7 +75,7 @@ import {
 } from "@/exploration/layout/ExplorationLayout.jsx";
 import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
-import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
+import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
 const NUGGET_ICON_MAP = {
@@ -1842,6 +1842,29 @@ function useExplorationLayoutModel() {
     setEmptyProjectFocus,
     setScrollIntentIndex,
   );
+  const scrollToExplorationTop = useCallback(() => {
+    flushSync(() => {
+      setEmptyProjectFocus(false);
+    });
+    setScrollIntentIndex(0);
+    if (location.pathname === "/" && location.hash) {
+      navigate({ pathname: "/", hash: "" }, { replace: true });
+    }
+    const duration = reduceMotion ? 0 : 1.35;
+    if (lenis) {
+      lenis.scrollTo(0, { duration, easing: reduceMotion ? undefined : WX_LENIS_EASE_IN_OUT });
+    } else {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    }
+  }, [
+    lenis,
+    reduceMotion,
+    setEmptyProjectFocus,
+    setScrollIntentIndex,
+    navigate,
+    location.pathname,
+    location.hash,
+  ]);
   useHashScrollToSection(location, scrollToSection);
   useEmptyCanvasResetSettled({ emptyProjectFocus, reduceMotion, setEmptyCanvasSettled });
   useEmptyCanvasSettledTimeout({
@@ -1874,6 +1897,7 @@ function useExplorationLayoutModel() {
     tabRailFadeTransition,
     emptyCanvasOpacityTransition,
     scrollToSection,
+    scrollToExplorationTop,
     onMainPanelsOpacityComplete,
   };
 }
@@ -1968,6 +1992,7 @@ function ExplorationPageAside(p) {
     location,
     navigate,
     scrollToSection,
+    scrollToExplorationTop,
     selectedIndex,
     reduceMotion,
     tabPillTransition,
@@ -1999,6 +2024,7 @@ function ExplorationPageAside(p) {
           location={location}
           navigate={navigate}
           onSelectSection={scrollToSection}
+          onHomeWordmarkClick={scrollToExplorationTop}
           selectedIndex={selectedIndex}
           reduceMotion={reduceMotion}
           tabPillTransition={tabPillTransition}
@@ -2305,6 +2331,7 @@ export function ExplorationHomePage() {
           location={m.location}
           navigate={m.navigate}
           scrollToSection={m.scrollToSection}
+          scrollToExplorationTop={m.scrollToExplorationTop}
           selectedIndex={m.selectedIndex}
           reduceMotion={m.reduceMotion}
           tabPillTransition={m.tabPillTransition}

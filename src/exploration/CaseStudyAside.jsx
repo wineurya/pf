@@ -47,7 +47,7 @@ function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
  * Sticky case-study aside — wordmark + heading + chapter list (active row expands with lede).
  * One chapter system replaces the prior TOC + ticker stack.
  *
- * @param {{ def: { title: string; kicker: string; lede?: string }, chapters: Array<{ id: string; eyebrow?: string; title: string; lede?: string }>, activeIndex: number, reduceMotion: boolean, location: object, navigate: function, onSelectSection: function }} props
+ * @param {{ def: { title: string; kicker: string; lede?: string }, chapters: Array<{ id: string; eyebrow?: string; title: string; lede?: string }>, activeIndex: number, reduceMotion: boolean, location: object, navigate: function }} props
  */
 export function CaseStudyAside({
   def,
@@ -56,7 +56,6 @@ export function CaseStudyAside({
   reduceMotion,
   location,
   navigate,
-  onSelectSection,
 }) {
   const safeIndex = Math.min(Math.max(activeIndex, 0), chapters.length - 1);
   const indexLabel = String(safeIndex + 1).padStart(2, "0");
@@ -76,7 +75,7 @@ export function CaseStudyAside({
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
         <div className="wx-mobile-sticky-nav flex w-full min-w-0 shrink-0 flex-row flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
           <div className="site-vt--nav flex w-full min-w-0 flex-nowrap items-center justify-start gap-3 min-h-14 sm:gap-4">
-            <WordmarkLink location={location} navigate={navigate} onSelectSection={onSelectSection} />
+            <WordmarkLink location={location} navigate={navigate} />
           </div>
         </div>
 
