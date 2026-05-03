@@ -35,30 +35,30 @@ function ResearchPaperLines() {
   );
 }
 
-function ResearchPaper({ paper, reduceMotion }) {
+function ResearchPaper({ paper, reduceMotion, active }) {
+  const pose = reduceMotion || !active ? paper.rest : paper.hover;
   const transition = reduceMotion ? { duration: 0 } : PAPER_TRANSITION;
 
   return (
     <motion.div
       className="wx-approach-folder-visual__paper"
       style={{ zIndex: paper.zIndex }}
-      variants={{
-        rest: { ...paper.rest, x: "-50%", transition },
-        hover: { ...(reduceMotion ? paper.rest : paper.hover), x: "-50%", transition },
-      }}
+      initial={false}
+      animate={{ ...pose, x: "-50%" }}
+      transition={transition}
     >
       <ResearchPaperLines />
     </motion.div>
   );
 }
 
-export function ApproachStepFolderHoverVisual({ reduceMotion = false, className }) {
+export function ApproachStepFolderHoverVisual({ reduceMotion = false, active = false, className }) {
   return (
     <div className={clsx("wx-approach-folder-visual", className)} aria-hidden>
       <div className="wx-approach-folder-visual__shell" />
       <div className="wx-approach-folder-visual__stage">
         {PAPERS.map((paper) => (
-          <ResearchPaper key={paper.key} paper={paper} reduceMotion={reduceMotion} />
+          <ResearchPaper key={paper.key} paper={paper} reduceMotion={reduceMotion} active={active} />
         ))}
         <div className="wx-approach-folder-visual__pocket" />
       </div>

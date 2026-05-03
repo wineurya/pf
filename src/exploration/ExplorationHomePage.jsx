@@ -2138,6 +2138,7 @@ const APPROACH_STEPS = [
     title: "Listen for the real problem",
     body: "Interviews, usability sessions, and evidence before assumptions — so the work answers what people actually need.",
     accent: "#ea580c",
+    showFolderVisual: true,
   },
   {
     title: "Turn insight into direction",
@@ -2152,6 +2153,8 @@ const APPROACH_STEPS = [
 ];
 
 function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual }) {
+  const [folderMotionActive, setFolderMotionActive] = useState(false);
+
   const inner = (
     <>
       <div className="wx-approach-step-card__title-row">
@@ -2161,7 +2164,7 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual 
       <p className="wx-approach-step-card__lede">{step.body}</p>
       {showFolderVisual ? (
         <div className="wx-approach-step-card__folder-visual">
-          <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} />
+          <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} active={folderMotionActive} />
         </div>
       ) : null}
     </>
@@ -2169,15 +2172,17 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual 
 
   if (showFolderVisual) {
     return (
-      <motion.li
+      <li
         className={clsx("wx-approach-step-card", "wx-approach-step-card--with-folder-visual", className)}
         style={{ "--wx-approach-accent": step.accent }}
-        initial="rest"
-        animate="rest"
-        whileHover={reduceMotion ? "rest" : "hover"}
+        data-approach-folder-card
+        onPointerEnter={() => {
+          if (!reduceMotion) setFolderMotionActive(true);
+        }}
+        onPointerLeave={() => setFolderMotionActive(false)}
       >
         {inner}
-      </motion.li>
+      </li>
     );
   }
 
@@ -2214,7 +2219,7 @@ function ExplorationMainApproachSection({ reduceMotion }) {
                 key={step.title}
                 step={step}
                 reduceMotion={reduceMotion}
-                showFolderVisual={index === 0}
+                showFolderVisual={Boolean(step.showFolderVisual)}
                 className={index === APPROACH_STEPS.length - 1 ? "wx-approach-step-card--bento-wide" : undefined}
               />
             ))}
