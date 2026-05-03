@@ -469,8 +469,6 @@ function AvanceWarmFooterMarkSvg({ className }) {
   return (
     <svg
       className={className}
-      width={18}
-      height={18}
       viewBox="0 0 18 18"
       aria-hidden
       focusable="false"
@@ -530,8 +528,6 @@ function WorkCardFooterOneLiner({ entry, reduceMotion, useLightText, useWarmFoot
           src={markSrc}
           alt=""
           decoding="async"
-          width={18}
-          height={18}
         />
       )}
       <span

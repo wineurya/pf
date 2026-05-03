@@ -940,14 +940,15 @@
   text-align: left;
   font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
   font-size: clamp(0.9875rem, 2.5vw, 1.125rem);
-  line-height: 1.25;
+  /* One line-height for mark / title / cycle so flex cross-axis centers share the same metrics */
+  line-height: 1.2;
   letter-spacing: -0.02em;
   font-synthesis: none;
 }
 
 .site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__title {
   font-size: 1em;
-  line-height: 1.25;
+  line-height: 1.2;
   letter-spacing: -0.03em;
   align-self: center;
 }
@@ -957,10 +958,10 @@
   align-self: center;
   flex: 1 1 auto;
   min-width: 0;
-  min-height: 1.25em;
+  min-height: 1.2em;
   display: flex;
   align-items: center;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__footer-line-cycle-clip > .block {
@@ -982,11 +983,12 @@
 
 .site-canvas .wx-work-card-v2__footer-mark {
   display: block;
-  width: 1.125rem;
-  height: 1.125rem;
+  /* `em` ties the mark box to the one-liner font size (was fixed rem vs fluid type). */
+  width: 1.125em;
+  height: 1.125em;
   flex-shrink: 0;
   align-self: center;
-  border-radius: 4px;
+  border-radius: 0.2222em;
   object-fit: contain;
 }
 
