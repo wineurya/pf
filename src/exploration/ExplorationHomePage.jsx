@@ -2112,18 +2112,18 @@ function ExplorationMainStudioSection({ reduceMotion }) {
 
 const APPROACH_STEPS = [
   {
-    title: "Research",
-    body: "User interviews, usability testing, affinity mapping, and competitive audits before touching a wireframe.",
+    title: "Listen for the real problem",
+    body: "Interviews, usability sessions, and evidence before assumptions — so the work answers what people actually need.",
     accent: "#ea580c",
   },
   {
-    title: "Structure and prototype",
-    body: "Flows, wireframes, and high-fidelity prototypes that trace decisions back to research findings.",
+    title: "Turn insight into direction",
+    body: "Maps, flows, and prototypes that tie every screen back to what we learned, not just what’s trendy.",
     accent: "var(--wx-primary)",
   },
   {
-    title: "Test and refine",
-    body: "Usability testing, iteration, and accessibility validation through to handoff or build.",
+    title: "Refine until it feels right",
+    body: "Testing, iteration, and accessibility checks until handoff or build feels confident and calm.",
     accent: "var(--wx-accent-teal)",
   },
 ];
