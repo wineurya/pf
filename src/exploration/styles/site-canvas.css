@@ -1709,6 +1709,9 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--wx-radius-segment);
+  /* Fixed width = 3 idle icons + longest label ("Approach") + gaps + padding.
+     Keeps the surrounding layout stable across all tab selections. */
+  width: calc(3 * var(--wx-tab-pill-height) + 7.5rem + 3 * 3px + 2 * var(--wx-tab-rail-inset));
   /* Mostly flat fill; light blur reads as UI chrome, not heavy glass. */
   background-color: color-mix(in srgb, var(--wx-tab-track-solid) 90%, var(--wx-page-bg));
   border: 1px solid var(--wx-border-faint);
@@ -1721,8 +1724,8 @@
 /** Scroll lives inside so outer radius clips cleanly (avoid oval / broken caps). */
 .site-canvas .wx-tab-track__scroll {
   --wx-tab-rail-inset: 4px;
-  display: inline-flex;
-  max-width: 100%;
+  display: flex;
+  width: 100%;
   flex-wrap: nowrap;
   align-items: center;
   gap: 3px;
@@ -1745,22 +1748,23 @@
   position: relative;
   box-sizing: border-box;
   isolation: isolate;
-  height: var(--wx-tab-pill-height);
+  flex: 1;
+  /* Floor prevents icon from being crushed if track math is off */
   min-width: var(--wx-tab-pill-height);
+  height: var(--wx-tab-pill-height);
   padding-inline: 0.5rem;
   border-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   transition:
     border-radius 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    min-width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    flex 420ms cubic-bezier(0.22, 1, 0.36, 1),
     padding 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Rounded chip only for the active section; idle slots read square in the track. */
+/* Active tab claims 3× the flex space of an idle slot. */
 .site-canvas .wx-tab[aria-selected="true"] {
-  border-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
-  min-width: max(var(--wx-tab-pill-min-width), var(--wx-tab-pill-height));
+  flex: 3;
   padding-inline: 0.875rem;
 }
 
@@ -2316,4 +2320,50 @@
   .site-canvas .wx-work-card__sweep {
     transform: scaleX(0) !important;
   }
+}
+
+/* Main column (#site-panels): 8px radius on surfaces + controls (global token is 8px; these were 12px / iMessage-large). */
+.site-canvas #site-panels {
+  --wx-radius-card: 8px;
+}
+
+.site-canvas #site-panels .wx-approach-step-card {
+  border-radius: 8px;
+}
+
+.site-canvas #site-panels .wx-gallery-frame {
+  border-radius: 8px;
+}
+
+.site-canvas #site-panels .wx-btn-primary,
+.site-canvas #site-panels .wx-btn-secondary {
+  border-radius: 8px;
+}
+
+.site-canvas #site-panels .wx-stack-nugget {
+  border-radius: 8px;
+}
+
+.site-canvas #site-panels .wx-stack-nugget__logo-wrap {
+  border-radius: 6px;
+}
+
+.site-canvas #site-panels .wx-faq-bubble {
+  border-radius: 8px 8px 2px 8px;
+}
+
+.site-canvas #site-panels .wx-faq-summary:focus-visible {
+  border-radius: 8px;
+}
+
+.site-canvas #site-panels .wx-work-card-v2__nugget {
+  border-radius: 8px;
+}
+
+.site-canvas #site-panels .wx-work-card--footer-warm .wx-work-card-v2__nugget {
+  border-radius: 9999px;
+}
+
+.site-canvas #site-panels .wx-form-input {
+  border-radius: 8px;
 }
