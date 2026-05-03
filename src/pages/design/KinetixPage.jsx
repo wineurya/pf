@@ -552,10 +552,13 @@ function PrototypePreview() {
         </div>
 
         <div className="kx-analysis-bar" aria-live="polite">
-          <div className="kx-analysis-dot" aria-hidden="true" />
-          10,000 sessions analyzed
-          <span className="kx-analysis-sep">·</span>
-          <span style={{ color: 'var(--kx-text-faint)' }}>Apr 28, 2026</span>
+          <div className="kx-analysis-bar-main">
+            <div className="kx-analysis-dot" aria-hidden="true" />
+            <span className="kx-analysis-text">10,000 sessions analyzed</span>
+          </div>
+          <div className="kx-analysis-bar-date">
+            <span className="kx-analysis-date">Apr 28, 2026</span>
+          </div>
         </div>
       </div>
     </div>

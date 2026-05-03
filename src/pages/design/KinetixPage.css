@@ -1791,7 +1791,7 @@
   background: var(--kx-blue-soft);
 }
 
-/* Analysis bar */
+/* Analysis bar — Figma node 218:479 */
 .kx-analysis-bar {
   position: absolute;
   bottom: 14px;
@@ -1800,8 +1800,9 @@
   transform: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
+  gap: 8px;
+  padding: 0 10px;
+  min-height: 28px;
   border-radius: var(--kx-radius-full);
   background: var(--kx-surface);
   border: 1px solid var(--kx-border);
@@ -1810,17 +1811,51 @@
   color: var(--kx-text-muted);
   white-space: nowrap;
   z-index: 2;
+  box-sizing: border-box;
+}
+
+.kx-analysis-bar-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 6px;
+}
+
+.kx-analysis-text {
+  line-height: 15.75px;
+  color: var(--kx-text-muted);
+}
+
+.kx-analysis-bar-date {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+  padding: 6px 0 6px 8px;
+}
+
+.kx-analysis-bar-date::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--kx-border);
+}
+
+.kx-analysis-date {
+  line-height: 15.75px;
+  color: var(--kx-text-faint);
 }
 
 .kx-analysis-dot {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  border-radius: 3px;
   background: var(--kx-blue);
-  animation: kx-pulse-soft 2s var(--kx-ease) infinite;
+  flex-shrink: 0;
 }
-
-.kx-analysis-sep { color: var(--kx-text-faint); opacity: 0.5; margin: 0 1px; }
 
 /* ── Insights panel ─────────────────────────────────────────────────────────── */
 .kx-insights-card {
