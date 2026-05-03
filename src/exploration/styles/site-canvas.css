@@ -497,11 +497,40 @@
   font-synthesis: none;
 }
 
-/* Groups heading + 3 step cards + figure; spacing between rows from parent .wx-approach-3up-with-visual */
+/* Groups heading + step cards + figure; spacing between rows from parent */
 .site-canvas .wx-approach-3up-with-visual {
   display: block;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
+}
+
+/**
+ * Approach bento: 1 column on small screens; from sm — 2 columns with sensible
+ * `minmax` floors (avoids three skinny columns); third step spans full width.
+ */
+.site-canvas .wx-approach-steps-bento {
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 40rem) {
+  .site-canvas .wx-approach-steps-bento {
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(min(100%, 12.5rem), 1fr));
+  }
+
+  .site-canvas .wx-approach-step-card--bento-wide {
+    grid-column: 1 / -1;
+    padding: 1.5rem 1.75rem 1.6rem 0;
+  }
 }
 
 /* Reserves space for a full-width approach visual; drop `aria-hidden` when adding real content */

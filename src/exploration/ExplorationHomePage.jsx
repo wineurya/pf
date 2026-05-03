@@ -2155,12 +2155,12 @@ function ApproachStepAnimatedIcon({ Icon, isActive, reduceMotion }) {
   );
 }
 
-function ApproachStepListItem({ step, reduceMotion }) {
+function ApproachStepListItem({ step, reduceMotion, className }) {
   const [hovered, setHovered] = useState(false);
   const LucideIcon = step.LucideIcon;
   return (
     <li
-      className="wx-approach-step-card"
+      className={clsx("wx-approach-step-card", className)}
       style={{ "--wx-approach-accent": step.accent }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -2191,15 +2191,20 @@ function ExplorationMainApproachSection({ reduceMotion }) {
       >
         <div
           className="wx-approach-3up-with-visual space-y-6 sm:space-y-8"
-          data-approach="research-3up"
+          data-approach="research-bento"
         >
           <div className="max-w-2xl space-y-2 lg:space-y-3">
             <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
             <h2 className="wx-text-section-title text-[var(--wx-ink)]">Research first, every time.</h2>
           </div>
-          <ol className="wx-approach-3up-ol m-0 grid list-none gap-5 p-0 sm:grid-cols-3 sm:gap-6">
-            {APPROACH_STEPS.map((step) => (
-              <ApproachStepListItem key={step.title} step={step} reduceMotion={reduceMotion} />
+          <ol className="wx-approach-steps-bento">
+            {APPROACH_STEPS.map((step, index) => (
+              <ApproachStepListItem
+                key={step.title}
+                step={step}
+                reduceMotion={reduceMotion}
+                className={index === APPROACH_STEPS.length - 1 ? "wx-approach-step-card--bento-wide" : undefined}
+              />
             ))}
           </ol>
           <div
