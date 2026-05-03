@@ -248,6 +248,16 @@
   font-synthesis: none;
 }
 
+.wx-text-meta--relaxed {
+  line-height: var(--wx-text-meta-leading-relaxed);
+}
+
+/** Pair with `.wx-text-meta` for uppercase kickers (shared tracking). */
+.wx-text-kicker {
+  letter-spacing: var(--wx-text-kicker-tracking);
+  text-transform: uppercase;
+}
+
 .wx-text-sm {
   font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
   font-size: var(--wx-text-sm-size);
@@ -277,13 +287,17 @@
   font-synthesis: none;
 }
 
+.wx-text-overline--relaxed {
+  line-height: var(--wx-text-overline-leading-relaxed);
+}
+
 /* Studio / section uppercase labels (Services, Contact, …) */
 .wx-text-section-kicker {
   font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
   font-size: var(--wx-text-overline-size);
   line-height: var(--wx-text-overline-leading);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--wx-text-kicker-tracking);
   text-transform: uppercase;
   font-synthesis: none;
 }
@@ -342,6 +356,70 @@
   line-height: var(--wx-text-overline-leading);
   font-weight: 500;
   font-synthesis: none;
+}
+
+.wx-text-section-title {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-section-title-size);
+  line-height: var(--wx-text-section-title-leading);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-text-section-title {
+    font-size: var(--wx-text-section-title-size-sm);
+  }
+}
+
+.wx-text-subsection-title {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-subsection-title-size);
+  line-height: var(--wx-text-subsection-title-leading);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-text-subsection-title {
+    font-size: var(--wx-text-subsection-title-size-sm);
+  }
+}
+
+.wx-text-page-title {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-page-title-size);
+  line-height: var(--wx-text-page-title-leading);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  font-synthesis: none;
+}
+
+@media (min-width: 40rem) {
+  .wx-text-page-title {
+    font-size: var(--wx-text-page-title-size-sm);
+  }
+}
+
+.wx-text-chapter-title {
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-chapter-title-size);
+  line-height: var(--wx-text-chapter-title-leading);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  font-synthesis: none;
+}
+
+.wx-text-chapter-title--active {
+  font-size: var(--wx-text-chapter-title-size-active);
+}
+
+@media (min-width: 40rem) {
+  .wx-text-chapter-title--active {
+    font-size: var(--wx-text-chapter-title-size-active-sm);
+  }
 }
 
 /* Per-step: --wx-approach-accent (hex or var) on the <li> */
@@ -1651,17 +1729,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Idle end caps follow the track curvature so corners do not show empty “ears”. */
-.site-canvas .wx-tab-track__scroll > .wx-tab:first-child:not([aria-selected="true"]) {
-  border-top-left-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
-  border-bottom-left-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
-}
-
-.site-canvas .wx-tab-track__scroll > .wx-tab:last-child:not([aria-selected="true"]) {
-  border-top-right-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
-  border-bottom-right-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
-}
-
 @supports not (backdrop-filter: blur(1px)) {
   .site-canvas .wx-tab-track {
     background-color: var(--wx-tab-track-solid);
@@ -1675,18 +1742,18 @@
   height: var(--wx-tab-pill-height);
   min-width: var(--wx-tab-pill-height);
   padding-inline: 0.5rem;
-  border-radius: 0;
+  border-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   transition:
-    border-radius 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    min-width 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    padding 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    min-width 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Rounded chip only for the active section; idle slots read square in the track. */
 .site-canvas .wx-tab[aria-selected="true"] {
-  border-radius: var(--wx-radius-segment);
+  border-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
   min-width: max(var(--wx-tab-pill-min-width), var(--wx-tab-pill-height));
   padding-inline: 0.875rem;
 }

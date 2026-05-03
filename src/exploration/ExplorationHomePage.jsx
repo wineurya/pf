@@ -1046,7 +1046,7 @@ function WorkCardLinkOverlays({
           <ViewTransitionLink
             to={entry.caseStudyPath}
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1.5 wx-text-meta font-normal leading-snug tracking-wide text-[color-mix(in_srgb,var(--wx-ink)_88%,var(--wx-page-bg))] no-underline transition-colors hover:text-[var(--wx-ink)] hover:underline hover:decoration-[color-mix(in_srgb,var(--wx-ink)_35%,transparent)] hover:underline-offset-4 focus:outline-none focus-visible:outline-none"
+            className="inline-flex items-center gap-1.5 wx-text-meta text-[color-mix(in_srgb,var(--wx-ink)_88%,var(--wx-page-bg))] no-underline transition-colors hover:text-[var(--wx-ink)] hover:underline hover:decoration-[color-mix(in_srgb,var(--wx-ink)_35%,transparent)] hover:underline-offset-4 focus:outline-none focus-visible:outline-none"
             aria-label={`${entry.title} — case study page`}
           >
             Case Study
@@ -1672,7 +1672,7 @@ function QualificationForm({ reduceMotion }) {
           <HugeiconsIcon icon={Mail01Icon} size={15} strokeWidth={1.6} />
           Send brief
         </motion.button>
-        <p className="wx-text-overline leading-relaxed text-[var(--wx-muted)]">
+        <p className="wx-text-overline wx-text-overline--relaxed text-[var(--wx-muted)]">
           Opens your mail client with the brief preformatted. No data leaves your device.
         </p>
       </div>
@@ -2066,7 +2066,7 @@ function ExplorationMainStudioSection({ reduceMotion }) {
       >
         <div className="space-y-3 lg:col-span-3 lg:space-y-4">
           <p className="wx-text-section-kicker text-[var(--wx-muted)]">Studio</p>
-          <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
+          <h2 className="wx-text-section-title text-[var(--wx-ink)]">
             Research-led design, built end to end.
           </h2>
           <p className="wx-text-body-secondary text-[var(--wx-muted)]">
@@ -2195,7 +2195,7 @@ function ExplorationMainApproachSection({ reduceMotion }) {
         >
           <div className="max-w-2xl space-y-2 lg:space-y-3">
             <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
-            <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">Research first, every time.</h2>
+            <h2 className="wx-text-section-title text-[var(--wx-ink)]">Research first, every time.</h2>
           </div>
           <ol className="wx-approach-3up-ol m-0 grid list-none gap-5 p-0 sm:grid-cols-3 sm:gap-6">
             {APPROACH_STEPS.map((step) => (
@@ -2218,7 +2218,7 @@ function ExplorationMainApproachSection({ reduceMotion }) {
             <div key={stat.label} className="space-y-2">
               <p className="wx-stat-value">{stat.value}</p>
               <p className="wx-text-sm font-medium text-[var(--wx-ink)]">{stat.label}</p>
-              <p className="wx-text-meta leading-relaxed text-[var(--wx-muted)]">{stat.hint}</p>
+              <p className="wx-text-meta wx-text-meta--relaxed text-[var(--wx-muted)]">{stat.hint}</p>
             </div>
           ))}
         </div>
@@ -2229,7 +2229,7 @@ function ExplorationMainApproachSection({ reduceMotion }) {
       >
         <div className="mb-6 space-y-2">
           <p className="wx-text-section-kicker text-[var(--wx-muted)]">FAQ</p>
-          <h3 className="text-xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-2xl">Questions, answered.</h3>
+          <h3 className="wx-text-subsection-title text-[var(--wx-ink)]">Questions, answered.</h3>
         </div>
         <FaqAccordion reduceMotion={reduceMotion} />
       </RevealCard>
@@ -2252,7 +2252,7 @@ function ExplorationMainContactSection({ reduceMotion }) {
         <div className="grid gap-6 p-6 sm:gap-8 sm:p-8 lg:gap-10 lg:p-10">
           <div className="space-y-4 lg:space-y-5">
             <p className="wx-text-section-kicker text-[var(--wx-muted)]">Contact</p>
-            <h2 className="text-2xl font-medium tracking-tight text-[var(--wx-ink)] sm:text-3xl">
+            <h2 className="wx-text-section-title text-[var(--wx-ink)]">
               Tell me what you&apos;re building.
             </h2>
             <p className="max-w-xl wx-text-body-secondary text-[var(--wx-muted)]">

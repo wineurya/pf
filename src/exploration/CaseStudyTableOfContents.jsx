@@ -38,7 +38,7 @@ function ChapterRow({ chapter, index, active, onSelect }) {
             {chapter.eyebrow ? (
               <span
                 className={clsx(
-                  "block wx-text-meta uppercase tracking-[0.14em]",
+                  "block wx-text-meta wx-text-kicker",
                   active
                     ? "text-[var(--wx-muted)]"
                     : "text-[color-mix(in_srgb,var(--wx-muted)_70%,transparent)]",
@@ -49,10 +49,11 @@ function ChapterRow({ chapter, index, active, onSelect }) {
             ) : null}
             <span
               className={clsx(
-                "mt-1 block font-medium tracking-tight",
+                "wx-text-chapter-title mt-1 block",
+                active && "wx-text-chapter-title--active",
                 active
-                  ? "text-lg text-[var(--wx-ink)] sm:text-xl"
-                  : "text-base text-[color-mix(in_srgb,var(--wx-ink)_82%,var(--wx-page-bg))]",
+                  ? "text-[var(--wx-ink)]"
+                  : "text-[color-mix(in_srgb,var(--wx-ink)_82%,var(--wx-page-bg))]",
               )}
             >
               {chapter.title}
@@ -67,7 +68,7 @@ function ChapterRow({ chapter, index, active, onSelect }) {
                   exit={{ opacity: 0, height: 0, marginTop: 0 }}
                   transition={{ duration: 0.36, ease: EASE }}
                 >
-                  <span className="block wx-text-body-secondary leading-relaxed text-[var(--wx-muted)]">
+                  <span className="wx-text-body-secondary block text-[var(--wx-muted)]">
                     {chapter.lede}
                   </span>
                 </motion.span>
@@ -115,7 +116,7 @@ export function CaseStudyTableOfContents({ chapters, activeIndex, reduceMotion }
     <nav className="w-full min-w-0" aria-labelledby="case-study-toc-heading">
       <p
         id="case-study-toc-heading"
-        className="wx-text-meta mb-4 text-left uppercase tracking-[0.18em] text-[var(--wx-muted)]"
+        className="wx-text-meta wx-text-kicker mb-4 text-left text-[var(--wx-muted)]"
       >
         Chapters
       </p>

@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component {
         >
           <p className="wx-text-sm font-medium">Something went wrong.</p>
           {isDev ? (
-            <pre className="wx-text-meta mt-4 max-h-[50vh] overflow-auto rounded-md bg-[var(--color-bg)] p-4 leading-relaxed whitespace-pre-wrap text-[var(--color-fg-secondary)]">
+            <pre className="wx-text-meta wx-text-meta--relaxed mt-4 max-h-[50vh] overflow-auto rounded-md bg-[var(--color-bg)] p-4 whitespace-pre-wrap text-[var(--color-fg-secondary)]">
               {String(this.state.error)}
             </pre>
           ) : null}

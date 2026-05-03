@@ -356,6 +356,34 @@
   --wx-text-aside-footer-size: 0.625rem;
   /* Form fields — 14px to match `wx-text-sm` / controls */
   --wx-text-form-input-leading: 1.45;
+
+  /* Uppercase kicker / meta label tracking (aside, TOC, case headers) */
+  --wx-text-kicker-tracking: 0.18em;
+  /* Prefer modifier classes over stacking Tailwind `leading-*` on `.wx-text-*` */
+  --wx-text-meta-leading-relaxed: 1.625;
+  --wx-text-overline-leading-relaxed: 1.625;
+
+  /* Section heading (home h2) — was Tailwind text-2xl / sm:text-3xl */
+  --wx-text-section-title-size: 1.5rem;
+  --wx-text-section-title-size-sm: 1.875rem;
+  --wx-text-section-title-leading: 1.2;
+
+  /* Subsection / stepped title (home FAQ h3, Siren step h2) — text-xl / sm:text-2xl */
+  --wx-text-subsection-title-size: 1.25rem;
+  --wx-text-subsection-title-size-sm: 1.5rem;
+  --wx-text-subsection-title-leading: 1.2;
+
+  /* Case / page title (aside h1, simple case header) — text-3xl / sm:text-4xl */
+  --wx-text-page-title-size: 1.875rem;
+  --wx-text-page-title-size-sm: 2.25rem;
+  --wx-text-page-title-leading: 1.05;
+
+  /* TOC chapter row primary line — idle text-base; active text-lg / sm:text-xl */
+  --wx-text-chapter-title-size: 1rem;
+  --wx-text-chapter-title-leading: 1.375;
+  --wx-text-chapter-title-size-active: 1.125rem;
+  --wx-text-chapter-title-size-active-sm: 1.25rem;
+
   --wx-pad-x: clamp(1.25rem, 4vw, 3.75rem);
   --wx-space-section: clamp(1.75rem, 4vw, 2.5rem);
   --wx-selection-bg: color-mix(in srgb, var(--wx-primary) 22%, transparent);

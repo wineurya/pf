@@ -8,10 +8,8 @@ const META_T = { duration: 0.24, ease: [0.22, 1, 0.36, 1] };
 function CaseStudyHeading({ def }) {
   return (
     <div className="flex flex-col items-start gap-2 text-left">
-      <p className="wx-text-meta uppercase tracking-[0.18em] text-[var(--wx-muted)]">{def.kicker}</p>
-      <h1 className="font-medium tracking-tight text-[var(--wx-ink)] text-3xl leading-[1.05] sm:text-4xl">
-        {def.title}
-      </h1>
+      <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">{def.kicker}</p>
+      <h1 className="wx-text-page-title text-[var(--wx-ink)]">{def.title}</h1>
       {def.lede ? (
         <p className="mt-1 max-w-md wx-text-body-secondary text-[var(--wx-muted)]">{def.lede}</p>
       ) : null}
@@ -39,7 +37,7 @@ function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
           {" / "}
           {totalLabel}
         </span>
-        <span className="ml-3 uppercase tracking-[0.18em]">Case study</span>
+        <span className="wx-text-kicker ml-3">Case study</span>
       </p>
     </div>
   );

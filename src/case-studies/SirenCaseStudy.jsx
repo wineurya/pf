@@ -7,11 +7,11 @@ export function SirenCaseStudy({ def }) {
   return (
     <article className="flex flex-col gap-12">
       <header className="max-w-2xl">
-        <p className="wx-text-sm font-medium tracking-wide text-[color-mix(in_srgb,var(--wx-ink)_55%,var(--wx-page-bg))] uppercase">
+        <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">
           {def.kicker}
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{def.title}</h1>
-        <p className="mt-4 wx-text-body-secondary text-[color-mix(in_srgb,var(--wx-ink)_78%,var(--wx-page-bg))]">
+        <h1 className="wx-text-page-title mt-2 text-[var(--wx-ink)]">{def.title}</h1>
+        <p className="wx-text-body-secondary mt-4 text-[var(--wx-muted)]">
           {def.lede}
         </p>
       </header>
@@ -25,7 +25,7 @@ export function SirenCaseStudy({ def }) {
               <p className="wx-text-overline font-mono text-[color-mix(in_srgb,var(--wx-ink)_45%,var(--wx-page-bg))]">
                 {String(i + 1).padStart(2, "0")}
               </p>
-              <h2 className="mt-1 text-xl font-semibold tracking-tight">{step.title}</h2>
+              <h2 className="wx-text-subsection-title mt-1 text-[var(--wx-ink)]">{step.title}</h2>
               <p className="mt-2 wx-text-sm text-[color-mix(in_srgb,var(--wx-ink)_80%,var(--wx-page-bg))]">
                 {step.blurb}
               </p>
