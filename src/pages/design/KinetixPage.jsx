@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import {
   LayoutDashboard, Zap, Map, ShieldCheck, FileText, Settings,
   ChevronDown, ChevronsLeft, ChevronsRight, Bell, RotateCcw, Check, Loader2,
@@ -9,6 +9,33 @@ import {
   Eye, Terminal, Sparkles,
 } from 'lucide-react'
 import './KinetixPage.css'
+
+/** Shared easing for Kinetix load choreography */
+const KX_EASE = [0.32, 0.72, 0, 1]
+
+function kxSlideFadeVariants(reduce, { x = 0, y = 8 } = {}) {
+  return {
+    hidden: { opacity: reduce ? 1 : 0, x: reduce ? 0 : x, y: reduce ? 0 : y },
+    show: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: { duration: reduce ? 0 : 0.32, ease: KX_EASE },
+    },
+  }
+}
+
+function kxStaggerContainer(reduce, { stagger = 0.04, delayChildren = 0 } = {}) {
+  return {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: reduce ? 0 : stagger,
+        delayChildren: reduce ? 0 : delayChildren,
+      },
+    },
+  }
+}
 
 // ─── Assets ───────────────────────────────────────────────────────────────────
 
@@ -171,13 +198,22 @@ function Sparkline({ points, color, idSuffix, width = 64, height = 22, className
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 function Sidebar({ active, setActive, expanded, onToggle }) {
+  const reduce = useReducedMotion()
+  const navItem = kxSlideFadeVariants(reduce, { x: -8, y: 0 })
+  const navStagger = kxStaggerContainer(reduce, { stagger: 0.034, delayChildren: reduce ? 0 : 0.06 })
+
   return (
     <aside
       id="kx-sidebar"
       className="kx-sidebar"
       aria-label="Workspace navigation"
     >
-      <div className="kx-logo">
+      <motion.div
+        className="kx-logo"
+        variants={kxSlideFadeVariants(reduce, { x: -10, y: 0 })}
+        initial="hidden"
+        animate="show"
+      >
         <div className="kx-logo-mark" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M2 7L6 3L10 7L6 11L2 7Z" fill="white" opacity="0.95" />
@@ -199,21 +235,36 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
             <ChevronsRight size={15} strokeWidth={2.2} aria-hidden />
           )}
         </button>
-      </div>
+      </motion.div>
 
-      <div className="kx-search">
+      <motion.div
+        className="kx-search"
+        variants={kxSlideFadeVariants(reduce, { x: -10, y: 0 })}
+        initial="hidden"
+        animate="show"
+        transition={{ delay: reduce ? 0 : 0.05 }}
+      >
         <Search size={13} />
         <input placeholder="Search projects…" />
         <kbd>⌘K</kbd>
-      </div>
+      </motion.div>
 
-      <nav className="kx-nav" aria-label="Main navigation">
-        <div className="kx-nav-section">Workspace</div>
+      <motion.nav
+        className="kx-nav"
+        aria-label="Main navigation"
+        variants={navStagger}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.div className="kx-nav-section" variants={navItem}>
+          Workspace
+        </motion.div>
         {NAV_ITEMS.map(({ id, label, Icon, badge }) => (
-          <button
+          <motion.button
             key={id}
             type="button"
             className={`kx-nav-item${active === id ? ' kx-active' : ''}`}
+            variants={navItem}
             onClick={() => setActive(id)}
             aria-current={active === id ? 'page' : undefined}
             title={badge != null ? `${label} · ${badge} notifications` : label}
@@ -221,17 +272,25 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
             <Icon size={15} />
             <span>{label}</span>
             {badge != null && <span className="kx-nav-badge">{badge}</span>}
-          </button>
+          </motion.button>
         ))}
 
-        <div className="kx-nav-section" style={{ marginTop: 8 }}>General</div>
-        <button type="button" className="kx-nav-item" title="Settings">
+        <motion.div className="kx-nav-section" style={{ marginTop: 8 }} variants={navItem}>
+          General
+        </motion.div>
+        <motion.button type="button" className="kx-nav-item" title="Settings" variants={navItem}>
           <Settings size={15} />
           <span>Settings</span>
-        </button>
-      </nav>
+        </motion.button>
+      </motion.nav>
 
-      <div className="kx-sidebar-footer">
+      <motion.div
+        className="kx-sidebar-footer"
+        variants={kxSlideFadeVariants(reduce, { x: -8, y: 0 })}
+        initial="hidden"
+        animate="show"
+        transition={{ delay: reduce ? 0 : 0.34 }}
+      >
         <button type="button" className="kx-team-card" title="Acme Studio · Pro · 12 seats">
           <img className="kx-avatar kx-avatar-md" src={AVATARS.team} alt="" />
           <div className="kx-team-card-text">
@@ -240,7 +299,7 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
           </div>
           <ChevronDown size={12} />
         </button>
-      </div>
+      </motion.div>
     </aside>
   )
 }
@@ -248,35 +307,44 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
 // ─── Top bar ──────────────────────────────────────────────────────────────────
 
 function TopBar({ simState, onRunSim, onViewReport }) {
+  const reduce = useReducedMotion()
+  const barItem = kxSlideFadeVariants(reduce, { x: 0, y: -6 })
+  const barStagger = kxStaggerContainer(reduce, { stagger: 0.04, delayChildren: reduce ? 0 : 0.03 })
+
   const btnClass =
     simState === 'idle'     ? 'kx-run-btn kx-run-btn-idle' :
     simState === 'loading'  ? 'kx-run-btn kx-run-btn-loading' :
                               'kx-run-btn kx-run-btn-complete'
 
   return (
-    <header className="kx-topbar">
-      <span className="kx-breadcrumb">
+    <motion.header
+      className="kx-topbar"
+      variants={barStagger}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.span className="kx-breadcrumb" variants={barItem}>
         <span>Kinetix</span>
-      </span>
+      </motion.span>
 
-      <button className="kx-project-selector">
+      <motion.button className="kx-project-selector" variants={barItem} type="button">
         <FileBarChart2 size={13} style={{ color: 'var(--kx-blue)', opacity: 0.85 }} />
         Checkout Redesign
         <span className="kx-version-tag">v4.2.1</span>
         <ChevronDown size={12} style={{ opacity: 0.45 }} />
-      </button>
+      </motion.button>
 
-      <span className="kx-topbar-status" aria-label="Complete, 2 minutes ago">
+      <motion.span className="kx-topbar-status" variants={barItem} aria-label="Complete, 2 minutes ago">
         <span className="kx-pill kx-pill-success" style={{ fontSize: 11 }}>
           <span className="kx-pill-dot" />
           Complete
         </span>
         <span className="kx-topbar-status-time">2 min ago</span>
-      </span>
+      </motion.span>
 
-      <div className="kx-topbar-gap" />
+      <motion.div className="kx-topbar-gap" variants={barItem} aria-hidden="true" />
 
-      <div className="kx-topbar-actions">
+      <motion.div className="kx-topbar-actions" variants={barItem}>
         <div className="kx-team-avatars" aria-label="Team">
           <img className="kx-avatar kx-avatar-sm" src={AVATARS.maya}  alt="" />
           <img className="kx-avatar kx-avatar-sm" src={AVATARS.tomas} alt="" />
@@ -305,17 +373,28 @@ function TopBar({ simState, onRunSim, onViewReport }) {
           {simState === 'loading'  && <><Loader2 size={13} className="kx-spin" /> Simulating…</>}
           {simState === 'complete' && <><Check size={13} /> Simulation Complete</>}
         </button>
-      </div>
-    </header>
+      </motion.div>
+    </motion.header>
   )
 }
 
 // ─── Metric cards ─────────────────────────────────────────────────────────────
 
 function MetricCards() {
+  const reduce = useReducedMotion()
+  const rowStagger = kxStaggerContainer(reduce, { stagger: 0.055, delayChildren: reduce ? 0 : 0.09 })
+  const cardItem = kxSlideFadeVariants(reduce, { y: 10 })
+
   return (
-    <div className="kx-metrics-row" role="list" aria-label="Simulation metrics">
-      {METRICS.map((metric, i) => {
+    <motion.div
+      className="kx-metrics-row"
+      role="list"
+      aria-label="Simulation metrics"
+      variants={rowStagger}
+      initial="hidden"
+      animate="show"
+    >
+      {METRICS.map((metric) => {
         const { label, value, sub, trend, trendLabel, trendSuffix, trendIcon: Icon, spark, color } = metric
         const trendPill = trend ? (
           <span className={`kx-metric-trend kx-trend-${trend}`}>
@@ -331,9 +410,7 @@ function MetricCards() {
             key={label}
             className="kx-metric-card kx-metric-card-large-spark"
             role="listitem"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.34, delay: i * 0.06, ease: [0.32, 0.72, 0, 1] }}
+            variants={cardItem}
           >
             <div className="kx-metric-body">
               <div className="kx-metric-top">
@@ -357,7 +434,7 @@ function MetricCards() {
           </motion.div>
         )
       })}
-    </div>
+    </motion.div>
   )
 }
 
@@ -469,41 +546,57 @@ function CheckoutPhone() {
 // ─── Prototype preview panel ───────────────────────────────────────────────────
 
 function PrototypePreview() {
+  const reduce = useReducedMotion()
   const [tab, setTab] = useState('heatmap')
   const [device, setDevice] = useState('mobile')
 
+  const headStagger = kxStaggerContainer(reduce, { stagger: 0.042, delayChildren: 0 })
+  const headPiece = kxSlideFadeVariants(reduce, { y: -6 })
+  const bodyStagger = kxStaggerContainer(reduce, { stagger: 0.08, delayChildren: reduce ? 0 : 0.03 })
+  const bodyPiece = kxSlideFadeVariants(reduce, { y: 14 })
+
   return (
-    <div className="kx-card kx-preview-card">
-      <div className="kx-card-head">
-        <div className="kx-preview-tabs">
+    <motion.div
+      className="kx-card kx-preview-card"
+      initial={reduce ? false : { opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduce ? 0 : 0.4, ease: KX_EASE, delay: reduce ? 0 : 0.1 }}
+    >
+      <motion.div className="kx-card-head" variants={headStagger} initial="hidden" animate="show">
+        <motion.div className="kx-preview-tabs" variants={headPiece}>
           <button
+            type="button"
             className={`kx-tab${tab === 'heatmap' ? ' kx-active' : ''}`}
             onClick={() => setTab('heatmap')}
           >
             <Eye size={11} /> Heatmap
           </button>
           <button
+            type="button"
             className={`kx-tab${tab === 'recordings' ? ' kx-active' : ''}`}
             onClick={() => setTab('recordings')}
           >
             Recordings <span className="kx-tab-count">12</span>
           </button>
           <button
+            type="button"
             className={`kx-tab${tab === 'annotations' ? ' kx-active' : ''}`}
             onClick={() => setTab('annotations')}
           >
             Annotations <span className="kx-tab-count">4</span>
           </button>
           <button
+            type="button"
             className={`kx-tab${tab === 'console' ? ' kx-active' : ''}`}
             onClick={() => setTab('console')}
           >
             <Terminal size={11} /> Console
           </button>
-        </div>
+        </motion.div>
 
-        <div className="kx-device-toggle" role="group" aria-label="Device size">
+        <motion.div className="kx-device-toggle" role="group" aria-label="Device size" variants={headPiece}>
           <button
+            type="button"
             className={`kx-device-btn${device === 'mobile' ? ' kx-active' : ''}`}
             onClick={() => setDevice('mobile')}
             aria-label="Mobile"
@@ -511,6 +604,7 @@ function PrototypePreview() {
             <Smartphone size={12} strokeWidth={2.2} />
           </button>
           <button
+            type="button"
             className={`kx-device-btn${device === 'tablet' ? ' kx-active' : ''}`}
             onClick={() => setDevice('tablet')}
             aria-label="Tablet"
@@ -518,25 +612,28 @@ function PrototypePreview() {
             <Tablet size={12} strokeWidth={2.2} />
           </button>
           <button
+            type="button"
             className={`kx-device-btn${device === 'desktop' ? ' kx-active' : ''}`}
             onClick={() => setDevice('desktop')}
             aria-label="Desktop"
           >
             <Monitor size={12} strokeWidth={2.2} />
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      <div className="kx-preview-body">
-        <CheckoutPhone />
+      <motion.div className="kx-preview-body" variants={bodyStagger} initial="hidden" animate="show">
+        <motion.div variants={bodyPiece} style={{ flexShrink: 0 }}>
+          <CheckoutPhone />
+        </motion.div>
 
-        <div className="kx-phone-annotations" aria-label="Issue annotations">
+        <motion.div className="kx-phone-annotations" aria-label="Issue annotations" variants={bodyPiece}>
           {[
             { num: 1, color: '#DC2626', label: 'CTA drop-off',     sub: 'Below thumb zone' },
             { num: 2, color: '#D97706', label: 'Form hesitation',  sub: 'Payment section' },
             { num: 3, color: '#D97706', label: 'Contrast risk',    sub: 'Secondary action' },
           ].map(({ num, color, label, sub }) => (
-            <button key={num} className="kx-annotation">
+            <button key={num} type="button" className="kx-annotation">
               <div className="kx-annotation-num" style={{ background: color }}>{num}</div>
               <div className="kx-annotation-body">
                 <div className="kx-annotation-label">{label}</div>
@@ -546,12 +643,12 @@ function PrototypePreview() {
             </button>
           ))}
 
-          <button className="kx-add-annotation">
+          <button type="button" className="kx-add-annotation">
             <Plus size={11} strokeWidth={2.5} /> Add annotation
           </button>
-        </div>
+        </motion.div>
 
-        <div className="kx-analysis-bar" aria-live="polite">
+        <motion.div className="kx-analysis-bar" aria-live="polite" variants={bodyPiece}>
           <div className="kx-analysis-bar-main">
             <div className="kx-analysis-dot" aria-hidden="true" />
             <span className="kx-analysis-text">10,000 sessions analyzed</span>
@@ -559,15 +656,16 @@ function PrototypePreview() {
           <div className="kx-analysis-bar-date">
             <span className="kx-analysis-date">Apr 28, 2026</span>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   )
 }
 
 // ─── Insights panel ────────────────────────────────────────────────────────────
 
 function InsightsPanel() {
+  const reduce = useReducedMotion()
   const [filter, setFilter] = useState('all')
   const counts = {
     high: ISSUES.filter(i => i.severity === 'high').length,
@@ -576,9 +674,25 @@ function InsightsPanel() {
   }
   const visible = filter === 'all' ? ISSUES : ISSUES.filter(i => i.severity === filter)
 
+  const tabStagger = kxStaggerContainer(reduce, { stagger: 0.032, delayChildren: reduce ? 0 : 0.05 })
+  const tabItem = kxSlideFadeVariants(reduce, { y: 6 })
+  const listStagger = kxStaggerContainer(reduce, { stagger: 0.055, delayChildren: reduce ? 0 : 0.02 })
+  const listItem = kxSlideFadeVariants(reduce, { x: 8, y: 0 })
+
   return (
-    <div className="kx-card kx-insights-card">
-      <div className="kx-card-head kx-insights-head">
+    <motion.div
+      className="kx-card kx-insights-card"
+      initial={reduce ? false : { opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduce ? 0 : 0.4, ease: KX_EASE, delay: reduce ? 0 : 0.18 }}
+    >
+      <motion.div
+        className="kx-card-head kx-insights-head"
+        variants={kxSlideFadeVariants(reduce, { y: -6 })}
+        initial="hidden"
+        animate="show"
+        transition={{ delay: reduce ? 0 : 0.04 }}
+      >
         <div>
           <span className="kx-card-title">Friction Insights</span>
           <span className="kx-insights-summary">Sorted by checkout risk</span>
@@ -586,53 +700,61 @@ function InsightsPanel() {
         <span className="kx-insights-total" aria-label={`${ISSUES.length} issues`}>
           {ISSUES.length}
         </span>
-      </div>
+      </motion.div>
 
-      <div className="kx-insights-tabs" role="tablist">
-        <button
+      <motion.div
+        className="kx-insights-tabs"
+        role="tablist"
+        variants={tabStagger}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.button
+          type="button"
           className={`kx-mini-tab${filter === 'all' ? ' kx-active' : ''}`}
+          variants={tabItem}
           onClick={() => setFilter('all')}
           role="tab"
           aria-selected={filter === 'all'}
         >
           All <span>{ISSUES.length}</span>
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          type="button"
           className={`kx-mini-tab${filter === 'high' ? ' kx-active' : ''}`}
+          variants={tabItem}
           onClick={() => setFilter('high')}
           role="tab"
           aria-selected={filter === 'high'}
         >
           High <span>{counts.high}</span>
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          type="button"
           className={`kx-mini-tab${filter === 'med' ? ' kx-active' : ''}`}
+          variants={tabItem}
           onClick={() => setFilter('med')}
           role="tab"
           aria-selected={filter === 'med'}
         >
           Med <span>{counts.med}</span>
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          type="button"
           className={`kx-mini-tab${filter === 'low' ? ' kx-active' : ''}`}
+          variants={tabItem}
           onClick={() => setFilter('low')}
           role="tab"
           aria-selected={filter === 'low'}
         >
           Low <span>{counts.low}</span>
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
-      <div className="kx-insights-list" role="list">
+      <motion.div className="kx-insights-list" role="list" variants={listStagger} initial="hidden" animate="show">
         {visible.map((issue, i) => (
           <div key={issue.id}>
-            <motion.div
-              className="kx-insight-row"
-              role="listitem"
-              initial={{ opacity: 0, x: 4 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.28, delay: 0.12 + i * 0.05, ease: [0.32, 0.72, 0, 1] }}
-            >
+            <motion.div className="kx-insight-row" role="listitem" variants={listItem}>
               <div className="kx-insight-rail" style={{ background: issue.color }} aria-hidden="true" />
               <div className="kx-insight-body">
                 <div className="kx-insight-top">
@@ -653,23 +775,18 @@ function InsightsPanel() {
             {i < visible.length - 1 && <div className="kx-insight-divider" />}
           </div>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 
 // ─── Recommendation cards ──────────────────────────────────────────────────────
 
-function RecCard({ rec, expanded, onToggle, index }) {
+function RecCard({ rec, expanded, onToggle, variants }) {
   const isOpen = expanded === rec.id
 
   return (
-    <motion.div
-      className="kx-rec-card"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.32, delay: 0.22 + index * 0.07, ease: [0.32, 0.72, 0, 1] }}
-    >
+    <motion.div className="kx-rec-card" variants={variants}>
       <button
         className="kx-rec-header"
         onClick={() => onToggle(rec.id)}
@@ -716,22 +833,35 @@ function RecCard({ rec, expanded, onToggle, index }) {
 }
 
 function RecsRow({ expanded, onToggle }) {
+  const reduce = useReducedMotion()
+  const recItem = kxSlideFadeVariants(reduce, { y: 14 })
+  const labelVars = kxSlideFadeVariants(reduce, { y: 8 })
+  const rowStagger = kxStaggerContainer(reduce, { stagger: 0.075, delayChildren: reduce ? 0 : 0.04 })
+
   return (
-    <div>
-      <div className="kx-section-label" style={{ marginBottom: 9 }}>
+    <div className="kx-recs-wrap">
+      <motion.div
+        className="kx-section-label"
+        style={{ marginBottom: 9 }}
+        variants={labelVars}
+        initial="hidden"
+        animate="show"
+        transition={{ delay: reduce ? 0 : 0.05 }}
+      >
         Recommendations
-      </div>
-      <div className="kx-recs-row" role="list" aria-label="Recommendations">
-        {RECS.map((rec, i) => (
-          <RecCard
-            key={rec.id}
-            rec={rec}
-            expanded={expanded}
-            onToggle={onToggle}
-            index={i}
-          />
+      </motion.div>
+      <motion.div
+        className="kx-recs-row"
+        role="list"
+        aria-label="Recommendations"
+        variants={rowStagger}
+        initial="hidden"
+        animate="show"
+      >
+        {RECS.map((rec) => (
+          <RecCard key={rec.id} rec={rec} expanded={expanded} onToggle={onToggle} variants={recItem} />
         ))}
-      </div>
+      </motion.div>
     </div>
   )
 }
@@ -739,13 +869,14 @@ function RecsRow({ expanded, onToggle }) {
 // ─── Report modal ──────────────────────────────────────────────────────────────
 
 function ReportModal({ onClose }) {
+  const reduce = useReducedMotion()
   return (
     <motion.div
       className="kx-modal-backdrop"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
+      transition={{ duration: reduce ? 0 : 0.18, ease: KX_EASE }}
       onClick={onClose}
     >
       <motion.div
@@ -753,7 +884,11 @@ function ReportModal({ onClose }) {
         initial={{ scale: 0.96, y: 10, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.97, y: 6, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 360, damping: 30 }}
+        transition={
+          reduce
+            ? { duration: 0 }
+            : { type: 'spring', stiffness: 360, damping: 30 }
+        }
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -822,6 +957,7 @@ function ReportModal({ onClose }) {
 // ─── KinetixPage ──────────────────────────────────────────────────────────────
 
 export default function KinetixPage() {
+  const reduce = useReducedMotion()
   const [activeNav,  setActiveNav]  = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [simState,   setSimState]   = useState('complete')
@@ -854,7 +990,13 @@ export default function KinetixPage() {
           onViewReport={() => setShowReport(true)}
         />
 
-        <main className="kx-content" id="kx-main-content">
+        <motion.main
+          className="kx-content"
+          id="kx-main-content"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : 0.22, ease: KX_EASE, delay: reduce ? 0 : 0.02 }}
+        >
           <MetricCards />
 
           <div className="kx-center-grid">
@@ -863,7 +1005,7 @@ export default function KinetixPage() {
           </div>
 
           <RecsRow expanded={expandedRec} onToggle={handleToggleRec} />
-        </main>
+        </motion.main>
       </div>
 
       <AnimatePresence>
