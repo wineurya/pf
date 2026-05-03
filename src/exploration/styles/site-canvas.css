@@ -425,7 +425,7 @@
   border: 1px solid var(--wx-border-soft);
   background: var(--wx-white);
   box-shadow: none;
-  /* No left padding — accent bar sits flush to the inner left; icon line & lede use --wx-approach-align */
+  /* No left padding — accent bar flush left; lede aligns with title via --wx-approach-align */
   padding: 1.25rem 1.25rem 1.35rem 0;
   overflow: visible;
   -webkit-font-smoothing: antialiased;
@@ -435,18 +435,6 @@
   .site-canvas .wx-approach-step-card {
     padding: 1.5rem 1.5rem 1.5rem 0;
   }
-}
-
-.site-canvas .wx-approach-step-card__icon-line {
-  display: flex;
-  align-items: center;
-  min-height: 1.5rem;
-  padding-left: var(--wx-approach-align);
-  margin: 0 0 0.5rem;
-}
-
-.site-canvas .wx-approach-step-card__lucide {
-  color: var(--wx-muted);
 }
 
 .site-canvas .wx-approach-step-card__title-row {
@@ -494,7 +482,17 @@
   font-synthesis: none;
 }
 
-/* Groups heading + step cards; spacing between rows from parent */
+/* Reserved band below approach cards for a future visual */
+.site-canvas .wx-approach-visual-slot {
+  margin-top: 0;
+  min-height: min(20rem, 45vh);
+  max-width: 100%;
+  border-radius: var(--wx-radius-card);
+  box-sizing: border-box;
+  background: var(--wx-page-bg);
+}
+
+/* Groups heading + step cards + reserved visual slot; spacing between rows from parent */
 .site-canvas .wx-approach-3up-with-visual {
   display: block;
   width: 100%;
