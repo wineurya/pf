@@ -76,6 +76,7 @@ import {
 import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
 import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
+import { ApproachStepFolderVisualPair } from "@/exploration/ApproachStepFolderVisual.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
 const NUGGET_ICON_MAP = {
@@ -2150,14 +2151,19 @@ const APPROACH_STEPS = [
   },
 ];
 
-function ApproachStepListItem({ step, className }) {
+function ApproachStepListItem({ step, className, reduceMotion }) {
   return (
     <li className={clsx("wx-approach-step-card", className)} style={{ "--wx-approach-accent": step.accent }}>
-      <div className="wx-approach-step-card__title-row">
-        <span className="wx-approach-step-card__accent" aria-hidden />
-        <h3 className="wx-approach-step-card__title">{step.title}</h3>
+      <div className="wx-approach-step-card__main">
+        <div className="wx-approach-step-card__title-row">
+          <span className="wx-approach-step-card__accent" aria-hidden />
+          <h3 className="wx-approach-step-card__title">{step.title}</h3>
+        </div>
+        <p className="wx-approach-step-card__lede">{step.body}</p>
       </div>
-      <p className="wx-approach-step-card__lede">{step.body}</p>
+      <div className="wx-approach-step-card__visual">
+        <ApproachStepFolderVisualPair reduceMotion={reduceMotion} />
+      </div>
     </li>
   );
 }
@@ -2187,6 +2193,7 @@ function ExplorationMainApproachSection({ reduceMotion }) {
               <ApproachStepListItem
                 key={step.title}
                 step={step}
+                reduceMotion={reduceMotion}
                 className={index === APPROACH_STEPS.length - 1 ? "wx-approach-step-card--bento-wide" : undefined}
               />
             ))}
