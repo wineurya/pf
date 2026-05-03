@@ -438,10 +438,17 @@
   }
 }
 
-/* Figma 68:446 — reserve space + host folder visual (first step only). */
+/* Figma 68:446 — reserve space + host folder visual (first step only).
+   Card border/radius stay on <li> with overflow visible so the folder fan isn’t clipped.
+   Copy is clipped to the same radius inside `__text-clip`. */
 .site-canvas .wx-approach-step-card--with-folder-visual {
   overflow: visible;
   padding-bottom: calc(1.35rem + clamp(3rem, 9dvh, 5.5rem));
+}
+
+.site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__text-clip {
+  overflow: hidden;
+  border-radius: inherit;
 }
 
 @media (min-width: 40rem) {

@@ -2155,18 +2155,13 @@ const APPROACH_STEPS = [
 function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual }) {
   const [folderMotionActive, setFolderMotionActive] = useState(false);
 
-  const inner = (
+  const textBlock = (
     <>
       <div className="wx-approach-step-card__title-row">
         <span className="wx-approach-step-card__accent" aria-hidden />
         <h3 className="wx-approach-step-card__title">{step.title}</h3>
       </div>
       <p className="wx-approach-step-card__lede">{step.body}</p>
-      {showFolderVisual ? (
-        <div className="wx-approach-step-card__folder-visual">
-          <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} active={folderMotionActive} />
-        </div>
-      ) : null}
     </>
   );
 
@@ -2181,14 +2176,17 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual 
         }}
         onPointerLeave={() => setFolderMotionActive(false)}
       >
-        {inner}
+        <div className="wx-approach-step-card__text-clip">{textBlock}</div>
+        <div className="wx-approach-step-card__folder-visual">
+          <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} active={folderMotionActive} />
+        </div>
       </li>
     );
   }
 
   return (
     <li className={clsx("wx-approach-step-card", className)} style={{ "--wx-approach-accent": step.accent }}>
-      {inner}
+      {textBlock}
     </li>
   );
 }
