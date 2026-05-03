@@ -11,7 +11,7 @@ export function IncityCaseStudy({ def }) {
         <p className="wx-text-body-secondary mt-4 text-[var(--wx-muted)]">{def.lede}</p>
       </header>
       {def.heroImage ? (
-        <div className="overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
+        <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
           <img
             src={def.heroImage}
             alt=""

@@ -4,14 +4,8 @@
   background-color: var(--wx-page-bg);
   color: var(--wx-ink);
   --wx-warm-title-ink: #1a1a1a;
-  /**
-   * 200:88 outer field: 2% #1a1a1a on page, then 2% primary blue on that mix.
-   */
-  --wx-warm-figma-canvas: color-mix(
-    in srgb,
-    var(--wx-primary) 2%,
-    color-mix(in srgb, var(--wx-warm-title-ink) 2%, var(--wx-page-bg) 98%) 98%
-  );
+  /* Work cards — outer field; transparent mock centers use checker in `.wx-work-card__figma-mock` */
+  --wx-warm-figma-canvas: var(--wx-transparent-art-b, #dee1e6);
   /* Muted subcopy on photo (Figma: brown-gray, not flat black) */
   --wx-warm-body-ink: oklch(0.4 0.02 50 / 0.82);
   /* Figma 200:109 (Frame 6) art — `drop-shadow` on <img> (alpha), rgb(47,32,14); sync from Effects panel on re-export */
@@ -547,6 +541,7 @@
 /** Case study chapter anchors (`AvanceCaseStudy` sections) — match mobile sticky nav offset */
 .site-canvas .wx-case-section {
   scroll-margin-top: 0.75rem;
+  background-color: var(--wx-transparent-art-b);
 }
 
 @media (max-width: 639px) {
@@ -579,7 +574,8 @@
   width: 100%;
   overflow: hidden;
   aspect-ratio: var(--wx-gallery-aspect);
-  background-color: var(--wx-surface);
+  background-color: var(--wx-transparent-art-b);
+  background-image: var(--wx-transparent-art-checker);
 }
 
 .site-canvas .wx-gallery-frame > img {
@@ -590,6 +586,12 @@
   object-fit: cover;
   transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
   will-change: transform;
+}
+
+/* Case + editorial media wells — transparent PNG shows checker (A/B swatches) */
+.site-canvas .wx-transparent-art-well {
+  background-color: var(--wx-transparent-art-b);
+  background-image: var(--wx-transparent-art-checker);
 }
 
 /* Work card — default 16:9; optional `workCardAspect` (`1/1`, `4/5`). Full-bleed bg, top chrome, sweep */
@@ -605,7 +607,7 @@
   color: var(--wx-ink);
 }
 
-/* Figma 200:88 — canvas #E3DBD1 shows at rounded edge / before image loads */
+/* Figma 200:88 — card shell fill (`--wx-warm-figma-canvas` = light swatch); mock center uses checker */
 .site-canvas .wx-work-card--figma.wx-work-card--footer-warm {
   background-color: var(--wx-warm-figma-canvas);
 }
@@ -740,7 +742,13 @@
   width: calc(100% * 1410.14 / 2400);
   height: calc(100% * 1490.18 / 2400);
   transform: translate3d(-50%, -50%, 0);
-  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas));
+  background-color: var(--wx-transparent-art-b);
+  background-image: var(--wx-transparent-art-checker);
+}
+
+.site-canvas .wx-work-card--figma-20088[data-figma-canvas] .wx-work-card__figma-mock {
+  background-color: var(--wx-figma-200-canvas);
+  background-image: none;
 }
 
 /* Per-entry: mock box matches a flat export’s aspect (e.g. InCity 458:10858) — set `--wx-figma-mock-aspect` on the card. */
@@ -757,8 +765,14 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: var(--wx-figma-200-canvas, var(--wx-warm-figma-canvas));
+  background-color: var(--wx-transparent-art-b);
+  background-image: var(--wx-transparent-art-checker);
   overflow: visible;
+}
+
+.site-canvas .wx-work-card--figma-20088[data-figma-canvas] .wx-work-card__figma-mock-media {
+  background-color: var(--wx-figma-200-canvas);
+  background-image: none;
 }
 
 /* 200:88 with no `workCardBackgroundImage` — keep slot, no <img> or drop-shadow on missing asset. */

@@ -388,8 +388,19 @@
   --wx-space-section: clamp(1.75rem, 4vw, 2.5rem);
   --wx-selection-bg: color-mix(in srgb, var(--wx-primary) 22%, transparent);
   --wx-work-card-ring: color-mix(in srgb, var(--wx-black) 4%, transparent);
-  --wx-work-fallback-mid: var(--color-neutral-200);
-  --wx-work-fallback-end: var(--color-neutral-300);
+  /**
+   * Case studies + transparent PNG artboards — pair #ADB6BD / #DEE1E6.
+   * Checker shows through alpha; use solid `--wx-transparent-art-b` for flat fills.
+   */
+  --wx-transparent-art-a: #adb6bd;
+  --wx-transparent-art-b: #dee1e6;
+  --wx-transparent-art-checker: repeating-conic-gradient(
+      var(--wx-transparent-art-b) 0% 25%,
+      var(--wx-transparent-art-a) 0% 50%
+    )
+    50% / 14px 14px;
+  --wx-work-fallback-mid: var(--wx-transparent-art-a);
+  --wx-work-fallback-end: var(--wx-transparent-art-b);
   --wx-scrim-gradient: linear-gradient(
     to top,
     color-mix(in srgb, var(--wx-black) 78%, transparent) 0%,

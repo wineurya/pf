@@ -75,7 +75,8 @@
   margin: 0;
   border-radius: 0.5rem;
   overflow: hidden;
-  background: var(--wx-surface, var(--color-bg-subtle));
+  background-color: var(--wx-transparent-art-b);
+  background-image: var(--wx-transparent-art-checker);
   box-shadow: 0 1px 0 color-mix(in srgb, var(--wx-black, #000) 6%, transparent);
 }
 
@@ -122,7 +123,8 @@
   border-radius: 0.35rem;
   overflow: hidden;
   aspect-ratio: 16 / 10;
-  background: var(--wx-surface, var(--color-bg-subtle));
+  background-color: var(--wx-transparent-art-b);
+  background-image: var(--wx-transparent-art-checker);
 }
 
 .wc-step-figure img {
@@ -157,7 +159,8 @@
   overflow: hidden;
   aspect-ratio: 4 / 5;
   max-height: 70vh;
-  background: var(--wx-surface, var(--color-bg-subtle));
+  background-color: var(--wx-transparent-art-b);
+  background-image: var(--wx-transparent-art-checker);
 }
 
 .wc-strip-figure img {

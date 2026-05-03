@@ -19,7 +19,7 @@ export function ResolutionsCaseStudy({ def }) {
         {strips.map((strip) => (
           <figure
             key={strip.caption}
-            className="group relative m-0 overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]"
+            className="wx-transparent-art-well group relative m-0 overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]"
           >
             <img
               src={strip.image}

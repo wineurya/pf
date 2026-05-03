@@ -22,7 +22,7 @@ function CaseChapterSection({ chapter, index }) {
     >
       {chapter.image ? (
         <figure className="wx-case-section__figure relative w-full max-w-[min(52rem,94vw)] px-5 sm:px-8 lg:px-10">
-          <div className="overflow-hidden rounded-[var(--wx-radius-card)] p-5 sm:p-8 lg:p-10">
+          <div className="wx-transparent-art-well overflow-hidden rounded-[var(--wx-radius-card)] p-5 sm:p-8 lg:p-10">
             <img
               src={chapter.image}
               alt={chapter.imageAlt || ""}
@@ -60,7 +60,7 @@ export function AvanceCaseStudy({ def }) {
           </p>
         </header>
         {def.heroImage ? (
-          <div className="overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
+          <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
             <img
               src={def.heroImage}
               alt=""

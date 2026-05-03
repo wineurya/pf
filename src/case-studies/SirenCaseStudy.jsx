@@ -30,7 +30,7 @@ export function SirenCaseStudy({ def }) {
                 {step.blurb}
               </p>
             </div>
-            <div className="overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
+            <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
               <img
                 src={step.image}
                 alt=""
