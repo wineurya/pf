@@ -79,9 +79,9 @@
 
   --kx-font: var(--kx-font-display);
 
-  /* Two weights only (topbar + page): Medium + Semibold — no Bold (700). */
-  --kx-weight-display:        500; /* Medium    */
-  --kx-weight-display-strong: 600; /* Semibold  */
+  /* Two weights only (topbar + page): Regular + Medium — no Semibold (600). */
+  --kx-weight-display:        400; /* Regular */
+  --kx-weight-display-strong: 500; /* Medium   */
   --kx-weight-regular: var(--kx-weight-display);
   --kx-weight-strong:  var(--kx-weight-display-strong);
 
