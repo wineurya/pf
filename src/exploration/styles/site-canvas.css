@@ -440,6 +440,7 @@
 
 /* Figma 68:446 — reserve space + host folder visual (first step only). */
 .site-canvas .wx-approach-step-card--with-folder-visual {
+  overflow: visible;
   padding-bottom: calc(1.35rem + clamp(3rem, 9dvh, 5.5rem));
 }
 
@@ -503,6 +504,7 @@
   height: clamp(4.8rem, 8.75dvh, 6.25rem);
   align-items: flex-end;
   justify-content: center;
+  overflow: visible;
   pointer-events: none;
 }
 
@@ -511,6 +513,7 @@
   width: clamp(4.8rem, 45%, 6.2rem);
   aspect-ratio: 230 / 234;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .site-canvas .wx-approach-folder-visual__shell,
@@ -533,7 +536,7 @@
 .site-canvas .wx-approach-folder-visual__stage {
   z-index: 1;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .site-canvas .wx-approach-folder-visual__paper {
