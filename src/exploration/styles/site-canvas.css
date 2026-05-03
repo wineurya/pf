@@ -494,7 +494,7 @@
   font-synthesis: none;
 }
 
-/* Groups heading + step cards + figure; spacing between rows from parent */
+/* Groups heading + step cards; spacing between rows from parent */
 .site-canvas .wx-approach-3up-with-visual {
   display: block;
   width: 100%;
@@ -528,15 +528,6 @@
     grid-column: 1 / -1;
     padding: 1.5rem 1.75rem 1.6rem 0;
   }
-}
-
-/* Reserves space for a full-width approach visual; drop `aria-hidden` when adding real content */
-.site-canvas .wx-approach-figure-slot {
-  margin-top: 0;
-  min-height: min(20rem, 45vh);
-  max-width: 100%;
-  border-radius: var(--wx-radius-card);
-  box-sizing: border-box;
 }
 
 .wx-headline {

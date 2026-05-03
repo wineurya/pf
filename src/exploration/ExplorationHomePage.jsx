@@ -2207,11 +2207,6 @@ function ExplorationMainApproachSection({ reduceMotion }) {
               />
             ))}
           </ol>
-          <div
-            className="wx-approach-figure-slot w-full"
-            data-placeholder="approach-visual"
-            aria-hidden
-          />
         </div>
       </RevealCard>
       <RevealCard
