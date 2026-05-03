@@ -75,7 +75,7 @@
   margin: 0;
   border-radius: 0.5rem;
   overflow: hidden;
-  background-color: var(--wx-transparent-art-b);
+  background-color: var(--wx-transparent-art-light);
   background-image: var(--wx-transparent-art-checker);
   box-shadow: 0 1px 0 color-mix(in srgb, var(--wx-black, #000) 6%, transparent);
 }
@@ -123,7 +123,7 @@
   border-radius: 0.35rem;
   overflow: hidden;
   aspect-ratio: 16 / 10;
-  background-color: var(--wx-transparent-art-b);
+  background-color: var(--wx-transparent-art-light);
   background-image: var(--wx-transparent-art-checker);
 }
 
@@ -159,7 +159,7 @@
   overflow: hidden;
   aspect-ratio: 4 / 5;
   max-height: 70vh;
-  background-color: var(--wx-transparent-art-b);
+  background-color: var(--wx-transparent-art-light);
   background-image: var(--wx-transparent-art-checker);
 }
 
