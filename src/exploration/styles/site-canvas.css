@@ -1772,9 +1772,9 @@
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   transition:
-    border-radius 380ms cubic-bezier(0.22, 1, 0.36, 1),
-    min-width 380ms cubic-bezier(0.22, 1, 0.36, 1),
-    padding 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    min-width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Rounded chip only for the active section; idle slots read square in the track. */
@@ -1955,6 +1955,16 @@
     height: auto;
     min-height: 0;
     line-height: 1;
+  }
+
+  .site-canvas .wx-sparkle {
+    opacity: 0.92;
+    transform: translate3d(-50%, -0.25rem, 0);
+    filter: none;
+  }
+
+  .site-canvas .wx-sparkle--run {
+    animation: none;
   }
 }
 
