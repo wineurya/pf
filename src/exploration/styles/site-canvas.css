@@ -418,128 +418,35 @@
 .site-canvas .wx-approach-step-card {
   --wx-approach-align: calc(0.25rem + 1rem);
 
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  display: block;
   box-sizing: border-box;
   height: 100%;
-  min-height: 0;
   border-radius: max(calc(var(--wx-radius-card) - 2px), 0.5rem);
   border: 1px solid var(--wx-border-soft);
   background: var(--wx-white);
   box-shadow: none;
   /* No left padding — accent bar flush left; lede aligns with title via --wx-approach-align */
-  padding: 1.25rem 1.25rem 0.2rem 0;
+  padding: 1.25rem 1.25rem 1.25rem 0;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
 @media (min-width: 40rem) {
   .site-canvas .wx-approach-step-card {
-    padding: 1.5rem 1.5rem 0.2rem 0;
+    padding: 1.5rem 1.5rem 1.5rem 0;
   }
 }
 
-.site-canvas .wx-approach-step-card__main {
-  flex: 1 1 auto;
-  min-height: 0;
+/* Figma 68:446 — reserve space + host folder visual (first step only). */
+.site-canvas .wx-approach-step-card--with-folder-visual {
+  padding-bottom: calc(1.35rem + clamp(3rem, 9dvh, 5.5rem));
 }
 
-.site-canvas .wx-approach-step-card__visual {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: flex-end;
-  justify-content: center;
-  height: clamp(6.4rem, 13dvh, 8.2rem);
-  margin-top: 0.85rem;
-  padding-left: var(--wx-approach-align);
-  overflow: hidden;
-}
-
-.site-canvas .wx-approach-folder-pair {
-  display: flex;
-  width: 100%;
-  max-width: 13.75rem;
-  align-items: flex-end;
-  justify-content: center;
-  gap: clamp(0.55rem, 2.3vw, 0.85rem);
-  transform: translateY(0.42rem);
-}
-
-/* Figma 288:94 — left is default, right is the hover-state deck. */
-.site-canvas .wx-approach-folder {
-  position: relative;
-  width: min(6rem, calc((100% - 0.85rem) / 2));
-  aspect-ratio: 230 / 234;
-  flex: 0 1 auto;
-  pointer-events: none;
-}
-
-.site-canvas .wx-approach-folder__shell,
-.site-canvas .wx-approach-folder__stage {
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-}
-
-.site-canvas .wx-approach-folder__shell {
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 46%, var(--wx-white)) 0%,
-    var(--wx-approach-accent, #ea580c) 100%
-  );
-}
-
-.site-canvas .wx-approach-folder__stage {
-  overflow: hidden;
-}
-
-.site-canvas .wx-approach-folder__paper {
-  position: absolute;
-  left: 50%;
-  width: 84.35%;
-  height: 60.7%;
-  margin-left: -42.175%;
-  box-sizing: border-box;
-  border: 1px solid color-mix(in srgb, var(--wx-black) 16%, transparent);
-  border-radius: 6px;
-  background: var(--wx-white);
-  padding: 9% 8%;
-  transform-origin: 50% 92%;
-}
-
-.site-canvas .wx-approach-folder__paper-lines {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
-  justify-content: center;
-  gap: 9%;
-}
-
-.site-canvas .wx-approach-folder__line {
-  display: block;
-  width: 100%;
-  height: 12%;
-  border-radius: 4px;
-  background: #f5f5f5;
-}
-
-.site-canvas .wx-approach-folder__line--short {
-  width: 84.7%;
-}
-
-.site-canvas .wx-approach-folder__line--mid {
-  width: 91.7%;
-}
-
-.site-canvas .wx-approach-folder__pocket {
-  position: absolute;
-  inset: auto 0 0;
-  z-index: 4;
-  height: 44.9%;
-  border-radius: 0 0 16px 16px;
-  background: var(--wx-approach-accent, #ea580c);
-  clip-path: polygon(0 0, 62.5% 0, 75% 20.5%, 100% 20.5%, 100% 100%, 0 100%);
+@media (min-width: 40rem) {
+  .site-canvas .wx-approach-step-card--with-folder-visual {
+    padding-bottom: calc(1.5rem + clamp(3rem, 9dvh, 5.75rem));
+  }
 }
 
 .site-canvas .wx-approach-step-card__title-row {
@@ -587,6 +494,100 @@
   font-synthesis: none;
 }
 
+.site-canvas .wx-approach-step-card__folder-visual {
+  position: absolute;
+  right: 1.25rem;
+  bottom: -0.4rem;
+  left: var(--wx-approach-align);
+  display: flex;
+  height: clamp(4.8rem, 8.75dvh, 6.25rem);
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.site-canvas .wx-approach-folder-visual {
+  position: relative;
+  width: clamp(4.8rem, 45%, 6.2rem);
+  aspect-ratio: 230 / 234;
+  flex-shrink: 0;
+}
+
+.site-canvas .wx-approach-folder-visual__shell,
+.site-canvas .wx-approach-folder-visual__stage {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+}
+
+/* Stack: back shell → papers → front pocket (Figma 68:446). */
+.site-canvas .wx-approach-folder-visual__shell {
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 48%, var(--wx-white)) 0%,
+    var(--wx-approach-accent, #ea580c) 100%
+  );
+}
+
+.site-canvas .wx-approach-folder-visual__stage {
+  z-index: 1;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.site-canvas .wx-approach-folder-visual__paper {
+  position: absolute;
+  width: 84.35%;
+  height: 60.68%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--wx-black) 16%, transparent);
+  border-radius: 6px;
+  background: var(--wx-white);
+  padding: 9% 9.1%;
+  transform-origin: 50% 92%;
+}
+
+.site-canvas .wx-approach-folder-visual__paper-lines {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7.05%;
+}
+
+.site-canvas .wx-approach-folder-visual__line {
+  display: block;
+  width: 100%;
+  height: 11.97%;
+  border-radius: 4px;
+  background: var(--wx-surface-soft);
+}
+
+.site-canvas .wx-approach-folder-visual__line--short {
+  width: 84.7%;
+}
+
+.site-canvas .wx-approach-folder-visual__line--mid {
+  width: 91.7%;
+}
+
+.site-canvas .wx-approach-folder-visual__pocket {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  height: 45.3%;
+  border-radius: 0 0 16px 16px;
+  background: var(--wx-approach-accent, #ea580c);
+  clip-path: polygon(0 0, 63% 0, 77% 22%, 100% 22%, 100% 100%, 0 100%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--wx-white) 22%, transparent);
+  pointer-events: none;
+}
+
 /* Groups heading + step cards; spacing between rows from parent */
 .site-canvas .wx-approach-3up-with-visual {
   display: block;
@@ -619,7 +620,7 @@
 
   .site-canvas .wx-approach-step-card--bento-wide {
     grid-column: 1 / -1;
-    padding: 1.5rem 1.75rem 0.2rem 0;
+    padding: 1.5rem 1.75rem 1.5rem 0;
   }
 }
 

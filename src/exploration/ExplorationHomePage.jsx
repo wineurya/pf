@@ -76,7 +76,7 @@ import {
 import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
 import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
-import { ApproachStepFolderVisualPair } from "@/exploration/ApproachStepFolderVisual.jsx";
+import { ApproachStepFolderHoverVisual } from "@/exploration/ApproachStepFolderVisual.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
 const NUGGET_ICON_MAP = {
@@ -2151,19 +2151,39 @@ const APPROACH_STEPS = [
   },
 ];
 
-function ApproachStepListItem({ step, className, reduceMotion }) {
+function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual }) {
+  const inner = (
+    <>
+      <div className="wx-approach-step-card__title-row">
+        <span className="wx-approach-step-card__accent" aria-hidden />
+        <h3 className="wx-approach-step-card__title">{step.title}</h3>
+      </div>
+      <p className="wx-approach-step-card__lede">{step.body}</p>
+      {showFolderVisual ? (
+        <div className="wx-approach-step-card__folder-visual">
+          <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} />
+        </div>
+      ) : null}
+    </>
+  );
+
+  if (showFolderVisual) {
+    return (
+      <motion.li
+        className={clsx("wx-approach-step-card", "wx-approach-step-card--with-folder-visual", className)}
+        style={{ "--wx-approach-accent": step.accent }}
+        initial="rest"
+        animate="rest"
+        whileHover={reduceMotion ? "rest" : "hover"}
+      >
+        {inner}
+      </motion.li>
+    );
+  }
+
   return (
     <li className={clsx("wx-approach-step-card", className)} style={{ "--wx-approach-accent": step.accent }}>
-      <div className="wx-approach-step-card__main">
-        <div className="wx-approach-step-card__title-row">
-          <span className="wx-approach-step-card__accent" aria-hidden />
-          <h3 className="wx-approach-step-card__title">{step.title}</h3>
-        </div>
-        <p className="wx-approach-step-card__lede">{step.body}</p>
-      </div>
-      <div className="wx-approach-step-card__visual">
-        <ApproachStepFolderVisualPair reduceMotion={reduceMotion} />
-      </div>
+      {inner}
     </li>
   );
 }
@@ -2194,6 +2214,7 @@ function ExplorationMainApproachSection({ reduceMotion }) {
                 key={step.title}
                 step={step}
                 reduceMotion={reduceMotion}
+                showFolderVisual={index === 0}
                 className={index === APPROACH_STEPS.length - 1 ? "wx-approach-step-card--bento-wide" : undefined}
               />
             ))}

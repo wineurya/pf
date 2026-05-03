@@ -1,91 +1,67 @@
-import { clsx } from "clsx";
 import { motion } from "motion/react";
+import { clsx } from "clsx";
 
-const FOLDER_LOOP = {
-  duration: 3.2,
-  repeat: Infinity,
-  repeatType: "mirror",
-  ease: [0.45, 0, 0.55, 1],
-};
+const PAPER_TRANSITION = { type: "spring", stiffness: 250, damping: 28, mass: 0.85 };
 
-const PAPER_DECK = [
+const PAPERS = [
   {
     key: "back",
-    top: "4.75%",
-    stack: { x: 0, y: 0, rotate: 0 },
-    hover: { x: 0, y: 0, rotate: 0 },
-    z: 1,
+    zIndex: 1,
+    rest: { top: "4.8%", left: "50%", rotate: 0 },
+    hover: { top: "4.8%", left: "50%", rotate: 0 },
   },
   {
     key: "middle",
-    top: "16.1%",
-    stack: { x: -7, y: 0, rotate: 0 },
-    hover: { x: -15, y: -4, rotate: -11.2 },
-    z: 2,
+    zIndex: 2,
+    rest: { top: "16.1%", left: "47%", rotate: 0 },
+    hover: { top: "8.6%", left: "34%", rotate: -11.2 },
   },
   {
     key: "front",
-    top: "31.5%",
-    stack: { x: 4, y: 0, rotate: 0 },
-    hover: { x: 14, y: -2, rotate: 12 },
-    z: 3,
+    zIndex: 3,
+    rest: { top: "31.5%", left: "52%", rotate: 0 },
+    hover: { top: "23.6%", left: "57%", rotate: 12 },
   },
 ];
 
 function ResearchPaperLines() {
   return (
-    <div className="wx-approach-folder__paper-lines">
-      <span className="wx-approach-folder__line wx-approach-folder__line--short" />
-      <span className="wx-approach-folder__line" />
-      <span className="wx-approach-folder__line wx-approach-folder__line--mid" />
-      <span className="wx-approach-folder__line" />
+    <div className="wx-approach-folder-visual__paper-lines">
+      <span className="wx-approach-folder-visual__line wx-approach-folder-visual__line--short" />
+      <span className="wx-approach-folder-visual__line" />
+      <span className="wx-approach-folder-visual__line wx-approach-folder-visual__line--mid" />
+      <span className="wx-approach-folder-visual__line" />
     </div>
   );
 }
 
-function ResearchPaper({ paper, state, animateHover }) {
-  const target = paper[state];
-  const animate =
-    animateHover && state === "hover"
-      ? {
-          x: [paper.stack.x, paper.hover.x],
-          y: [paper.stack.y, paper.hover.y],
-          rotate: [paper.stack.rotate, paper.hover.rotate],
-        }
-      : target;
+function ResearchPaper({ paper, reduceMotion }) {
+  const transition = reduceMotion ? { duration: 0 } : PAPER_TRANSITION;
 
   return (
     <motion.div
-      className="wx-approach-folder__paper"
-      style={{ top: paper.top, zIndex: paper.z }}
-      initial={false}
-      animate={animate}
-      transition={animateHover && state === "hover" ? FOLDER_LOOP : { duration: 0 }}
+      className="wx-approach-folder-visual__paper"
+      style={{ zIndex: paper.zIndex }}
+      variants={{
+        rest: { ...paper.rest, x: "-50%", transition },
+        hover: { ...(reduceMotion ? paper.rest : paper.hover), x: "-50%", transition },
+      }}
     >
       <ResearchPaperLines />
     </motion.div>
   );
 }
 
-function ResearchFolder({ state = "stack", animateHover = false, className }) {
+export function ApproachStepFolderHoverVisual({ reduceMotion = false, className }) {
   return (
-    <div className={clsx("wx-approach-folder", className)} aria-hidden="true">
-      <div className="wx-approach-folder__shell" />
-      <div className="wx-approach-folder__stage">
-        {PAPER_DECK.map((paper) => (
-          <ResearchPaper key={paper.key} paper={paper} state={state} animateHover={animateHover} />
+    <div className={clsx("wx-approach-folder-visual", className)} aria-hidden>
+      <div className="wx-approach-folder-visual__shell" />
+      <div className="wx-approach-folder-visual__stage">
+        {PAPERS.map((paper) => (
+          <ResearchPaper key={paper.key} paper={paper} reduceMotion={reduceMotion} />
         ))}
-        <div className="wx-approach-folder__pocket" />
+        <div className="wx-approach-folder-visual__pocket" />
       </div>
-    </div>
-  );
-}
-
-export function ApproachStepFolderVisualPair({ reduceMotion = false, className }) {
-  return (
-    <div className={clsx("wx-approach-folder-pair", className)} aria-hidden="true">
-      <ResearchFolder state="stack" />
-      <ResearchFolder state="hover" animateHover={!reduceMotion} />
     </div>
   );
 }
