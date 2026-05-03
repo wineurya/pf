@@ -279,6 +279,8 @@
   --wx-tab-pill-height: 2.375rem;
   --wx-tab-pill-min-width: 3.375rem;
   --wx-tab-track-pad-y: 0.25rem;
+  /** Hairline UI stroke — max 12% black on page (outlines over drop shadows). */
+  --wx-outline-ink: color-mix(in srgb, var(--wx-black) 12%, transparent);
   --wx-border-soft: color-mix(in srgb, var(--wx-black) 6%, transparent);
   --wx-border-faint: color-mix(in srgb, var(--wx-black) 5%, transparent);
   --wx-border-muted: color-mix(in srgb, var(--wx-black) 8%, transparent);
@@ -286,12 +288,11 @@
   --wx-stack-logo-well-tint: color-mix(in srgb, var(--wx-black) 3.5%, transparent);
   --wx-stack-hover-border-mix: color-mix(in srgb, var(--wx-black) 10%, transparent);
   --wx-stack-hover-ring-mix: color-mix(in srgb, var(--wx-black) 6%, transparent);
-  --wx-ring-subtle: color-mix(in srgb, var(--wx-black) 4%, transparent);
-  --wx-ring-strong: color-mix(in srgb, var(--wx-black) 16%, transparent);
-  --wx-shadow-key: color-mix(in srgb, var(--wx-black) 16%, transparent);
-  --wx-shadow-ambient: color-mix(in srgb, var(--wx-black) 8%, transparent);
-  --wx-shadow-tab: 0 2px 4px var(--wx-shadow-key), 0 1px 2px var(--wx-shadow-ambient);
-  --wx-inset-highlight: inset 0 1px 20px color-mix(in srgb, var(--wx-white) 16%, transparent);
+  --wx-ring-subtle: color-mix(in srgb, var(--wx-black) 8%, transparent);
+  --wx-ring-strong: var(--wx-outline-ink);
+  --wx-shadow-key: transparent;
+  --wx-shadow-ambient: transparent;
+  --wx-shadow-tab: 0 0 0 1px var(--wx-outline-ink);
   --wx-radius-segment: 12px;
   --wx-radius-track: 16px;
   --wx-radius-card: 8px;
@@ -408,7 +409,7 @@
     color-mix(in srgb, var(--wx-black) 28%, transparent) 42%,
     color-mix(in srgb, var(--wx-black) 48%, transparent) 100%
   );
-  --wx-chip-float-shadow: 0 12px 28px -16px color-mix(in srgb, var(--wx-black) 65%, transparent);
+  --wx-chip-float-shadow: none;
   --wx-track-shadow-color: var(--wx-shadow-ambient);
   --wx-tab-track-border: color-mix(in srgb, var(--wx-black) 5%, transparent);
   --wx-tab-glass-highlight: color-mix(in srgb, var(--wx-white) 65%, transparent);
@@ -421,23 +422,16 @@
   --wx-btn-primary-hover-ring: color-mix(in srgb, var(--wx-primary) 85%, var(--wx-primary-border-mix));
   --wx-btn-secondary-bg: var(--wx-white);
   --wx-btn-secondary-bg-hover: var(--color-neutral-50);
-  --wx-btn-secondary-border: color-mix(in srgb, var(--wx-black) 16%, transparent);
-  --wx-btn-secondary-border-hover: color-mix(in srgb, var(--wx-black) 22%, transparent);
+  --wx-btn-secondary-border: var(--wx-outline-ink);
+  --wx-btn-secondary-border-hover: var(--wx-outline-ink);
   --wx-mask-solid: var(--wx-black);
   --wx-on-scrim: var(--wx-white);
   --wx-on-scrim-muted: color-mix(in srgb, var(--wx-white) 78%, transparent);
-  --wx-tab-shadow-active:
-    inset 0 1px 20px color-mix(in srgb, var(--wx-white) 18%, transparent),
-    0 4px 10px -4px var(--wx-primary-glow),
-    0 1px 2px var(--wx-shadow-ambient),
-    0 0 0 1px var(--wx-primary);
-  --wx-tab-shadow-idle:
-    inset 0 1px 0 color-mix(in srgb, var(--wx-white) 30%, transparent),
-    0 1px 1px var(--wx-shadow-ambient),
-    0 0 0 1px color-mix(in srgb, var(--wx-white) 28%, transparent);
-  --wx-btn-press-shadow: 0 2px 4px var(--wx-shadow-key), 0 1px 2px var(--wx-shadow-ambient);
-  --wx-btn-shadow-xs: 0 1px 2px var(--wx-shadow-ambient);
-  --wx-btn-primary-hover-inset: inset 0 1px 20px color-mix(in srgb, var(--wx-white) 22%, transparent);
+  --wx-tab-shadow-active: 0 0 0 1px var(--wx-primary);
+  --wx-tab-shadow-idle: 0 0 0 1px var(--wx-outline-ink);
+  --wx-btn-press-shadow: none;
+  --wx-btn-shadow-xs: none;
+  --wx-btn-primary-hover-inset: none;
 }
 
 @media (width >= 48rem) {
