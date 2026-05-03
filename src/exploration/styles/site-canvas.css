@@ -439,11 +439,14 @@
 }
 
 /* Figma 68:446 — reserve space + host folder visual (first step only).
-   Card border/radius stay on <li> with overflow visible so the folder fan isn’t clipped.
-   Copy is clipped to the same radius inside `__text-clip`. */
+   <li> stays overflow visible for the fanned papers; copy clips inside `__text-clip`.
+   `__folder-clip` is the bottom band that matches the card footprint and masks
+   anything that would paint below the rounded bottom (slight bottom crop). */
 .site-canvas .wx-approach-step-card--with-folder-visual {
+  --wx-approach-folder-band: calc(1.35rem + clamp(3rem, 9dvh, 5.5rem));
+
   overflow: visible;
-  padding-bottom: calc(1.35rem + clamp(3rem, 9dvh, 5.5rem));
+  padding-bottom: var(--wx-approach-folder-band);
 }
 
 .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__text-clip {
@@ -453,8 +456,24 @@
 
 @media (min-width: 40rem) {
   .site-canvas .wx-approach-step-card--with-folder-visual {
-    padding-bottom: calc(1.5rem + clamp(3rem, 9dvh, 5.75rem));
+    --wx-approach-folder-band: calc(1.5rem + clamp(3rem, 9dvh, 5.75rem));
   }
+}
+
+.site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__folder-clip {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--wx-approach-folder-band);
+  overflow: hidden;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+  pointer-events: none;
+  clip-path: inset(
+    -4rem min(-3.5rem, -10vw) 0 min(-3.5rem, -10vw) round 0 0 var(--wx-radius-card, 8px)
+      var(--wx-radius-card, 8px)
+  );
 }
 
 .site-canvas .wx-approach-step-card__title-row {
@@ -514,6 +533,8 @@
   overflow: visible;
   pointer-events: none;
 }
+
+/* Positioning is unchanged; clipping happens on `__folder-clip`. */
 
 .site-canvas .wx-approach-folder-visual {
   position: relative;

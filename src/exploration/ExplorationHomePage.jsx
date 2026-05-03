@@ -2177,8 +2177,10 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual 
         onPointerLeave={() => setFolderMotionActive(false)}
       >
         <div className="wx-approach-step-card__text-clip">{textBlock}</div>
-        <div className="wx-approach-step-card__folder-visual">
-          <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} active={folderMotionActive} />
+        <div className="wx-approach-step-card__folder-clip" aria-hidden>
+          <div className="wx-approach-step-card__folder-visual">
+            <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} active={folderMotionActive} />
+          </div>
         </div>
       </li>
     );
