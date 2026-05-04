@@ -274,7 +274,7 @@ function MetricFunnelViz({ steps, activeStep }) {
 }
 
 function MetricBarsViz({ heights, color }) {
-  const max = Math.max(...heights)
+  const max = heights.length ? Math.max(...heights) : 1
   const norm = max > 0 ? heights.map((v) => v / max) : heights
 
   return (
@@ -1132,7 +1132,7 @@ export default function KinetixPage() {
           onViewReport={() => setShowReport(true)}
         />
 
-        <motion.main
+        <motion.div
           className="kx-content"
           id="kx-main-content"
           initial={reduce ? false : { opacity: 0 }}
@@ -1147,7 +1147,7 @@ export default function KinetixPage() {
           </div>
 
           <RecsRow expanded={expandedRec} onToggle={handleToggleRec} />
-        </motion.main>
+        </motion.div>
       </div>
 
       <AnimatePresence>
