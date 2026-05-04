@@ -9,7 +9,7 @@ export function WorkCaseLayout({ reduceMotion, className, children }) {
   return (
     <div
       className={clsx(
-        "site-canvas wx-exploration-root wx-work-case-chrome relative z-0 min-h-dvh w-full text-[var(--color-fg)]",
+        "site-canvas wx-exploration-root wx-work-case-chrome relative z-0 min-h-dvh w-full",
         !reduceMotion && "wx-exploration-root--custom-cursor",
         className,
       )}

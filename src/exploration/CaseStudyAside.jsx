@@ -7,11 +7,11 @@ const META_T = { duration: 0.24, ease: [0.22, 1, 0.36, 1] };
 
 function CaseStudyHeading({ def }) {
   return (
-    <div className="flex flex-col items-start gap-2 text-left">
+    <div className="relative w-full text-left">
       <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">{def.kicker}</p>
-      <h1 className="wx-text-page-title text-[var(--wx-ink)]">{def.title}</h1>
+      <h1 className="wx-text-page-title mt-2 text-[var(--wx-ink)]">{def.title}</h1>
       {def.lede ? (
-        <p className="mt-1 max-w-md wx-text-body-secondary text-[var(--wx-muted)]">{def.lede}</p>
+        <p className="mt-2 wx-text-body-secondary text-[var(--wx-muted)]">{def.lede}</p>
       ) : null}
     </div>
   );
@@ -19,7 +19,7 @@ function CaseStudyHeading({ def }) {
 
 function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
   return (
-    <div className="mt-auto flex flex-col items-start gap-2 border-t border-[color:var(--wx-border-soft)] pt-6 text-left">
+    <div className="mt-auto flex flex-col items-start gap-2 border-t border-[color:var(--wx-border-soft)] pt-8 text-left lg:pt-10">
       <p className="wx-text-meta tabular-nums text-[var(--wx-muted)]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -79,9 +79,17 @@ export function CaseStudyAside({
           </div>
         </div>
 
-        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col gap-10 pt-10 text-left lg:gap-12 lg:pt-12">
-          <CaseStudyHeading def={def} />
-          <CaseStudyTableOfContents chapters={chapters} activeIndex={activeIndex} reduceMotion={reduceMotion} />
+        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col">
+          <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
+            <div className="relative w-full space-y-5 text-left">
+              <CaseStudyHeading def={def} />
+              <CaseStudyTableOfContents
+                chapters={chapters}
+                activeIndex={activeIndex}
+                reduceMotion={reduceMotion}
+              />
+            </div>
+          </div>
           <CaseStudyProgress indexLabel={indexLabel} totalLabel={totalLabel} reduceMotion={reduceMotion} />
         </div>
       </div>
