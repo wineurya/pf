@@ -417,6 +417,7 @@
 /* Approach — index card: accent only beside title; index + lede align with title text */
 .site-canvas .wx-approach-step-card {
   --wx-approach-align: calc(0.25rem + 1rem);
+  --wx-approach-card-clip-r: max(calc(var(--wx-radius-card) - 2px), 0.5rem);
 
   position: relative;
   display: block;
@@ -469,6 +470,61 @@
 
   .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__text-clip {
     padding-right: 1.5rem;
+  }
+}
+
+/* Folder card: hover — gradient stroke on the shell (orange low → neutral top), revealed bottom-up. */
+@media (hover: hover) and (pointer: fine) {
+  .site-canvas .wx-approach-step-card--with-folder-visual {
+    transition: border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .site-canvas .wx-approach-step-card--with-folder-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+      to top,
+      var(--wx-approach-accent, #ea580c),
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 45%, var(--wx-border-soft)),
+      color-mix(in srgb, var(--wx-border-soft) 92%, var(--wx-black)),
+      var(--wx-border-soft)
+    );
+    padding: 1px;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    clip-path: inset(100% 0 0 0 round var(--wx-approach-card-clip-r));
+    transition:
+      clip-path 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s ease;
+  }
+
+  .site-canvas .wx-approach-step-card--with-folder-visual:hover {
+    border-color: transparent;
+  }
+
+  .site-canvas .wx-approach-step-card--with-folder-visual:hover::after {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round var(--wx-approach-card-clip-r));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @media (hover: hover) and (pointer: fine) {
+    .site-canvas .wx-approach-step-card--with-folder-visual::after {
+      transition: opacity 0.2s ease;
+    }
+
+    .site-canvas .wx-approach-step-card--with-folder-visual:hover::after {
+      clip-path: inset(0 0 0 0 round var(--wx-approach-card-clip-r));
+    }
   }
 }
 
@@ -2493,6 +2549,7 @@
 
 .site-canvas #site-panels .wx-approach-step-card {
   border-radius: 8px;
+  --wx-approach-card-clip-r: 8px;
 }
 
 .site-canvas #site-panels .wx-gallery-frame {
