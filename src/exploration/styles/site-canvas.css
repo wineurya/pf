@@ -438,46 +438,49 @@
   }
 }
 
-/* Figma 68:446 — reserve space + host folder visual (first step only).
-   <li> stays overflow visible for the fanned papers; copy clips inside `__text-clip`.
-   `__folder-clip` is the bottom band that matches the card footprint and masks
-   anything that would paint below the rounded bottom (slight bottom crop). */
+/* Figma 294:7 `Approach Step Card` — flex column, gap 12px, pt/pr 20px, folder slot 175px overflow clip. */
 .site-canvas .wx-approach-step-card--with-folder-visual {
-  --wx-approach-folder-band: calc(1.35rem + clamp(3rem, 9dvh, 5.5rem));
-
-  overflow: visible;
-  padding-bottom: var(--wx-approach-folder-band);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  padding: 1.25rem 1.25rem 0 0;
+  overflow: hidden;
 }
 
 .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__text-clip {
   overflow: hidden;
-  /* Don’t inherit top-left radius: it clips the flush-left accent bar. */
   border-top-left-radius: 0;
   border-top-right-radius: inherit;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  flex-shrink: 0;
 }
 
 @media (min-width: 40rem) {
   .site-canvas .wx-approach-step-card--with-folder-visual {
-    --wx-approach-folder-band: calc(1.5rem + clamp(3rem, 9dvh, 5.75rem));
+    padding: 1.5rem 1.5rem 0 0;
   }
 }
 
-.site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__folder-clip {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: var(--wx-approach-folder-band);
+.site-canvas .wx-approach-step-card__folder-slot {
+  position: relative;
+  width: 100%;
+  height: 10.9375rem;
+  flex-shrink: 0;
   overflow: hidden;
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
+}
+
+.site-canvas .wx-approach-step-card__folder-visual-inner {
+  position: absolute;
+  left: 50%;
+  top: 1.875rem;
+  width: min(26.375rem, 136%);
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   pointer-events: none;
-  clip-path: inset(
-    -4rem min(-3.5rem, -10vw) 0 min(-3.5rem, -10vw) round 0 0 var(--wx-radius-card, 8px)
-      var(--wx-radius-card, 8px)
-  );
 }
 
 .site-canvas .wx-approach-step-card__title-row {
@@ -490,9 +493,12 @@
 .site-canvas .wx-approach-step-card__accent {
   width: 0.25rem;
   flex-shrink: 0;
-  /* Square on the left so the stroke meets the card edge cleanly */
   border-radius: 0 0.125rem 0.125rem 0;
   background: var(--wx-approach-accent, #ea580c);
+}
+
+.site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__accent {
+  border-radius: 2px;
 }
 
 .site-canvas .wx-approach-step-card__title {
@@ -512,6 +518,10 @@
   .site-canvas .wx-approach-step-card__title {
     font-size: 1.125rem;
   }
+
+  .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__title {
+    font-size: 1.0625rem;
+  }
 }
 
 .site-canvas .wx-approach-step-card__lede {
@@ -525,25 +535,15 @@
   font-synthesis: none;
 }
 
-.site-canvas .wx-approach-step-card__folder-visual {
-  position: absolute;
-  right: 1.25rem;
-  bottom: -0.4rem;
-  left: var(--wx-approach-align);
-  display: flex;
-  height: clamp(4.8rem, 8.75dvh, 6.25rem);
-  align-items: flex-end;
-  justify-content: center;
-  overflow: visible;
-  pointer-events: none;
+.site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__lede {
+  line-height: 1.25rem;
 }
 
-/* Positioning is unchanged; clipping happens on `__folder-clip`. */
-
-.site-canvas .wx-approach-folder-visual {
+.site-canvas .wx-approach-step-card__folder-visual-inner .wx-approach-folder-visual {
   position: relative;
-  width: clamp(4.8rem, 45%, 6.2rem);
-  aspect-ratio: 230 / 234;
+  width: 100%;
+  max-width: 26.375rem;
+  aspect-ratio: 422 / 249;
   flex-shrink: 0;
   overflow: visible;
 }
@@ -573,8 +573,8 @@
 
 .site-canvas .wx-approach-folder-visual__paper {
   position: absolute;
-  width: 84.35%;
-  height: 60.68%;
+  width: 46%;
+  height: 57%;
   box-sizing: border-box;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--wx-black) 16%, transparent);

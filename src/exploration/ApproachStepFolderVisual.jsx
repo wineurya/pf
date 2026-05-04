@@ -1,26 +1,28 @@
 import { motion } from "motion/react";
 import { clsx } from "clsx";
 
-const PAPER_TRANSITION = { type: "spring", stiffness: 250, damping: 28, mass: 0.85 };
+// k=200, d=24, m=0.9 → ζ≈0.89 (near-critical, fluid settle)
+const PAPER_TRANSITION = { type: "spring", stiffness: 200, damping: 24, mass: 0.9 };
 
+/* Poses tuned to Figma component 294:7 (Approach Step Card — fanned default). */
 const PAPERS = [
   {
     key: "back",
     zIndex: 1,
-    rest: { top: "4.8%", left: "50%", rotate: 0 },
-    hover: { top: "4.8%", left: "50%", rotate: 0 },
+    rest: { top: "-3%", left: "59%", rotate: -6 },
+    hover: { top: "-5%", left: "62%", rotate: -10 },
   },
   {
     key: "middle",
     zIndex: 2,
-    rest: { top: "16.1%", left: "47%", rotate: 0 },
-    hover: { top: "8.6%", left: "34%", rotate: -11.2 },
+    rest: { top: "13%", left: "30%", rotate: 2 },
+    hover: { top: "10%", left: "27%", rotate: -5 },
   },
   {
     key: "front",
     zIndex: 3,
-    rest: { top: "31.5%", left: "52%", rotate: 0 },
-    hover: { top: "23.6%", left: "57%", rotate: 12 },
+    rest: { top: "34%", left: "73%", rotate: 8 },
+    hover: { top: "30%", left: "76%", rotate: 12 },
   },
 ];
 
