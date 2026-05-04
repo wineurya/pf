@@ -179,6 +179,7 @@ function Sparkline({ points, color, idSuffix, width = 64, height = 22, className
   const w = width
   const h = height
   const pad = 5
+  const innerH = h - pad * 2
   const n = points.length
   const stepX = n > 1 ? w / (n - 1) : 0
   const yAt = (t) => h - pad - t * innerH
