@@ -473,17 +473,38 @@
   }
 }
 
-/* Folder card: hover — same 1px border language as rest (—wx-border-soft); orange only as a low tint, revealed bottom-up. */
+/* Folder card: hover — radial wash anchored bottom-center; 1px border same as rest (—wx-border-soft), accent tint low, revealed bottom-up. */
 @media (hover: hover) and (pointer: fine) {
   .site-canvas .wx-approach-step-card--with-folder-visual {
     transition: border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .site-canvas .wx-approach-step-card--with-folder-visual > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .site-canvas .wx-approach-step-card--with-folder-visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      ellipse 125% 90% at 50% 100%,
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 15%, var(--wx-white)) 0%,
+      var(--wx-white) 62%
+    );
+    transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .site-canvas .wx-approach-step-card--with-folder-visual::after {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 2;
     border-radius: inherit;
     pointer-events: none;
     opacity: 0;
@@ -505,6 +526,10 @@
       opacity 0.2s ease;
   }
 
+  .site-canvas .wx-approach-step-card--with-folder-visual:hover::before {
+    opacity: 1;
+  }
+
   .site-canvas .wx-approach-step-card--with-folder-visual:hover {
     border-color: transparent;
   }
@@ -522,6 +547,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   @media (hover: hover) and (pointer: fine) {
+    .site-canvas .wx-approach-step-card--with-folder-visual::before {
+      transition: opacity 0.12s ease;
+    }
+
     .site-canvas .wx-approach-step-card--with-folder-visual::after {
       transition: opacity 0.2s ease;
     }
