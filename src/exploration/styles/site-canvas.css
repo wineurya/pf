@@ -1966,7 +1966,7 @@
 }
 
 /* =========================
-   Headline — rotating word + single sparkle (straight rise, transform only)
+   Headline — rotating word + wordmark mark (same asset/size as nav `WordmarkLink`)
    ========================= */
 /* Tight line-height: rotating words have no descenders; trims stray gap under the line */
 .wx-headline {
@@ -1995,7 +1995,7 @@
   vertical-align: baseline;
 }
 
-/* Shrink-wraps the rotating word; width follows the active word — sparkles anchor to edges */
+/* Shrink-wraps the rotating word; width follows the active word — mark anchors to word block */
 .site-canvas .wx-headline-word-wrap {
   position: relative;
   display: inline-block;
@@ -2045,11 +2045,11 @@
   transform: translate3d(-50%, 0, 0);
 }
 
-/* Figma asset tinted via mask + background in JSX — keep box for rise animation */
+/* Same mark + box size as `WordmarkLink` (`size-3` / 0.75rem) — gradient in JSX */
 .site-canvas .wx-sparkle__img {
   display: block;
-  width: 0.9rem;
-  height: 0.9rem;
+  width: 0.75rem;
+  height: 0.75rem;
   max-width: none;
   flex-shrink: 0;
 }
@@ -2093,13 +2093,6 @@
     transform: translate3d(-50%, var(--wx-sparkle-rise-distance), 0) scale(1);
     opacity: 0;
     filter: blur(0);
-  }
-}
-
-@media (width >= 40rem) {
-  .site-canvas .wx-sparkle__img {
-    width: 1rem;
-    height: 1rem;
   }
 }
 

@@ -75,7 +75,7 @@ import {
 } from "@/exploration/layout/ExplorationLayout.jsx";
 import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
-import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
+import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
 import { ApproachStepFolderHoverVisual } from "@/exploration/ApproachStepFolderVisual.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
@@ -1242,9 +1242,9 @@ function AsideHeroHeadline({ reduceMotion }) {
               aria-hidden
             >
               <MaskedFigmaIcon
-                className="wx-sparkle__img"
-                src={SITE_FIGMA_ASSETS.headlineSparkle}
-                background="var(--wx-primary)"
+                className="wx-sparkle__img shrink-0 translate-y-px select-none"
+                src={SITE_FIGMA_ASSETS.logoMark}
+                background={WX_WORDMARK_MARK_GRADIENT}
               />
             </span>
           </span>
