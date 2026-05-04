@@ -100,7 +100,7 @@ const NUGGET_ICON_MAP = {
 };
 
 /**
- * Lucide Animated â€” https://lucide-animated.com (npm: `lucide-animated`). Icons animate on hover.
+ * Lucide Animated — https://lucide-animated.com (npm: `lucide-animated`). Icons animate on hover.
  * Keys match `nuggets[].icon` in `siteContent.js`; unmapped keys fall back to `NUGGET_ICON_MAP` + Hugeicons.
  */
 const LUCIDE_NUGGET_MAP = {
@@ -125,8 +125,8 @@ const LUCIDE_NUGGET_MAP = {
 
 /**
  * Work card nugget list: one timing model for show + hide (forward stagger in, reverse out).
- * Easing: Emil Kowalski â€” strong ease-out cubic-bezier(0.23, 1, 0.32, 1) for transform + opacity; ~240ms
- * for small UI; stagger 0.05s fits his 30â€“80ms list spacing. See emilkowal.ski, Motion easing docs.
+ * Easing: Emil Kowalski — strong ease-out cubic-bezier(0.23, 1, 0.32, 1) for transform + opacity; ~240ms
+ * for small UI; stagger 0.05s fits his 30–80ms list spacing. See emilkowal.ski, Motion easing docs.
  */
 const NUGGET_ROW_MOTION = {
   stagger: 0.05,
@@ -172,7 +172,7 @@ const CONTACT_PHOSPHOR_ICONS = {
 
 /** Contact-row pills (aside footer) — gentle in/out tween. */
 const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
-/** Lenis scroll-to-section â€” smoother than linear. */
+/** Lenis scroll-to-section — smoother than linear. */
 const WX_LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
 
 /** Empty-canvas: crossfade duration (ms) for main + aside copy + section tabs. */
@@ -180,7 +180,7 @@ const EMPTY_CANVAS_ENTER_MS = 1100;
 const EMPTY_CANVAS_EXIT_MS = 1100;
 /**
  * `#site-panels` off-screen rest pose: `translateY` only (no scale). Used for nav-only + **route remount**
- * (e.g. `/work/â€¦` â†’ `/`) so the main column eases in the same way as leaving empty-canvas.
+ * (e.g. `/work/…` → `/`) so the main column eases in the same way as leaving empty-canvas.
  */
 const EMPTY_CANVAS_PANELS_DY = 20;
 const EMPTY_CANVAS_ENTER_S = EMPTY_CANVAS_ENTER_MS / 1000;
@@ -246,7 +246,7 @@ function getWorkCardVariant(entry) {
 }
 
 /**
- * `workCardNuggetsAriaLabel` optional in `siteContent.js` per entry. Default: â€œ{title} â€” role-relevant highlightsâ€.
+ * `workCardNuggetsAriaLabel` optional in `siteContent.js` per entry. Default: “{title} — role-relevant highlights”.
  */
 function getWorkCardNuggetsListAriaLabel(entry) {
   const custom = entry.workCardNuggetsAriaLabel?.trim();
@@ -324,7 +324,7 @@ function WorkCardTeaserSimple({ full, isActive, reduceMotion, useLightOnImage, u
 }
 
 /**
- * `workCardTeaserLead` stands alone. On hover: optional 0â€“2 stutter lines (e.g. â€œTry:â€ nudges), then `finale`.
+ * `workCardTeaserLead` stands alone. On hover: optional 0–2 stutter lines (e.g. “Try:” nudges), then `finale`.
  * With no stutters, only the finale (e.g. a one-line quip) is typed in.
  */
 function formatStutterSegment(s) {
@@ -598,7 +598,7 @@ function workCardBackgroundUrl(entry) {
   return null;
 }
 
-/** Default 16:9; optional `workCardAspect` (`"1/1"`, `"4/5"`, â€¦) on a work entry. */
+/** Default 16:9; optional `workCardAspect` (`"1/1"`, `"4/5"`, …) on a work entry. */
 function workCardAspectClassName(entry) {
   if (entry.workCardAspect === "1/1") return "aspect-square";
   if (entry.workCardAspect === "4/5") return "aspect-[4/5]";
@@ -655,11 +655,11 @@ function WorkNuggetPill({ label, iconKey, reduceMotion, nuggetsRevealed, nuggetI
   );
 }
 
-/** `sizes` for 200:88 artboard: mock â‰ˆ0.6 card width, high-DPR â€” pair with 2560w/2000w `srcset` */
+/** `sizes` for 200:88 artboard: mock ≈0.6 card width, high-DPR — pair with 2560w/2000w `srcset` */
 const FIGMA_200_88_SIZES = "(min-width: 64rem) min(40vw, 32rem), min(100vw, 100vw)";
 
 /**
- * Figma `Testing/200:88` (Frame 4): 2400Ã—2400, canvas rgb(227,219,209); child `200:109` 1410.14Ã—1490.18px, centered, img cover + warm shadow.
+ * Figma `Testing/200:88` (Frame 4): 2400×2400, canvas rgb(227,219,209); child `200:109` 1410.14×1490.18px, centered, img cover + warm shadow.
  * With `workCardFigmaNoImage` and no `workCardBackgroundImage`, render the same frame with a solid slot (no raster).
  */
 function WorkCardFigma20088Artboard({ entry, bgUrl }) {
@@ -1513,14 +1513,14 @@ function FaqAccordion({ reduceMotion }) {
 
 /* =====================================================================
    Commercial-clarity components
-   - Trust strip, productized service cards, Pâ†’Dâ†’O case story, How-I-work
+   - Trust strip, productized service cards, P→D→O case story, How-I-work
      fallback, and qualified-contact form. All accents driven by the four
      wx-accent tokens (primary, teal, violet, amber) so the palette stays
      coherent across nuggets, icons, and hovers.
    ===================================================================== */
 
 /**
- * ServicesList â€” calm typographic list. Title + a single sentence.
+ * ServicesList — calm typographic list. Title + a single sentence.
  * No prices, no codes, no icons, no cards. Pricing lives in the FAQ.
  * Pattern follows Reynolds / Rusli / Carignan.
  */
@@ -1626,7 +1626,7 @@ function QualificationForm({ reduceMotion }) {
       lines.push(`${field.label}: ${value}`);
     }
     const body = encodeURIComponent(lines.join("\n\n"));
-    const subject = encodeURIComponent("Project brief â€” wineury.design");
+    const subject = encodeURIComponent("Project brief — wineury.design");
     setSubmitted(true);
     window.location.href = `mailto:wineurya30@gmail.com?subject=${subject}&body=${body}`;
   };

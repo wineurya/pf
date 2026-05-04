@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
@@ -7,7 +7,31 @@ import { wxNavTabTransition } from "@/exploration/navMotion.js";
 
 const TAB_ICONS = [PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon];
 
-const WX_TAB_LABEL_MAX_W = 200;
+const WX_TAB_LABEL_MAX_W = 160;
+
+// k=200, d=20, m=0.8 → ω₀≈15.8 rad/s, ζ≈0.79
+const LETTER_SPRING = { type: "spring", stiffness: 200, damping: 20, mass: 0.8 };
+
+// Letters slide in from the right (x: 4 → 0), exit rightward (0 → x: 4).
+// Using always-mounted variants (no AnimatePresence) eliminates the race
+// condition where fast tab-switching leaves text stuck mid-animation.
+const LETTER_VARIANTS = {
+  hidden: { opacity: 0, x: 4 },
+  show: { opacity: 1, x: 0, transition: LETTER_SPRING },
+};
+
+const LABEL_VARIANTS = {
+  hidden: {
+    maxWidth: 0,
+    marginLeft: 0,
+    transition: { staggerChildren: 0.01, staggerDirection: -1 },
+  },
+  show: {
+    maxWidth: WX_TAB_LABEL_MAX_W,
+    marginLeft: 8,
+    transition: { staggerChildren: 0.035, delayChildren: 0.02 },
+  },
+};
 
 function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
   if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -18,27 +42,14 @@ function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
   document.getElementById(`site-tab-${SECTION_TABS[next].id}`)?.focus();
 }
 
-function labelMotionPresets(reduceMotion) {
-  if (reduceMotion) {
-    return {
-      initial: { opacity: 1, maxWidth: WX_TAB_LABEL_MAX_W, marginLeft: 8 },
-      exit: { opacity: 0, maxWidth: 0, marginLeft: 0 },
-    };
-  }
-  return {
-    initial: { opacity: 0, maxWidth: 0, marginLeft: 0 },
-    exit: { opacity: 0, maxWidth: 0, marginLeft: 0 },
-  };
-}
-
 function iconRestTarget({ selected, reduceMotion }) {
   if (reduceMotion) return { scale: selected ? 1.03 : 1, opacity: selected ? 1 : 0.86 };
   return { scale: selected ? 1.06 : 1, opacity: selected ? 1 : 0.84 };
 }
 
 function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectSection }) {
-  const labelPreset = labelMotionPresets(reduceMotion);
   const iconTarget = iconRestTarget({ selected, reduceMotion });
+  const labelState = selected ? "show" : "hidden";
 
   return (
     <motion.button
@@ -85,34 +96,34 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
         >
           <HugeiconsIcon icon={TAB_ICONS[i]} size={17} color="currentColor" strokeWidth={1.6} />
         </motion.span>
-        <AnimatePresence initial={false}>
-          {selected ? (
-            <motion.span
-              key="label"
-              className="wx-tab-label-text overflow-hidden whitespace-nowrap pr-0.5 tracking-tight"
-              style={{ display: "inline-block" }}
-              initial={labelPreset.initial}
-              animate={{
-                opacity: 1,
-                maxWidth: WX_TAB_LABEL_MAX_W,
-                marginLeft: 8,
-              }}
-              exit={labelPreset.exit}
-              transition={pillT}
-            >
-              {tab.label}
-            </motion.span>
-          ) : null}
-        </AnimatePresence>
+
+        {/* Label always mounted — avoids AnimatePresence race on fast clicks */}
+        <motion.span
+          className="wx-tab-label-text overflow-hidden whitespace-nowrap pr-0.5 tracking-tight"
+          style={{ display: "inline-block" }}
+          variants={LABEL_VARIANTS}
+          initial={false}
+          animate={labelState}
+        >
+          {reduceMotion ? (
+            selected ? tab.label : null
+          ) : (
+            tab.label.split("").map((char, idx) => (
+              <motion.span
+                key={idx}
+                variants={LETTER_VARIANTS}
+                style={{ display: "inline-block" }}
+              >
+                {char}
+              </motion.span>
+            ))
+          )}
+        </motion.span>
       </span>
     </motion.button>
   );
 }
 
-/**
- * Section tabs (Work / Studio / …) — split from the wordmark so chrome can fade or
- * transition independently in view transitions.
- */
 export function SectionTabRail({
   onSelectSection,
   selectedIndex,
@@ -123,7 +134,9 @@ export function SectionTabRail({
   const pillT = tabPillTransition ?? wxNavTabTransition(reduceMotion);
 
   return (
-    <div
+    <motion.div
+      layout
+      transition={{ type: "spring", stiffness: 160, damping: 22, mass: 1 }}
       className="wx-tab-track min-w-0 max-w-full shrink"
       role="tablist"
       aria-label="Sections"
@@ -145,6 +158,6 @@ export function SectionTabRail({
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }

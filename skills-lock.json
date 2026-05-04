@@ -6,6 +6,12 @@
       "sourceType": "github",
       "computedHash": "51fd3733024ec6808ebce6268e2f1e7cef7510e434a88e9d6294d332a64e99c4"
     },
+    "anti-slop": {
+      "source": "rand/cc-polymath",
+      "sourceType": "github",
+      "skillPath": "skills/anti-slop/SKILL.md",
+      "computedHash": "76efa981799d4d9454aef081ae02fd21cc38f56450d0d8bd33c5f50221f53543"
+    },
     "deploy-to-vercel": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",

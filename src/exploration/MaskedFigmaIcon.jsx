@@ -2,7 +2,7 @@
  * Figma SVG as mask + `background` so fill tracks tokens (Figma files often ship fixed raster colors).
  */
 /** Clean 3-stop gradient. */
-export const WX_WORDMARK_MARK_GRADIENT = `linear-gradient(135deg, var(--wx-primary) 0%, var(--wx-accent-violet) 50%, var(--wx-accent-amber) 100%)`;
+export const WX_WORDMARK_MARK_GRADIENT = `var(--wx-gradient-accent)`;
 
 export function MaskedFigmaIcon({ src, className, background = "var(--wx-primary)", style, ...rest }) {
   return (

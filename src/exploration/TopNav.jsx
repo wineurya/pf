@@ -47,6 +47,7 @@ export function TopNav({
         </div>
       ) : (
         <motion.div
+          layout
           className="min-w-0"
           initial={false}
           animate={{ opacity: hideRail ? 0 : 1 }}
