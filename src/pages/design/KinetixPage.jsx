@@ -108,22 +108,40 @@ const METRICS = [
   {
     label: 'Friction Score', value: '82', sub: '/ 100',
     trend: 'warn', trendLabel: '-4.2%', trendSuffix: 'in friction', trendIcon: TrendingDown,
-    spark: [0.52, 0.56, 0.51, 0.62, 0.58, 0.68, 0.64, 0.72, 0.69, 0.76, 0.74, 0.8], color: '#D97706',
+    viz: {
+      kind: 'spark',
+      color: '#D97706',
+      points: [
+        0.52, 0.56, 0.51, 0.62, 0.58, 0.68, 0.64, 0.72, 0.69, 0.76, 0.74, 0.8,
+      ],
+    },
   },
   {
     label: 'Confidence', value: '98%', sub: 'model accuracy',
-    trend: 'good', trendLabel: '2.1%', trendIcon: null,
-    spark: [0.82, 0.84, 0.83, 0.87, 0.86, 0.89, 0.88, 0.91, 0.93, 0.92, 0.95, 0.98], color: '#16A34A',
+    trend: 'good', trendLabel: '2.1%', trendSuffix: 'vs baseline', trendIcon: null,
+    viz: {
+      kind: 'donut',
+      percent: 98,
+      color: '#16A34A',
+    },
   },
   {
     label: 'Conversion Risk', value: 'Med', sub: 'funnel · step 3',
-    trend: 'warn', trendLabel: 'Flagged', trendIcon: null,
-    spark: [0.5, 0.48, 0.52, 0.5, 0.54, 0.53, 0.56, 0.55, 0.58, 0.59, 0.62], color: '#D97706',
+    trend: 'warn', trendLabel: 'Flagged', trendSuffix: null, trendIcon: null,
+    viz: {
+      kind: 'funnel',
+      steps: 5,
+      activeStep: 2,
+    },
   },
   {
     label: 'Sessions Simulated', value: '10K', sub: 'synthetic users',
-    trend: 'mute', trendLabel: 'Apr 28', trendIcon: null,
-    spark: [0.18, 0.23, 0.26, 0.34, 0.38, 0.45, 0.5, 0.57, 0.64, 0.74, 0.86, 1.0], color: '#2563EB',
+    trend: 'mute', trendLabel: 'Apr 28', trendSuffix: null, trendIcon: null,
+    viz: {
+      kind: 'bars',
+      color: '#2563EB',
+      heights: [0.12, 0.16, 0.21, 0.24, 0.31, 0.37, 0.44, 0.53, 0.62, 0.71, 0.84, 0.93],
+    },
   },
 ]
 
@@ -140,42 +158,42 @@ function SeverityPill({ s }) {
   )
 }
 
-/** Smooth cubic path through spark points (Catmull-Rom → Bézier). */
-function sparkPointsToSmoothPath(points, w, h) {
+/** Piecewise-linear path — reads cleaner than cardinal splines under aspect scaling. */
+function sparkPointsToLinePath(points, w, h) {
   const n = points.length
   if (n < 2) return ''
-  const stepX = w / (n - 1)
-  const yAt = (p) => h - p * (h - 2) - 1
-  const xy = (i) => ({ x: i * stepX, y: yAt(points[i]) })
+  const pad = 5
+  const innerH = h - pad * 2
+  const stepX = n > 1 ? w / (n - 1) : 0
+  const yAt = (t) => h - pad - t * innerH
 
-  let d = `M ${xy(0).x.toFixed(2)} ${xy(0).y.toFixed(2)}`
-  for (let i = 0; i < n - 1; i++) {
-    const p0 = xy(Math.max(0, i - 1))
-    const p1 = xy(i)
-    const p2 = xy(i + 1)
-    const p3 = xy(Math.min(n - 1, i + 2))
-    const cp1x = p1.x + (p2.x - p0.x) / 6
-    const cp1y = p1.y + (p2.y - p0.y) / 6
-    const cp2x = p2.x - (p3.x - p1.x) / 6
-    const cp2y = p2.y - (p3.y - p1.y) / 6
-    d += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`
+  let d = `M 0 ${yAt(points[0]).toFixed(2)}`
+  for (let i = 1; i < n; i++) {
+    const x = (i * stepX).toFixed(2)
+    d += ` L ${x} ${yAt(points[i]).toFixed(2)}`
   }
   return d
 }
 
 function Sparkline({ points, color, idSuffix, width = 64, height = 22, className = '' }) {
-  const w = width, h = height
-  const linePath = sparkPointsToSmoothPath(points, w, h)
+  const w = width
+  const h = height
+  const pad = 5
+  const n = points.length
+  const stepX = n > 1 ? w / (n - 1) : 0
+  const yAt = (t) => h - pad - t * innerH
+
+  const linePath = sparkPointsToLinePath(points, w, h)
   const areaPath = `${linePath} L ${w} ${h} L 0 ${h} Z`
   const last = points[points.length - 1]
-  const lastX = w
-  const lastY = h - last * (h - 2) - 1
+  const lastX = (n - 1) * stepX
+  const lastY = yAt(last)
   const gid = `kxg-${idSuffix}`.replace(/[^a-zA-Z0-9_-]/g, '')
 
   return (
     <svg
       viewBox={`0 0 ${w} ${h}`}
-      preserveAspectRatio="none"
+      preserveAspectRatio="xMidYMid meet"
       width="100%"
       height="100%"
       className={`kx-spark${className ? ` ${className}` : ''}`}
@@ -188,10 +206,85 @@ function Sparkline({ points, color, idSuffix, width = 64, height = 22, className
         </linearGradient>
       </defs>
       <path d={areaPath} fill={`url(#${gid})`} />
-      <path d={linePath} stroke={color} strokeWidth={1.4} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={lastX} cy={lastY} r="2" fill={color} />
-      <circle cx={lastX} cy={lastY} r="3.5" fill={color} fillOpacity="0.18" />
+      <path
+        d={linePath}
+        stroke={color}
+        strokeWidth={1.65}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx={lastX} cy={lastY} r={2} fill={color} />
+      <circle cx={lastX} cy={lastY} r={3.5} fill={color} fillOpacity="0.18" />
     </svg>
+  )
+}
+
+function MetricDonutViz({ percent, color }) {
+  const size = 76
+  const sw = 7
+  const r = (size - sw) / 2
+  const cx = size / 2
+  const cy = size / 2
+  const c = 2 * Math.PI * r
+  const arc = Math.max(0, Math.min(100, percent)) / 100
+  const dash = arc * c
+  const gap = Math.max(c - dash, 0.001)
+
+  return (
+    <svg
+      viewBox={`0 0 ${size} ${size}`}
+      preserveAspectRatio="xMidYMid meet"
+      width="100%"
+      height="100%"
+      className="kx-metric-viz-donut"
+      aria-hidden="true"
+    >
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--kx-border-strong)" strokeWidth={sw} opacity={0.45} />
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="none"
+        stroke={color}
+        strokeWidth={sw}
+        strokeDasharray={`${dash} ${gap}`}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${cx} ${cy})`}
+      />
+    </svg>
+  )
+}
+
+function MetricFunnelViz({ steps, activeStep }) {
+  return (
+    <div className="kx-metric-viz-funnel" aria-hidden="true">
+      {Array.from({ length: steps }, (_, i) => {
+        const pct = Math.round(((steps - i) / steps) * 88 + 28)
+        const active = i === activeStep
+        return (
+          <div key={String(i)} className={`kx-viz-funnel-step${active ? ' kx-viz-funnel-step-active' : ''}`}>
+            <div className="kx-viz-funnel-bar" style={{ height: `${pct}%` }} />
+            <span className="kx-viz-funnel-num">{i + 1}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function MetricBarsViz({ heights, color }) {
+  const max = Math.max(...heights)
+  const norm = max > 0 ? heights.map((v) => v / max) : heights
+
+  return (
+    <div className="kx-metric-viz-bars" aria-hidden="true">
+      {norm.map((v, i) => (
+        <div key={String(i)} className="kx-viz-bar-wrap">
+          <div className="kx-viz-bar" style={{ height: `${Math.max(v * 100, 4)}%`, background: color }} />
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -395,7 +488,7 @@ function MetricCards() {
       animate="show"
     >
       {METRICS.map((metric) => {
-        const { label, value, sub, trend, trendLabel, trendSuffix, trendIcon: Icon, spark, color } = metric
+        const { label, value, sub, trend, trendLabel, trendSuffix, trendIcon: Icon, viz } = metric
         const trendPill = trend ? (
           <span className={`kx-metric-trend kx-trend-${trend}`}>
             {Icon && <Icon size={10} strokeWidth={2.4} />}
@@ -405,10 +498,43 @@ function MetricCards() {
         ) : null
         const slug = label.replace(/\s+/g, '-').toLowerCase()
 
+        let vizNode = null
+        if (viz.kind === 'spark') {
+          vizNode = (
+            <div className="kx-metric-viz-slot kx-metric-viz-slot-spark" aria-hidden="true">
+              <Sparkline
+                points={viz.points}
+                color={viz.color}
+                idSuffix={`${slug}-spark`}
+                width={200}
+                height={72}
+              />
+            </div>
+          )
+        } else if (viz.kind === 'donut') {
+          vizNode = (
+            <div className="kx-metric-viz-slot kx-metric-viz-slot-donut" aria-hidden="true">
+              <MetricDonutViz percent={viz.percent} color={viz.color} />
+            </div>
+          )
+        } else if (viz.kind === 'funnel') {
+          vizNode = (
+            <div className="kx-metric-viz-slot kx-metric-viz-slot-funnel" aria-hidden="true">
+              <MetricFunnelViz steps={viz.steps} activeStep={viz.activeStep} />
+            </div>
+          )
+        } else if (viz.kind === 'bars') {
+          vizNode = (
+            <div className="kx-metric-viz-slot kx-metric-viz-slot-bars" aria-hidden="true">
+              <MetricBarsViz heights={viz.heights} color={viz.color} />
+            </div>
+          )
+        }
+
         return (
           <motion.div
             key={label}
-            className="kx-metric-card kx-metric-card-large-spark"
+            className="kx-metric-card kx-metric-card-split"
             role="listitem"
             variants={cardItem}
           >
@@ -422,15 +548,7 @@ function MetricCards() {
               </div>
               <div className="kx-metric-bottom">{trendPill}</div>
             </div>
-            <div className="kx-metric-spark-large" aria-hidden="true">
-              <Sparkline
-                points={spark}
-                color={color}
-                idSuffix={`${slug}-large`}
-                width={200}
-                height={72}
-              />
-            </div>
+            {vizNode}
           </motion.div>
         )
       })}
