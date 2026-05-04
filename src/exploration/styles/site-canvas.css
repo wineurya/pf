@@ -455,6 +455,9 @@
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   flex-shrink: 0;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
 }
 
 @media (min-width: 40rem) {
@@ -469,6 +472,29 @@
   height: 10.9375rem;
   flex-shrink: 0;
   overflow: hidden;
+}
+
+/* No in-flow children (visual is absolute) — stretch on cross-axis and bleed past pr padding so the slot matches the card. */
+.site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__folder-slot {
+  align-self: stretch;
+  box-sizing: border-box;
+  width: calc(100% + 1.25rem);
+  max-width: none;
+  margin-right: -1.25rem;
+  min-width: 0;
+}
+
+@media (min-width: 40rem) {
+  .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__folder-slot {
+    width: calc(100% + 1.5rem);
+    margin-right: -1.5rem;
+  }
+
+  .site-canvas .wx-approach-step-card--bento-wide.wx-approach-step-card--with-folder-visual
+    .wx-approach-step-card__folder-slot {
+    width: calc(100% + 1.75rem);
+    margin-right: -1.75rem;
+  }
 }
 
 .site-canvas .wx-approach-step-card__folder-visual-inner {
@@ -643,6 +669,12 @@
   list-style: none;
   gap: 1.25rem;
   grid-template-columns: 1fr;
+}
+
+.site-canvas .wx-approach-steps-bento > .wx-approach-step-card {
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
 }
 
 @media (min-width: 40rem) {
