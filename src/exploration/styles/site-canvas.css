@@ -516,6 +516,7 @@
 
   .site-canvas .wx-approach-step-card--with-folder-visual:hover .wx-approach-folder-visual__line::before {
     opacity: 1;
+    clip-path: inset(0 0 0 0 round 4px);
   }
 }
 
@@ -530,8 +531,9 @@
     }
 
     .site-canvas .wx-approach-folder-visual__line::before {
-      transition-duration: 0.15s;
-      transition-timing-function: ease;
+      transition:
+        opacity 0.12s ease,
+        clip-path 0.12s ease;
     }
   }
 }
@@ -658,7 +660,7 @@
   gap: 0.625rem;
 }
 
-/* Placeholder bars: flat grey base; L→R gradient on ::before fades in on card hover (opacity — gradients don’t interpolate on `background`). */
+/* Placeholder bars: flat grey base; tint layer fades + clip-reveals L→R on card hover. */
 .site-canvas .wx-approach-folder-visual__line {
   position: relative;
   display: block;
@@ -676,13 +678,16 @@
   border-radius: inherit;
   pointer-events: none;
   opacity: 0;
+  clip-path: inset(0 100% 0 0 round 4px);
   background: linear-gradient(
     to right,
     color-mix(in srgb, var(--wx-approach-accent, #ea580c) 44%, var(--wx-surface-soft)) 0%,
     color-mix(in srgb, var(--wx-approach-accent, #ea580c) 12%, var(--wx-surface-soft)) 24%,
     var(--wx-surface-soft) 48%
   );
-  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    clip-path 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Bar widths vs 194px inner width from Figma `288:66`. */
