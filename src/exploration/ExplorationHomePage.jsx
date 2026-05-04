@@ -1604,7 +1604,7 @@ function QualificationFormField({ field, isFullWidth }) {
       <span className="wx-text-form-label text-[var(--wx-ink)]">
         {field.label}
         {field.required ? (
-          <span aria-hidden className="ml-1 text-[var(--wx-primary)]">
+          <span aria-hidden className="ml-1 wx-gradient-text">
             *
           </span>
         ) : null}
@@ -1639,7 +1639,7 @@ function QualificationForm({ reduceMotion }) {
       >
         Your brief is on its way. If your email client didn&apos;t open, send the same
         details to{" "}
-        <a className="text-[var(--wx-primary)] underline-offset-4 hover:underline" href="mailto:wineurya30@gmail.com">
+        <a className="wx-gradient-text underline-offset-4 hover:underline" href="mailto:wineurya30@gmail.com">
           wineurya30@gmail.com
         </a>
         . I&apos;ll reply within two business days.
@@ -1957,7 +1957,7 @@ function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
               <dd>{SITE_AVAILABILITY.opening}</dd>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="size-1.5 rounded-full bg-[var(--wx-primary)]" aria-hidden />
+              <span className="size-1.5 rounded-full bg-[var(--wx-gradient-accent)]" aria-hidden />
               <dt className="sr-only">Engagements</dt>
               <dd>{SITE_AVAILABILITY.note}</dd>
             </div>
@@ -2115,9 +2115,15 @@ function ExplorationMainStudioSection({ reduceMotion }) {
               icon={QuoteUpIcon}
               size={26}
               strokeWidth={1.4}
-              color="currentColor"
-              className="text-[var(--wx-primary)]"
+              className="[&_path]:!stroke-[url(#wx-grad)]"
             />
+            <svg width="0" height="0" className="absolute">
+              <linearGradient id="wx-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="var(--wx-primary)" />
+                <stop offset="50%" stopColor="var(--wx-accent-violet)" />
+                <stop offset="100%" stopColor="var(--wx-accent-amber)" />
+              </linearGradient>
+            </svg>
             <blockquote className="wx-text-pullquote tracking-tight text-[var(--wx-ink)]">
               &ldquo;{SITE_TESTIMONIALS[0].quote}&rdquo;
             </blockquote>

@@ -261,6 +261,7 @@
   --wx-accent-teal: #0d9488;
   --wx-accent-violet: #7c3aed;
   --wx-accent-amber: #d97706;
+  --wx-gradient-accent: linear-gradient(135deg, var(--wx-primary) 0%, var(--wx-accent-violet) 50%, var(--wx-accent-amber) 100%);
   /* FAQ / chat — sent-style iMessage blue + legible fg (WCAG on white mix). */
   --wx-imessage-bubble: #0a84ff;
   --wx-imessage-bubble-ring: color-mix(in srgb, #0066d6 55%, var(--wx-imessage-bubble));

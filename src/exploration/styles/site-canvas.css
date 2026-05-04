@@ -474,6 +474,20 @@
 }
 
 /* Folder card: hover — radial wash anchored bottom-center; 1px border same as rest (—wx-border-soft), accent tint low, revealed bottom-up. */
+.site-canvas .wx-gradient-text {
+  background: var(--wx-gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.site-canvas .wx-gradient-text {
+  background: var(--wx-gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .site-canvas .wx-approach-step-card--with-folder-visual {
     transition: border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
@@ -511,8 +525,11 @@
     background: linear-gradient(
       to top,
       color-mix(in srgb, var(--wx-approach-accent, #ea580c) 44%, var(--wx-border-soft)) 0%,
-      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 12%, var(--wx-border-soft)) 24%,
-      var(--wx-border-soft) 48%
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 30%, var(--wx-border-soft)) 14%,
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 18%, var(--wx-border-soft)) 30%,
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 8%, var(--wx-border-soft)) 48%,
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 2%, var(--wx-border-soft)) 66%,
+      var(--wx-border-soft) 84%
     );
     padding: 1px;
     -webkit-mask:
@@ -605,7 +622,7 @@
   width: 0.25rem;
   flex-shrink: 0;
   border-radius: 0 0.125rem 0.125rem 0;
-  background: var(--wx-approach-accent, #ea580c);
+  background: var(--wx-gradient-accent);
 }
 
 .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__accent {
@@ -711,8 +728,11 @@
   background: linear-gradient(
     to right,
     color-mix(in srgb, var(--wx-approach-accent, #ea580c) 44%, var(--wx-surface-soft)) 0%,
-    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 12%, var(--wx-surface-soft)) 24%,
-    var(--wx-surface-soft) 48%
+    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 30%, var(--wx-surface-soft)) 14%,
+    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 18%, var(--wx-surface-soft)) 30%,
+    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 8%, var(--wx-surface-soft)) 48%,
+    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 2%, var(--wx-surface-soft)) 66%,
+    var(--wx-surface-soft) 84%
   );
   transition:
     opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
