@@ -438,7 +438,7 @@
   }
 }
 
-/* Figma 294:7 `Approach Step Card` — flex column, gap 12px, pt/pr 20px, folder slot 175px overflow clip. */
+/* Figma `294:7` card shell + `294:13` Folder visual — gap 12px, pt/pr 20px, slot 175px clips 422×249 folder (y≈30). */
 .site-canvas .wx-approach-step-card--with-folder-visual {
   display: flex;
   flex-direction: column;
@@ -573,15 +573,13 @@
 
 .site-canvas .wx-approach-folder-visual__paper {
   position: absolute;
-  width: 46%;
-  height: 57%;
   box-sizing: border-box;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--wx-black) 16%, transparent);
   border-radius: 6px;
   background: var(--wx-white);
   padding: 9% 9.1%;
-  transform-origin: 50% 92%;
+  transform-origin: 50% 50%;
 }
 
 .site-canvas .wx-approach-folder-visual__paper-lines {
@@ -590,13 +588,15 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 7.05%;
+  gap: 0.625rem;
 }
 
 .site-canvas .wx-approach-folder-visual__line {
   display: block;
   width: 100%;
-  height: 11.97%;
+  height: 1.0625rem;
+  max-height: 17%;
+  min-height: 12px;
   border-radius: 4px;
   background: var(--wx-surface-soft);
 }
@@ -611,15 +611,27 @@
 
 .site-canvas .wx-approach-folder-visual__pocket {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  /* Figma 294:18 — pocket frame in 422×249 space (extends past folder bottom). */
+  left: calc(-95.5 / 422 * 100%);
+  top: calc(164 / 249 * 100%);
   z-index: 10;
-  height: 45.3%;
+  width: calc(614 / 422 * 100%);
+  height: calc(194 / 249 * 100%);
+  overflow: hidden;
   border-radius: 0 0 16px 16px;
-  background: var(--wx-approach-accent, #ea580c);
-  clip-path: polygon(0 0, 63% 0, 77% 22%, 100% 22%, 100% 100%, 0 100%);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--wx-white) 22%, transparent);
+  pointer-events: none;
+}
+
+.site-canvas .wx-approach-folder-visual__pocket-img {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 113%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center top;
   pointer-events: none;
 }
 
