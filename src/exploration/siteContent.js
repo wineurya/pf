@@ -34,7 +34,7 @@ export const SITE_ACCENT_HEX = {
 export const SITE_FIGMA_ASSETS = {
   heroMountain: "https://www.figma.com/api/mcp/asset/df18d447-515f-49a2-a1ea-e0a3cdae9b41",
   heroOcean: "https://www.figma.com/api/mcp/asset/3c8a4aa9-c288-4b68-bd5d-8bffdce84853",
-  /** Same path as `public/favicon.svg` (Figma mark + token gradient) */
+  /** Same path as `public/favicon.svg` (radial loader mark + gradient) */
   logoMark: "/favicon.svg",
 };
 
