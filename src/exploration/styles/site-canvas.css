@@ -438,7 +438,7 @@
   }
 }
 
-/* Figma `294:7` card shell + `294:13` Folder visual — gap 12px, pt/pr 20px, slot 175px clips 422×249 folder (y≈30). */
+/* Figma `294:7` card + `294:13` Folder visual — gap 12px, pt/pr 20px, slot 175px clips 422×249 folder (inner offset 24px). */
 .site-canvas .wx-approach-step-card--with-folder-visual {
   display: flex;
   flex-direction: column;
@@ -474,7 +474,7 @@
 .site-canvas .wx-approach-step-card__folder-visual-inner {
   position: absolute;
   left: 50%;
-  top: 1.875rem;
+  top: 1.5rem;
   width: min(26.375rem, 136%);
   transform: translateX(-50%);
   display: flex;
@@ -548,25 +548,11 @@
   overflow: visible;
 }
 
-.site-canvas .wx-approach-folder-visual__shell,
+/* Papers + pocket only — no folder back fill in Figma `294:14` (add treatment via `__stage` or a wrapper when ready). */
 .site-canvas .wx-approach-folder-visual__stage {
   position: absolute;
   inset: 0;
   border-radius: 16px;
-}
-
-/* Stack: back shell → papers → front pocket (Figma 68:446). */
-.site-canvas .wx-approach-folder-visual__shell {
-  z-index: 0;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--wx-approach-accent, #ea580c) 48%, var(--wx-white)) 0%,
-    var(--wx-approach-accent, #ea580c) 100%
-  );
-}
-
-.site-canvas .wx-approach-folder-visual__stage {
-  z-index: 1;
   isolation: isolate;
   overflow: visible;
 }

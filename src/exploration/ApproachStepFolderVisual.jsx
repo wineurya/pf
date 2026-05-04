@@ -76,7 +76,6 @@ function ResearchPaper({ paper, reduceMotion, active }) {
 export function ApproachStepFolderHoverVisual({ reduceMotion = false, active = false, className }) {
   return (
     <div className={clsx("wx-approach-folder-visual", className)} aria-hidden>
-      <div className="wx-approach-folder-visual__shell" />
       <div className="wx-approach-folder-visual__stage">
         {PAPERS.map((paper) => (
           <ResearchPaper key={paper.key} paper={paper} reduceMotion={reduceMotion} active={active} />
