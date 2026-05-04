@@ -2136,18 +2136,18 @@ function ExplorationMainStudioSection({ reduceMotion }) {
 const APPROACH_STEPS = [
   {
     title: "Listen for the real problem",
-    body: "Interviews, usability sessions, and evidence before assumptions — so the work answers what people actually need.",
+    body: "Before touching the interface, I look for the friction underneath it through conversations, patterns, audits, and the small details people usually work around.",
     accent: "#ea580c",
     showFolderVisual: true,
   },
   {
     title: "Turn insight into direction",
-    body: "Maps, flows, and prototypes that tie every screen back to what we learned, not just what’s trendy.",
+    body: "I translate messy findings into flows, wireframes, and prototypes that make the next step easier to see, test, and build toward.",
     accent: "var(--wx-primary)",
   },
   {
     title: "Refine until it feels right",
-    body: "Testing, iteration, and accessibility checks until handoff or build feels confident and calm.",
+    body: "I test what is working, fix what still feels unclear, and keep tightening the experience until it feels usable, accessible, and ready to hand off.",
     accent: "var(--wx-accent-teal)",
   },
 ];
