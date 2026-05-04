@@ -622,7 +622,7 @@
   width: 0.25rem;
   flex-shrink: 0;
   border-radius: 0 0.125rem 0.125rem 0;
-  background: var(--wx-gradient-accent);
+  background: var(--wx-approach-accent, #ea580c);
 }
 
 .site-canvas .wx-approach-step-card--with-folder-visual .wx-approach-step-card__accent {
