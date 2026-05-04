@@ -489,10 +489,9 @@
     opacity: 0;
     background: linear-gradient(
       to top,
-      var(--wx-approach-accent, #ea580c),
-      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 45%, var(--wx-border-soft)),
-      color-mix(in srgb, var(--wx-border-soft) 92%, var(--wx-black)),
-      var(--wx-border-soft)
+      var(--wx-approach-accent, #ea580c) 0%,
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 18%, var(--wx-border-soft)) 38%,
+      var(--wx-border-soft) 100%
     );
     padding: 1px;
     -webkit-mask:
