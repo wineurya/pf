@@ -414,6 +414,13 @@
 }
 
 /* Per-step: --wx-approach-accent (hex or var) on the <li> */
+/* Animated angle for folder-paper gradient outline (hover); @property enables keyframe sync. */
+@property --wx-approach-paper-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 /* Approach — index card: accent only beside title; index + lede align with title text */
 .site-canvas .wx-approach-step-card {
   --wx-approach-align: calc(0.25rem + 1rem);
@@ -583,6 +590,54 @@
   background: var(--wx-white);
   padding: 1.375rem 1.1875rem;
   transform-origin: 50% 50%;
+  transition:
+    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-canvas .wx-approach-step-card--with-folder-visual:hover .wx-approach-folder-visual__paper {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--wx-white), var(--wx-white)) padding-box,
+      conic-gradient(
+        from var(--wx-approach-paper-border-angle),
+        var(--wx-approach-accent, var(--wx-primary)),
+        var(--wx-accent-teal),
+        var(--wx-accent-violet),
+        var(--wx-primary),
+        var(--wx-approach-accent, var(--wx-primary))
+      )
+        border-box;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-approach-accent, var(--wx-primary)) 12%, transparent);
+    animation: wx-approach-paper-outline-spin 2.8s linear infinite;
+  }
+}
+
+@keyframes wx-approach-paper-outline-spin {
+  to {
+    --wx-approach-paper-border-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @media (hover: hover) and (pointer: fine) {
+    .site-canvas .wx-approach-step-card--with-folder-visual:hover .wx-approach-folder-visual__paper {
+      animation: none;
+      --wx-approach-paper-border-angle: 0deg;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-approach-accent, var(--wx-primary)) 10%, transparent);
+      background:
+        linear-gradient(var(--wx-white), var(--wx-white)) padding-box,
+        linear-gradient(
+          125deg,
+          var(--wx-approach-accent, var(--wx-primary)),
+          var(--wx-primary),
+          var(--wx-accent-teal)
+        )
+          border-box;
+    }
+  }
 }
 
 .site-canvas .wx-approach-folder-visual__paper-lines {
