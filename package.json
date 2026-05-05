@@ -1,5 +1,6 @@
 {
   "name": "pf",
+  "description": "Personal portfolio: Vite, React, Tailwind v4, Motion, GSAP, Lenis. Design tokens and scroll-driven motion; Vercel.",
   "private": true,
   "version": "0.0.1",
   "type": "module",
