@@ -1,45 +1,43 @@
-# pf
+# Portfolio (pf)
 
-Vite + React + Tailwind v4 + Motion + GSAP + Lenis + React Router.
+Personal portfolio site built with **Vite**, **React**, **Tailwind CSS v4**, **Motion**, **GSAP**, **Lenis**, and **React Router**. The live build targets **Vercel** (`vercel.json` in repo).
 
-## Run
+## Quick start
+
+Requires **Node 20+** (see `package.json` `engines`).
 
 ```bash
-npm install && npm run dev
+npm install
+npm run dev
 ```
 
-## Multiple machines (laptop + desktop)
+## Project map
 
-The repo includes **agent skills** and a lockfile so Cursor and the `skills` CLI stay aligned after `git pull`:
+| Area | Location |
+|------|-----------|
+| App entry & routes | `src/` |
+| Design tokens (`@theme`, CSS variables) | `src/styles/tokens.css` |
+| Token notes | `src/styles/tokens.readme.md` |
+| GSAP bootstrap | `src/lib/gsap.js` |
+| Lenis + ScrollTrigger | `src/lib/lenis.js` |
+| Static assets | `public/` |
 
-- `.agents/skills/` — installed skills (same on every clone)
-- `skills-lock.json` — pinned versions; refresh from registries with `npx skills experimental_install` when you intentionally upgrade
-- `CLAUDE.md` — merge order and project notes for AI assistants
+## Working on multiple machines
 
-Use **Node 20+** (see `package.json` `engines`). After cloning on a new machine: `npm install`, then open the project as usual.
+The repo may include Cursor agent metadata (`.agents/`, `skills-lock.json`, `CLAUDE.md`) so tooling stays aligned after `git pull`. That is optional for running the site; you only need `npm install` and `npm run dev`.
 
-## Tokens
+## Roadmap (high level)
 
-Design tokens: `src/styles/tokens.css` (`@theme` + `:root`). Details: `src/styles/tokens.readme.md`.
+- Badge / pill entrance animations (Motion stagger + spring)
+- SplitText-style title reveals (GSAP)
+- Scroll sequences (ScrollTrigger + Lenis)
+- Shared layout transitions (`layoutId`)
+- Optional React Three Fiber layer
 
-## Motion
+## References
 
-GSAP entry: `src/lib/gsap.js`. Lenis + ScrollTrigger: `src/lib/lenis.js`.
-
-## Roadmap
-
-- [ ] Badge / pill entrance (Motion stagger + spring)
-- [ ] SplitText-style title reveals (GSAP)
-- [ ] Scroll sequences (ScrollTrigger + Lenis)
-- [ ] Shared layout transitions (`layoutId`)
-- [ ] Optional R3F layer
-
-## Reference libraries
-
-- [ui.aceternity.com](https://ui.aceternity.com), [magicui.design](https://magicui.design), [animata.design](https://animata.design), [hover.dev](https://hover.dev), [motion-primitives.com](https://motion-primitives.com)
-- [github.com/itsjwill/nextjs-animated-components](https://github.com/itsjwill/nextjs-animated-components) (150+ MIT components)
-- [awwwards.com](https://awwwards.com), [gsap.com/showcase](https://gsap.com/showcase)
+UI and motion inspiration: [Aceternity UI](https://ui.aceternity.com), [Magic UI](https://magicui.design), [Animata](https://animata.design), [Hover.dev](https://hover.dev), [Motion Primitives](https://motion-primitives.com), [nextjs-animated-components](https://github.com/itsjwill/nextjs-animated-components).
 
 ## Fonts
 
-**SF Pro / SF Pro Rounded (San Francisco)** use a **system font stack** in `src/styles/tokens.css` (`--font-body`, `--font-display`): `ui-rounded`, `-apple-system`, `"SF Pro Rounded"`, then `"SF Pro Text"` / `"SF Pro Display"`, `BlinkMacSystemFont`, and `Segoe UI` / `Roboto` / `system-ui` fallbacks. Base body weight is **400 (Regular)** in `index.css`. **Do not commit** Apple font files; the stack uses installed OS fonts only.
+Body and display type use a **system stack** in `src/styles/tokens.css` (SF Pro / system UI on Apple, Segoe UI / Roboto elsewhere). Do not commit proprietary font binaries.
