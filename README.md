@@ -2,7 +2,7 @@
 
 > **Status: work in progress.** Active rewrite; APIs, routes, and styles are still moving.
 
-My personal portfolio site. Built with Vite, React, and Tailwind v4. Motion uses Framer Motion, GSAP, and Lenis for the scroll layer; routing is handled by React Router. The production build is deployed on Vercel.
+My personal portfolio, but also a sketchbook. I use it to poke at typography, spacing, and motion—trying ideas from references I like, seeing what sticks, and letting half of it stay rough on purpose. Stack is Vite, React, and Tailwind v4; motion is Framer Motion, GSAP, and Lenis with React Router tying sections together. It ships to Vercel when something feels ready enough to show.
 
 ## Run it
 
