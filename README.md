@@ -26,7 +26,7 @@ npm run dev
 
 ## Tooling
 
-The repo ships some Cursor-related metadata (`.agents/`, `skills-lock.json`, `CLAUDE.md`) so my tooling stays in sync across machines. None of it is required to run the site—just `npm install` and you're good.
+The repo ships some Cursor-related metadata (`.agents/`, `skills-lock.json`) so my tooling stays in sync across machines. None of it is required to run the site—just `npm install` and you're good.
 
 ## Roadmap
 
