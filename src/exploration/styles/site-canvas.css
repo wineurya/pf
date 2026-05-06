@@ -2273,7 +2273,7 @@
   }
 }
 
-/* CTAs — Figma 146:15388 (primary), 146:15390 (secondary) */
+/* CTAs — primary matches aside headline accent (teal→violet→amber); secondary unchanged */
 .site-canvas .wx-btn-primary {
   position: relative;
   display: inline-flex;
@@ -2283,9 +2283,13 @@
   overflow: hidden;
   padding: 8px 14px;
   border-radius: 12px;
-  border: 1px solid var(--wx-btn-primary-border-soft);
-  background-color: var(--wx-primary);
-  box-shadow: 0 0 0 1px var(--wx-primary);
+  border: 1px solid color-mix(in srgb, var(--wx-white) 30%, var(--wx-accent-violet));
+  background-color: var(--wx-accent-teal);
+  background-image: var(--wx-headline-word-gradient);
+  background-size: 135% 100%;
+  background-position: 8% 50%;
+  background-repeat: no-repeat;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-accent-teal) 38%, transparent);
   font-size: var(--wx-text-ui-14);
   line-height: var(--wx-text-ui-14-lh);
   font-weight: 500;
@@ -2297,16 +2301,19 @@
   outline: none;
   transition:
     box-shadow 260ms cubic-bezier(0.4, 0, 0.2, 1),
-    transform 160ms cubic-bezier(0.3, 0, 0, 1);
+    transform 160ms cubic-bezier(0.3, 0, 0, 1),
+    filter 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-position 320ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .site-canvas .wx-btn-primary:hover {
-  background-color: var(--wx-btn-primary-hover-bg);
-  box-shadow: 0 0 0 1px var(--wx-btn-primary-hover-ring);
+  filter: brightness(1.06);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-accent-violet) 48%, transparent);
+  background-position: 92% 50%;
 }
 
 .site-canvas .wx-btn-primary:focus-visible {
-  outline: 2px solid var(--wx-primary);
+  outline: 2px solid var(--wx-accent-violet);
   outline-offset: 2px;
 }
 
@@ -2622,6 +2629,12 @@
   .site-canvas .wx-service-card::after,
   .site-canvas .wx-form-input {
     transition: none !important;
+  }
+
+  .site-canvas .wx-btn-primary:hover {
+    filter: none;
+    background-position: 8% 50%;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-accent-teal) 38%, transparent);
   }
 
   .site-canvas .wx-stack-nugget:active {
