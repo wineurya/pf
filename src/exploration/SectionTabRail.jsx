@@ -3,7 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
 import { SECTION_TABS } from "@/exploration/siteContent.js";
-import { wxNavTabTransition } from "@/exploration/navMotion.js";
+import { WX_NAV_TAB_SPRING, wxNavTabTransition } from "@/exploration/navMotion.js";
 
 const TAB_ICONS = [PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon];
 
@@ -17,8 +17,8 @@ const TAB_SELECTED_ACCENTS = [
   "var(--wx-accent-amber)",
 ];
 
-// k=200, d=20, m=0.8 → ω₀≈15.8 rad/s, ζ≈0.79
-const LETTER_SPRING = { type: "spring", stiffness: 200, damping: 20, mass: 0.8 };
+// Slightly softer than before so letter motion matches slower pill width.
+const LETTER_SPRING = { type: "spring", stiffness: 150, damping: 19, mass: 0.85 };
 
 // Letters slide in from the right (x: 4 → 0), exit rightward (0 → x: 4).
 // Using always-mounted variants (no AnimatePresence) eliminates the race
@@ -28,18 +28,35 @@ const LETTER_VARIANTS = {
   show: { opacity: 1, x: 0, transition: LETTER_SPRING },
 };
 
-const LABEL_VARIANTS = {
-  hidden: {
-    maxWidth: 0,
-    marginLeft: 0,
-    transition: { staggerChildren: 0.01, staggerDirection: -1 },
-  },
-  show: {
-    maxWidth: WX_TAB_LABEL_MAX_W,
-    marginLeft: 8,
-    transition: { staggerChildren: 0.035, delayChildren: 0.02 },
-  },
-};
+function labelVariants(reduceMotion) {
+  if (reduceMotion) {
+    return {
+      hidden: {
+        maxWidth: 0,
+        marginLeft: 0,
+        transition: { duration: 0 },
+      },
+      show: {
+        maxWidth: WX_TAB_LABEL_MAX_W,
+        marginLeft: 8,
+        transition: { duration: 0 },
+      },
+    };
+  }
+  const widthT = { maxWidth: WX_NAV_TAB_SPRING, marginLeft: WX_NAV_TAB_SPRING };
+  return {
+    hidden: {
+      maxWidth: 0,
+      marginLeft: 0,
+      transition: { staggerChildren: 0.014, staggerDirection: -1, ...widthT },
+    },
+    show: {
+      maxWidth: WX_TAB_LABEL_MAX_W,
+      marginLeft: 8,
+      transition: { staggerChildren: 0.048, delayChildren: 0.028, ...widthT },
+    },
+  };
+}
 
 function handleTabListKeyDown(e, selectedIndex, onSelectSection) {
   if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -55,7 +72,7 @@ function iconRestTarget({ selected, reduceMotion }) {
   return { scale: selected ? 1.06 : 1, opacity: selected ? 1 : 0.84 };
 }
 
-function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectSection }) {
+function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, labelVars, onSelectSection }) {
   const iconTarget = iconRestTarget({ selected, reduceMotion });
   const labelState = selected ? "show" : "hidden";
   const selectedAccent = TAB_SELECTED_ACCENTS[i % TAB_SELECTED_ACCENTS.length];
@@ -111,7 +128,7 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
         <motion.span
           className="wx-tab-label-text overflow-hidden whitespace-nowrap pr-0.5 tracking-tight"
           style={{ display: "inline-block" }}
-          variants={LABEL_VARIANTS}
+          variants={labelVars}
           initial={false}
           animate={labelState}
         >
@@ -142,11 +159,12 @@ export function SectionTabRail({
   tabRowRef,
 }) {
   const pillT = tabPillTransition ?? wxNavTabTransition(reduceMotion);
+  const labelVars = labelVariants(reduceMotion);
 
   return (
     <motion.div
       layout
-      transition={{ type: "spring", stiffness: 160, damping: 22, mass: 1 }}
+      transition={pillT}
       className="wx-tab-track min-w-0 max-w-full shrink"
       role="tablist"
       aria-label="Sections"
@@ -163,6 +181,7 @@ export function SectionTabRail({
               selected={selected}
               reduceMotion={reduceMotion}
               pillT={pillT}
+              labelVars={labelVars}
               onSelectSection={onSelectSection}
             />
           );

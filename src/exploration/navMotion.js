@@ -5,13 +5,13 @@
 export const WX_NAV_EASE_OUT = [0.22, 1, 0.36, 1];
 
 /**
- * Pill spring: k=160, d=22, m=1 → ω₀≈12.6 rad/s, ζ≈0.87 (near-critical).
- * Lower stiffness removes the fast-acceleration snap while staying responsive.
+ * Pill + rail layout spring: k≈68, d≈17, m≈1.25 — slower width/icon motion than the
+ * previous k=160 setup while still settling without mush.
  */
+export const WX_NAV_TAB_SPRING = { type: "spring", stiffness: 68, damping: 17, mass: 1.25 };
+
 export function wxNavTabTransition(reduceMotion) {
-  return reduceMotion
-    ? { duration: 0 }
-    : { type: "spring", stiffness: 160, damping: 22, mass: 1 };
+  return reduceMotion ? { duration: 0 } : WX_NAV_TAB_SPRING;
 }
 
 /** Rail opacity — tween is fine; opacity doesn’t benefit from spring physics */
