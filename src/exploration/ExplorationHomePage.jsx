@@ -2070,7 +2070,7 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
       id="section-work"
       role="tabpanel"
       aria-labelledby="site-tab-work"
-      className="wx-work-section min-h-0 pb-[var(--wx-space-section)]"
+      className="wx-work-section min-h-0"
     >
       {lead ? (
         <WorkCard
@@ -2082,7 +2082,7 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
         />
       ) : null}
       {rest.length > 0 ? (
-        <div className="wx-work-stack mt-6 flex w-full flex-col gap-6 sm:mt-8 sm:gap-7">
+        <div className="wx-work-stack flex w-full flex-col gap-6 sm:gap-7">
           {rest.map((entry) => (
             <WorkCard
               key={entry.slug}

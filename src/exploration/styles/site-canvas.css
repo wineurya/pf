@@ -141,10 +141,17 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: clamp(1.5rem, 4vw, 2.25rem);
+  /* Match `.wx-work-stack` gap-6 / sm:gap-7 — one rhythm from featured card through the stack */
+  gap: 1.5rem;
   /* `cqw` in card height = full column width (cards are width: 100%) */
   container-type: inline-size;
   container-name: wx-work;
+}
+
+@media (min-width: 40rem) {
+  .site-canvas .wx-work-section {
+    gap: 1.75rem;
+  }
 }
 
 .site-canvas ::selection {
