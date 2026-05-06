@@ -5,26 +5,29 @@
 export const WX_NAV_EASE_OUT = [0.22, 1, 0.36, 1];
 
 /**
- * Pill + rail: shared spring for icon, fill cross-fade, and layout hints.
+ * Pill + rail: spring for icon scale/opacity micro-motion.
  */
 export const WX_NAV_TAB_SPRING = { type: "spring", stiffness: 68, damping: 17, mass: 1.25 };
 
-/**
- * Tab label width (maxWidth / margin): slow growth when a pill opens (small → wide).
- */
-export const WX_NAV_TAB_LABEL_EXPAND_SPRING = {
-  type: "spring",
-  stiffness: 36,
-  damping: 12,
-  mass: 1.65,
+/** Springs bounce on maxWidth — bad for measured layout; use tweens below for label width. */
+export const WX_NAV_TAB_LABEL_EXPAND_DURATION_S = 0.48;
+export const WX_NAV_TAB_LABEL_COLLAPSE_DURATION_S = 0.26;
+
+export const WX_NAV_TAB_LABEL_EXPAND_TWEEN = {
+  maxWidth: { type: "tween", duration: WX_NAV_TAB_LABEL_EXPAND_DURATION_S, ease: WX_NAV_EASE_OUT },
+  marginLeft: { type: "tween", duration: WX_NAV_TAB_LABEL_EXPAND_DURATION_S, ease: WX_NAV_EASE_OUT },
 };
 
-/** When a tab collapses to icon-only — slightly snappier than expand. */
-export const WX_NAV_TAB_LABEL_COLLAPSE_SPRING = {
-  type: "spring",
-  stiffness: 90,
-  damping: 20,
-  mass: 1,
+export const WX_NAV_TAB_LABEL_COLLAPSE_TWEEN = {
+  maxWidth: { type: "tween", duration: WX_NAV_TAB_LABEL_COLLAPSE_DURATION_S, ease: WX_NAV_EASE_OUT },
+  marginLeft: { type: "tween", duration: WX_NAV_TAB_LABEL_COLLAPSE_DURATION_S, ease: WX_NAV_EASE_OUT },
+};
+
+/** Rail layout follows tab widths — single ease, between expand and collapse feel */
+export const WX_NAV_TAB_RAIL_LAYOUT_TWEEN = {
+  type: "tween",
+  duration: 0.38,
+  ease: WX_NAV_EASE_OUT,
 };
 
 export function wxNavTabTransition(reduceMotion) {

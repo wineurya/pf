@@ -4,8 +4,12 @@ import { PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon } from "@hugeicon
 import { clsx } from "clsx";
 import { SECTION_TABS } from "@/exploration/siteContent.js";
 import {
-  WX_NAV_TAB_LABEL_COLLAPSE_SPRING,
-  WX_NAV_TAB_LABEL_EXPAND_SPRING,
+  WX_NAV_EASE_OUT,
+  WX_NAV_TAB_LABEL_COLLAPSE_DURATION_S,
+  WX_NAV_TAB_LABEL_COLLAPSE_TWEEN,
+  WX_NAV_TAB_LABEL_EXPAND_DURATION_S,
+  WX_NAV_TAB_LABEL_EXPAND_TWEEN,
+  WX_NAV_TAB_RAIL_LAYOUT_TWEEN,
   wxNavTabTransition,
 } from "@/exploration/navMotion.js";
 
@@ -21,16 +25,24 @@ const TAB_SELECTED_ACCENTS = [
   "var(--wx-accent-amber)",
 ];
 
-// Softer letter motion on show so typography follows the slow label width growth.
-const LETTER_SPRING_SHOW = { type: "spring", stiffness: 95, damping: 16, mass: 1.05 };
-const LETTER_SPRING_HIDE = { type: "spring", stiffness: 160, damping: 20, mass: 0.82 };
+// Tweens (no spring overshoot) — stagger rides inside the opening width motion.
+const LETTER_TWEEN_SHOW = {
+  type: "tween",
+  duration: 0.22,
+  ease: WX_NAV_EASE_OUT,
+};
+const LETTER_TWEEN_HIDE = {
+  type: "tween",
+  duration: 0.14,
+  ease: WX_NAV_EASE_OUT,
+};
 
 // Letters slide in from the right (x: 4 → 0), exit rightward (0 → x: 4).
 // Using always-mounted variants (no AnimatePresence) eliminates the race
 // condition where fast tab-switching leaves text stuck mid-animation.
 const LETTER_VARIANTS = {
-  hidden: { opacity: 0, x: 4, transition: LETTER_SPRING_HIDE },
-  show: { opacity: 1, x: 0, transition: LETTER_SPRING_SHOW },
+  hidden: { opacity: 0, x: 4, transition: LETTER_TWEEN_HIDE },
+  show: { opacity: 1, x: 0, transition: LETTER_TWEEN_SHOW },
 };
 
 function labelVariants(reduceMotion) {
@@ -48,27 +60,19 @@ function labelVariants(reduceMotion) {
       },
     };
   }
-  const expandW = {
-    maxWidth: WX_NAV_TAB_LABEL_EXPAND_SPRING,
-    marginLeft: WX_NAV_TAB_LABEL_EXPAND_SPRING,
-  };
-  const collapseW = {
-    maxWidth: WX_NAV_TAB_LABEL_COLLAPSE_SPRING,
-    marginLeft: WX_NAV_TAB_LABEL_COLLAPSE_SPRING,
-  };
   return {
     hidden: {
       maxWidth: 0,
       marginLeft: 0,
-      transition: { staggerChildren: 0.014, staggerDirection: -1, ...collapseW },
+      transition: { staggerChildren: 0.012, staggerDirection: -1, ...WX_NAV_TAB_LABEL_COLLAPSE_TWEEN },
     },
     show: {
       maxWidth: WX_TAB_LABEL_MAX_W,
       marginLeft: 8,
       transition: {
-        staggerChildren: 0.065,
-        delayChildren: 0.08,
-        ...expandW,
+        staggerChildren: 0.032,
+        delayChildren: 0,
+        ...WX_NAV_TAB_LABEL_EXPAND_TWEEN,
       },
     },
   };
@@ -128,7 +132,15 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, labelVars
         }}
         initial={false}
         animate={{ opacity: selected ? 1 : 0 }}
-        transition={reduceMotion ? { duration: 0.01 } : pillT}
+        transition={
+          reduceMotion
+            ? { duration: 0.01 }
+            : {
+                type: "tween",
+                ease: WX_NAV_EASE_OUT,
+                duration: selected ? WX_NAV_TAB_LABEL_EXPAND_DURATION_S : WX_NAV_TAB_LABEL_COLLAPSE_DURATION_S,
+              }
+        }
       />
       <span className="relative z-10 flex min-w-min items-center justify-center">
         <motion.span
@@ -176,11 +188,12 @@ export function SectionTabRail({
 }) {
   const pillT = tabPillTransition ?? wxNavTabTransition(reduceMotion);
   const labelVars = labelVariants(reduceMotion);
+  const railTransition = reduceMotion ? { duration: 0 } : WX_NAV_TAB_RAIL_LAYOUT_TWEEN;
 
   return (
     <motion.div
       layout
-      transition={pillT}
+      transition={railTransition}
       className="wx-tab-track min-w-0 max-w-full shrink"
       role="tablist"
       aria-label="Sections"
