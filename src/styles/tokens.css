@@ -261,14 +261,18 @@
   --wx-accent-teal: #0d9488;
   --wx-accent-violet: #7c3aed;
   --wx-accent-amber: #d97706;
-  --wx-gradient-accent: linear-gradient(135deg, var(--wx-primary) 0%, var(--wx-accent-violet) 50%, var(--wx-accent-amber) 100%);
-  /* Aside hero — rotating word + sparkle mark; teal→violet→amber (no blue lead). */
-  --wx-headline-word-gradient: linear-gradient(
+  /**
+   * Shared marketing ramp — primary-led; headline clip, sparkle mask, CTAs, meta dots.
+   * Single surface avoids competing teal-backdrop + gradient stacks on controls.
+   */
+  --wx-gradient-accent: linear-gradient(
     125deg,
-    var(--wx-accent-teal) 0%,
-    var(--wx-accent-violet) 50%,
+    var(--wx-primary) 0%,
+    var(--wx-accent-violet) 48%,
+    var(--wx-accent-teal) 78%,
     var(--wx-accent-amber) 100%
   );
+  --wx-headline-word-gradient: var(--wx-gradient-accent);
   /* FAQ / chat — sent-style iMessage blue + legible fg (WCAG on white mix). */
   --wx-imessage-bubble: #0a84ff;
   --wx-imessage-bubble-ring: color-mix(in srgb, #0066d6 55%, var(--wx-imessage-bubble));

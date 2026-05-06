@@ -2197,7 +2197,7 @@
   transform: translate3d(-50%, 0, 0);
 }
 
-/* Slightly larger than nav wordmark mark — gradient matches `--wx-headline-word-gradient` in JSX */
+/* Slightly larger than nav wordmark mark — gradient matches `--wx-gradient-accent` / headline clip */
 .site-canvas .wx-sparkle__spin {
   display: block;
   transform-origin: 50% 50%;
@@ -2273,7 +2273,7 @@
   }
 }
 
-/* CTAs — primary matches aside headline accent (teal→violet→amber); secondary unchanged */
+/* CTAs — primary fill uses `--wx-gradient-accent` (token-led ramp); secondary unchanged */
 .site-canvas .wx-btn-primary {
   position: relative;
   display: inline-flex;
@@ -2283,13 +2283,13 @@
   overflow: hidden;
   padding: 8px 14px;
   border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--wx-white) 30%, var(--wx-accent-violet));
-  background-color: var(--wx-accent-teal);
-  background-image: var(--wx-headline-word-gradient);
+  border: 1px solid color-mix(in srgb, var(--wx-white) 24%, var(--wx-primary));
+  background-color: var(--wx-primary);
+  background-image: var(--wx-gradient-accent);
   background-size: 135% 100%;
   background-position: 8% 50%;
   background-repeat: no-repeat;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-accent-teal) 38%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-primary) 36%, transparent);
   font-size: var(--wx-text-ui-14);
   line-height: var(--wx-text-ui-14-lh);
   font-weight: 500;
@@ -2307,13 +2307,13 @@
 }
 
 .site-canvas .wx-btn-primary:hover {
-  filter: brightness(1.06);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-accent-violet) 48%, transparent);
+  filter: brightness(1.05);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-primary) 52%, transparent);
   background-position: 92% 50%;
 }
 
 .site-canvas .wx-btn-primary:focus-visible {
-  outline: 2px solid var(--wx-accent-violet);
+  outline: 2px solid color-mix(in srgb, var(--wx-primary) 88%, var(--wx-accent-violet));
   outline-offset: 2px;
 }
 
@@ -2634,7 +2634,7 @@
   .site-canvas .wx-btn-primary:hover {
     filter: none;
     background-position: 8% 50%;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-accent-teal) 38%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--wx-primary) 36%, transparent);
   }
 
   .site-canvas .wx-stack-nugget:active {

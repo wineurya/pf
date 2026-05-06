@@ -1233,6 +1233,7 @@ function AsideHeroHeadline({ reduceMotion }) {
               </span>
             </span>
             <span
+              key={activeWord}
               className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
               aria-hidden
             >
@@ -1250,7 +1251,7 @@ function AsideHeroHeadline({ reduceMotion }) {
                 <MaskedFigmaIcon
                   className="wx-sparkle__img shrink-0 translate-y-px select-none"
                   src={SITE_FIGMA_ASSETS.logoMark}
-                  background="var(--wx-headline-word-gradient)"
+                  background="var(--wx-gradient-accent)"
                 />
               </motion.span>
             </span>
