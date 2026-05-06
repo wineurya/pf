@@ -3,7 +3,11 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
 import { SECTION_TABS } from "@/exploration/siteContent.js";
-import { WX_NAV_TAB_SPRING, wxNavTabTransition } from "@/exploration/navMotion.js";
+import {
+  WX_NAV_TAB_LABEL_COLLAPSE_SPRING,
+  WX_NAV_TAB_LABEL_EXPAND_SPRING,
+  wxNavTabTransition,
+} from "@/exploration/navMotion.js";
 
 const TAB_ICONS = [PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon];
 
@@ -17,15 +21,16 @@ const TAB_SELECTED_ACCENTS = [
   "var(--wx-accent-amber)",
 ];
 
-// Slightly softer than before so letter motion matches slower pill width.
-const LETTER_SPRING = { type: "spring", stiffness: 150, damping: 19, mass: 0.85 };
+// Softer letter motion on show so typography follows the slow label width growth.
+const LETTER_SPRING_SHOW = { type: "spring", stiffness: 95, damping: 16, mass: 1.05 };
+const LETTER_SPRING_HIDE = { type: "spring", stiffness: 160, damping: 20, mass: 0.82 };
 
 // Letters slide in from the right (x: 4 → 0), exit rightward (0 → x: 4).
 // Using always-mounted variants (no AnimatePresence) eliminates the race
 // condition where fast tab-switching leaves text stuck mid-animation.
 const LETTER_VARIANTS = {
-  hidden: { opacity: 0, x: 4 },
-  show: { opacity: 1, x: 0, transition: LETTER_SPRING },
+  hidden: { opacity: 0, x: 4, transition: LETTER_SPRING_HIDE },
+  show: { opacity: 1, x: 0, transition: LETTER_SPRING_SHOW },
 };
 
 function labelVariants(reduceMotion) {
@@ -43,17 +48,28 @@ function labelVariants(reduceMotion) {
       },
     };
   }
-  const widthT = { maxWidth: WX_NAV_TAB_SPRING, marginLeft: WX_NAV_TAB_SPRING };
+  const expandW = {
+    maxWidth: WX_NAV_TAB_LABEL_EXPAND_SPRING,
+    marginLeft: WX_NAV_TAB_LABEL_EXPAND_SPRING,
+  };
+  const collapseW = {
+    maxWidth: WX_NAV_TAB_LABEL_COLLAPSE_SPRING,
+    marginLeft: WX_NAV_TAB_LABEL_COLLAPSE_SPRING,
+  };
   return {
     hidden: {
       maxWidth: 0,
       marginLeft: 0,
-      transition: { staggerChildren: 0.014, staggerDirection: -1, ...widthT },
+      transition: { staggerChildren: 0.014, staggerDirection: -1, ...collapseW },
     },
     show: {
       maxWidth: WX_TAB_LABEL_MAX_W,
       marginLeft: 8,
-      transition: { staggerChildren: 0.048, delayChildren: 0.028, ...widthT },
+      transition: {
+        staggerChildren: 0.065,
+        delayChildren: 0.08,
+        ...expandW,
+      },
     },
   };
 }
