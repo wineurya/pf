@@ -75,7 +75,7 @@ import {
 } from "@/exploration/layout/ExplorationLayout.jsx";
 import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
-import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
+import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
 import { ApproachStepFolderHoverVisual } from "@/exploration/ApproachStepFolderVisual.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
@@ -1210,20 +1210,16 @@ function AsideHeroHeadline({ reduceMotion }) {
           <span className="wx-headline-word-wrap">
             <span className="wx-headline-rotate" aria-live="polite">
               <span className="wx-headline-rotate__mask">
-                <AnimatePresence mode="wait" initial={false}>
+                <AnimatePresence mode="sync" initial={false}>
                   <motion.span
                     key={activeWord}
                     className="wx-headline-rotate__word"
                     initial={
-                      reduceMotion
-                        ? false
-                        : { y: "100%", opacity: 0, filter: "blur(8px)" }
+                      reduceMotion ? false : { y: "100%", opacity: 0 }
                     }
-                    animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                    animate={{ y: 0, opacity: 1 }}
                     exit={
-                      reduceMotion
-                        ? undefined
-                        : { y: "-108%", opacity: 0, filter: "blur(10px)" }
+                      reduceMotion ? undefined : { y: "-100%", opacity: 0 }
                     }
                     transition={
                       reduceMotion
@@ -1237,11 +1233,11 @@ function AsideHeroHeadline({ reduceMotion }) {
               </span>
             </span>
             <span
-              key={`spark-${activeWord}`}
               className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
               aria-hidden
             >
               <motion.span
+                key={activeWord}
                 className="wx-sparkle__spin"
                 initial={reduceMotion ? false : { rotate: -320, scale: 0.88 }}
                 animate={{ rotate: 0, scale: 1 }}
@@ -1254,7 +1250,7 @@ function AsideHeroHeadline({ reduceMotion }) {
                 <MaskedFigmaIcon
                   className="wx-sparkle__img shrink-0 translate-y-px select-none"
                   src={SITE_FIGMA_ASSETS.logoMark}
-                  background={WX_WORDMARK_MARK_GRADIENT}
+                  background="var(--wx-headline-word-gradient)"
                 />
               </motion.span>
             </span>

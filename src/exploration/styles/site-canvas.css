@@ -14,7 +14,7 @@
   /* Sparkle rises just after the word (tiny delay); brief blur flash then opacity/transform fade */
   --wx-sparkle-rise-delay: 0.07s;
   --wx-sparkle-rise-duration: 0.92s;
-  --wx-sparkle-rise-distance: -2.65rem;
+  --wx-sparkle-rise-distance: -2.85rem;
   --wx-sparkle-rise-ease: cubic-bezier(0.22, 0.65, 0.28, 1);
   --wx-sparkle-blur-flash: 10px;
   /* Work cards: `min(80dvb, 720px)` = tested 80dvb cap, ~80% of 900px dynamic viewport; px bounds tall screens */
@@ -2132,7 +2132,7 @@
   position: relative;
   display: inline;
   font-weight: inherit;
-  color: var(--wx-alive);
+  color: inherit;
   white-space: nowrap;
   line-height: 1;
   vertical-align: baseline;
@@ -2153,12 +2153,13 @@
   vertical-align: baseline;
 }
 
-/* Clip frame: matches glyph width/height of the current word for clean slide animation */
+/* Clip frame: fixed cap height; grid stacks entering/exiting words in one cell (sync crossfade). */
 .site-canvas .wx-headline-rotate__mask {
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
+  display: inline-grid;
+  grid-template-columns: max-content;
+  grid-template-rows: 1fr;
+  justify-items: start;
+  align-items: end;
   overflow: hidden;
   width: max-content;
   max-width: 100%;
@@ -2168,11 +2169,19 @@
 }
 
 .site-canvas .wx-headline-rotate__word {
-  display: block;
-  flex-shrink: 0;
+  grid-area: 1 / 1;
+  align-self: end;
   width: max-content;
+  max-width: 100%;
   line-height: 1;
   transform-origin: 50% 100%;
+  background-image: var(--wx-headline-word-gradient);
+  background-size: 120% 120%;
+  background-position: 40% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .site-canvas .wx-sparkle {
@@ -2188,7 +2197,7 @@
   transform: translate3d(-50%, 0, 0);
 }
 
-/* Same mark + box size as `WordmarkLink` (`size-3` / 0.75rem) — gradient in JSX */
+/* Slightly larger than nav wordmark mark — gradient matches `--wx-headline-word-gradient` in JSX */
 .site-canvas .wx-sparkle__spin {
   display: block;
   transform-origin: 50% 50%;
@@ -2196,8 +2205,8 @@
 
 .site-canvas .wx-sparkle__img {
   display: block;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 1rem;
+  height: 1rem;
   max-width: none;
   flex-shrink: 0;
 }
@@ -2246,7 +2255,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .site-canvas .wx-headline-rotate__mask {
-    display: inline-flex;
+    display: inline-block;
     overflow: visible;
     height: auto;
     min-height: 0;
