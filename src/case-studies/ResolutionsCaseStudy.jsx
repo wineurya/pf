@@ -1,37 +1,13 @@
-import { CaseStudyFillerRect } from "@/case-studies/CaseStudyFillerRect.jsx";
+import { CaseStudyMediaStack } from "@/case-studies/CaseStudyMediaStack.jsx";
 
-/**
- * Resolutions — editorial vertical strips (habit / rhythm narrative).
- * @param {{ kicker: string; title: string; lede: string; strips?: { caption: string; image: string }[] }} props.def
- */
-export function ResolutionsCaseStudy({ def }) {
-  const strips = def.strips ?? [];
-  return (
-    <article className="flex flex-col gap-10">
-      <header className="max-w-2xl">
-        <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">
-          {def.kicker}
-        </p>
-        <h1 className="wx-text-page-title mt-2 text-[var(--wx-ink)]">{def.title}</h1>
-        <p className="wx-text-body-secondary mt-4 text-[var(--wx-muted)]">
-          {def.lede}
-        </p>
-      </header>
-      <div className="flex flex-col gap-8">
-        {strips.map((strip) => (
-          <figure
-            key={strip.caption}
-            className="wx-transparent-art-well group relative m-0 overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]"
-          >
-            <div className="relative p-3 sm:p-4">
-              <CaseStudyFillerRect className="w-full" />
-              <figcaption className="wx-text-sm pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[color-mix(in_srgb,var(--wx-ink)_70%,transparent)] to-transparent px-4 py-3 font-medium text-white">
-                {strip.caption}
-              </figcaption>
-            </div>
-          </figure>
-        ))}
-      </div>
-    </article>
-  );
+/** Resolutions — editorial vertical strips, four habit beats. */
+const RESOLUTIONS_ROWS = [
+  { ratio: "16/9", frames: [{ flex: true }] },
+  { ratio: "5/4", frames: [{ flex: true }, { flex: true }] },
+  { ratio: "16/8.5", frames: [{ flex: true }] },
+  { ratio: "5/4", frames: [{ basis: "55%" }, { flex: true }] },
+];
+
+export function ResolutionsCaseStudy() {
+  return <CaseStudyMediaStack rows={RESOLUTIONS_ROWS} />;
 }

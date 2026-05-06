@@ -3,11 +3,7 @@
  * 159:93 hero+visual, 159:849 stepped list, 159:1099 narrow editorial stack).
  * Copy is minimal on purpose; swap URLs as projects ship.
  */
-import {
-  SITE_EXTRA_IMAGES,
-  SITE_IMAGE_FALLBACKS,
-  SITE_WORK,
-} from "@/exploration/siteContent.js";
+import { SITE_EXTRA_IMAGES, SITE_WORK } from "@/exploration/siteContent.js";
 
 /** @type {Record<string, { template: 'hero' | 'steps' | 'editorial'; title: string; kicker: string; lede: string; heroImage?: string; backLabel?: string; steps?: { title: string; blurb: string; image: string }[]; strips?: { caption: string; image: string }[] }>} */
 export const WORK_CASE_PAGES = {
@@ -23,7 +19,8 @@ export const WORK_CASE_PAGES = {
       about:
         "Avance is a coach-shaped mobile flow: plain-language goals, a visible plan and deadline, and coaching prompts when momentum stalls — without the weight of a traditional LMS.",
       team: "Solo concept",
-      toolLabels: ["Figma", "After Effects"],
+      duration: "Mar 2025 – May 2025",
+      toolLabels: ["Figma", "After Effects", "Motion Design"],
     },
     /**
      * Long-form chapters. ScrollTrigger spy in `useCaseStudyScrollSpy` updates the
@@ -85,9 +82,17 @@ export const WORK_CASE_PAGES = {
     template: "hero",
     title: "InCity",
     kicker: "Civic · Mobile",
-    lede: "All-in-one access to city services, updates, and support — with a calmer first screen and prompts for city problems, status, and reporting (Figma 458:10858).",
+    lede: "Platform to improve community reporting and compliance. Geotagged reports, standardized checklists, and real-time transit updates — designed for residents, not for the back office.",
     heroImage: "/work/incity-hero.png",
     backLabel: "Index",
+    editorialMeta: {
+      industry: "Civic Tech · Government Services",
+      about:
+        "InCity is a mobile-first reporting platform that modernizes non-emergency city service requests for Atlanta residents. It streamlines geotagged reports, request tracking, and real-time city updates to support transparency and community involvement.",
+      team: "6 people",
+      duration: "Feb 2025 – Apr 2025",
+      toolLabels: ["UX Design", "Accessibility", "User Research", "Information Architecture", "Usability Testing"],
+    },
   },
   siren: {
     template: "steps",
@@ -95,23 +100,14 @@ export const WORK_CASE_PAGES = {
     kicker: "Safety · Product",
     lede: "From trust signals to verification — a stepped look at the flow, not a wall of text.",
     backLabel: "Index",
-    steps: [
-      {
-        title: "Map the risk",
-        blurb: "Where trust breaks first in the journey.",
-        image: SITE_EXTRA_IMAGES.aurora,
-      },
-      {
-        title: "Test the guardrails",
-        blurb: "Sprint-shaped usability passes on the uncomfortable paths.",
-        image: SITE_EXTRA_IMAGES.studioDesk,
-      },
-      {
-        title: "Ship the calm",
-        blurb: "A UI that signals safety without shouting.",
-        image: SITE_IMAGE_FALLBACKS.heroOcean,
-      },
-    ],
+    editorialMeta: {
+      industry: "Safety · Product",
+      about:
+        "Siren is a trust-and-safety surface for products where users sign on uncomfortable terms. The work focuses on verification flows that read calm, not interrogative — and on guardrails that catch the wrong action before it ships.",
+      team: "Solo concept",
+      duration: "2024",
+      toolLabels: ["Trust & Safety", "Interaction", "Usability"],
+    },
   },
   resolutions: {
     template: "editorial",
@@ -119,12 +115,14 @@ export const WORK_CASE_PAGES = {
     kicker: "Product · Habit",
     lede: "A scroll-first pass: rhythm, stills, and space — the copy stays out of the way.",
     backLabel: "Index",
-    strips: [
-      { caption: "Onboarding", image: SITE_EXTRA_IMAGES.typography },
-      { caption: "Routines", image: SITE_EXTRA_IMAGES.workshop },
-      { caption: "Progress", image: SITE_EXTRA_IMAGES.gradient },
-      { caption: "Return", image: SITE_EXTRA_IMAGES.marble },
-    ],
+    editorialMeta: {
+      industry: "Product · Habit",
+      about:
+        "Resolutions is an editorial pass on a habit product — pacing, stills, and stage rather than a feature dump. Each stage maps to a real user moment instead of a screen tour.",
+      team: "Solo concept",
+      duration: "2023",
+      toolLabels: ["Editorial", "Motion", "Brand"],
+    },
   },
 };
 

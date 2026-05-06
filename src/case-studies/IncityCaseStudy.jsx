@@ -1,22 +1,13 @@
-import { CaseStudyFillerRect } from "@/case-studies/CaseStudyFillerRect.jsx";
+import { CaseStudyMediaStack } from "@/case-studies/CaseStudyMediaStack.jsx";
 
-/**
- * InCity — full-width hero + narrative block (kept out of the public work grid; route only).
- * @param {{ kicker: string; title: string; lede: string; heroImage?: string }} props.def
- */
-export function IncityCaseStudy({ def }) {
-  return (
-    <article className="flex flex-col gap-10">
-      <header className="max-w-2xl">
-        <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">{def.kicker}</p>
-        <h1 className="wx-text-page-title mt-2 text-[var(--wx-ink)]">{def.title}</h1>
-        <p className="wx-text-body-secondary mt-4 text-[var(--wx-muted)]">{def.lede}</p>
-      </header>
-      {def.heroImage ? (
-        <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)] p-4 sm:p-6">
-          <CaseStudyFillerRect className="w-full" />
-        </div>
-      ) : null}
-    </article>
-  );
+/** InCity — Figma `Testing/10:5` cadence: hero, 2-up, hero, narrow+wide. */
+const INCITY_ROWS = [
+  { ratio: "16/8.5", frames: [{ flex: true }] },
+  { ratio: "5/4", frames: [{ flex: true }, { flex: true }] },
+  { ratio: "16/9", frames: [{ flex: true }] },
+  { ratio: "5/4", frames: [{ basis: "42%" }, { flex: true }] },
+];
+
+export function IncityCaseStudy() {
+  return <CaseStudyMediaStack rows={INCITY_ROWS} />;
 }
