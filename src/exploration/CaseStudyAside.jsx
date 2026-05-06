@@ -1,7 +1,6 @@
 import { clsx } from "clsx";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
-import { CaseStudyTableOfContents } from "@/exploration/CaseStudyTableOfContents.jsx";
 
 function MetaBlock({ label, value }) {
   if (!value) return null;
@@ -13,25 +12,42 @@ function MetaBlock({ label, value }) {
   );
 }
 
-function CaseStudyTagPills({ tags }) {
-  if (!tags?.length) return null;
+function CaseStudyTagPills({ toolLabels, highlightLabels }) {
+  const tools = toolLabels ?? [];
+  const highlights = highlightLabels ?? [];
+  if (!tools.length && !highlights.length) return null;
+
   return (
-    <ul className="m-0 flex flex-wrap gap-x-2 gap-y-2 p-0 list-none">
-      {tags.map((tag) => (
-        <li key={tag}>
-          <span
-            className={clsx(
-              "wx-text-meta inline-flex items-center justify-center rounded-full",
-              "border border-[color:var(--wx-border-soft)]",
-              "bg-[color-mix(in_srgb,var(--wx-surface)_88%,var(--wx-page-bg))]",
-              "px-3 py-1 text-[var(--wx-ink)]",
-            )}
-          >
-            {tag}
-          </span>
-        </li>
-      ))}
-    </ul>
+    <div className="wx-case-tags">
+      {tools.length > 0 ? (
+        <div className="wx-case-tags__block">
+          <p id="case-tags-tools" className="wx-case-tags__label">
+            Tools
+          </p>
+          <ul className="wx-case-tags__group" aria-labelledby="case-tags-tools">
+            {tools.map((tag) => (
+              <li key={`tool-${tag}`}>
+                <span className="wx-case-tags__pill wx-case-tags__pill--tool">{tag}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {highlights.length > 0 ? (
+        <div className="wx-case-tags__block">
+          <p id="case-tags-focus" className="wx-case-tags__label">
+            Focus
+          </p>
+          <ul className="wx-case-tags__group" aria-labelledby="case-tags-focus">
+            {highlights.map((tag) => (
+              <li key={`hi-${tag}`}>
+                <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -40,7 +56,7 @@ function CaseStudyTitleBlock({ year, title, lede }) {
     <div className="space-y-3">
       <div className="leading-none">
         {year ? (
-          <p className="wx-text-section-title font-semibold leading-none tracking-tight text-[color-mix(in_srgb,var(--wx-muted)_38%,var(--wx-page-bg))]">
+          <p className="wx-text-section-title font-semibold leading-none tracking-tight text-[var(--wx-muted)]">
             {year}
           </p>
         ) : null}
@@ -86,30 +102,22 @@ function CaseStudyAsideMeta({ industry, about, role, team, duration, kind }) {
   );
 }
 
-function asideTags(editorialMeta, gridEntry) {
+/** Dedupe preserves first-seen order within each rail */
+function asideTagRails(editorialMeta, gridEntry) {
   const toolLabels = editorialMeta?.toolLabels?.filter(Boolean) ?? [];
-  const nuggetLabels = gridEntry?.nuggets?.map((n) => n.label).filter(Boolean) ?? [];
-  return [...new Set([...toolLabels, ...nuggetLabels])];
+  const highlightLabels = gridEntry?.nuggets?.map((n) => n.label).filter(Boolean) ?? [];
+  const uniq = (labels) => [...new Set(labels)];
+  return { toolLabels: uniq(toolLabels), highlightLabels: uniq(highlightLabels) };
 }
 
 /**
- * Editorial source-of-truth for a case study route — title, year, lede, meta,
- * tags, plus an optional Chapters rail driven by `useCaseStudyScrollSpy`.
- *
- * Layout follows Figma `Testing/10:5` left frame: top nav row, a year-over-title
- * block with lede, stacked meta blocks, tag pills, and finally chapter nav.
+ * Editorial source-of-truth for a case study route — title, year, lede, meta, tags.
+ * Layout follows Figma `Testing/10:5` left frame: top nav row, year-over-title
+ * block with lede, stacked meta blocks, then grouped tag rails.
  */
-export function CaseStudyAside({
-  def,
-  gridEntry,
-  chapters = [],
-  activeIndex = 0,
-  reduceMotion,
-  location,
-  navigate,
-}) {
+export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const editorialMeta = def.editorialMeta ?? null;
-  const tags = asideTags(editorialMeta, gridEntry);
+  const { toolLabels, highlightLabels } = asideTagRails(editorialMeta, gridEntry);
   const year = gridEntry?.year?.trim();
   const role = gridEntry?.role?.trim();
   const kind = gridEntry?.kind?.trim();
@@ -117,7 +125,6 @@ export function CaseStudyAside({
   const about = editorialMeta?.about?.trim() || gridEntry?.summary?.trim();
   const team = editorialMeta?.team?.trim();
   const duration = editorialMeta?.duration?.trim();
-  const hasChapters = chapters.length > 0;
 
   return (
     <aside
@@ -132,7 +139,7 @@ export function CaseStudyAside({
       aria-label={`${def.title} — case study overview`}
       data-site-region="case-aside"
     >
-      <div className="flex min-h-0 w-full flex-1 flex-col gap-10 px-[var(--wx-pad-x)] py-8 sm:gap-12 sm:py-10 lg:gap-0 lg:justify-between lg:px-6 lg:py-12">
+      <div className="flex min-h-0 w-full flex-1 flex-col gap-10 px-[var(--wx-pad-x)] py-8 sm:gap-12 sm:py-10 lg:gap-10 lg:px-6 lg:py-12">
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
@@ -148,19 +155,8 @@ export function CaseStudyAside({
             kind={kind}
           />
 
-          <CaseStudyTagPills tags={tags} />
+          <CaseStudyTagPills toolLabels={toolLabels} highlightLabels={highlightLabels} />
         </div>
-
-        {hasChapters ? (
-          <div className="border-t border-[color:var(--wx-border-soft)] pt-6 sm:pt-7 lg:pt-8">
-            <CaseStudyTableOfContents
-              chapters={chapters}
-              activeIndex={activeIndex}
-              reduceMotion={reduceMotion}
-              railMode
-            />
-          </div>
-        ) : null}
       </div>
     </aside>
   );

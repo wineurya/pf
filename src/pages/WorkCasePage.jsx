@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { getWorkCasePageContext } from "@/data/work-cases.js";
 import { AvanceCaseStudy } from "@/case-studies/AvanceCaseStudy.jsx";
@@ -8,7 +7,6 @@ import { SirenCaseStudy } from "@/case-studies/SirenCaseStudy.jsx";
 import { ExplorationBody } from "@/exploration/layout/ExplorationLayout.jsx";
 import { WorkCaseLayout } from "@/exploration/layout/WorkCaseLayout.jsx";
 import { CaseStudyAside } from "@/exploration/CaseStudyAside.jsx";
-import { useCaseStudyScrollSpy } from "@/exploration/useCaseStudyScrollSpy.js";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
 
 const CASE_STUDY_BY_SLUG = {
@@ -20,25 +18,13 @@ const CASE_STUDY_BY_SLUG = {
 
 /**
  * Two-column case study shell — Figma `Testing/10:5` rhythm:
- * • LEFT: editorial source (year/title/lede + meta + tags + chapter rail).
+ * • LEFT: editorial source (year/title/lede + meta + tags).
  * • RIGHT: media-led gallery the case study renders.
  */
-function CaseStudyShell({ def, gridEntry, CaseStudy, reduceMotion, location, navigate }) {
-  const chapters = def.chapters ?? [];
-  const sectionIds = useMemo(() => chapters.map((c) => c.id), [chapters]);
-  const activeIndex = useCaseStudyScrollSpy(sectionIds);
-
+function CaseStudyShell({ def, gridEntry, CaseStudy, location, navigate }) {
   return (
     <ExplorationBody>
-      <CaseStudyAside
-        def={def}
-        gridEntry={gridEntry}
-        chapters={chapters}
-        activeIndex={activeIndex}
-        reduceMotion={reduceMotion}
-        location={location}
-        navigate={navigate}
-      />
+      <CaseStudyAside def={def} gridEntry={gridEntry} location={location} navigate={navigate} />
       <main
         className="site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-3 px-[var(--wx-pad-x)] pb-24 pt-10 sm:gap-4 sm:pt-12 lg:min-w-0 lg:flex-1 lg:basis-0 lg:px-6 lg:pb-16 lg:pt-12"
         data-site-region="case-panels"
@@ -65,14 +51,7 @@ export function WorkCasePage() {
 
   return (
     <WorkCaseLayout reduceMotion={reduceMotion}>
-      <CaseStudyShell
-        def={def}
-        gridEntry={gridEntry}
-        CaseStudy={CaseStudy}
-        reduceMotion={reduceMotion}
-        location={location}
-        navigate={navigate}
-      />
+      <CaseStudyShell def={def} gridEntry={gridEntry} CaseStudy={CaseStudy} location={location} navigate={navigate} />
     </WorkCaseLayout>
   );
 }

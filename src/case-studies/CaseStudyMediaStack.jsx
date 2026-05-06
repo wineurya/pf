@@ -5,8 +5,7 @@ import { CaseStudyFillerRect } from "@/case-studies/CaseStudyFillerRect.jsx";
 const ROW_REVEAL_T = { duration: 0.5, ease: [0.19, 1, 0.22, 1] };
 
 /**
- * Small kicker shown above a row group when a row belongs to a chapter that
- * needs scroll-spy (paired with `CaseStudyAside`'s ToC `id`).
+ * Small kicker shown above a row group when a row carries chapter editorial framing.
  */
 function ChapterAnchorHeader({ chapter }) {
   if (!chapter) return null;
@@ -46,7 +45,7 @@ function MediaRowFrames({ row }) {
 
 /**
  * One row of the gallery (single, 2-up, narrow + wide, etc.). Wrapped in a
- * `<section>` so chapter anchoring + scroll spy work naturally.
+ * `<section>` when `chapterId` is set so anchors resolve for deep links / scroll.
  */
 function MediaRow({ row, index, anchorId, chapter }) {
   const Tag = anchorId ? motion.section : motion.div;
@@ -73,13 +72,12 @@ function MediaRow({ row, index, anchorId, chapter }) {
 
 /**
  * Vertical media-led gallery — Figma `Testing 10:5` right column rhythm. Each
- * `row` is one band of frames; pass `chapter` per row to attach the scroll-spy
- * anchor used by `CaseStudyAside`'s ToC.
+ * `row` is one band of frames; pass `chapter` per row to show eyebrow/title headers.
  *
  * `rows`: Array<{
  *   ratio?: string;                  // default ratio for frames in the row
  *   gap?: "md" | "lg";
- *   chapterId?: string;              // id used by `useCaseStudyScrollSpy`
+ *   chapterId?: string;              // optional DOM id on `<section>` (anchors / scroll link-in)
  *   chapter?: { eyebrow?: string; title?: string };
  *   frames: Array<{ ratio?: string; flex?: boolean; basis?: string; rounded?: string }>;
  * }>

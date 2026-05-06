@@ -22,11 +22,7 @@ export const WORK_CASE_PAGES = {
       duration: "Mar 2025 – May 2025",
       toolLabels: ["Figma", "After Effects", "Motion Design"],
     },
-    /**
-     * Long-form chapters. ScrollTrigger spy in `useCaseStudyScrollSpy` updates the
-     * left aside (eyebrow / title / lede) as each section enters viewport center.
-     * Body copy is intentionally minimal lorem per repo policy — replace as content lands.
-     */
+    /** Chapter defs remain available for templates/export; aside navigation rail removed. */
     chapters: [
       {
         id: "ch-overview",

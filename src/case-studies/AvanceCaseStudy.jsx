@@ -1,9 +1,9 @@
 import { CaseStudyMediaStack } from "@/case-studies/CaseStudyMediaStack.jsx";
 
 /**
- * Avance — image-led chapter stack. Editorial copy lives in `CaseStudyAside`;
- * the right column is purely media (Figma `Testing/10:5` rhythm). Each chapter
- * id anchors a row group so `useCaseStudyScrollSpy` can drive the aside ToC.
+ * Avance — image-led chapter stack. Editorial summary lives in `CaseStudyAside`;
+ * the right column is purely media (Figma `Testing/10:5` rhythm). Chapter ids on
+ * each band remain valid anchors for deep links or native scroll.
  *
  * Layout cadence per chapter:
  *   • overview → wide hero
