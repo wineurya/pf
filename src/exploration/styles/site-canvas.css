@@ -2080,7 +2080,7 @@
 }
 
 .site-canvas .wx-tab:focus-visible {
-  outline: 2px solid var(--wx-primary);
+  outline: 2px solid var(--wx-tab-accent, var(--wx-primary));
   outline-offset: 2px;
 }
 
@@ -2182,6 +2182,11 @@
 }
 
 /* Same mark + box size as `WordmarkLink` (`size-3` / 0.75rem) — gradient in JSX */
+.site-canvas .wx-sparkle__spin {
+  display: block;
+  transform-origin: 50% 50%;
+}
+
 .site-canvas .wx-sparkle__img {
   display: block;
   width: 0.75rem;

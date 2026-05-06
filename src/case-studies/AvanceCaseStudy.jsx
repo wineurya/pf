@@ -1,39 +1,49 @@
 import { motion } from "motion/react";
+import { CaseStudyFillerRect } from "@/case-studies/CaseStudyFillerRect.jsx";
 
 const SECTION_REVEAL_T = { duration: 0.55, ease: [0.19, 1, 0.22, 1] };
 
 /**
- * Image-only chapter frame — copy lives in `CaseStudyAside` / scroll ticker.
- * Section id must match `work-cases` chapter ids for `useCaseStudyScrollSpy`.
+ * Chapter stack — copy + 5:4 placeholder in the main column (navigation + overview live in
+ * `CaseStudyAside` + `CaseStudyEditorialHeader`). Section ids power `useCaseStudyScrollSpy`.
  */
 function CaseChapterSection({ chapter, index }) {
   const label = `${chapter.eyebrow}: ${chapter.title}`;
+  const bodyParts = chapter.bodyParts ?? [];
 
   return (
     <motion.section
       id={chapter.id}
       data-case-chapter-index={index}
       aria-label={label}
-      className="wx-case-section relative flex min-h-[min(72svh,46rem)] flex-col items-center justify-center py-12 sm:py-16 lg:py-24"
+      className="wx-case-section relative flex scroll-mt-24 flex-col gap-10 py-12 sm:gap-12 sm:py-16 lg:scroll-mt-28 lg:py-24"
       initial={{ opacity: 0.94 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, amount: 0.28, margin: "0px 0px -8% 0px" }}
+      viewport={{ once: true, amount: 0.22, margin: "0px 0px -8% 0px" }}
       transition={SECTION_REVEAL_T}
     >
-      {chapter.image ? (
-        <figure className="wx-case-section__figure relative w-full max-w-[min(52rem,94vw)] px-5 sm:px-8 lg:px-10">
-          <div className="wx-transparent-art-well overflow-hidden rounded-[var(--wx-radius-card)] p-5 sm:p-8 lg:p-10">
-            <img
-              src={chapter.image}
-              alt={chapter.imageAlt || ""}
-              className="block h-auto w-full max-h-[min(78svh,52rem)] select-none object-contain"
-              loading={index === 0 ? "eager" : "lazy"}
-              decoding="async"
-              sizes="(min-width: 1024px) 52rem, 94vw"
-            />
-          </div>
-        </figure>
-      ) : null}
+      <div className="w-full max-w-[min(52rem,100%)] space-y-5 px-5 sm:px-8 lg:px-10">
+        {chapter.eyebrow ? (
+          <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">{chapter.eyebrow}</p>
+        ) : null}
+        <h2 className="wx-text-subsection-title text-balance text-[var(--wx-ink)]">{chapter.title}</h2>
+        {chapter.lede ? (
+          <p className="wx-text-body-secondary max-w-2xl text-[var(--wx-muted)]">{chapter.lede}</p>
+        ) : null}
+        {bodyParts.map((para, pi) => (
+          <p
+            key={`${chapter.id}-p-${pi}`}
+            className="wx-text-body-secondary max-w-2xl text-[color-mix(in_srgb,var(--wx-muted)_92%,var(--wx-page-bg))]"
+          >
+            {para}
+          </p>
+        ))}
+      </div>
+      <figure className="wx-case-section__figure relative w-full max-w-[min(52rem,94vw)] px-5 sm:px-8 lg:px-10">
+        <div className="wx-transparent-art-well overflow-hidden rounded-[var(--wx-radius-card)] p-5 sm:p-8 lg:p-10">
+          <CaseStudyFillerRect className="w-full" />
+        </div>
+      </figure>
     </motion.section>
   );
 }
@@ -50,26 +60,9 @@ export function AvanceCaseStudy({ def }) {
   if (chapters.length === 0) {
     return (
       <article className="flex flex-col gap-10">
-        <header className="max-w-2xl">
-          <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">
-            {def.kicker}
-          </p>
-          <h1 className="wx-text-page-title mt-2 text-[var(--wx-ink)]">{def.title}</h1>
-          <p className="wx-text-body-secondary mt-4 text-[var(--wx-muted)]">
-            {def.lede}
-          </p>
-        </header>
         {def.heroImage ? (
-          <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
-            <img
-              src={def.heroImage}
-              alt=""
-              className="h-auto w-full object-cover"
-              width={2400}
-              height={2400}
-              sizes="(min-width: 1200px) 1152px, 100vw"
-              decoding="async"
-            />
+          <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)] p-4 sm:p-6">
+            <CaseStudyFillerRect className="w-full" />
           </div>
         ) : null}
       </article>

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
-import { getWorkCaseOrNull } from "@/data/work-cases.js";
+import { getWorkCasePageContext } from "@/data/work-cases.js";
 import { AvanceCaseStudy } from "@/case-studies/AvanceCaseStudy.jsx";
 import { IncityCaseStudy } from "@/case-studies/IncityCaseStudy.jsx";
 import { ResolutionsCaseStudy } from "@/case-studies/ResolutionsCaseStudy.jsx";
@@ -8,6 +8,7 @@ import { SirenCaseStudy } from "@/case-studies/SirenCaseStudy.jsx";
 import { ExplorationBody } from "@/exploration/layout/ExplorationLayout.jsx";
 import { WorkCaseLayout } from "@/exploration/layout/WorkCaseLayout.jsx";
 import { CaseStudyAside } from "@/exploration/CaseStudyAside.jsx";
+import { CaseStudyEditorialHeader } from "@/exploration/CaseStudyEditorialHeader.jsx";
 import { useCaseStudyScrollSpy } from "@/exploration/useCaseStudyScrollSpy.js";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
 
@@ -19,11 +20,9 @@ const CASE_STUDY_BY_SLUG = {
 };
 
 /**
- * Split body for chaptered cases — mirrors the home `ExplorationBody` (`aside`+`panels`),
- * keeps `site-vt--aside` / `site-vt--panels` intact for the staged route morph.
- * Active chapter is driven by `useCaseStudyScrollSpy` (GSAP ScrollTrigger).
+ * Split body for chaptered cases — narrow sticky rail + editorial column (see Figma Testing 10:5).
  */
-function CaseStudySplitBody({ def, CaseStudy, reduceMotion, location, navigate }) {
+function CaseStudySplitBody({ def, gridEntry, CaseStudy, reduceMotion, location, navigate }) {
   const chapters = def.chapters;
   const sectionIds = useMemo(() => chapters.map((c) => c.id), [chapters]);
   const activeIndex = useCaseStudyScrollSpy(sectionIds);
@@ -39,10 +38,13 @@ function CaseStudySplitBody({ def, CaseStudy, reduceMotion, location, navigate }
         navigate={navigate}
       />
       <div
-        className="site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-12 px-[var(--wx-pad-x)] pb-28 pt-12 sm:gap-14 lg:min-w-0 lg:flex-1 lg:basis-0 lg:gap-16 lg:px-3 lg:pl-3 lg:pr-[var(--wx-pad-x)] lg:pb-32 lg:pt-14"
+        className="site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-0 px-[var(--wx-pad-x)] pb-28 pt-12 sm:pt-14 lg:min-w-0 lg:flex-1 lg:basis-0 lg:px-3 lg:pl-4 lg:pr-[var(--wx-pad-x)] lg:pb-32 lg:pt-16"
         data-site-region="case-panels"
       >
-        <CaseStudy def={def} />
+        <CaseStudyEditorialHeader def={def} gridEntry={gridEntry} editorialMeta={def.editorialMeta} />
+        <div className="mt-14 sm:mt-16 lg:mt-20">
+          <CaseStudy def={def} />
+        </div>
       </div>
     </ExplorationBody>
   );
@@ -52,11 +54,12 @@ export function WorkCasePage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const def = slug ? getWorkCaseOrNull(slug) : null;
+  const ctx = slug ? getWorkCasePageContext(slug) : null;
   const reduceMotion = useReducedMotion();
 
-  if (!def || !slug) return <Navigate to="/" replace />;
+  if (!ctx || !slug) return <Navigate to="/" replace />;
 
+  const { def, gridEntry } = ctx;
   const CaseStudy = CASE_STUDY_BY_SLUG[slug];
   if (!CaseStudy) return <Navigate to="/" replace />;
 
@@ -67,6 +70,7 @@ export function WorkCasePage() {
       {hasChapters ? (
         <CaseStudySplitBody
           def={def}
+          gridEntry={gridEntry}
           CaseStudy={CaseStudy}
           reduceMotion={reduceMotion}
           location={location}
@@ -74,9 +78,10 @@ export function WorkCasePage() {
         />
       ) : (
         <div
-          className="site-vt--panels relative z-10 mx-auto flex w-full max-w-[1200px] flex-col gap-6 px-[var(--wx-pad-x)] pb-24 pt-12"
+          className="site-vt--panels relative z-10 mx-auto flex w-full max-w-[min(1200px,100%)] flex-col gap-12 px-[var(--wx-pad-x)] pb-24 pt-12 sm:gap-14 sm:pt-14"
           data-site-region="work-case-panels"
         >
+          <CaseStudyEditorialHeader def={def} gridEntry={gridEntry} editorialMeta={def.editorialMeta} />
           <CaseStudy def={def} />
         </div>
       )}

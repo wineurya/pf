@@ -1210,25 +1210,25 @@ function AsideHeroHeadline({ reduceMotion }) {
           <span className="wx-headline-word-wrap">
             <span className="wx-headline-rotate" aria-live="polite">
               <span className="wx-headline-rotate__mask">
-                <AnimatePresence mode="popLayout" initial={false}>
+                <AnimatePresence mode="wait" initial={false}>
                   <motion.span
                     key={activeWord}
                     className="wx-headline-rotate__word"
                     initial={
                       reduceMotion
                         ? false
-                        : { y: "110%", opacity: 0.12, filter: "blur(10px)", scale: 0.8 }
+                        : { y: "100%", opacity: 0, filter: "blur(8px)" }
                     }
-                    animate={{ y: 0, opacity: 1, filter: "blur(0px)", scale: 1 }}
+                    animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                     exit={
                       reduceMotion
                         ? undefined
-                        : { y: "-120%", opacity: 0, filter: "blur(12px)", scale: 0.8 }
+                        : { y: "-108%", opacity: 0, filter: "blur(10px)" }
                     }
                     transition={
                       reduceMotion
                         ? { duration: 0 }
-                        : { duration: HEADLINE_WORD_ENTER_DURATION, ease: [0.45, 0.02, 0.2, 1] }
+                        : { duration: HEADLINE_WORD_ENTER_DURATION, ease: [0.16, 0.82, 0.24, 1] }
                     }
                   >
                     {activeWord}
@@ -1241,11 +1241,22 @@ function AsideHeroHeadline({ reduceMotion }) {
               className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
               aria-hidden
             >
-              <MaskedFigmaIcon
-                className="wx-sparkle__img shrink-0 translate-y-px select-none"
-                src={SITE_FIGMA_ASSETS.logoMark}
-                background={WX_WORDMARK_MARK_GRADIENT}
-              />
+              <motion.span
+                className="wx-sparkle__spin"
+                initial={reduceMotion ? false : { rotate: -320, scale: 0.88 }}
+                animate={{ rotate: 0, scale: 1 }}
+                transition={
+                  reduceMotion
+                    ? { duration: 0 }
+                    : { duration: 0.88, ease: [0.11, 0.92, 0.18, 1] }
+                }
+              >
+                <MaskedFigmaIcon
+                  className="wx-sparkle__img shrink-0 translate-y-px select-none"
+                  src={SITE_FIGMA_ASSETS.logoMark}
+                  background={WX_WORDMARK_MARK_GRADIENT}
+                />
+              </motion.span>
             </span>
           </span>
         </span>
@@ -2053,6 +2064,7 @@ function ExplorationPageAside(p) {
 }
 
 function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
+  const [lead, ...rest] = SITE_WORK;
   return (
     <section
       id="section-work"
@@ -2060,15 +2072,28 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
       aria-labelledby="site-tab-work"
       className="wx-work-section min-h-0 pb-[var(--wx-space-section)]"
     >
-      {SITE_WORK.map((entry) => (
+      {lead ? (
         <WorkCard
-          key={entry.slug}
-          entry={entry}
+          key={lead.slug}
+          entry={lead}
           reduceMotion={reduceMotion}
-          onEmptyProjectClick={entry.status === "incomplete" ? () => setEmptyProjectFocus(true) : undefined}
-          onOpenNavOnlyView={entry.workCardOpenNavOnlyView ? () => setEmptyProjectFocus(true) : undefined}
+          onEmptyProjectClick={lead.status === "incomplete" ? () => setEmptyProjectFocus(true) : undefined}
+          onOpenNavOnlyView={lead.workCardOpenNavOnlyView ? () => setEmptyProjectFocus(true) : undefined}
         />
-      ))}
+      ) : null}
+      {rest.length > 0 ? (
+        <div className="wx-work-stack mt-6 flex w-full flex-col gap-6 sm:mt-8 sm:gap-7">
+          {rest.map((entry) => (
+            <WorkCard
+              key={entry.slug}
+              entry={entry}
+              reduceMotion={reduceMotion}
+              onEmptyProjectClick={entry.status === "incomplete" ? () => setEmptyProjectFocus(true) : undefined}
+              onOpenNavOnlyView={entry.workCardOpenNavOnlyView ? () => setEmptyProjectFocus(true) : undefined}
+            />
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }

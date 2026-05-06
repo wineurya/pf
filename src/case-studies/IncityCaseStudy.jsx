@@ -1,3 +1,5 @@
+import { CaseStudyFillerRect } from "@/case-studies/CaseStudyFillerRect.jsx";
+
 /**
  * InCity — full-width hero + narrative block (kept out of the public work grid; route only).
  * @param {{ kicker: string; title: string; lede: string; heroImage?: string }} props.def
@@ -11,16 +13,8 @@ export function IncityCaseStudy({ def }) {
         <p className="wx-text-body-secondary mt-4 text-[var(--wx-muted)]">{def.lede}</p>
       </header>
       {def.heroImage ? (
-        <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
-          <img
-            src={def.heroImage}
-            alt=""
-            className="h-auto w-full object-cover"
-            width={2000}
-            height={1200}
-            sizes="(min-width: 1200px) 1152px, 100vw"
-            decoding="async"
-          />
+        <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)] p-4 sm:p-6">
+          <CaseStudyFillerRect className="w-full" />
         </div>
       ) : null}
     </article>

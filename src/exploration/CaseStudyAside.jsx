@@ -1,25 +1,14 @@
 import { clsx } from "clsx";
 import { AnimatePresence, motion } from "motion/react";
+import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
 import { CaseStudyTableOfContents } from "@/exploration/CaseStudyTableOfContents.jsx";
 
 const META_T = { duration: 0.24, ease: [0.22, 1, 0.36, 1] };
 
-function CaseStudyHeading({ def }) {
-  return (
-    <div className="relative w-full text-left">
-      <p className="wx-text-meta wx-text-kicker text-[var(--wx-muted)]">{def.kicker}</p>
-      <h1 className="wx-text-page-title mt-2 text-[var(--wx-ink)]">{def.title}</h1>
-      {def.lede ? (
-        <p className="mt-2 wx-text-body-secondary text-[var(--wx-muted)]">{def.lede}</p>
-      ) : null}
-    </div>
-  );
-}
-
 function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
   return (
-    <div className="mt-auto flex flex-col items-start gap-2 border-t border-[color:var(--wx-border-soft)] pt-8 text-left lg:pt-10">
+    <div className="mt-6 flex shrink-0 flex-col items-start gap-2 border-t border-[color:var(--wx-border-soft)] pt-6 text-left lg:mt-8 lg:pt-8">
       <p className="wx-text-meta tabular-nums text-[var(--wx-muted)]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -37,17 +26,17 @@ function CaseStudyProgress({ indexLabel, totalLabel, reduceMotion }) {
           {" / "}
           {totalLabel}
         </span>
-        <span className="wx-text-kicker ml-3">Case study</span>
+        <span className="wx-text-kicker ml-2">Chapters</span>
       </p>
     </div>
   );
 }
 
 /**
- * Sticky case-study aside — wordmark + heading + chapter list (active row expands with lede).
- * One chapter system replaces the prior TOC + ticker stack.
+ * Minimal sticky rail — back, wordmark, compact chapter list, progress (Figma 10:5 left frame,
+ * reduced to navigation only; body copy and meta live in the main column).
  *
- * @param {{ def: { title: string; kicker: string; lede?: string }, chapters: Array<{ id: string; eyebrow?: string; title: string; lede?: string }>, activeIndex: number, reduceMotion: boolean, location: object, navigate: function }} props
+ * @param {{ def: { title: string }, chapters: Array, activeIndex: number, reduceMotion: boolean, location: object, navigate: function }} props
  */
 export function CaseStudyAside({
   def,
@@ -65,31 +54,31 @@ export function CaseStudyAside({
     <aside
       className={clsx(
         "relative z-20 flex w-full min-w-0 shrink-0 flex-col border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
-        "lg:grow-0 lg:shrink-0 lg:sticky lg:top-0 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0",
-        "lg:flex-none lg:w-[min(42%,36rem)] lg:h-svh lg:max-h-svh",
+        "lg:grow-0 lg:shrink-0 lg:sticky lg:top-0 lg:max-h-svh lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0 lg:border-r",
+        "lg:w-[min(17.5rem,26vw)] lg:max-w-[20rem]",
       )}
-      aria-label={`${def.title} — chapter overview`}
+      aria-label={`${def.title} — chapter navigation`}
       data-site-region="case-aside"
     >
-      <div className="flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12">
+      <div className="flex min-h-0 w-full max-w-full flex-1 flex-col px-[var(--wx-pad-x)] py-8 sm:px-5 sm:py-10 lg:px-4 lg:py-12">
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
-        <div className="wx-mobile-sticky-nav flex w-full min-w-0 shrink-0 flex-row flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
-          <div className="site-vt--nav flex w-full min-w-0 flex-nowrap items-center justify-start gap-3 min-h-14 sm:gap-4">
-            <WordmarkLink location={location} navigate={navigate} />
-          </div>
+        <div className="site-vt--nav flex min-h-0 w-full flex-col gap-5">
+          <ViewTransitionLink
+            to="/#section-work"
+            className="wx-text-meta font-medium text-[var(--wx-muted)] outline-none transition-colors hover:text-[var(--wx-primary)] focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
+          >
+            Back to work
+          </ViewTransitionLink>
+          <WordmarkLink location={location} navigate={navigate} />
         </div>
 
-        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col">
-          <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
-            <div className="relative w-full space-y-5 text-left">
-              <CaseStudyHeading def={def} />
-              <CaseStudyTableOfContents
-                chapters={chapters}
-                activeIndex={activeIndex}
-                reduceMotion={reduceMotion}
-              />
-            </div>
-          </div>
+        <div className="site-vt--aside mt-8 flex min-h-0 w-full flex-1 flex-col lg:mt-10">
+          <CaseStudyTableOfContents
+            chapters={chapters}
+            activeIndex={activeIndex}
+            reduceMotion={reduceMotion}
+            railMode
+          />
           <CaseStudyProgress indexLabel={indexLabel} totalLabel={totalLabel} reduceMotion={reduceMotion} />
         </div>
       </div>

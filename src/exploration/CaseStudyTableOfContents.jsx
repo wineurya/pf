@@ -8,7 +8,7 @@ import { useLenis } from "@/providers/LenisProvider.jsx";
 const LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
 const EASE = [0.22, 1, 0.36, 1];
 
-function ChapterRow({ chapter, index, active, onSelect }) {
+function ChapterRow({ chapter, index, active, onSelect, railMode }) {
   const idx = String(index + 1).padStart(2, "0");
 
   return (
@@ -16,7 +16,8 @@ function ChapterRow({ chapter, index, active, onSelect }) {
       <button
         type="button"
         className={clsx(
-          "group relative w-full rounded-md py-3 pl-4 pr-3 text-left outline-none transition-colors duration-200",
+          "group relative w-full rounded-md text-left outline-none transition-colors duration-200",
+          railMode ? "py-2 pl-2 pr-1" : "py-3 pl-4 pr-3",
           "focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]",
           active
             ? "border-l-2 border-[var(--wx-primary)] bg-[color-mix(in_srgb,var(--wx-primary)_6%,transparent)]"
@@ -25,17 +26,18 @@ function ChapterRow({ chapter, index, active, onSelect }) {
         aria-current={active ? "location" : undefined}
         onClick={() => onSelect(chapter.id)}
       >
-        <span className="flex items-baseline gap-3">
+        <span className={clsx("flex items-baseline", railMode ? "gap-2" : "gap-3")}>
           <span
             className={clsx(
               "wx-text-meta shrink-0 tabular-nums",
+              railMode && "text-[length:var(--wx-text-meta-size)]",
               active ? "text-[var(--wx-primary)]" : "text-[color-mix(in_srgb,var(--wx-muted)_85%,transparent)]",
             )}
           >
             {idx}
           </span>
           <span className="min-w-0 flex-1">
-            {chapter.eyebrow ? (
+            {chapter.eyebrow && !railMode ? (
               <span
                 className={clsx(
                   "block wx-text-meta wx-text-kicker",
@@ -49,17 +51,25 @@ function ChapterRow({ chapter, index, active, onSelect }) {
             ) : null}
             <span
               className={clsx(
-                "wx-text-chapter-title mt-1 block",
-                active && "wx-text-chapter-title--active",
-                active
-                  ? "text-[var(--wx-ink)]"
-                  : "text-[color-mix(in_srgb,var(--wx-ink)_82%,var(--wx-page-bg))]",
+                "mt-1 block",
+                railMode
+                  ? clsx(
+                      "text-sm font-medium leading-snug tracking-tight",
+                      active ? "text-[var(--wx-ink)]" : "text-[color-mix(in_srgb,var(--wx-ink)_82%,var(--wx-page-bg))]",
+                    )
+                  : clsx(
+                      "wx-text-chapter-title",
+                      active && "wx-text-chapter-title--active",
+                      active
+                        ? "text-[var(--wx-ink)]"
+                        : "text-[color-mix(in_srgb,var(--wx-ink)_82%,var(--wx-page-bg))]",
+                    ),
               )}
             >
               {chapter.title}
             </span>
             <AnimatePresence initial={false}>
-              {active && chapter.lede ? (
+              {active && chapter.lede && !railMode ? (
                 <motion.span
                   key={`lede-${chapter.id}`}
                   className="block overflow-hidden"
@@ -85,9 +95,9 @@ function ChapterRow({ chapter, index, active, onSelect }) {
  * Single chapter system for the case study aside — list of chapters where the active one
  * expands to reveal its lede. Replaces the separate Contents list + ticker.
  *
- * @param {{ chapters: Array<{ id: string; eyebrow?: string; title: string; lede?: string }>, activeIndex: number, reduceMotion: boolean }} props
+ * @param {{ chapters: Array<{ id: string; eyebrow?: string; title: string; lede?: string }>, activeIndex: number, reduceMotion: boolean, railMode?: boolean }} props
  */
-export function CaseStudyTableOfContents({ chapters, activeIndex, reduceMotion }) {
+export function CaseStudyTableOfContents({ chapters, activeIndex, reduceMotion, railMode = false }) {
   const lenis = useLenis();
   const safeIndex = Math.min(Math.max(activeIndex, 0), Math.max(chapters.length - 1, 0));
 
@@ -116,11 +126,14 @@ export function CaseStudyTableOfContents({ chapters, activeIndex, reduceMotion }
     <nav className="w-full min-w-0" aria-labelledby="case-study-toc-heading">
       <p
         id="case-study-toc-heading"
-        className="wx-text-meta wx-text-kicker mb-4 text-left text-[var(--wx-muted)]"
+        className={clsx(
+          "wx-text-meta wx-text-kicker text-left text-[var(--wx-muted)]",
+          railMode ? "mb-2" : "mb-4",
+        )}
       >
         Chapters
       </p>
-      <ol className="m-0 flex list-none flex-col gap-1 p-0">
+      <ol className={clsx("m-0 flex list-none flex-col p-0", railMode ? "gap-0.5" : "gap-1")}>
         {chapters.map((ch, i) => (
           <ChapterRow
             key={ch.id}
@@ -128,6 +141,7 @@ export function CaseStudyTableOfContents({ chapters, activeIndex, reduceMotion }
             index={i}
             active={i === safeIndex}
             onSelect={scrollToChapter}
+            railMode={railMode}
           />
         ))}
       </ol>

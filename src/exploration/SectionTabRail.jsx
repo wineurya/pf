@@ -9,6 +9,14 @@ const TAB_ICONS = [PenTool02Icon, BookUserIcon, Layers01Icon, Mail01Icon];
 
 const WX_TAB_LABEL_MAX_W = 160;
 
+/** Selected pill fill — cycles the brand accent family (not blue-only). */
+const TAB_SELECTED_ACCENTS = [
+  "var(--wx-primary)",
+  "var(--wx-accent-violet)",
+  "var(--wx-accent-teal)",
+  "var(--wx-accent-amber)",
+];
+
 // k=200, d=20, m=0.8 → ω₀≈15.8 rad/s, ζ≈0.79
 const LETTER_SPRING = { type: "spring", stiffness: 200, damping: 20, mass: 0.8 };
 
@@ -50,6 +58,7 @@ function iconRestTarget({ selected, reduceMotion }) {
 function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectSection }) {
   const iconTarget = iconRestTarget({ selected, reduceMotion });
   const labelState = selected ? "show" : "hidden";
+  const selectedAccent = TAB_SELECTED_ACCENTS[i % TAB_SELECTED_ACCENTS.length];
 
   return (
     <motion.button
@@ -66,6 +75,7 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
         "text-[var(--wx-tab-idle-fg)]",
         selected ? "font-semibold" : "font-medium",
       )}
+      style={{ "--wx-tab-accent": selectedAccent }}
       onClick={() => onSelectSection(tab.sectionId, i)}
     >
       <span
@@ -80,8 +90,8 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, onSelectS
         aria-hidden
         className="wx-tab__fill pointer-events-none absolute inset-0 -z-10"
         style={{
-          backgroundColor: "var(--wx-primary)",
-          boxShadow: "var(--wx-tab-shadow-active)",
+          backgroundColor: "var(--wx-tab-accent)",
+          boxShadow: "0 0 0 1px var(--wx-tab-accent)",
         }}
         initial={false}
         animate={{ opacity: selected ? 1 : 0 }}

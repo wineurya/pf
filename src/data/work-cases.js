@@ -6,6 +6,7 @@
 import {
   SITE_EXTRA_IMAGES,
   SITE_IMAGE_FALLBACKS,
+  SITE_WORK,
 } from "@/exploration/siteContent.js";
 
 /** @type {Record<string, { template: 'hero' | 'steps' | 'editorial'; title: string; kicker: string; lede: string; heroImage?: string; backLabel?: string; steps?: { title: string; blurb: string; image: string }[]; strips?: { caption: string; image: string }[] }>} */
@@ -17,6 +18,13 @@ export const WORK_CASE_PAGES = {
     lede: "Plain-language goals become a plan, a deadline, and a coach in your corner when the search goes quiet or progress slows.",
     heroImage: "/work/avance-hero.png",
     backLabel: "Index",
+    editorialMeta: {
+      industry: "Coaching · Consumer mobile",
+      about:
+        "Avance is a coach-shaped mobile flow: plain-language goals, a visible plan and deadline, and coaching prompts when momentum stalls — without the weight of a traditional LMS.",
+      team: "Solo concept",
+      toolLabels: ["Figma", "After Effects"],
+    },
     /**
      * Long-form chapters. ScrollTrigger spy in `useCaseStudyScrollSpy` updates the
      * left aside (eyebrow / title / lede) as each section enters viewport center.
@@ -120,6 +128,14 @@ export const WORK_CASE_PAGES = {
   },
 };
 
+export function getWorkCasePageContext(slug) {
+  if (!slug) return null;
+  const def = WORK_CASE_PAGES[slug];
+  if (!def) return null;
+  const gridEntry = SITE_WORK.find((e) => e.slug === slug) ?? null;
+  return { def, gridEntry };
+}
+
 export function getWorkCaseOrNull(slug) {
-  return WORK_CASE_PAGES[slug] ?? null;
+  return slug ? WORK_CASE_PAGES[slug] ?? null : null;
 }

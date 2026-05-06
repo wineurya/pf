@@ -1,3 +1,5 @@
+import { CaseStudyFillerRect } from "@/case-studies/CaseStudyFillerRect.jsx";
+
 /**
  * Resolutions — editorial vertical strips (habit / rhythm narrative).
  * @param {{ kicker: string; title: string; lede: string; strips?: { caption: string; image: string }[] }} props.def
@@ -21,19 +23,12 @@ export function ResolutionsCaseStudy({ def }) {
             key={strip.caption}
             className="wx-transparent-art-well group relative m-0 overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]"
           >
-            <img
-              src={strip.image}
-              alt=""
-              className="aspect-[21/9] w-full object-cover"
-              width={2000}
-              height={860}
-              sizes="(min-width: 1200px) 1152px, 100vw"
-              loading="lazy"
-              decoding="async"
-            />
-            <figcaption className="wx-text-sm absolute inset-x-0 bottom-0 bg-gradient-to-t from-[color-mix(in_srgb,var(--wx-ink)_70%,transparent)] to-transparent px-4 py-3 font-medium text-white">
-              {strip.caption}
-            </figcaption>
+            <div className="relative p-3 sm:p-4">
+              <CaseStudyFillerRect className="w-full" />
+              <figcaption className="wx-text-sm pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[color-mix(in_srgb,var(--wx-ink)_70%,transparent)] to-transparent px-4 py-3 font-medium text-white">
+                {strip.caption}
+              </figcaption>
+            </div>
           </figure>
         ))}
       </div>

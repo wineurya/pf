@@ -1,3 +1,5 @@
+import { CaseStudyFillerRect } from "@/case-studies/CaseStudyFillerRect.jsx";
+
 /**
  * Siren — stepped case layout (safety / trust narrative).
  * @param {{ kicker: string; title: string; lede: string; steps?: { title: string; blurb: string; image: string }[] }} props.def
@@ -30,17 +32,8 @@ export function SirenCaseStudy({ def }) {
                 {step.blurb}
               </p>
             </div>
-            <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)]">
-              <img
-                src={step.image}
-                alt=""
-                className="aspect-[4/3] w-full object-cover"
-                width={800}
-                height={600}
-                sizes="(min-width: 900px) 50vw, 100vw"
-                loading="lazy"
-                decoding="async"
-              />
+            <div className="wx-transparent-art-well overflow-hidden rounded-lg border border-[color:var(--wx-border-soft)] p-3 sm:p-4">
+              <CaseStudyFillerRect className="w-full" />
             </div>
           </li>
         ))}
