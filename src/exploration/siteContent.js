@@ -150,6 +150,13 @@ export const SITE_WORK = [
     workCardFigmaCanvas: "#f4f4f1",
     workCardFigmaLightCanvas: true,
     workCardFooterWarm: true,
+    /** Same footer chrome as Avance: default mark (`SITE_FIGMA_ASSETS.logoMark`) + title + rotating line */
+    workCardFooterRotatingLines: [
+      "Services, updates, reporting — one place.",
+      "Right when you need it.",
+      "Welcome → tags → chat prompts → resolution.",
+      "Less hunting across city sites.",
+    ],
     workCardNuggetsMonochrome: true,
     workCardNuggetsAriaLabel: "Product signals",
     nuggets: [
@@ -185,6 +192,12 @@ export const SITE_WORK = [
     workCardFigmaCanvas: "#f3f3f2",
     workCardFigmaLightCanvas: true,
     workCardFooterWarm: true,
+    workCardFooterRotatingLines: [
+      "Trust signals without the wall of text.",
+      "Safety that doesn't shout.",
+      "Verification-heavy — still human.",
+      "Clear states, fewer dead ends.",
+    ],
     workCardNuggetsMonochrome: true,
     workCardNuggetsAriaLabel: "Focus areas",
     nuggets: [
@@ -218,6 +231,12 @@ export const SITE_WORK = [
     workCardFigmaCanvas: "#f4f4f1",
     workCardFigmaLightCanvas: true,
     workCardFooterWarm: true,
+    workCardFooterRotatingLines: [
+      "Scroll-first rhythm, quiet structure.",
+      "Space for momentum to land.",
+      "Onboarding → routines → return visits.",
+      "Editorial pacing before dense copy.",
+    ],
     workCardNuggetsMonochrome: true,
     workCardNuggetsAriaLabel: "Product beats",
     nuggets: [
@@ -251,6 +270,12 @@ export const SITE_WORK = [
     workCardFigmaCanvas: "#f5f5f4",
     workCardFigmaLightCanvas: true,
     workCardFooterWarm: true,
+    workCardFooterRotatingLines: [
+      "Brand voice meets shipping UI.",
+      "Measured, not ornamental.",
+      "Display type, density, motion — systematic.",
+      "Bold brand bar, real components.",
+    ],
     workCardNuggetsMonochrome: true,
     workCardNuggetsAriaLabel: "System pieces",
     nuggets: [
