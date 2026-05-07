@@ -5,10 +5,28 @@ import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
 function MetaBlock({ label, value }) {
   if (!value) return null;
   return (
-    <div className="space-y-1.5">
-      <p className="wx-text-sm font-semibold tracking-tight text-[var(--wx-ink)]">{label}</p>
-      <p className="wx-text-meta text-[var(--wx-muted)]">{value}</p>
+    <div className="min-w-0 space-y-1">
+      <p className="wx-aside-footer__label">{label}</p>
+      <p className="wx-text-sm font-medium tracking-tight text-[var(--wx-ink)]">{value}</p>
     </div>
+  );
+}
+
+/**
+ * Apple Settings-style row separator.
+ * Container has no `gap`; padding+border on each section creates the rhythm so first
+ * + last sections sit flush with the column.
+ */
+function AsideSection({ children, className }) {
+  return (
+    <section
+      className={clsx(
+        "border-t border-[color:var(--wx-border-soft)] pt-6 first:border-t-0 first:pt-0 lg:pt-7",
+        className,
+      )}
+    >
+      {children}
+    </section>
   );
 }
 
@@ -54,19 +72,25 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
 function CaseStudyTitleBlock({ year, title, lede }) {
   return (
     <div className="space-y-3">
-      <div className="leading-none">
-        {year ? (
-          <p className="wx-text-section-title font-semibold leading-none tracking-tight text-[var(--wx-muted)]">
-            {year}
-          </p>
-        ) : null}
-        <h1 className="wx-text-section-title mt-1 font-semibold leading-tight tracking-tight text-[var(--wx-ink)]">
+      <div className="space-y-1.5">
+        {year ? <p className="wx-aside-footer__label">{year}</p> : null}
+        <h1 className="wx-text-section-title font-semibold leading-tight tracking-tight text-[var(--wx-ink)]">
           {title}
         </h1>
       </div>
       {lede ? (
         <p className="wx-text-body-secondary text-[var(--wx-muted)]">{lede}</p>
       ) : null}
+    </div>
+  );
+}
+
+function CaseStudyAboutBlock({ about }) {
+  if (!about) return null;
+  return (
+    <div className="space-y-2">
+      <p className="wx-aside-footer__label">About</p>
+      <p className="wx-text-body-secondary text-[var(--wx-muted)]">{about}</p>
     </div>
   );
 }
@@ -89,16 +113,21 @@ function CaseStudyAsideTopRow({ location, navigate }) {
   );
 }
 
-function CaseStudyAsideMeta({ industry, about, role, team, duration, kind }) {
+function CaseStudyAsideMeta({ industry, role, team, duration, kind }) {
+  const items = [
+    { label: "Role", value: role },
+    { label: "Team", value: team },
+    { label: "Industry", value: industry },
+    { label: "Project type", value: kind },
+    { label: "Duration", value: duration },
+  ].filter((item) => item.value);
+  if (!items.length) return null;
   return (
-    <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-1">
-      <MetaBlock label="Industry" value={industry} />
-      <MetaBlock label="About" value={about} />
-      <MetaBlock label="Role" value={role} />
-      <MetaBlock label="Team" value={team} />
-      <MetaBlock label="Project type" value={kind} />
-      <MetaBlock label="Duration" value={duration} />
-    </div>
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
+      {items.map((item) => (
+        <MetaBlock key={item.label} label={item.label} value={item.value} />
+      ))}
+    </dl>
   );
 }
 
@@ -142,19 +171,32 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
-        <div className="site-vt--aside mt-9 flex min-h-0 w-full min-w-0 flex-1 flex-col space-y-6 lg:mt-12 lg:space-y-7 lg:py-2">
-          <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
+        <div className="site-vt--aside mt-9 flex min-h-0 w-full min-w-0 flex-1 flex-col lg:mt-12 lg:py-2">
+          <AsideSection>
+            <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
+          </AsideSection>
 
-          <CaseStudyAsideMeta
-            industry={industry}
-            about={about}
-            role={role}
-            team={team}
-            duration={duration}
-            kind={kind}
-          />
+          {about ? (
+            <AsideSection>
+              <CaseStudyAboutBlock about={about} />
+            </AsideSection>
+          ) : null}
 
-          <CaseStudyTagPills toolLabels={toolLabels} highlightLabels={highlightLabels} />
+          <AsideSection>
+            <CaseStudyAsideMeta
+              industry={industry}
+              role={role}
+              team={team}
+              duration={duration}
+              kind={kind}
+            />
+          </AsideSection>
+
+          {toolLabels.length || highlightLabels.length ? (
+            <AsideSection>
+              <CaseStudyTagPills toolLabels={toolLabels} highlightLabels={highlightLabels} />
+            </AsideSection>
+          ) : null}
         </div>
       </div>
     </aside>
