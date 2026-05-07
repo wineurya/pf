@@ -39,7 +39,12 @@ const TEXT_FIELD_SELECTOR = [
   'input[type="datetime-local"]',
 ].join(", ");
 
-/** Dot follower — morphs to a tiny + over clickable targets; skipped when reduced motion. */
+/**
+ * Dot follower — morphs to a tiny + over clickable targets; skipped when
+ * reduced motion. Movement uses `translate3d` exposed via CSS variables so
+ * pointer move is compositor-only (no layout, no paint on the parent).
+ * `elementFromPoint` is debounced to RAF so hit-testing doesn't run per event.
+ */
 export function DotCursor({ reduceMotion }) {
   const ref = useRef(null);
 
@@ -48,6 +53,9 @@ export function DotCursor({ reduceMotion }) {
     const el = ref.current;
     if (!el) return undefined;
     let rafId = 0;
+    let pendingX = 0;
+    let pendingY = 0;
+    let pending = false;
 
     const syncInteractive = (clientX, clientY) => {
       const under = document.elementFromPoint(clientX, clientY);
@@ -58,13 +66,19 @@ export function DotCursor({ reduceMotion }) {
       el.classList.toggle("wx-dot-cursor--interactive", interactive);
     };
 
+    const flush = () => {
+      pending = false;
+      el.style.setProperty("--wx-dot-cursor-x", `${pendingX}px`);
+      el.style.setProperty("--wx-dot-cursor-y", `${pendingY}px`);
+      syncInteractive(pendingX, pendingY);
+    };
+
     const onMove = (e) => {
-      el.style.left = `${e.clientX}px`;
-      el.style.top = `${e.clientY}px`;
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        syncInteractive(e.clientX, e.clientY);
-      });
+      pendingX = e.clientX;
+      pendingY = e.clientY;
+      if (pending) return;
+      pending = true;
+      rafId = requestAnimationFrame(flush);
     };
 
     window.addEventListener("pointermove", onMove, { passive: true });

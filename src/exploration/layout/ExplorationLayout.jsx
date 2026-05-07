@@ -40,7 +40,7 @@ export const ExplorationMainPanels = forwardRef(function ExplorationMainPanels(
     <Component
       ref={ref}
       className={clsx(
-        "site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-[var(--wx-gallery-gap)] px-[var(--wx-pad-x)] pb-20 pt-10 lg:min-w-0 lg:flex-1 lg:basis-0 lg:px-3 lg:pl-3 lg:pr-[var(--wx-pad-x)] lg:pb-24 lg:pt-12",
+        "site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-[var(--wx-gallery-gap)] px-[var(--wx-pad-x)] pb-20 pt-[var(--wx-aside-pad-y-mobile)] lg:min-w-0 lg:flex-1 lg:basis-0 lg:px-3 lg:pl-3 lg:pr-[var(--wx-pad-x)] lg:pb-24 lg:pt-[var(--wx-panels-pad-top-lg)]",
         className,
       )}
       id="site-panels"

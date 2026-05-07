@@ -12,6 +12,7 @@ const WorkCasePage = lazy(() =>
 );
 const KinetixPage = lazy(() => import("@/pages/design/KinetixPage.jsx"));
 const LogoExplorationPage = lazy(() => import("@/pages/design/LogoExplorationPage.jsx"));
+const DesignSystemPage = lazy(() => import("@/pages/design/DesignSystemPage.jsx"));
 
 function RouteFallback() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
       <CanvasRoot>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
+            <Route path="/design/system" element={<DesignSystemPage />} />
             <Route path="/design/logo-exploration" element={<LogoExplorationPage />} />
             <Route path="/design/kinetix" element={<KinetixPage />} />
             <Route

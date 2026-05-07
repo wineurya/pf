@@ -3,14 +3,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/** Coalesce rapid refresh calls into one rAF — ScrollTrigger.refresh() is layout-heavy. */
-let scrollTriggerRefreshRaf = 0;
+/** Trailing debounce — ScrollTrigger.refresh() is layout-heavy; image loads + layout bursts fire many callers. */
+let scrollTriggerRefreshTimer = 0;
 export function queueScrollTriggerRefresh() {
-  if (scrollTriggerRefreshRaf) return;
-  scrollTriggerRefreshRaf = requestAnimationFrame(() => {
-    scrollTriggerRefreshRaf = 0;
+  if (scrollTriggerRefreshTimer) window.clearTimeout(scrollTriggerRefreshTimer);
+  scrollTriggerRefreshTimer = window.setTimeout(() => {
+    scrollTriggerRefreshTimer = 0;
     ScrollTrigger.refresh();
-  });
+  }, 72);
 }
 
 export { gsap, ScrollTrigger };
