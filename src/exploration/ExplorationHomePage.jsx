@@ -23,10 +23,8 @@ import {
   QuoteUpIcon,
 } from "@hugeicons/core-free-icons";
 import { ArrowUpRight } from "@phosphor-icons/react";
-import { Envelope } from "@phosphor-icons/react/dist/csr/Envelope";
-import { InstagramLogo } from "@phosphor-icons/react/dist/csr/InstagramLogo";
-import { LinkedinLogo } from "@phosphor-icons/react/dist/csr/LinkedinLogo";
-import { XLogo } from "@phosphor-icons/react/dist/csr/XLogo";
+import { EnvelopeSimple } from "@phosphor-icons/react/dist/csr/EnvelopeSimple";
+import { FilePdf } from "@phosphor-icons/react/dist/csr/FilePdf";
 import { clsx } from "clsx";
 import {
   BookTextIcon,
@@ -78,6 +76,7 @@ import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
 import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
 import { ApproachStepFolderHoverVisual } from "@/exploration/ApproachStepFolderVisual.jsx";
+import { LinkedInBrandIcon } from "@/exploration/LinkedInBrandIcon.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
 const NUGGET_ICON_MAP = {
@@ -164,11 +163,11 @@ function stackToolLogoUrl(tool) {
   return null;
 }
 
-const CONTACT_PHOSPHOR_ICONS = {
-  linkedin: LinkedinLogo,
-  x: XLogo,
-  instagram: InstagramLogo,
-  email: Envelope,
+/** Aside contact row — `linkedin` uses official mark geometry via {@link LinkedInBrandIcon}. */
+const CONTACT_ROW_ICONS = {
+  linkedin: LinkedInBrandIcon,
+  resume: FilePdf,
+  email: EnvelopeSimple,
 };
 
 /** Contact-row pills (aside footer) — gentle in/out tween. */
@@ -1425,9 +1424,10 @@ function StackToolkitNuggets() {
 }
 
 function ContactPill({ c, reduceMotion, labelEase }) {
-  const PhosphorIcon = CONTACT_PHOSPHOR_ICONS[c.icon];
+  const Icon = CONTACT_ROW_ICONS[c.icon];
   const external = c.href.startsWith("http");
   const [open, setOpen] = useState(false);
+  const isBrandSvg = c.icon === "linkedin";
 
   return (
     <motion.a
@@ -1443,8 +1443,10 @@ function ContactPill({ c, reduceMotion, labelEase }) {
       transition={reduceMotion ? { duration: 0 } : { layout: { duration: 0.22, ease: labelEase } }}
     >
       <span className="wx-contact-pill__icon" aria-hidden>
-        {PhosphorIcon ? (
-          <PhosphorIcon className="wx-contact-pill__phosphor" size={18} weight="regular" />
+        {Icon && isBrandSvg ? (
+          <Icon className="wx-contact-pill__brand-svg" />
+        ) : Icon ? (
+          <Icon className="wx-contact-pill__phosphor" size={18} weight="regular" />
         ) : null}
       </span>
       <motion.span
@@ -1472,9 +1474,9 @@ function ContactPill({ c, reduceMotion, labelEase }) {
 function AsideContactRow({ reduceMotion }) {
   const labelEase = WX_TAB_EASE_IN_OUT;
   return (
-    <nav className="wx-contact-row" aria-label="Contact and social links">
+    <nav className="wx-contact-row" aria-label="Profile, résumé, and email">
       {SITE_CONTACT_SOCIALS.map((c) => (
-        <ContactPill key={c.label} c={c} reduceMotion={reduceMotion} labelEase={labelEase} />
+        <ContactPill key={c.href} c={c} reduceMotion={reduceMotion} labelEase={labelEase} />
       ))}
     </nav>
   );

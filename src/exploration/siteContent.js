@@ -423,11 +423,12 @@ export const SITE_STACK_MARQUEE_LAYERS = [
 export const SITE_STACK_TOOLS = SITE_STACK_MARQUEE_LAYERS.flat();
 
 /**
- * Contact row — `icon` keys map to Phosphor icons (monochrome stroke, B/W via currentColor).
- * Verified channels only. X / Instagram removed until handles confirmed.
+ * Aside contact row — `icon`: `linkedin` (official mark SVG), `resume`, `email` (Phosphor).
+ * Add `public/resume.pdf` (or change `href`) so the résumé link resolves.
  */
 export const SITE_CONTACT_SOCIALS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/wineury", icon: "linkedin" },
+  { label: "Résumé", href: "/resume.pdf", icon: "resume" },
   { label: "Email", href: "mailto:wineurya30@gmail.com", icon: "email" },
 ];
 
