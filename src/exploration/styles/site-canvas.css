@@ -1773,17 +1773,26 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-width: 0;
+  width: 100%;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
 /*
- * Marquee clip: padding inside overflow:hidden keeps chip outlines from being cropped.
- * Horizontal padding keeps the first/last pills from hugging the fade seam.
+ * Marquee clip: vertical padding keeps chip outlines inside the mask; no negative margins
+ * (they pulled the track past the aside on mobile and enabled horizontal page scroll).
  */
 .site-canvas .wx-stack-marquee {
   overflow: hidden;
-  padding: 16px 10px;
-  margin: -16px -10px;
+  overflow-x: clip;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding-block: var(--spacing-4);
+  padding-inline: 0;
+  touch-action: pan-y;
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0,
@@ -1807,7 +1816,12 @@
   align-items: center;
   gap: 0.5rem;
   width: max-content;
+  max-width: none;
+  direction: ltr;
+  flex-wrap: nowrap;
   will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
   animation: wx-marquee-x 50s linear infinite;
 }
 
@@ -1816,15 +1830,31 @@
   animation-direction: reverse;
 }
 
-/* Pause on hover/focus so users can interact */
-.site-canvas .wx-stack-marquee__inner:hover,
-.site-canvas .wx-stack-marquee__inner:focus-within {
-  animation-play-state: paused;
+@media (width < 64rem) {
+  .site-canvas .wx-stack-marquee__inner {
+    animation-duration: min(50s, 34s);
+  }
+
+  .site-canvas .wx-stack-marquee__inner--reverse {
+    animation-duration: min(58s, 40s);
+  }
+}
+
+/* Pause on real hover only — touch must not stick “paused” on iOS/Android. */
+@media (hover: hover) and (pointer: fine) {
+  .site-canvas .wx-stack-marquee__inner:hover,
+  .site-canvas .wx-stack-marquee__inner:focus-within {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes wx-marquee-x {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .site-canvas .wx-stack-marquee__item {
