@@ -26,19 +26,31 @@ function MediaRowFrames({ row }) {
   return (
     <div
       className={clsx(
-        "flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-start",
+        "flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-stretch",
         row.gap === "lg" ? "sm:gap-4" : "sm:gap-3",
       )}
     >
-      {frames.map((f, fi) => (
-        <div
-          key={fi}
-          className={clsx("min-w-0", f.flex ? "min-w-0 flex-1" : null)}
-          style={f.basis ? { flex: `0 0 ${f.basis}` } : undefined}
-        >
-          <CaseStudyFillerRect ratio={f.ratio ?? row.ratio ?? "16/10"} rounded={f.rounded ?? "lg"} />
-        </div>
-      ))}
+      {frames.map((f, fi) => {
+        const fillHeight =
+          f.fillHeight ??
+          (frames.length > 1 && Boolean(f.basis) && f.flex !== true);
+        return (
+          <div
+            key={fi}
+            className={clsx(
+              "flex min-h-0 min-w-0 flex-col sm:self-stretch",
+              f.flex ? "min-w-0 flex-1" : null,
+            )}
+            style={f.basis ? { flex: `0 0 ${f.basis}` } : undefined}
+          >
+            <CaseStudyFillerRect
+              ratio={f.ratio ?? row.ratio ?? "16/10"}
+              rounded={f.rounded ?? "lg"}
+              fillHeight={fillHeight}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -79,7 +91,7 @@ function MediaRow({ row, index, anchorId, chapter }) {
  *   gap?: "md" | "lg";
  *   chapterId?: string;              // optional DOM id on `<section>` (anchors / scroll link-in)
  *   chapter?: { eyebrow?: string; title?: string };
- *   frames: Array<{ ratio?: string; flex?: boolean; basis?: string; rounded?: string }>;
+ *   frames: Array<{ ratio?: string; flex?: boolean; basis?: string; rounded?: string; fillHeight?: boolean }>;
  * }>
  */
 export function CaseStudyMediaStack({ rows }) {

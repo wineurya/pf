@@ -6,8 +6,15 @@ import { clsx } from "clsx";
  *
  * Defaults to 5:4 to match prior call sites; pass `ratio` (e.g. "16/9", "4/5")
  * for variety, or `style={{ aspectRatio }}` for arbitrary values.
+ * `fillHeight` drops aspect ratio so the block can grow to the row's stretch height.
  */
-export function CaseStudyFillerRect({ className, ratio = "5/4", rounded = "lg", style }) {
+export function CaseStudyFillerRect({
+  className,
+  ratio = "5/4",
+  rounded = "lg",
+  style,
+  fillHeight = false,
+}) {
   const radiusClass =
     rounded === "none"
       ? "rounded-none"
@@ -22,11 +29,12 @@ export function CaseStudyFillerRect({ className, ratio = "5/4", rounded = "lg", 
     <div
       className={clsx(
         "pointer-events-none w-full max-w-full select-none overflow-hidden",
+        fillHeight && "min-h-0 flex-1",
         radiusClass,
         "bg-[color-mix(in_srgb,var(--wx-muted)_10%,var(--wx-page-bg))]",
         className,
       )}
-      style={{ aspectRatio: ratio, ...style }}
+      style={fillHeight ? { ...style } : { aspectRatio: ratio, ...style }}
       aria-hidden
     />
   );
