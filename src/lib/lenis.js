@@ -1,6 +1,6 @@
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
-import { gsap, ScrollTrigger } from "./gsap.js";
+import { ScrollTrigger } from "./gsap.js";
 
 export function initLenis() {
   const lenis = new Lenis();
@@ -30,14 +30,16 @@ export function initLenis() {
   };
   ScrollTrigger.addEventListener("refresh", onRefresh);
 
-  const tickerFn = (time) => {
-    lenis.raf(time * 1000);
-  };
-  gsap.ticker.add(tickerFn);
-  gsap.ticker.lagSmoothing(0);
+  /** Drive Lenis with native rAF (DOM timestamp ms). Avoids GSAP ticker work each frame. */
+  let rafId = 0;
+  function raf(timeMs) {
+    lenis.raf(timeMs);
+    rafId = requestAnimationFrame(raf);
+  }
+  rafId = requestAnimationFrame(raf);
 
   function destroy() {
-    gsap.ticker.remove(tickerFn);
+    cancelAnimationFrame(rafId);
     ScrollTrigger.removeEventListener("refresh", onRefresh);
     unsubscribeLenisScroll();
     // Drop the viewport proxy before destroying Lenis, otherwise ScrollTrigger can

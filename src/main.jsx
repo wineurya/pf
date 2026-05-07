@@ -5,7 +5,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary.jsx";
 import App from "@/App.jsx";
 import { LenisProvider } from "@/providers/LenisProvider.jsx";
 import { MotionProvider } from "@/providers/MotionProvider.jsx";
-import "@/lib/gsap.js";
+import { MotionBudgetPause } from "@/shell/MotionBudgetPause.jsx";
 import "@/index.css";
 
 createRoot(document.getElementById("root")).render(
@@ -13,6 +13,7 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <ErrorBoundary>
         <MotionProvider>
+          <MotionBudgetPause />
           <LenisProvider>
             <App />
           </LenisProvider>

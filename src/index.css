@@ -52,4 +52,24 @@
   #root {
     min-height: 100%;
   }
+
+  /* Hidden tab / unfocused document — pause infinite CSS loops (see MotionBudgetPause.jsx). */
+  html[data-motion-paused] .site-canvas .wx-stack-marquee__inner {
+    animation-play-state: paused !important;
+  }
+
+  html[data-motion-paused] .site-canvas .wx-headline-rotate__word {
+    animation-play-state: paused !important;
+  }
+
+  html[data-motion-paused]
+    .site-canvas
+    .wx-aside-availability-dot--pulse
+    .wx-aside-availability-dot__fill::after {
+    animation-play-state: paused !important;
+  }
+
+  html[data-motion-paused] .site-canvas .wx-case-tags__focus-marquee-strip {
+    animation-play-state: paused !important;
+  }
 }
