@@ -231,12 +231,31 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  /* Marquee math assumes LTR strip; keeps -50% loop correct under `dir="rtl"`. */
+  direction: ltr;
+  flex-wrap: nowrap;
   will-change: transform;
   animation: wx-case-focus-marquee-x var(--wx-case-focus-marquee-s, 40s) linear infinite;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
-[data-site-region="case-aside"] .wx-case-tags__focus-marquee-strip:hover {
-  animation-play-state: paused;
+/* Shorter loop on narrow viewports so movement reads; duration is still driven by `--wx-case-focus-marquee-s`. */
+@media (width < 64rem) {
+  [data-site-region="case-aside"] .wx-case-tags__focus-marquee-strip {
+    animation-duration: min(var(--wx-case-focus-marquee-s, 40s), 32s);
+  }
+}
+
+/* Pause on hover only for real hover (not touch), so tap doesn’t stick paused on iOS/Android. */
+@media (hover: hover) and (pointer: fine) {
+  [data-site-region="case-aside"] .wx-case-tags__focus-marquee-strip:hover {
+    animation-play-state: paused;
+  }
+}
+
+[data-site-region="case-aside"] .wx-case-tags__focus-marquee-strip > li {
+  flex-shrink: 0;
 }
 
 @keyframes wx-case-focus-marquee-x {
