@@ -1,0 +1,81 @@
+---
+description: Enforce portfolio design tokens, typography (SF Pro + Rounded), colors, and exploration chrome for UI work
+alwaysApply: true
+---
+
+# Design system enforcement (wineury portfolio)
+
+Treat **[`/design/system`](/design/system)** as the living checklist for marketing/exploration UI. Source files are canonical:
+
+- **Tokens:** `src/styles/tokens.css` (`--wx-*`, `--color-neutral-*`, `@theme` spacing scale `--spacing-*`, fluid space `--space-fluid-*`, layout `--layout-*`, breakpoints `--breakpoint-*`, `--font-display`, `--font-body`, motion, radius).
+- **Exploration utilities:** `src/exploration/styles/site-canvas.css` (scope `.site-canvas`, `.wx-text-*`, component chrome).
+- **Case aside:** `src/styles/work-case.css` (`[data-site-region="case-aside"]`, meta/tags).
+
+## Typography
+
+- **`--font-display`:** Larger / bolder marketing type (**titles, hero, stats, wordmark, FAQ questions**) — **SF Pro Rounded–led** (`ui-rounded`, then SF Pro Rounded → Display → Text). Use via utilities that bind `font-family: var(--font-display)` in `site-canvas.css` (e.g. `.wx-text-section-title`, `.wx-text-page-title`, `.wx-headline`, `.wx-stat-value`).
+- **`--font-body`:** Reading weight and UI chrome — **SF Pro Text → SF Pro Display** only (**no SF Pro Rounded** in this stack). Used for `.wx-text-body-secondary`, `.wx-text-meta`, `.wx-text-sm`, kickers, form labels, bubbles, etc.
+- Do not describe the site as “Rounded for everything.” **Rounded = display/titles; SF Pro = body.**
+
+## Color
+
+- Surfaces, ink, borders, accents: **`var(--wx-*)`** or **`--color-neutral-*`** from `tokens.css`. No scattered hex for blues/grays; brand accents use **`--wx-primary`**, **`--wx-accent-*`**, **`--wx-gradient-accent`** as documented on `/design/system`.
+- Hairline UI: **`--wx-border-soft`**, **`--wx-border-hairline`**, **`--wx-outline-ink`** — not raw `gray-200`.
+
+## Spacing, layout, and alignment
+
+- **Horizontal page padding:** **`--wx-pad-x`** (`clamp(1.25rem, 4vw, 3.75rem)`) — use **`px-[var(--wx-pad-x)]`** on exploration/main columns so gutters match the rest of the shell; `.site-canvas` may set **`padding-inline: var(--wx-pad-x)`** on the outer shell — do not invent new side margins for the same surface.
+- **Vertical section rhythm (aside / stacked chrome):** **`--wx-space-section`** for gaps between stacked sections in the exploration aside and similar stacks.
+- **Fluid spacing between major blocks:** **`--space-fluid-xs`** … **`--space-fluid-4xl`** (`clamp(...)` in `:root`) — prefer these for viewport-aware gaps (hero → content, section banding) over hard-coded `margin-top` in `px`.
+- **Fixed rhythm (components, dense UI):** **`@theme` `--spacing-*`** powers Tailwind **`p-*`**, **`m-*`**, **`gap-*`**, **`space-y-*`** — prefer these utilities over arbitrary values like **`p-[13px]`** or one-off **`rem`** unless mapping to an existing token.
+- **Page width and gutters (global layouts):** **`--layout-max-width`** (primary column cap, `80rem`), **`--layout-max-width-sm`** (`40rem`), **`--layout-max-width-lg`** (`96rem`), **`--layout-gutter`** (`clamp(1rem, 4vw, 3rem)`) — combine with **`mx-auto`** and **`max-w-[var(--layout-max-width)]`** (or the sm/lg variants when the pattern already uses them); do not scatter unrelated **`max-w-[900px]`** on new marketing surfaces unless mirroring this page’s intentional narrow doc column.
+- **Work / media layout:** **`--wx-explore-aside-basis`**, **`--wx-max-copy`**, **`--wx-gallery-gap`**, **`--wx-work-overlay-pad-x`**, **`--wx-work-overlay-pad-y`**, **`--wx-work-copy-gap`** — use for aside vs gallery split, overlay copy rails, and card internals instead of bespoke gaps.
+- **Alignment:** Prefer **flex/grid** with **`gap-*`** from the theme scale (or **`--space-fluid-*`** for macro layout). Avoid mixing **`space-y-*`** and **`gap-*`** on the same flex column without a reason; keep **full-width bands** vs **inset readable columns** consistent with sibling routes (`site-canvas`).
+
+## Layout regions
+
+- Exploration / case chrome: wrap in **`site-canvas`**; align horizontal padding with **`--wx-pad-x`** as above.
+- Case study aside/panels: respect **`data-site-region`** patterns from `WorkCasePage` / `CaseStudyAside`.
+
+## Responsive breakpoints
+
+- **`@theme` breakpoints** (`--breakpoint-xs` … `--breakpoint-3xl` in `tokens.css`) underpin **`sm:`**, **`md:`**, **`lg:`**, etc. — keep responsive jumps aligned with existing pages; prefer token-backed responsive type (`--wx-text-*-size-sm`) and **`clamp()`** layout tokens before adding unrelated custom min-width breakpoints.
+
+## Links and navigation
+
+- In exploration routes, prefer **`ViewTransitionLink`** from `@/components/ViewTransitionLink.jsx` where other exploration links use it.
+- Link styling: **`wx-text-meta`** (or appropriate scale) + **`text-[var(--wx-primary)]`**, **`underline-offset-2`**, **`hover:underline`** unless matching an existing pattern in the same surface.
+
+## Components
+
+- Reuse existing primitives (**`WordmarkLink`**, **`CaseStudyAside`** meta/tags, **`SectionTabRail`**, etc.) instead of one-off duplicates.
+- **`prefers-reduced-motion`:** honor existing hooks (`useReducedMotion`, token zeroed durations).
+
+## Pills & chips (canonical references — future UI)
+
+When adding **dense icon + label chips** (filters, metadata strips, tool rows), treat **work card nuggets** as the primary visual and token reference — not one-off `rounded-full` + random grays.
+
+**Work card nuggets (case study / Figma-style cards, e.g. Kinetix row):**
+
+- **Markup / React:** `WorkNuggetPill` + `WorkCardNuggetsChromeRow` in `src/exploration/ExplorationHomePage.jsx`; list is `<ul class="wx-work-card-v2__nuggets">` with `<span class="wx-work-card-v2__nugget">` per item (icon slot + `wx-work-card-v2__nugget-label`). Data: `nuggets[]` on work entries in `src/exploration/siteContent.js`.
+- **CSS:** `src/exploration/styles/site-canvas.css` — search **`wx-work-card-v2__nugget`**. Base chips: **`--wx-white`** fill, **`--wx-ink`** text, **`1px solid var(--wx-border-muted)`**, **`--wx-text-nugget`** (0.75rem), weight **600**, slight **letter-spacing**, compact padding, **`border-radius: 0.4rem`** (main surface); **`#site-panels`** may soften to **8px** radius and **transparent** border for the panels rail.
+- **Warm footer variant** (`wx-work-card--footer-warm`, typical for 200:88 + case study cards): **pill** shape **`border-radius: 9999px`**, **`--wx-text-nugget-warm`**, weight **500**, **0.04em** tracking, **12px** icon box, **`min-height: 1.75rem`**, row **`gap: 0.5rem` / `0.75rem` (sm)**. Optional inverse: **`wx-work-card-v2__nugget--on-dark`** (white on near-black).
+- **Do not** clone Kinetix demo pills (**`kx-pill`** in `KinetixPage.*`) for marketing/exploration UI — those are **`--kx-*`** exception territory.
+
+**Case study aside tags** (tools / focus row, uppercase micro labels): **`CaseStudyAside`** + **`.wx-case-tags`** in `work-case.css` / design system **Tag / pill system** — different role (aside metadata, Marquee-ish focus line), complementary to work nuggets.
+
+**Section / nav pills:** **`SectionTabRail`** tab pills use segment/track radius tokens (**`--wx-radius-segment`**, **`--wx-radius-track`**) — not the same component as work nuggets; keep that split.
+
+## Exceptions
+
+- **`src/pages/design/KinetixPage.*`** uses **`--kx-*`** — do not force `--wx-*` there unless migrating that demo intentionally.
+
+## Agent checklist before finishing UI changes
+
+1. Colors and borders route through **`--wx-*`** / **`--color-neutral-*`** (or documented exception above).
+2. **Titles / hero / bold marketing lines** use **`var(--font-display)`** (or existing utilities already wired to it); **body copy and UI chrome** use **`var(--font-body)`** / **`wx-text-meta`**, **`wx-text-sm`**, **`wx-text-body-secondary`**, etc.
+3. Copy reflects **SF Rounded for display titles, SF Pro for body** — not Rounded-only.
+4. **Spacing:** macro layout uses **`--space-fluid-*`**, **`--wx-pad-x`**, **`--wx-space-section`**, **`--layout-*`**; component rhythm uses **`@theme`** **`gap-*` / `p-*` / `m-*`** — not ad-hoc pixel margins unless unavoidable.
+5. **Page alignment** matches exploration patterns (**`mx-auto`** + **`max-w-[var(--layout-max-width)]`** or route-appropriate variant + **`--wx-pad-x`**).
+6. New routes/components align with **`/design/system`** or extend it when adding tokens.
+7. New **pill / chip** UI follows **`wx-work-card-v2__nugget`** idioms (**`--wx-text-nugget*`**, **`--wx-border-muted`**, warm vs base radii in `site-canvas.css`), or **`CaseStudyAside`** / **`wx-case-tags`**, or **`SectionTabRail`** pills, or a documented exception — avoid orphan styles.

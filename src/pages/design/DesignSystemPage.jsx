@@ -318,6 +318,8 @@ const COMPONENT_TOKENS = [
   { token: "--wx-gallery-gap",     value: "12px",           label: "Gallery gap",        where: "Work card grid gutter" },
   { token: "--wx-text-aside-footer-size", value: "0.625rem / 10px", label: "Aside label size", where: "MetaBlock label, tag group headers" },
   { token: "--wx-text-kicker-tracking",   value: "0.18em",          label: "Kicker tracking",  where: "Section kickers, overline elements" },
+  { token: "--wx-text-nugget",            value: "0.75rem",         label: "Work nugget type", where: "Default work-card chips (sentence case)" },
+  { token: "--wx-text-nugget-warm",       value: "0.7rem",          label: "Work nugget (warm)", where: "Warm-footer / Figma-style pill chips" },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -333,10 +335,10 @@ function TokenBadge({ children }) {
 /** Matches subsection titles across Color (and keeps Border / Gradient aligned). */
 function ColorSubsectionHeader({ title, description }) {
   return (
-    <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-      <p className="text-xs font-semibold text-[var(--wx-ink)]">{title}</p>
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+      <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)]">{title}</p>
       {description ? (
-        <p className="wx-text-meta text-[var(--wx-muted)] sm:max-w-[22rem] sm:text-right">{description}</p>
+        <p className="wx-text-body-secondary text-[var(--wx-muted)] sm:max-w-[min(28rem,100%)] sm:text-right leading-relaxed">{description}</p>
       ) : null}
     </div>
   );
@@ -377,7 +379,7 @@ function ColorTokenRow({ label, token, primitive, usage, bg, oklchL }) {
             </span>
           ) : null}
         </div>
-        <p className="wx-text-meta text-[var(--wx-muted)] leading-snug">{usage}</p>
+        <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-snug">{usage}</p>
         {primitive ? (
           <p className="wx-text-meta text-[var(--wx-muted)]">
             Resolves to <TokenBadge>{primitive}</TokenBadge>
@@ -391,15 +393,41 @@ function ColorTokenRow({ label, token, primitive, usage, bg, oklchL }) {
   );
 }
 
-function SectionHeader({ index, title, description }) {
+/** Sticky rail: numbered index, title, readable lead, optional technical appendix in smaller type */
+function SectionHeader({ index, title, headingId, lead, technicalNote }) {
   return (
-    <div className="col-span-full lg:col-span-1 lg:sticky lg:top-[57px] lg:self-start">
-      <p className="font-mono text-[11px] text-[var(--wx-muted)] tracking-widest mb-2">{index}</p>
-      <h2 className="text-xl font-semibold tracking-tight text-[var(--wx-ink)] leading-tight">{title}</h2>
-      {description && (
-        <p className="wx-text-meta text-[var(--wx-muted)] mt-2 leading-relaxed max-w-[18rem]">{description}</p>
-      )}
+    <div className="col-span-full lg:col-span-1 lg:sticky lg:top-[57px] lg:self-start lg:scroll-mt-[4.75rem]">
+      <p className="wx-text-meta text-[var(--wx-muted)] tracking-wider mb-2">{index}</p>
+      <h2 id={headingId} className="wx-text-section-title font-semibold text-[var(--wx-ink)]">
+        {title}
+      </h2>
+      {lead ? (
+        <p className="wx-text-body-secondary text-[var(--wx-ink)] mt-4 leading-relaxed max-w-[min(38rem,var(--layout-max-width-sm))]">{lead}</p>
+      ) : null}
+      {technicalNote ? (
+        <p className="wx-text-meta text-[var(--wx-muted)] mt-3 leading-relaxed max-w-[min(38rem,var(--layout-max-width-sm))]">{technicalNote}</p>
+      ) : null}
     </div>
+  );
+}
+
+const PAGE_SECTIONS = [
+  { id: "design-color", label: "Color" },
+  { id: "design-typography", label: "Typography" },
+  { id: "design-spacing-layout", label: "Spacing & layout" },
+  { id: "design-radius", label: "Radius" },
+  { id: "design-motion", label: "Motion" },
+  { id: "design-components", label: "Components" },
+];
+
+function JumpNavLink({ id, children }) {
+  return (
+    <a
+      href={`#${id}`}
+      className="wx-text-meta text-[var(--wx-muted)] hover:text-[var(--wx-primary)] underline-offset-4 hover:underline transition-colors duration-[var(--duration-normal)] whitespace-nowrap"
+    >
+      {children}
+    </a>
   );
 }
 
@@ -430,25 +458,64 @@ export default function DesignSystemPage() {
       <main id="main" className="mx-auto max-w-[900px] px-[var(--wx-pad-x)] pb-32">
 
         {/* ── Hero ───────────────────────────────────────────────────────── */}
-        <section className="pt-16 pb-14 lg:pt-20 lg:pb-16">
+        <section className="pt-16 pb-14 lg:pt-20 lg:pb-16" aria-labelledby="design-system-title">
           <p className="wx-text-section-kicker text-[var(--wx-muted)] mb-5">Design System</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-[var(--wx-ink)] sm:text-4xl leading-tight max-w-2xl mb-5">
+          <h1 id="design-system-title" className="wx-text-page-title font-semibold text-[var(--wx-ink)] max-w-[min(24rem,var(--layout-max-width-sm))] mb-5 leading-tight">
             The visual vocabulary.
           </h1>
-          <p className="wx-text-body-secondary text-[var(--wx-muted)] max-w-lg">
-            Color, type, spacing, layout, radius, and motion tokens that power every surface of wineury.design — all defined in{" "}
-            <TokenBadge>tokens.css</TokenBadge> and composed as utilities in{" "}
-            <TokenBadge>site-canvas.css</TokenBadge>.
-          </p>
+          <div className="space-y-[var(--wx-space-section)] max-w-[min(36rem,var(--layout-max-width-sm))]">
+            <p className="wx-text-body-secondary text-[var(--wx-ink)] leading-relaxed">
+              This page is your map to how the portfolio looks and behaves: which colors mean “surface” versus “muted text,” how type scales behave, when to reach for fluid spacing versus Tailwind spacing, and where motion curves live in code.
+            </p>
+            <div className="rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] bg-[var(--wx-surface-soft)] px-5 py-5 space-y-4">
+              <p className="wx-text-sm font-semibold text-[var(--wx-ink)]">How to read it</p>
+              <ul className="wx-text-body-secondary text-[var(--wx-muted)] list-disc list-outside pl-5 space-y-3 leading-relaxed">
+                <li>
+                  Start with each section summary on the left (or top on small screens)—that explains the{" "}
+                  <span className="text-[var(--wx-ink)]">idea</span> before you scan the rows of tokens.
+                </li>
+                <li>
+                  Token names (<TokenBadge>like this</TokenBadge>) match what you paste in CSS or Tailwind; the tables say where they are typically used.
+                </li>
+                <li>
+                  Source of truth lives in{" "}
+                  <TokenBadge>src/styles/tokens.css</TokenBadge>; exploration utilities hang off{" "}
+                  <TokenBadge>src/exploration/styles/site-canvas.css</TokenBadge>.
+                </li>
+              </ul>
+            </div>
+            <nav className="pt-2" aria-label="Sections on this page">
+              <p className="wx-text-sm font-semibold text-[var(--wx-ink)] mb-3">Jump to</p>
+              <ul className="flex flex-wrap gap-x-4 gap-y-2 list-none p-0 m-0">
+                {PAGE_SECTIONS.map((s) => (
+                  <li key={s.id}>
+                    <JumpNavLink id={s.id}>{s.label}</JumpNavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </section>
 
         {/* ── 01  Color ──────────────────────────────────────────────────── */}
         <Divider />
-        <section className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16">
+        <section
+          id="design-color"
+          className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16 scroll-mt-[calc(3.5rem+var(--spacing-4))]"
+          aria-labelledby="heading-design-color"
+        >
           <SectionHeader
             index="01"
             title="Color"
-            description="Primitive neutrals live in @theme; marketing semantics use --wx-* aliases that resolve to --color-neutral-* or canonical accent hex (tokens.css)."
+            headingId="heading-design-color"
+            lead='Pick a semantic token (such as ink or surface) instead of grabbing a gray hex—so hover states, borders, and text stay visually aligned across the whole site.'
+            technicalNote={
+              <>
+                Neutral numbers <TokenBadge>--color-neutral-*</TokenBadge> live in{" "}
+                <TokenBadge>@theme</TokenBadge>; friendlier names map to those steps in{" "}
+                <TokenBadge>tokens.css</TokenBadge> as <TokenBadge>--wx-*</TokenBadge>.
+              </>
+            }
           />
 
           <div className="space-y-10">
@@ -467,8 +534,8 @@ export default function DesignSystemPage() {
                   role="img"
                   aria-label="Continuous grayscale from white to black, left to right, interpolated in OKLCH"
                 />
-                <p className="wx-text-meta text-[var(--wx-muted)] leading-snug">
-                  Strip: smooth reference (OKLCH lightness only). Table: named stops — spacing tightens at the paper end by design.
+                <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-relaxed">
+                  The strip is a continuous OKLCH gray for eyeballing transitions; the table lists named stops. Stops squeeze closer together toward the highlights on purpose—so mid-tones where UI chrome lives stay subtle.
                 </p>
               </div>
               <div className="divide-y divide-[color:var(--wx-border-faint)] rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] overflow-hidden bg-[var(--wx-page-bg)]">
@@ -524,7 +591,7 @@ export default function DesignSystemPage() {
                     />
                     <div className="flex-1 min-w-0 space-y-1">
                       <p className="text-xs font-medium text-[var(--wx-ink)]">{b.name}</p>
-                      <p className="wx-text-meta text-[var(--wx-muted)] leading-snug">{b.usage}</p>
+                      <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-snug">{b.usage}</p>
                       <p className="wx-text-meta text-[var(--wx-muted)]">
                         Mix <span className="font-mono tabular-nums">{b.opacity}</span> black
                       </p>
@@ -546,8 +613,8 @@ export default function DesignSystemPage() {
               <div className="rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] overflow-hidden">
                 <div className="h-12 w-full" style={{ background: "var(--wx-gradient-accent)" }} aria-hidden />
                 <div className="border-t border-[color:var(--wx-border-faint)] px-3 py-3">
-                  <p className="wx-text-meta text-[var(--wx-muted)] leading-snug">
-                    <TokenBadge>--wx-gradient-accent</TokenBadge> · also drives{" "}
+                  <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-relaxed">
+                    Ships as <TokenBadge>--wx-gradient-accent</TokenBadge>; the hero wordmark consumes the same ramps through{" "}
                     <TokenBadge>--wx-headline-word-gradient</TokenBadge>.
                   </p>
                 </div>
@@ -558,17 +625,21 @@ export default function DesignSystemPage() {
 
         {/* ── 02  Typography ─────────────────────────────────────────────── */}
         <Divider />
-        <section className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16">
+        <section
+          id="design-typography"
+          className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16 scroll-mt-[calc(3.5rem+var(--spacing-4))]"
+          aria-labelledby="heading-design-typography"
+        >
           <SectionHeader
             index="02"
             title="Typography"
-            description={
+            headingId="heading-design-typography"
+            lead="Rounded display type carries headlines and standout numbers; SF Pro carries everything you actually read—paragraphs, labels, and dense UI. Match that split and the portfolio feels consistent rather than accidental."
+            technicalNote={
               <>
-                Two stacks in <TokenBadge>tokens.css</TokenBadge>:{" "}
-                <TokenBadge>--font-display</TokenBadge> for bigger / bolder surfaces (hero, titles, stats, wordmark)
-                — SF Pro Rounded–led via <TokenBadge>ui-rounded</TokenBadge>.{" "}
-                <TokenBadge>--font-body</TokenBadge> for reading and dense UI — SF Pro Text / SF Pro Display only.
-                .wx-text-* utilities bind to the correct stack in <TokenBadge>site-canvas.css</TokenBadge>.
+                Families are <TokenBadge>--font-display</TokenBadge> (SF Pro Rounded–led via <TokenBadge>ui-rounded</TokenBadge>) and <TokenBadge>--font-body</TokenBadge> (SF Pro Text / Display only),
+                defined in <TokenBadge>tokens.css</TokenBadge>. Utilities such as <TokenBadge>.wx-text-meta</TokenBadge> bind family, size, and line-height in{" "}
+                <TokenBadge>site-canvas.css</TokenBadge>.
               </>
             }
           />
@@ -577,7 +648,10 @@ export default function DesignSystemPage() {
 
             {/* Font families */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-3">Font families</p>
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Font families</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Each specimen below maps to one CSS variable. Reach for display on marketing titles; reach for body on sentences and chrome.
+              </p>
               <div className="space-y-0">
                 {FONT_FAMILIES.map((fam) => (
                   <div
@@ -591,10 +665,10 @@ export default function DesignSystemPage() {
                       >
                         {fam.mono ? "0123456789 Aa Bb Cc" : "Aa Bb Cc Dd Ee 0123"}
                       </p>
-                      <p className="wx-text-meta text-[var(--wx-muted)] mt-1">{fam.usage}</p>
+                      <p className="wx-text-body-secondary text-[var(--wx-muted)] mt-2 leading-relaxed">{fam.usage}</p>
                     </div>
                     <div className="shrink-0 text-right space-y-1 pt-0.5">
-                      <p className="text-xs font-semibold text-[var(--wx-ink)]">{fam.label}</p>
+                      <p className="wx-text-sm font-semibold text-[var(--wx-ink)]">{fam.label}</p>
                       <TokenBadge>{fam.token}</TokenBadge>
                     </div>
                   </div>
@@ -604,9 +678,10 @@ export default function DesignSystemPage() {
 
             {/* Type scale */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Type scale</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                Classes bind <TokenBadge>font-family</TokenBadge>, <TokenBadge>font-size</TokenBadge>, and <TokenBadge>line-height</TokenBadge>. Apply weight separately.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Type scale</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Each row is a ready-made combination: the class sets <TokenBadge>font-family</TokenBadge>, <TokenBadge>font-size</TokenBadge>, and <TokenBadge>line-height</TokenBadge>. Add{" "}
+                <TokenBadge>font-weight</TokenBadge> separately when you need extra emphasis.
               </p>
               <div className="space-y-0">
                 {TYPE_SCALE.map((step) => (
@@ -624,7 +699,7 @@ export default function DesignSystemPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="wx-text-meta text-[var(--wx-muted)]">{step.usage}</p>
+                      <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-snug">{step.usage}</p>
                       <TokenBadge>{step.token}</TokenBadge>
                     </div>
                   </div>
@@ -635,7 +710,10 @@ export default function DesignSystemPage() {
             {/* Letter spacing + line height */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
-                <p className="text-xs font-semibold text-[var(--wx-ink)] mb-4">Letter spacing</p>
+                <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Letter spacing</p>
+                <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed">
+                  Visual density control: widen all-caps kickers; keep body copy near the default unless you have a typography reason not to.
+                </p>
                 <div className="space-y-3">
                   {LETTER_SPACING.map((t) => (
                     <div key={t.label} className="flex items-center gap-3">
@@ -655,7 +733,10 @@ export default function DesignSystemPage() {
               </div>
 
               <div>
-                <p className="text-xs font-semibold text-[var(--wx-ink)] mb-4">Line height</p>
+                <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Line height</p>
+                <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed">
+                  Titles sit tight; prose gets more breathing room so multi-line paragraphs stay comfortable on long scrolls.
+                </p>
                 <div className="space-y-3">
                   {LINE_HEIGHTS.map((l) => (
                     <div key={l.label} className="flex items-center gap-3">
@@ -672,28 +753,36 @@ export default function DesignSystemPage() {
 
         {/* ── 03  Spacing & layout ─────────────────────────────────────────── */}
         <Divider />
-        <section className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16">
+        <section
+          id="design-spacing-layout"
+          className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16 scroll-mt-[calc(3.5rem+var(--spacing-4))]"
+          aria-labelledby="heading-design-spacing-layout"
+        >
           <SectionHeader
             index="03"
             title="Spacing & layout"
-            description="Fluid tokens for viewport-aware gaps, @theme spacing for component rhythm, and layout aliases for gutters, alignment, breakpoints, and work-card chrome."
+            headingId="heading-design-spacing-layout"
+            lead="Work in three layers: fluid gaps that breathe with the viewport, fixed Tailwind steps inside individual components, then named layout tokens whenever you are sizing the page frame or a case-study aside."
+            technicalNote={
+              <>
+                Fluid scales use <TokenBadge>clamp()</TokenBadge> in <TokenBadge>:root</TokenBadge>; density uses <TokenBadge>@theme --spacing-*</TokenBadge> with <TokenBadge>gap-*</TokenBadge> / <TokenBadge>p-*</TokenBadge>; layout aliases cover max widths, gutters, overlays, and breakpoints.
+              </>
+            }
           />
 
           <div className="space-y-10">
 
             {/* Page shell & alignment */}
             <div className="space-y-4">
-              <p className="text-xs font-semibold text-[var(--wx-ink)]">Page alignment</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] leading-relaxed">
-                Center the readable column with <TokenBadge>mx-auto</TokenBadge>, cap width with{" "}
-                <TokenBadge>--layout-max-width</TokenBadge> (or SM/LG variants), and inset horizontally with{" "}
-                <TokenBadge>--wx-pad-x</TokenBadge>. Prefer flex/grid <TokenBadge>gap-*</TokenBadge> from the theme scale instead of stacking one-off margins. This checklist page intentionally uses{" "}
-                <TokenBadge>max-w-[900px]</TokenBadge>; marketing routes typically use{" "}
-                <TokenBadge>max-w-[var(--layout-max-width)]</TokenBadge>.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)]">Page alignment</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Center the main column with <TokenBadge>mx-auto</TokenBadge>, cap how wide it can grow with <TokenBadge>--layout-max-width</TokenBadge> (or the smaller / larger variants), and match side gutters with{" "}
+                <TokenBadge>--wx-pad-x</TokenBadge>. Inside that frame, prefer flex or grid <TokenBadge>gap-*</TokenBadge> from the theme instead of stacking custom margins. This reference page is intentionally narrow at{" "}
+                <TokenBadge>max-w-[900px]</TokenBadge>; most marketing routes use <TokenBadge>max-w-[var(--layout-max-width)]</TokenBadge>.
               </p>
               <div className="rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] bg-[var(--wx-surface-soft)] p-5 space-y-3">
-                <p className="wx-text-meta text-[var(--wx-muted)]">
-                  Canonical exploration shell fragment:
+                <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-relaxed">
+                  Drop-in pattern for exploration pages:
                 </p>
                 <code className="block font-mono text-[11px] text-[var(--wx-ink)] leading-relaxed whitespace-pre-wrap break-all">
                   {`<div class="site-canvas …">\n  <main class="mx-auto max-w-[var(--layout-max-width)] px-[var(--wx-pad-x)]">…</main>\n</div>`}
@@ -703,9 +792,9 @@ export default function DesignSystemPage() {
 
             {/* Fluid scale */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Fluid scale</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                <TokenBadge>:root</TokenBadge> <TokenBadge>clamp()</TokenBadge> — use between major bands (hero, section breaks).
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Fluid scale</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Tokens such as <TokenBadge>--space-fluid-lg</TokenBadge> grow smoothly between breakpoints—ideal for spacing hero sections, large section breaks, and anything where “a little more air on desktop” beats a hard pixel jump.
               </p>
               <div className="space-y-3">
                 {FLUID_SPACING.map((s) => (
@@ -728,10 +817,9 @@ export default function DesignSystemPage() {
 
             {/* @theme spacing scale */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Fixed rhythm (@theme spacing)</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                Tailwind <TokenBadge>p-*</TokenBadge>, <TokenBadge>m-*</TokenBadge>, <TokenBadge>gap-*</TokenBadge> map to hyphenated tokens such as{" "}
-                <TokenBadge>--spacing-4</TokenBadge>. Prefer these over arbitrary pixels inside components.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Fixed rhythm (@theme spacing)</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Tailwind&apos;s <TokenBadge>p-*</TokenBadge>, <TokenBadge>m-*</TokenBadge>, and <TokenBadge>gap-*</TokenBadge> pull from hyphenated pairs like <TokenBadge>--spacing-4</TokenBadge>. Use those steps inside buttons, cards, and forms so paddings snap to the same grid everywhere.
               </p>
               <div className="space-y-2">
                 {SPACING_THEME_SAMPLES.map((s) => (
@@ -756,9 +844,9 @@ export default function DesignSystemPage() {
 
             {/* Layout tokens */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Layout & region tokens</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                Named by role — gutters, max widths, aside basis, overlays, gallery rhythm.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Layout & region tokens</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Named by job, not by number: gutters, readable column widths, aside width in work layouts, overlay padding on imagery, gallery gutters. Prefer these over inventing parallel max-width variables.
               </p>
               <div className="space-y-0">
                 {LAYOUT_TOKENS.map((t) => (
@@ -768,7 +856,7 @@ export default function DesignSystemPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-[var(--wx-ink)]">{t.label}</p>
-                      <p className="wx-text-meta text-[var(--wx-muted)] mt-0.5">{t.usage}</p>
+                      <p className="wx-text-body-secondary text-[var(--wx-muted)] mt-1 leading-snug">{t.usage}</p>
                     </div>
                     <div className="shrink-0 text-right space-y-1">
                       <TokenBadge>{t.token}</TokenBadge>
@@ -781,10 +869,9 @@ export default function DesignSystemPage() {
 
             {/* Breakpoints */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Breakpoints</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                Defined in <TokenBadge>@theme</TokenBadge>; drive responsive prefixes. Pair with responsive type tokens (e.g.{" "}
-                <TokenBadge>--wx-text-*-size-sm</TokenBadge>) and <TokenBadge>clamp()</TokenBadge> layout before adding bespoke min-widths.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Breakpoints</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                These widths back <TokenBadge>sm:</TokenBadge>, <TokenBadge>md:</TokenBadge>, and friends. When you add a new responsive rule, check whether type tokens (e.g. <TokenBadge>--wx-text-*-size-sm</TokenBadge>) or layout <TokenBadge>clamp()</TokenBadge> already solve it before introducing a one-off <TokenBadge>min-width</TokenBadge>.
               </p>
               <div className="divide-y divide-[color:var(--wx-border-faint)] rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] overflow-hidden bg-[var(--wx-page-bg)]">
                 {BREAKPOINT_TOKENS.map((b) => (
@@ -793,7 +880,7 @@ export default function DesignSystemPage() {
                       <span className="font-mono text-[10px] font-semibold text-[var(--wx-ink)]">{b.tw}</span>
                     </div>
                     <div className="min-w-0 flex-1 space-y-1">
-                      <p className="wx-text-meta text-[var(--wx-muted)] leading-snug">{b.usage}</p>
+                      <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-snug">{b.usage}</p>
                       <p className="font-mono text-[10px] text-[var(--wx-mute-2)]">{b.value}</p>
                     </div>
                     <div className="shrink-0 pt-0.5 text-right">
@@ -808,11 +895,21 @@ export default function DesignSystemPage() {
 
         {/* ── 04  Radius ─────────────────────────────────────────────────── */}
         <Divider />
-        <section className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16">
+        <section
+          id="design-radius"
+          className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16 scroll-mt-[calc(3.5rem+var(--spacing-4))]"
+          aria-labelledby="heading-design-radius"
+        >
           <SectionHeader
             index="04"
             title="Radius"
-            description="8px (Card) is the base. UI chrome uses Segment (12px) and Track (16px) for the tab pill system."
+            headingId="heading-design-radius"
+            lead="One default card radius keeps photography and cards feeling related; tab chrome steps up to larger radii so pills read as controls sitting inside a track—not as random boxes."
+            technicalNote={
+              <>
+                <TokenBadge>--wx-radius-card</TokenBadge> is the everyday 8px baseline. <TokenBadge>--wx-radius-segment</TokenBadge> / <TokenBadge>--wx-radius-track</TokenBadge> belong to the segmented tab system.
+              </>
+            }
           />
 
           <div>
@@ -826,7 +923,7 @@ export default function DesignSystemPage() {
                   <div className="space-y-0.5">
                     <p className="text-xs font-semibold text-[var(--wx-ink)]">{r.label}</p>
                     <p className="font-mono text-[10px] text-[var(--wx-muted)]">{r.value}</p>
-                    <p className="wx-text-meta text-[var(--wx-muted)] leading-tight">{r.usage}</p>
+                    <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-tight">{r.usage}</p>
                     <TokenBadge>{r.token}</TokenBadge>
                   </div>
                 </div>
@@ -837,16 +934,29 @@ export default function DesignSystemPage() {
 
         {/* ── 05  Motion ─────────────────────────────────────────────────── */}
         <Divider />
-        <section className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16">
+        <section
+          id="design-motion"
+          className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16 scroll-mt-[calc(3.5rem+var(--spacing-4))]"
+          aria-labelledby="heading-design-motion"
+        >
           <SectionHeader
             index="05"
             title="Motion"
-            description="All durations resolve to 0ms under prefers-reduced-motion. No linear easing in UI — every transition follows an intentional physics curve."
+            headingId="heading-design-motion"
+            lead="Durations answer “how long should the user feel this change?”; easings answer “does it snap, float, or overshoot?” Prefer named tokens so motion stays consistent and easy to tune."
+            technicalNote={
+              <>
+                When visitors enable reduced motion, durations fall back to 0ms through <TokenBadge>tokens.css</TokenBadge>. Avoid bare <TokenBadge>linear</TokenBadge> easing for interface polish—reach for a curve with character.
+              </>
+            }
           />
 
           <div className="space-y-10">
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-4">Duration</p>
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Duration</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Faster values are for swaps and taps; slower values reinforce hierarchy shifts (menus, staged reveals). Pair each duration with an easing token that matches its intent.
+              </p>
               <div className="space-y-3">
                 {DURATION_TOKENS.map((d) => (
                   <div key={d.token} className="flex items-center gap-3">
@@ -859,22 +969,22 @@ export default function DesignSystemPage() {
                         style={{ width: `${d.barPct}%` }}
                       />
                     </div>
-                    <div className="w-48 shrink-0 flex items-center justify-between gap-2">
-                      <span className="text-xs text-[var(--wx-ink)]">{d.label}</span>
-                      <span className="wx-text-meta text-[var(--wx-muted)] text-right">{d.usage}</span>
+                    <div className="min-w-0 w-48 shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                      <span className="text-sm font-medium text-[var(--wx-ink)]">{d.label}</span>
+                      <span className="wx-text-body-secondary text-[var(--wx-muted)] text-left sm:text-right leading-snug">{d.usage}</span>
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="wx-text-meta text-[var(--wx-muted)] mt-4">
-                All zeroed by <TokenBadge>prefers-reduced-motion: reduce</TokenBadge> via tokens.css.
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mt-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Honoring <TokenBadge>prefers-reduced-motion</TokenBadge> here means long transitions gracefully collapse so the interface stays respectful without ripping out styles by hand each time.
               </p>
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Easing curves</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                Use <TokenBadge>--ease-fluid</TokenBadge> as the default. Reach for spring or expo variants for entrance motion.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Easing curves</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                <TokenBadge>--ease-fluid</TokenBadge> is the default “everyday UI” curve. Springy and exponential options are for entrances, drawers, and moments that should feel choreographed rather than mechanical.
               </p>
               <div className="space-y-0">
                 {EASING_TOKENS.map((e) => (
@@ -886,7 +996,7 @@ export default function DesignSystemPage() {
                       <p className="text-sm font-medium text-[var(--wx-ink)]">{e.label}</p>
                       <TokenBadge>{e.token}</TokenBadge>
                     </div>
-                    <p className="wx-text-meta text-[var(--wx-muted)]">{e.usage}</p>
+                    <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-snug">{e.usage}</p>
                     <p className="font-mono text-[10px] text-[var(--wx-muted)] mt-1 opacity-60">{e.value}</p>
                   </div>
                 ))}
@@ -897,21 +1007,30 @@ export default function DesignSystemPage() {
 
         {/* ── 06  Components ─────────────────────────────────────────────── */}
         <Divider />
-        <section className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16">
+        <section
+          id="design-components"
+          className="py-14 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10 lg:gap-16 scroll-mt-[calc(3.5rem+var(--spacing-4))]"
+          aria-labelledby="heading-design-components"
+        >
           <SectionHeader
             index="06"
             title="Components"
-            description="UI primitives shared across case studies, home canvas, and navigation chrome. Every value routes through --wx-* tokens."
+            headingId="heading-design-components"
+            lead="Reusable excerpts of the exploration UI—project metadata grids, tag rows, and section labels—with live specimens so you can compare intent against implementation."
+            technicalNote={
+              <>
+                Under the hood everything still resolves to <TokenBadge>--wx-*</TokenBadge> aliases so tweaks stay centralized.
+              </>
+            }
           />
 
           <div className="space-y-12">
 
             {/* MetaBlock */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">MetaBlock</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                Used in <TokenBadge>CaseStudyAside</TokenBadge> to display project metadata. 2-column{" "}
-                <TokenBadge>dl</TokenBadge> grid — 10px uppercase label + 14px medium value.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">MetaBlock</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                The label / value grid you see in <TokenBadge>CaseStudyAside</TokenBadge>: uppercase micro labels with generous tracking, paired with medium values for quick scanning.
               </p>
               <div className="p-5 rounded-[8px] ring-1 ring-[color:var(--wx-border-soft)] bg-[var(--wx-surface-soft)]">
                 <dl className="grid grid-cols-2 gap-x-6 gap-y-3">
@@ -944,12 +1063,9 @@ export default function DesignSystemPage() {
 
             {/* Tag system */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Tag / pill system</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                Used in <TokenBadge>CaseStudyAside</TokenBadge> via <TokenBadge>.wx-case-tags</TokenBadge>.
-                Tool row: icon marks + labels. Focus row: soft-filled capsule pills (<TokenBadge>py-1</TokenBadge>{" "}
-                × <TokenBadge>px-2.5</TokenBadge>), marquee strip with faded horizontal edges at{" "}
-                <TokenBadge>--wx-text-meta-size</TokenBadge> (13px).
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Tag / pill system</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Tool chips read as compact buttons; focus areas lean on a subtle marquee row at meta size. Both patterns hang off <TokenBadge>.wx-case-tags</TokenBadge> inside the aside.
               </p>
               <div className="p-5 rounded-[8px] ring-1 ring-[color:var(--wx-border-soft)] bg-[var(--wx-surface-soft)] space-y-4">
                 <div>
@@ -1006,12 +1122,49 @@ export default function DesignSystemPage() {
               </div>
             </div>
 
+            {/* Work card nuggets — reference chips (exploration Work tab) */}
+            <div>
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Work card nuggets</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Case study cards surface a staggered chip row over the artwork (see home Work tab — e.g. Kinetix). Use this pairing of type,
+                stroke, fill, and pill radius when you introduce new dense icon + label chips outside the aside—do not reinvent from gray Tailwind
+                shorthand.
+              </p>
+              <div className="p-5 rounded-[8px] ring-1 ring-[color:var(--wx-border-soft)] bg-[var(--wx-surface-soft)] space-y-4">
+                <ul className="m-0 flex max-w-full list-none flex-wrap gap-2 p-0 sm:gap-3" role="list">
+                  {[
+                    { label: "Case study", icon: "CS" },
+                    { label: "Design system", icon: "DS" },
+                    { label: "Prototyping", icon: "Px" },
+                  ].map(({ label, icon }) => (
+                    <li key={label}>
+                      <span className="inline-flex min-h-[1.75rem] max-w-full items-center gap-[0.4rem] rounded-full border border-[color:var(--wx-border-muted)] bg-[var(--wx-white)] px-[0.7rem] py-[0.3125rem] text-[length:var(--wx-text-nugget-warm)] font-medium leading-[1.15] tracking-[0.04em] text-[var(--wx-ink)]">
+                        <span
+                          className="inline-flex size-3 shrink-0 items-center justify-center rounded-[2px] wx-text-meta font-semibold text-[var(--wx-muted)]"
+                          aria-hidden
+                        >
+                          {icon}
+                        </span>
+                        {label}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="wx-text-meta text-[var(--wx-muted)] leading-relaxed">
+                  Implemented as <TokenBadge>WorkNuggetPill</TokenBadge> · <TokenBadge>wx-work-card-v2__nugget</TokenBadge> in{" "}
+                  <TokenBadge>ExplorationHomePage.jsx</TokenBadge>
+                  {" + "}
+                  <TokenBadge>site-canvas.css</TokenBadge>. Main column cards use tighter corners and{" "}
+                  <TokenBadge>--wx-text-nugget</TokenBadge>; warm Figma-footprint cards use the full pill shown here.
+                </p>
+              </div>
+            </div>
+
             {/* Section kicker */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-1">Section kicker</p>
-              <p className="wx-text-meta text-[var(--wx-muted)] mb-4">
-                <TokenBadge>.wx-text-section-kicker</TokenBadge> — 12px, 600 weight, 0.18em tracking, uppercase.
-                Used on home section headers and aside labels.
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Section kicker</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Tiny uppercase ribbons that anchor a section (“Selected work”) before the big title arrives. Implemented as <TokenBadge>.wx-text-section-kicker</TokenBadge>.
               </p>
               <div className="p-5 rounded-[8px] ring-1 ring-[color:var(--wx-border-soft)] bg-[var(--wx-surface-soft)] space-y-3">
                 <p className="wx-text-section-kicker text-[var(--wx-muted)]">Selected work</p>
@@ -1022,7 +1175,10 @@ export default function DesignSystemPage() {
 
             {/* Component token table */}
             <div>
-              <p className="text-xs font-semibold text-[var(--wx-ink)] mb-3">Component-level tokens</p>
+              <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Component-level tokens</p>
+              <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
+                Specialized sizes and radii that only show up inside a handful of composites—exported here so you do not need to hunt the codebase.
+              </p>
               <div className="space-y-0">
                 {COMPONENT_TOKENS.map((t) => (
                   <div
@@ -1031,7 +1187,7 @@ export default function DesignSystemPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-[var(--wx-ink)]">{t.label}</p>
-                      <p className="wx-text-meta text-[var(--wx-muted)] mt-0.5">{t.where}</p>
+                      <p className="wx-text-body-secondary text-[var(--wx-muted)] mt-1 leading-snug">{t.where}</p>
                     </div>
                     <div className="shrink-0 text-right space-y-1">
                       <TokenBadge>{t.token}</TokenBadge>

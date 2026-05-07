@@ -1477,6 +1477,7 @@
   }
 }
 
+/* Work card nuggets — dense chips (icon + label); reference for future pills: design-system-enforcement.mdc → Pills & chips. */
 .site-canvas .wx-work-card-v2__nuggets {
   display: flex;
   flex: 1 1 0%;
