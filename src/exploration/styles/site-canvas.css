@@ -1964,18 +1964,9 @@
   color: currentColor;
 }
 
-/* Phosphor: single-color stroke icons inherit link color (ink → primary on hover/focus) */
+/* Phosphor contact-row glyphs (LinkedinLogo, FilePdf, EnvelopeSimple) — same size/weight in JSX; inherit link color. */
 .site-canvas .wx-contact-pill__phosphor {
   flex-shrink: 0;
-  color: currentColor;
-}
-
-/* LinkedIn — filled brand geometry; matches Phosphor footprint at 18px */
-.site-canvas .wx-contact-pill__brand-svg {
-  display: block;
-  flex-shrink: 0;
-  width: 18px;
-  height: 18px;
   color: currentColor;
 }
 

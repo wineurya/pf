@@ -25,6 +25,7 @@ import {
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { EnvelopeSimple } from "@phosphor-icons/react/dist/csr/EnvelopeSimple";
 import { FilePdf } from "@phosphor-icons/react/dist/csr/FilePdf";
+import { LinkedinLogo } from "@phosphor-icons/react/dist/csr/LinkedinLogo";
 import { clsx } from "clsx";
 import {
   BookTextIcon,
@@ -76,7 +77,6 @@ import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
 import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
 import { ApproachStepFolderHoverVisual } from "@/exploration/ApproachStepFolderVisual.jsx";
-import { LinkedInBrandIcon } from "@/exploration/LinkedInBrandIcon.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
 const NUGGET_ICON_MAP = {
@@ -163,12 +163,14 @@ function stackToolLogoUrl(tool) {
   return null;
 }
 
-/** Aside contact row — `linkedin` uses official mark geometry via {@link LinkedInBrandIcon}. */
+/** Aside contact row — single family (Phosphor regular @ 18px) so stroke weight matches across links. */
 const CONTACT_ROW_ICONS = {
-  linkedin: LinkedInBrandIcon,
+  linkedin: LinkedinLogo,
   resume: FilePdf,
   email: EnvelopeSimple,
 };
+
+const CONTACT_ROW_ICON_PROPS = { size: 18, weight: "regular" };
 
 /** Contact-row pills (aside footer) — gentle in/out tween. */
 const WX_TAB_EASE_IN_OUT = [0.4, 0, 0.2, 1];
@@ -1427,7 +1429,6 @@ function ContactPill({ c, reduceMotion, labelEase }) {
   const Icon = CONTACT_ROW_ICONS[c.icon];
   const external = c.href.startsWith("http");
   const [open, setOpen] = useState(false);
-  const isBrandSvg = c.icon === "linkedin";
 
   return (
     <motion.a
@@ -1443,11 +1444,7 @@ function ContactPill({ c, reduceMotion, labelEase }) {
       transition={reduceMotion ? { duration: 0 } : { layout: { duration: 0.22, ease: labelEase } }}
     >
       <span className="wx-contact-pill__icon" aria-hidden>
-        {Icon && isBrandSvg ? (
-          <Icon className="wx-contact-pill__brand-svg" />
-        ) : Icon ? (
-          <Icon className="wx-contact-pill__phosphor" size={18} weight="regular" />
-        ) : null}
+        {Icon ? <Icon className="wx-contact-pill__phosphor" {...CONTACT_ROW_ICON_PROPS} /> : null}
       </span>
       <motion.span
         className="wx-contact-pill__label"

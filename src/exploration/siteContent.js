@@ -423,7 +423,7 @@ export const SITE_STACK_MARQUEE_LAYERS = [
 export const SITE_STACK_TOOLS = SITE_STACK_MARQUEE_LAYERS.flat();
 
 /**
- * Aside contact row — `icon`: `linkedin` (official mark SVG), `resume`, `email` (Phosphor).
+ * Aside contact row — `icon`: `linkedin`, `resume`, `email` (one Phosphor set in ExplorationHomePage).
  * Add `public/resume.pdf` (or change `href`) so the résumé link resolves.
  */
 export const SITE_CONTACT_SOCIALS = [
