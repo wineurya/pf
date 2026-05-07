@@ -176,12 +176,6 @@
   }
 }
 
-@keyframes kx-metric-radial-rotate {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes kx-badge-pop {
   0%   { transform: scale(0.6); opacity: 0; }
   70%  { transform: scale(1.1); }
@@ -1153,25 +1147,12 @@
   flex-shrink: 0;
 }
 
-.kx-metric-viz-radial-base,
-.kx-metric-viz-radial-rotor {
-  position: absolute;
-  inset: 0;
+.kx-metric-viz-radial-svg {
+  display: block;
   width: 100%;
   height: 100%;
-  display: block;
 }
 
-.kx-metric-viz-radial-rotor--anim {
-  animation: kx-metric-radial-rotate 1.35s linear infinite;
-  transform-origin: 50% 50%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kx-metric-viz-radial-rotor--anim {
-    animation: none;
-  }
-}
 .kx-metric-viz-slot-funnel,
 .kx-metric-viz-slot-bars {
   height: 100%;
@@ -1187,7 +1168,7 @@
   pointer-events: none;
 }
 
-/* Donut gauge (Confidence) */
+/* Donut gauge (metrics using kind: donut) */
 .kx-metric-viz-donut {
   display: block;
   flex-shrink: 0;

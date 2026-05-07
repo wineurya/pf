@@ -122,6 +122,8 @@ const METRICS = [
     viz: {
       kind: 'radial',
       color: '#16A34A',
+      fill: 0.9,
+      remainderColor: 'var(--kx-border-strong)',
     },
   },
   {
@@ -256,8 +258,7 @@ function MetricDonutViz({ percent, color }) {
   )
 }
 
-function MetricRadialLinesViz({ color }) {
-  const reduce = useReducedMotion()
+function MetricRadialLinesViz({ color, fill = 1, remainderColor = 'var(--kx-border-strong)' }) {
   const vb = 76
   const cx = vb / 2
   const cy = vb / 2
@@ -265,26 +266,28 @@ function MetricRadialLinesViz({ color }) {
   const r0 = 12.5
   const r1 = 29.5
   const lines = useMemo(() => {
+    const t = Math.max(0, Math.min(1, fill))
+    const greenCount = Math.round(n * t)
     return Array.from({ length: n }, (_, i) => {
       const a = (i / n) * Math.PI * 2 - Math.PI / 2
       const c = Math.cos(a)
       const s = Math.sin(a)
-      const t = n > 1 ? i / (n - 1) : 0
-      const opacity = 0.18 + t * 0.82
+      const active = i < greenCount
       return {
         x0: c * r0,
         y0: s * r0,
         x1: c * r1,
         y1: s * r1,
-        opacity,
+        stroke: active ? color : remainderColor,
+        opacity: active ? 0.94 : 0.52,
         i,
       }
     })
-  }, [n, r0, r1])
+  }, [n, r0, r1, fill, color, remainderColor])
 
   return (
     <div className="kx-metric-viz-radial-outer" aria-hidden="true">
-      <svg className="kx-metric-viz-radial-base" viewBox={`0 0 ${vb} ${vb}`} preserveAspectRatio="xMidYMid meet">
+      <svg className="kx-metric-viz-radial-svg" viewBox={`0 0 ${vb} ${vb}`} preserveAspectRatio="xMidYMid meet">
         <circle
           cx={cx}
           cy={cy}
@@ -295,21 +298,15 @@ function MetricRadialLinesViz({ color }) {
           opacity={0.42}
         />
         <circle cx={cx} cy={cy} r={4.75} fill={color} fillOpacity={0.14} />
-      </svg>
-      <svg
-        className={`kx-metric-viz-radial-rotor${reduce ? '' : ' kx-metric-viz-radial-rotor--anim'}`}
-        viewBox={`0 0 ${vb} ${vb}`}
-        preserveAspectRatio="xMidYMid meet"
-      >
         <g transform={`translate(${cx} ${cy})`}>
-          {lines.map(({ x0, y0, x1, y1, opacity, i }) => (
+          {lines.map(({ x0, y0, x1, y1, stroke, opacity, i }) => (
             <line
               key={i}
               x1={x0}
               y1={y0}
               x2={x1}
               y2={y1}
-              stroke={color}
+              stroke={stroke}
               strokeWidth={2.05}
               strokeLinecap="round"
               opacity={opacity}
@@ -591,7 +588,11 @@ function MetricCards() {
         } else if (viz.kind === 'radial') {
           vizNode = (
             <div className="kx-metric-viz-slot kx-metric-viz-slot-radial" aria-hidden="true">
-              <MetricRadialLinesViz color={viz.color} />
+              <MetricRadialLinesViz
+                color={viz.color}
+                fill={viz.fill}
+                remainderColor={viz.remainderColor}
+              />
             </div>
           )
         } else if (viz.kind === 'bars') {
