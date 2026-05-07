@@ -95,6 +95,19 @@ function CaseStudyAboutBlock({ about }) {
   );
 }
 
+/** If most significant words from the lede appear in `about`, the second paragraph reads as a repeat. */
+function asideAboutRepeatsLede(lede, about) {
+  if (!about?.trim() || !lede?.trim()) return false;
+  const hay = about.toLowerCase();
+  const tokens = lede.toLowerCase().match(/[a-z]{4,}/g) ?? [];
+  if (tokens.length < 6) return false;
+  let hit = 0;
+  for (const t of tokens) {
+    if (hay.includes(t)) hit++;
+  }
+  return hit / tokens.length >= 0.52;
+}
+
 function CaseStudyAsideTopRow({ location, navigate }) {
   return (
     <div
@@ -159,6 +172,8 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const team = editorialMeta?.team?.trim();
   const duration = editorialMeta?.duration?.trim();
 
+  const showAboutSection = Boolean(about) && !asideAboutRepeatsLede(def.lede, about);
+
   return (
     <aside
       className={clsx(
@@ -182,7 +197,7 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
             <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
           </AsideSection>
 
-          {about ? (
+          {showAboutSection ? (
             <AsideSection>
               <CaseStudyAboutBlock about={about} />
             </AsideSection>
