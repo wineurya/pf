@@ -466,19 +466,19 @@ export const SITE_TESTIMONIALS = [];
 /** Stats row — calm, factual, buyer-relevant (not vanity craft signals). */
 export const SITE_STATS = [
   {
-    value: "6 wk",
-    label: "Median engagement",
-    hint: "From kickoff to public launch.",
+    value: "4-8 wk",
+    label: "Typical scope",
+    hint: "Enough time to learn the flow, shape the UI, and leave a build-ready path.",
   },
   {
-    value: "2 rounds",
-    label: "Usability testing",
-    hint: "On every product engagement, not just discovery.",
+    value: "1-2 rounds",
+    label: "User checks",
+    hint: "Fast validation while the structure is still easy to change.",
   },
   {
-    value: "100%",
-    label: "Build-ready handoff",
-    hint: "Specs or shipped front-end code, every project.",
+    value: "Dev-ready",
+    label: "Handoff",
+    hint: "Annotated states, edge cases, and front-end notes for a cleaner build.",
   },
 ];
 
