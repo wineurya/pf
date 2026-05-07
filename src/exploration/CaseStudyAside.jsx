@@ -1,3 +1,5 @@
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
@@ -123,22 +125,14 @@ function CaseStudyAsideTopRow({ location, navigate }) {
                 }}
               />
               <span className="relative z-10 flex min-w-0 items-center justify-center gap-1">
-                <svg
-                  viewBox="0 0 24 24"
-                  width={17}
-                  height={17}
-                  aria-hidden
+                <HugeiconsIcon
+                  icon={ArrowLeft02Icon}
+                  size={17}
+                  color="currentColor"
+                  strokeWidth={1.6}
                   className="shrink-0"
-                >
-                  <path
-                    d="M19 12H5M11 6l-6 6 6 6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                  aria-hidden
+                />
                 <span className="wx-tab-label-text overflow-visible whitespace-nowrap pr-px tracking-tight">Back</span>
               </span>
             </ViewTransitionLink>
