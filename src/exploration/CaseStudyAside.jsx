@@ -53,15 +53,15 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
 
 function CaseStudyTitleBlock({ year, title, lede }) {
   return (
-    <div className="flex flex-col gap-5 lg:gap-6">
-      <div className="flex flex-col gap-2">
+    <div className="space-y-3">
+      <div className="space-y-1.5">
         {year ? <p className="wx-aside-footer__label">{year}</p> : null}
-        <h1 className="wx-text-section-title font-semibold leading-[1.05] tracking-tight text-[var(--wx-ink)]">
+        <h1 className="wx-text-section-title font-semibold leading-tight tracking-tight text-[var(--wx-ink)]">
           {title}
         </h1>
       </div>
       {lede ? (
-        <p className="wx-text-body-secondary max-w-[34ch] text-balance text-[var(--wx-ink)]">{lede}</p>
+        <p className="wx-text-body-secondary text-[var(--wx-muted)]">{lede}</p>
       ) : null}
     </div>
   );
@@ -70,9 +70,9 @@ function CaseStudyTitleBlock({ year, title, lede }) {
 function CaseStudyAboutBlock({ about }) {
   if (!about) return null;
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="space-y-2">
       <p className="wx-aside-footer__label">About</p>
-      <p className="wx-text-body-secondary max-w-[42ch] text-[var(--wx-muted)]">{about}</p>
+      <p className="wx-text-body-secondary text-[var(--wx-muted)]">{about}</p>
     </div>
   );
 }
@@ -98,32 +98,71 @@ function CaseStudyAsideTopRow({ location, navigate }) {
     >
       <div className="site-vt--nav flex w-full min-w-0 flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
         <WordmarkLink location={location} navigate={navigate} />
-        <ViewTransitionLink
-          to={{ pathname: "/", hash: "section-work" }}
-          className={clsx(
-            "wx-text-meta shrink-0 font-medium text-[var(--wx-muted)] outline-none transition-colors",
-            "hover:text-[var(--wx-primary)]",
-            "focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]",
-          )}
-        >
-          Back
-        </ViewTransitionLink>
+        <div className="wx-tab-track wx-tab-track--single min-w-0 shrink-0">
+          <div className="wx-tab-track__scroll relative min-w-0">
+            <ViewTransitionLink
+              to={{ pathname: "/", hash: "section-work" }}
+              className="wx-tab wx-tab--back"
+              style={{ "--wx-tab-accent": "var(--wx-primary)" }}
+              aria-label="Back to Work section"
+            >
+              <span
+                aria-hidden
+                className="wx-tab__fill pointer-events-none absolute inset-0 -z-20"
+                style={{
+                  backgroundColor: "var(--wx-tab-idle)",
+                  boxShadow: "var(--wx-tab-shadow-idle)",
+                }}
+              />
+              <span
+                aria-hidden
+                className="wx-tab__fill pointer-events-none absolute inset-0 -z-10 opacity-100"
+                style={{
+                  backgroundColor: "var(--wx-primary)",
+                  boxShadow: "var(--wx-tab-shadow-active)",
+                }}
+              />
+              <span className="relative z-10 flex min-w-0 items-center justify-center gap-1">
+                <svg
+                  viewBox="0 0 24 24"
+                  width={17}
+                  height={17}
+                  aria-hidden
+                  className="shrink-0"
+                >
+                  <path
+                    d="M19 12H5M11 6l-6 6 6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="wx-tab-label-text overflow-visible whitespace-nowrap pr-px tracking-tight">Back</span>
+              </span>
+            </ViewTransitionLink>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function CaseStudyAsideMeta({ industry, role, team, duration, kind }) {
+/**
+ * Editorial meta is intentionally capped at 4 (Role / Team / Industry / Duration).
+ * "Project type" was dropped — it duplicates Industry in practice and bloats the column.
+ */
+function CaseStudyAsideMeta({ industry, role, team, duration }) {
   const items = [
     { label: "Role", value: role },
     { label: "Team", value: team },
     { label: "Industry", value: industry },
-    { label: "Project type", value: kind },
     { label: "Duration", value: duration },
   ].filter((item) => item.value);
   if (!items.length) return null;
   return (
-    <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
       {items.map((item) => (
         <MetaBlock key={item.label} label={item.label} value={item.value} />
       ))}
@@ -148,14 +187,13 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const { toolLabels, highlightLabels } = asideTagRails(editorialMeta, gridEntry);
   const year = gridEntry?.year?.trim();
   const role = gridEntry?.role?.trim();
-  const kind = gridEntry?.kind?.trim();
   const industry = editorialMeta?.industry?.trim();
   const about = editorialMeta?.about?.trim() || gridEntry?.summary?.trim();
   const team = editorialMeta?.team?.trim();
   const duration = editorialMeta?.duration?.trim();
 
   const showAboutSection = Boolean(about) && !asideAboutRepeatsLede(def.lede, about);
-  const hasMeta = Boolean(role || kind || industry || team || duration);
+  const hasMeta = Boolean(role || industry || team || duration);
   const hasTagRails = toolLabels.length > 0 || highlightLabels.length > 0;
   const hasFooterCluster = hasMeta || hasTagRails;
 
@@ -178,24 +216,23 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
         {/*
-         * Two-cluster layout (copedesign / onepagelove rhythm):
-         *   • Editorial cluster (title + lede + about) leads at the top
-         *   • Meta + tag rails are anchored to the bottom of the sticky column on lg (`mt-auto`)
-         * One hairline divider replaces the previous per-section borders so the column reads
-         * as composed editorial, not a stack of equal cards.
+         * Mirrors `ExplorationPageAside` so the route view-transition feels seamless:
+         *   • Editorial copy block — `flex-1 justify-center` (vertically centered in the
+         *     sticky column on lg, matches the home hero rhythm).
+         *   • Meta + tag rails — pushed to the bottom with `mt-auto`, no border divider
+         *     (less-is-more; airspace alone signals the shift from editorial to credits).
          */}
-        <div className="site-vt--aside mt-10 flex min-h-0 w-full min-w-0 flex-1 flex-col gap-10 lg:mt-14 lg:gap-14 lg:py-1">
-          <div className="flex flex-col gap-8 lg:gap-10">
-            <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
-            {showAboutSection ? <CaseStudyAboutBlock about={about} /> : null}
+        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col">
+          <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
+            <div className="space-y-5">
+              <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
+              {showAboutSection ? <CaseStudyAboutBlock about={about} /> : null}
+            </div>
           </div>
 
           {hasFooterCluster ? (
             <div
-              className={clsx(
-                "flex flex-col gap-8 border-t border-[color:var(--wx-border-soft)] pt-8",
-                "lg:mt-auto lg:gap-9 lg:pt-9",
-              )}
+              className="mt-auto w-full min-w-0 space-y-6 pt-8 lg:space-y-7 lg:pt-10"
               data-site-region="case-aside-footer"
             >
               {hasMeta ? (
@@ -204,7 +241,6 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
                   role={role}
                   team={team}
                   duration={duration}
-                  kind={kind}
                 />
               ) : null}
 
