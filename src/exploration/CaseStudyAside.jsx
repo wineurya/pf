@@ -112,8 +112,7 @@ function asideTagRails(editorialMeta, gridEntry) {
 
 /**
  * Editorial source-of-truth for a case study route — title, year, lede, meta, tags.
- * Layout follows Figma `Testing/10:5` left frame: top nav row, year-over-title
- * block with lede, stacked meta blocks, then grouped tag rails.
+ * Column shell matches `ExplorationPageAside` (padding, sticky height, `site-vt--aside`).
  */
 export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const editorialMeta = def.editorialMeta ?? null;
@@ -131,19 +130,19 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
       className={clsx(
         "relative z-20 flex w-full min-w-0 shrink-0 flex-col",
         "border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
-        "lg:grow-0 lg:shrink-0 lg:sticky lg:top-0",
-        "lg:max-h-svh lg:min-h-svh lg:overflow-y-auto lg:overscroll-contain",
+        "lg:grow-0 lg:shrink-0 lg:flex-none lg:sticky lg:top-0",
+        "lg:h-svh lg:max-h-svh lg:overflow-y-auto lg:overscroll-contain",
         "lg:border-b-0 lg:border-r",
         "lg:w-[min(31rem,38vw)] lg:max-w-[31rem]",
       )}
       aria-label={`${def.title} — case study overview`}
       data-site-region="case-aside"
     >
-      <div className="flex min-h-0 w-full flex-1 flex-col gap-10 px-[var(--wx-pad-x)] py-8 sm:gap-12 sm:py-10 lg:gap-10 lg:px-6 lg:py-12">
+      <div className="flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12">
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
-        <div className="site-vt--aside flex flex-col gap-10 sm:gap-12 lg:gap-10">
+        <div className="site-vt--aside mt-9 flex min-h-0 w-full min-w-0 flex-1 flex-col space-y-6 lg:mt-12 lg:space-y-7 lg:py-2">
           <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
 
           <CaseStudyAsideMeta

@@ -4,7 +4,7 @@ import { AvanceCaseStudy } from "@/case-studies/AvanceCaseStudy.jsx";
 import { IncityCaseStudy } from "@/case-studies/IncityCaseStudy.jsx";
 import { ResolutionsCaseStudy } from "@/case-studies/ResolutionsCaseStudy.jsx";
 import { SirenCaseStudy } from "@/case-studies/SirenCaseStudy.jsx";
-import { ExplorationBody } from "@/exploration/layout/ExplorationLayout.jsx";
+import { ExplorationBody, ExplorationMainPanels } from "@/exploration/layout/ExplorationLayout.jsx";
 import { WorkCaseLayout } from "@/exploration/layout/WorkCaseLayout.jsx";
 import { CaseStudyAside } from "@/exploration/CaseStudyAside.jsx";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
@@ -25,13 +25,13 @@ function CaseStudyShell({ def, gridEntry, CaseStudy, location, navigate }) {
   return (
     <ExplorationBody>
       <CaseStudyAside def={def} gridEntry={gridEntry} location={location} navigate={navigate} />
-      <main
-        className="site-vt--panels relative z-10 flex w-full min-w-0 shrink-0 flex-col gap-3 px-[var(--wx-pad-x)] pb-24 pt-10 sm:gap-4 sm:pt-12 lg:min-w-0 lg:flex-1 lg:basis-0 lg:px-6 lg:pb-16 lg:pt-12"
+      <ExplorationMainPanels
+        as="main"
         data-site-region="case-panels"
         aria-label={`${def.title} — case study media`}
       >
         <CaseStudy def={def} />
-      </main>
+      </ExplorationMainPanels>
     </ExplorationBody>
   );
 }
