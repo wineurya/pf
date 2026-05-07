@@ -1775,12 +1775,6 @@
   -webkit-font-smoothing: antialiased;
 }
 
-.site-canvas .wx-stack-marquee-stack .wx-stack-marquee + .wx-stack-marquee {
-  padding-top: 0.625rem;
-  margin-top: 0.125rem;
-  border-top: 1px solid var(--wx-border-hairline);
-}
-
 /*
  * Marquee clip: padding inside overflow:hidden keeps chip outlines from being cropped.
  * Horizontal padding keeps the first/last pills from hugging the fade seam.
