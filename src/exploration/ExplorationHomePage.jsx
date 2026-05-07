@@ -47,6 +47,7 @@ import {
 } from "lucide-animated";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
+import { WX_SKIP_HOME_PANELS_ENTER_KEY } from "@/lib/navigateViewTransition.js";
 import { queueScrollTriggerRefresh } from "@/lib/gsap.js";
 import { useLenis } from "@/providers/LenisProvider.jsx";
 import {
@@ -1919,6 +1920,8 @@ function useExplorationLayoutModel() {
   const emptyProjectFocusRef = useRef(false);
   emptyProjectFocusRef.current = emptyProjectFocus;
   const selectedIndex = scrollIntentIndex ?? activeIndex;
+  /** VT navigations merge this flag so `#site-panels` doesn't fight the cross-fade on mount. */
+  const skipHomePanelsVtReveal = Boolean(location.state?.[WX_SKIP_HOME_PANELS_ENTER_KEY]);
   const tabRowRef = useRef(null);
   const { tabPillTransition, tabRailFadeTransition, emptyCanvasOpacityTransition } = useExplorationNavMotion(
     reduceMotion,
@@ -1989,6 +1992,7 @@ function useExplorationLayoutModel() {
     scrollToSection,
     scrollToExplorationTop,
     onMainPanelsOpacityComplete,
+    skipHomePanelsVtReveal,
   };
 }
 
@@ -2106,7 +2110,7 @@ function ExplorationPageAside(p) {
     >
       <div
         className={clsx(
-          "flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12",
+          "wx-aside-shell flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] lg:min-h-0",
           emptyProjectFocus && emptyCanvasSettled && "lg:flex-none",
         )}
       >
@@ -2195,8 +2199,8 @@ function ExplorationMainStudioSection({ reduceMotion }) {
             Research-led design, built end to end.
           </h2>
           <p className="wx-text-body-secondary text-[var(--wx-muted)]">
-            Product designer focused on research, interaction design, and accessible interfaces. I design and build in
-            the same conversation — no handoff gap between what I sketch and what ships.
+            Product designer working across research, interaction, and shipping UI. I design in Figma and build in
+            React, so detail doesn&rsquo;t get lost between the sketch and the code.
           </p>
         </div>
         <div className="wx-gallery-frame overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:col-span-2">
@@ -2428,14 +2432,19 @@ function ExplorationPageMainColumn(p) {
     emptyProjectFocus,
     emptyCanvasSettled,
     reduceMotion,
+    skipHomePanelsVtReveal,
     emptyCanvasOpacityTransition,
     onMainPanelsOpacityComplete,
     setEmptyProjectFocus,
   } = p;
+  const panelsInitialMount =
+    reduceMotion || skipHomePanelsVtReveal
+      ? { opacity: 1, y: 0 }
+      : { opacity: 0, y: EMPTY_CANVAS_PANELS_DY };
   return (
     <ExplorationMainPanels
       as={motion.div}
-      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: EMPTY_CANVAS_PANELS_DY }}
+      initial={panelsInitialMount}
       animate={
         reduceMotion
           ? { opacity: emptyProjectFocus ? 0 : 1, y: 0 }
@@ -2486,6 +2495,7 @@ export function ExplorationHomePage() {
           emptyProjectFocus={m.emptyProjectFocus}
           emptyCanvasSettled={m.emptyCanvasSettled}
           reduceMotion={m.reduceMotion}
+          skipHomePanelsVtReveal={m.skipHomePanelsVtReveal}
           emptyCanvasOpacityTransition={m.emptyCanvasOpacityTransition}
           onMainPanelsOpacityComplete={m.onMainPanelsOpacityComplete}
           setEmptyProjectFocus={m.setEmptyProjectFocus}

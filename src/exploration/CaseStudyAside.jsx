@@ -8,7 +8,7 @@ import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
 function MetaBlock({ label, value }) {
   if (!value) return null;
   return (
-    <div className="min-w-0 space-y-1.5">
+    <div className="wx-case-aside-meta__item">
       <p className="wx-aside-footer__label">{label}</p>
       <p className="wx-text-sm font-medium tracking-tight text-[var(--wx-ink)]">{value}</p>
     </div>
@@ -58,43 +58,45 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
 
 function CaseStudyTitleBlock({ year, title, lede }) {
   return (
-    <div className="space-y-3">
-      <div className="space-y-1.5">
+    <div className="wx-case-aside-title">
+      <div className="wx-case-aside-title__stack">
         {year ? <p className="wx-aside-footer__label">{year}</p> : null}
-        <h1 className="wx-text-section-title font-semibold leading-tight tracking-tight text-[var(--wx-ink)]">
-          {title}
-        </h1>
+        <h1 className="wx-case-aside-title__heading">{title}</h1>
       </div>
-      {lede ? (
-        <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{lede}</p>
-      ) : null}
+      {lede ? <p className="wx-case-aside-title__lede">{lede}</p> : null}
     </div>
   );
 }
 
-function CaseStudyAboutBlock({ paragraphs }) {
+function CaseStudyGistBlock({ title, paragraphs }) {
   if (!paragraphs?.length) return null;
   return (
-    <div className="space-y-2">
-      <p className="wx-aside-footer__label">About</p>
-      <div className="space-y-2">
+    <section className="wx-case-aside-block wx-case-aside-block--gist">
+      <h2 className="wx-case-aside-block__heading">What&rsquo;s the gist of {title}?</h2>
+      <div className="wx-case-aside-block__body">
         {paragraphs.map((p, i) => (
-          <p key={i} className="wx-text-body-secondary w-full text-[var(--wx-muted)]">
+          <p key={i} className="wx-case-aside-block__para">
             {p}
           </p>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
-function CaseStudyOutcomeBlock({ outcome }) {
-  if (!outcome?.trim()) return null;
+function CaseStudyOutcomeBlock({ paragraphs }) {
+  if (!paragraphs?.length) return null;
   return (
-    <div className="space-y-2">
-      <p className="wx-aside-footer__label">Outcome</p>
-      <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{outcome}</p>
-    </div>
+    <section className="wx-case-aside-block wx-case-aside-block--outcome">
+      <h2 className="wx-case-aside-block__heading">What was the outcome?</h2>
+      <div className="wx-case-aside-block__body">
+        {paragraphs.map((p, i) => (
+          <p key={i} className="wx-case-aside-block__para">
+            {p}
+          </p>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -175,7 +177,7 @@ function CaseStudyAsideMeta({ industry, role, team, duration }) {
   ].filter((item) => item.value);
   if (!items.length) return null;
   return (
-    <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
+    <dl className="wx-case-aside-meta grid grid-cols-2">
       {items.map((item) => (
         <MetaBlock key={item.label} label={item.label} value={item.value} />
       ))}
@@ -200,6 +202,13 @@ function asideAboutParagraphs(editorialMeta, gridEntry) {
   return single ? [single] : [];
 }
 
+function asideOutcomeParagraphs(editorialMeta) {
+  const fromMeta = editorialMeta?.outcomeParagraphs?.filter(Boolean) ?? [];
+  if (fromMeta.length) return fromMeta;
+  const single = editorialMeta?.outcome?.trim();
+  return single ? [single] : [];
+}
+
 /**
  * Editorial source-of-truth for a case study route — title, year, lede, meta, tags.
  * Column shell matches `ExplorationPageAside` (same lg aside basis, padding, sticky height, header wrapper).
@@ -213,12 +222,12 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const aboutParagraphs = asideAboutParagraphs(editorialMeta, gridEntry);
   const team = editorialMeta?.team?.trim();
   const duration = editorialMeta?.duration?.trim();
-  const outcome = editorialMeta?.outcome?.trim();
+  const outcomeParagraphs = asideOutcomeParagraphs(editorialMeta);
 
   const showAboutSection =
     aboutParagraphs.length > 0 &&
     !asideAboutRepeatsLede(def.lede, aboutParagraphs.length === 1 ? aboutParagraphs[0] : aboutParagraphs.join(" "));
-  const showOutcomeSection = Boolean(outcome);
+  const showOutcomeSection = outcomeParagraphs.length > 0;
   const hasMeta = Boolean(role || industry || team || duration);
   const hasTagRails = toolLabels.length > 0 || highlightLabels.length > 0;
   const hasFooterCluster = hasMeta || hasTagRails;
@@ -231,13 +240,14 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         "lg:grow-0 lg:shrink-0 lg:flex-none lg:sticky lg:top-0",
         "lg:h-svh lg:max-h-svh lg:overflow-y-auto lg:overscroll-contain",
         "lg:border-b-0",
-        /* Same width token as home exploration — keeps wordmark / chrome aligned across routes */
+        /* Match home aside width + scrollbar gutter — keeps the cross-fade on
+           route change pixel-aligned instead of shifting by the gutter width. */
         "lg:w-[var(--wx-explore-aside-basis)]",
       )}
       aria-label={`${def.title} — case study overview`}
       data-site-region="case-aside"
     >
-      <div className="flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] pb-10 pt-0 sm:pt-10 lg:min-h-0 lg:pb-12 lg:pt-12">
+      <div className="wx-aside-shell flex min-h-0 w-full flex-1 flex-col px-[var(--wx-pad-x)] lg:min-h-0">
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
@@ -246,17 +256,21 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
          * the editorial stack and the meta/tag footer; copy stays start-aligned via `items-start`.
          */}
         <div className="site-vt--aside flex h-full min-h-0 w-full min-w-0 flex-1 flex-col items-start justify-between">
-          <div className="mt-9 flex w-full min-w-0 shrink-0 flex-col items-start justify-start lg:mt-12 lg:min-h-0 lg:py-2">
-            <div className="space-y-5">
+          <div className="wx-case-aside-stack flex w-full min-w-0 shrink-0 flex-col items-start justify-start lg:min-h-0">
+            <div className="wx-case-aside-stack__inner w-full">
               <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
-              {showAboutSection ? <CaseStudyAboutBlock paragraphs={aboutParagraphs} /> : null}
-              {showOutcomeSection ? <CaseStudyOutcomeBlock outcome={outcome} /> : null}
+              {showAboutSection ? (
+                <CaseStudyGistBlock title={def.title} paragraphs={aboutParagraphs} />
+              ) : null}
+              {showOutcomeSection ? (
+                <CaseStudyOutcomeBlock paragraphs={outcomeParagraphs} />
+              ) : null}
             </div>
           </div>
 
           {hasFooterCluster ? (
             <div
-              className="w-full min-w-0 shrink-0 space-y-6 pt-8 lg:space-y-7 lg:pt-10"
+              className="wx-case-aside-footer w-full min-w-0 shrink-0"
               data-site-region="case-aside-footer"
             >
               {hasMeta ? (
