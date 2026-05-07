@@ -63,7 +63,7 @@ function CaseStudyTitleBlock({ year, title, lede }) {
         </h1>
       </div>
       {lede ? (
-        <p className="wx-text-body-secondary text-[var(--wx-muted)]">{lede}</p>
+        <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{lede}</p>
       ) : null}
     </div>
   );
@@ -74,7 +74,7 @@ function CaseStudyAboutBlock({ about }) {
   return (
     <div className="space-y-2">
       <p className="wx-aside-footer__label">About</p>
-      <p className="wx-text-body-secondary text-[var(--wx-muted)]">{about}</p>
+      <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{about}</p>
     </div>
   );
 }
@@ -210,14 +210,12 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
         {/*
-         * Mirrors `ExplorationPageAside` so the route view-transition feels seamless:
-         *   • Editorial copy block — `flex-1 justify-center` (vertically centered in the
-         *     sticky column on lg, matches the home hero rhythm).
-         *   • Meta + tag rails — pushed to the bottom with `mt-auto`, no border divider
-         *     (less-is-more; airspace alone signals the shift from editorial to credits).
+         * Mirrors `ExplorationPageAside` shell; editorial block is top-aligned (`justify-start`
+         * / `items-start`) with natural column height (`h-fit`) so copy measures full width.
+         * Meta + tag rails — `mt-auto` when present; no border divider between zones.
          */}
-        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col">
-          <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
+        <div className="site-vt--aside flex h-fit min-h-0 w-full min-w-0 flex-col items-start justify-start">
+          <div className="mt-9 flex w-full min-w-0 flex-1 flex-col items-start justify-start lg:mt-12 lg:min-h-0 lg:py-2">
             <div className="space-y-5">
               <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
               {showAboutSection ? <CaseStudyAboutBlock about={about} /> : null}
