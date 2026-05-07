@@ -97,18 +97,23 @@ function CaseStudyAboutBlock({ about }) {
 
 function CaseStudyAsideTopRow({ location, navigate }) {
   return (
-    <div className="site-vt--nav flex w-full items-center justify-between gap-3">
-      <WordmarkLink location={location} navigate={navigate} />
-      <ViewTransitionLink
-        to="/#section-work"
-        className={clsx(
-          "wx-text-meta font-medium text-[var(--wx-muted)] outline-none transition-colors",
-          "hover:text-[var(--wx-primary)]",
-          "focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]",
-        )}
-      >
-        Back
-      </ViewTransitionLink>
+    <div
+      className="wx-mobile-sticky-nav flex w-full min-w-0 shrink-0 flex-row flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4"
+      data-site-region="case-header-nav"
+    >
+      <div className="site-vt--nav flex w-full min-w-0 flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
+        <WordmarkLink location={location} navigate={navigate} />
+        <ViewTransitionLink
+          to="/#section-work"
+          className={clsx(
+            "wx-text-meta shrink-0 font-medium text-[var(--wx-muted)] outline-none transition-colors",
+            "hover:text-[var(--wx-primary)]",
+            "focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]",
+          )}
+        >
+          Back
+        </ViewTransitionLink>
+      </div>
     </div>
   );
 }
@@ -141,7 +146,7 @@ function asideTagRails(editorialMeta, gridEntry) {
 
 /**
  * Editorial source-of-truth for a case study route — title, year, lede, meta, tags.
- * Column shell matches `ExplorationPageAside` (padding, sticky height, `site-vt--aside`).
+ * Column shell matches `ExplorationPageAside` (same lg aside basis, padding, sticky height, header wrapper).
  */
 export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const editorialMeta = def.editorialMeta ?? null;
@@ -157,12 +162,13 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   return (
     <aside
       className={clsx(
-        "relative z-20 flex w-full min-w-0 shrink-0 flex-col",
+        "relative z-20 flex w-full min-w-0 shrink-0 flex-col [scrollbar-gutter:stable]",
         "border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
         "lg:grow-0 lg:shrink-0 lg:flex-none lg:sticky lg:top-0",
         "lg:h-svh lg:max-h-svh lg:overflow-y-auto lg:overscroll-contain",
         "lg:border-b-0 lg:border-r",
-        "lg:w-[min(31rem,38vw)] lg:max-w-[31rem]",
+        /* Same width token as home exploration — keeps wordmark / chrome aligned across routes */
+        "lg:w-[var(--wx-explore-aside-basis)]",
       )}
       aria-label={`${def.title} — case study overview`}
       data-site-region="case-aside"

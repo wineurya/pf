@@ -2012,10 +2012,11 @@ function ExplorationPageAside(p) {
   return (
     <aside
       className={clsx(
-        "relative z-20 flex w-full min-w-0 shrink-0 flex-col border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
+        "relative z-20 flex w-full min-w-0 shrink-0 flex-col border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)] [scrollbar-gutter:stable]",
         "lg:grow-0 lg:shrink-0 lg:sticky lg:top-0 lg:overflow-y-auto lg:overscroll-contain lg:border-b-0",
         "lg:flex-none",
-        (!emptyProjectFocus || !emptyCanvasSettled) && "lg:w-[min(42%,36rem)] lg:h-svh lg:max-h-svh",
+        (!emptyProjectFocus || !emptyCanvasSettled) &&
+          "lg:w-[var(--wx-explore-aside-basis)] lg:h-svh lg:max-h-svh",
         emptyProjectFocus && emptyCanvasSettled && "lg:w-full lg:max-w-none lg:self-start",
         emptyProjectFocus && emptyCanvasSettled && "lg:h-auto lg:max-h-none lg:min-h-0",
       )}
