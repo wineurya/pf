@@ -1,18 +1,22 @@
 ---
-description: After finishing a user task, commit and push the branch
+description: Commit and push only when changes are substantively worth recording—not after every tiny edit
 alwaysApply: true
 ---
 
-# Commit and push after each task
+# Commit when there is enough substance
 
-When a **user task** is **done** (goal met, build/tests you ran pass, and you are about to hand off the answer):
+Do **not** commit automatically after every task or per trivial tweak (single-line nits, typo-only edits, tiny formatting unless part of a larger change).
 
-1. **Stage** all files that belong to that task: `git add` with the paths you changed (or `git add -p` if mixed with unrelated edits—do not stuff unrelated work into the same commit).
+**Commit and push** when the work is meaningfully complete—for example: a real bug fix or feature slice, a coherent refactor, documentation or config that stands on its own, or several related edits that together tell a clear story.
+
+When you **do** commit:
+
+1. **Stage** only what belongs together: `git add` those paths (or `git add -p` if mixed with unrelated work—do not bundle unrelated changes).
 2. **Commit** with a **clear, complete-sentence** message describing what changed and why (conventional style is fine, e.g. `fix: …` / `feat: …`).
-3. **Push** the current branch: `git push` (or `git push -u origin <branch>` on first push).
+3. **Push** if this repo uses a remote and you intend to publish that commit: `git push` (or `git push -u origin <branch>` on first push).
 
-**Skip** commit/push only if `git status` is clean and there is nothing to record.
+**Skip** commit entirely when there is nothing material to record, or when edits are too small to warrant history noise—leave the working tree for the user or batch with later work.
 
-**If push fails** (no remote, auth, network, or non-fast-forward), report the exact error, say what is still only local, and do not claim the work is on the server.
+**If push fails** (no remote, auth, network, or non-fast-forward), report the exact error, clarify what is still local only, and do not claim the work is on the server.
 
-This is **in addition to** any other end-of-task checks in this repo (e.g. `npm run check:slop` when the vibecheck rule applies). Order: run checks that apply, then **commit, then push**.
+This sits alongside other end-of-task checks (e.g. `npm run check:slop` when applicable): run those first; **commit and push only when the change set warrants it.**
