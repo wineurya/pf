@@ -1,9 +1,6 @@
 /**
- * Case-study “Tools” row — raster/vector marks from UXWing (free commercial use).
- * @see https://uxwing.com/license/
- *
- * Bundle under `public/case-tool-icons/`. Download originals from UXWing (named on each file’s page).
- * FigJam → board icon (UXWing). Lottie → `lottie.png` (LottieFiles mark). Motion / Premiere → animation-motion (UXWing).
+ * Case-study “Tools” row — product logomarks in `public/case-tool-icons/`.
+ * Figma / Adobe / LottieFiles marks from vendor artwork; FigJam tile uses Figma-ecosystem styling.
  */
 function toolIconUrl(file) {
   const base = import.meta.env.BASE_URL;
@@ -18,24 +15,24 @@ function normalizeToolLabel(label) {
     .replace(/\s+/g, " ");
 }
 
-function resolveUxwingFile(label) {
+function resolveToolIconFile(label) {
   const t = normalizeToolLabel(label);
   if (t === "figma") return "figma.svg";
-  if (t === "figjam") return "figjam-board.svg";
-  if (t === "lottie") return "lottie.png";
+  if (t === "figjam") return "figjam.svg";
+  if (t === "lottie" || t === "lottiefiles") return "lottiefiles-mark.svg";
   if (t === "after effects" || t === "adobe after effects") return "adobe-after-effects.svg";
   if (t === "illustrator" || t === "adobe illustrator") return "adobe-illustrator.svg";
-  if (t === "motion design" || t === "premiere pro" || t === "adobe premiere pro") return "lottie-motion.svg";
+  if (t === "motion design" || t === "premiere pro" || t === "adobe premiere pro") {
+    return "adobe-premiere-pro.svg";
+  }
   return null;
 }
 
 export function CaseStudyToolBrandIcon({ label, className }) {
-  const file = resolveUxwingFile(label) ?? "fallback-wrench.svg";
+  const file = resolveToolIconFile(label) ?? "fallback-wrench.svg";
   return (
     <img
       src={toolIconUrl(file)}
-      width={24}
-      height={24}
       alt=""
       className={className}
       loading="lazy"
