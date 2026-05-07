@@ -10,21 +10,6 @@ const INCITY_ABOUT_PARAGRAPHS = [
   "InCity targets those failures—with city updates, interactive map points, and case tracking that keeps people informed from report to resolution.",
 ];
 
-const INCITY_PROBLEM_BEATS = [
-  {
-    title: "Desktop-first design",
-    body: "A desktop-centric UI loads mobile users with small targets and buried navigation.",
-  },
-  {
-    title: "Buried workflows",
-    body: "Reporting is scattered across multiple steps—up to eight before a submission is sent.",
-  },
-  {
-    title: "Opaque status updates",
-    body: "Without timely feedback, people can't tell whether their case is moving forward.",
-  },
-];
-
 /** @type {Record<string, { template: 'hero' | 'steps' | 'editorial'; title: string; kicker: string; lede: string; heroImage?: string; backLabel?: string; steps?: { title: string; blurb: string; image: string }[]; strips?: { caption: string; image: string }[] }>} */
 export const WORK_CASE_PAGES = {
   avance: {
@@ -104,12 +89,6 @@ export const WORK_CASE_PAGES = {
     editorialMeta: {
       industry: "Civic tech · Government services",
       aboutParagraphs: INCITY_ABOUT_PARAGRAPHS,
-      problem: {
-        label: "The problem",
-        lead:
-          "ATL311's desktop-first experience buries critical reporting paths. Residents hit tiny controls, hidden menus, and long sequences—then walk away.",
-        beats: INCITY_PROBLEM_BEATS,
-      },
       outcome:
         "Task completion time dropped by about 75%, error rate fell from roughly 30% to near 5%, and abandoned submissions were eliminated. The work was also recognized by the Assistant City Manager of Kennesaw, who noted the impact if the system were implemented.",
       team: "6 people",

@@ -88,26 +88,6 @@ function CaseStudyAboutBlock({ paragraphs }) {
   );
 }
 
-function CaseStudyProblemBlock({ problem }) {
-  if (!problem?.beats?.length) return null;
-  return (
-    <div className="space-y-3">
-      <p className="wx-aside-footer__label">{problem.label ?? "The Problem"}</p>
-      {problem.lead ? (
-        <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{problem.lead}</p>
-      ) : null}
-      <ul className="list-none space-y-3 p-0">
-        {problem.beats.map((b) => (
-          <li key={b.title} className="space-y-1">
-            <p className="wx-text-sm font-medium text-[var(--wx-ink)]">{b.title}</p>
-            <p className="wx-text-body-secondary text-[var(--wx-muted)]">{b.body}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 function CaseStudyOutcomeBlock({ outcome }) {
   if (!outcome?.trim()) return null;
   return (
@@ -238,7 +218,6 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const showAboutSection =
     aboutParagraphs.length > 0 &&
     !asideAboutRepeatsLede(def.lede, aboutParagraphs.length === 1 ? aboutParagraphs[0] : aboutParagraphs.join(" "));
-  const showProblemSection = Boolean(editorialMeta?.problem?.beats?.length);
   const showOutcomeSection = Boolean(outcome);
   const hasMeta = Boolean(role || industry || team || duration);
   const hasTagRails = toolLabels.length > 0 || highlightLabels.length > 0;
@@ -271,7 +250,6 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
             <div className="space-y-5">
               <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
               {showAboutSection ? <CaseStudyAboutBlock paragraphs={aboutParagraphs} /> : null}
-              {showProblemSection ? <CaseStudyProblemBlock problem={editorialMeta.problem} /> : null}
               {showOutcomeSection ? <CaseStudyOutcomeBlock outcome={outcome} /> : null}
             </div>
           </div>
