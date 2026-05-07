@@ -2175,6 +2175,7 @@
 .site-canvas .wx-headline-line {
   display: inline;
   word-spacing: normal;
+  white-space: nowrap;
 }
 
 .site-canvas .wx-headline-static {
