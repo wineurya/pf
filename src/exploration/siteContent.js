@@ -59,7 +59,7 @@ export const SITE_HERO = {
   eyebrow: "Available for projects",
   headline: "Designs that feel",
   subhead:
-    "Product designer in Atlanta. I take work from research through shipped UI—untangling messy flows into systems teams can build and people can use.",
+    "I'm a product designer who takes work from research through shipped UI—untangling messy flows into systems teams can build and people can use.",
   primaryCta: { label: "Get in touch", href: "#section-contact" },
   secondaryCta: { label: "View work", href: "#section-work" },
 };
