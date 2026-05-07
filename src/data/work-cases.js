@@ -6,8 +6,8 @@
 import { SITE_EXTRA_IMAGES, SITE_WORK } from "@/exploration/siteContent.js";
 
 const INCITY_ABOUT_PARAGRAPHS = [
-  "Plagued with issues, ATL311 was the system Atlanta residents relied on to report non-emergency problems. Too many reports were forgotten, left incomplete, or closed without a real fix.",
-  "InCity targets those failures—with city updates, interactive map points, and case tracking that keeps people informed from report to resolution.",
+  "Atlanta relied on ATL311 for non-emergency reports, but too many tickets stalled—unfinished, forgotten, or closed without a real fix.",
+  "InCity targets that gap with timely city updates, map context, and case tracking from report through resolution.",
 ];
 
 /** @type {Record<string, { template: 'hero' | 'steps' | 'editorial'; title: string; kicker: string; lede: string; heroImage?: string; backLabel?: string; steps?: { title: string; blurb: string; image: string }[]; strips?: { caption: string; image: string }[] }>} */
@@ -90,7 +90,7 @@ export const WORK_CASE_PAGES = {
       industry: "Civic tech · Government services",
       aboutParagraphs: INCITY_ABOUT_PARAGRAPHS,
       outcome:
-        "Task completion time dropped by about 75%, error rate fell from roughly 30% to near 5%, and abandoned submissions were eliminated. The work was also recognized by the Assistant City Manager of Kennesaw, who noted the impact if the system were implemented.",
+        "About 75% faster completion, errors near 5% (down from roughly 30%), and abandoned submissions eliminated. The Assistant City Manager of Kennesaw cited the work for its citywide potential.",
       team: "6 people",
       duration: "Feb 2025 – Apr 2025",
       toolLabels: ["Figma", "FigJam", "Lottie", "Adobe After Effects", "Adobe Illustrator"],
