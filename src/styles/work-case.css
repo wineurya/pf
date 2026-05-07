@@ -118,12 +118,15 @@
   display: flex;
   flex-direction: column;
   gap: clamp(0.75rem, 0.5rem + 0.6vw, 1rem);
+  min-width: 0;
+  width: 100%;
 }
 
 [data-site-region="case-aside"] .wx-case-tags__block {
   display: flex;
   flex-direction: column;
   gap: clamp(0.35rem, 0.25rem + 0.3vw, 0.5rem);
+  min-width: 0;
 }
 
 /* Match `wx-aside-footer__label` so every aside eyebrow reads the same */
@@ -148,15 +151,15 @@
 }
 
 [data-site-region="case-aside"] .wx-case-tags__group--tools {
-  gap: 22px;
+  gap: var(--spacing-5);
   align-items: center;
   line-height: 0;
 }
 
 [data-site-region="case-aside"] .wx-case-tags__group--tools > li {
   display: flex;
-  width: 24px;
-  height: 24px;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -187,30 +190,33 @@
 }
 
 [data-site-region="case-aside"] .wx-case-tags__group--focus {
-  column-gap: 0.625rem;
-  row-gap: 0.625rem;
+  column-gap: var(--spacing-2);
+  row-gap: var(--spacing-2);
   align-items: center;
 }
 
-/* Matches DS “Tag / pill” inset rhythm (~DesignSystemPage: marquee clips mirror stack gutters). */
+/* Clip marquee inside the padded aside — no negative margins (avoids horizontal bleed / off-canvas tabs). */
 [data-site-region="case-aside"] .wx-case-tags__focus-marquee {
   overflow: hidden;
   max-width: 100%;
-  padding: 10px 20px;
-  margin: -10px -20px;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding-block: var(--spacing-1);
+  padding-inline: 0;
   box-sizing: border-box;
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0,
-    var(--wx-mask-solid, #000) 1.5rem,
-    var(--wx-mask-solid, #000) calc(100% - 1.5rem),
+    var(--wx-mask-solid) 1.25rem,
+    var(--wx-mask-solid) calc(100% - 1.25rem),
     transparent 100%
   );
   mask-image: linear-gradient(
     to right,
     transparent 0,
-    var(--wx-mask-solid, #000) 1.5rem,
-    var(--wx-mask-solid, #000) calc(100% - 1.5rem),
+    var(--wx-mask-solid) 1.25rem,
+    var(--wx-mask-solid) calc(100% - 1.25rem),
     transparent 100%
   );
   mask-repeat: no-repeat;
@@ -221,7 +227,7 @@
   display: flex;
   width: max-content;
   align-items: center;
-  gap: 0.625rem;
+  gap: var(--spacing-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -268,22 +274,26 @@
   object-position: center;
 }
 
-/* Focus chips — ~4% ink fill; py-1 + px-2.5 rhythm aligns DS Tag/pill demo */
+/* Focus chips — warm work-nugget pill (Design System: Tag / pill + work card nuggets reference). */
 [data-site-region="case-aside"] .wx-case-tags__group--focus .wx-case-tags__pill,
 [data-site-region="case-aside"] .wx-case-tags__focus-marquee .wx-case-tags__pill {
   display: inline-flex;
   align-items: center;
   max-width: 100%;
-  padding: 0.25rem 0.625rem;
-  border: none;
+  box-sizing: border-box;
+  min-height: 1.75rem;
+  padding: 0.3125rem 0.7rem;
+  border: 1px solid var(--wx-border-muted);
   border-radius: 999px;
   box-shadow: none;
-  font-size: var(--wx-text-meta-size, 0.8125rem);
-  font-weight: 450;
-  line-height: var(--wx-text-meta-leading, 1.35);
-  letter-spacing: -0.012em;
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+  font-size: var(--wx-text-nugget-warm);
+  font-weight: 500;
+  font-synthesis: none;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
   color: var(--wx-ink);
-  background-color: color-mix(in srgb, var(--wx-ink) 4%, transparent);
+  background-color: var(--wx-white);
 }
 
 /* Shared aside chrome — applies to both the home `[data-site-region="aside"]`

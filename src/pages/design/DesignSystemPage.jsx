@@ -1065,7 +1065,9 @@ export default function DesignSystemPage() {
             <div>
               <p className="text-sm font-semibold text-[var(--wx-ink)] font-[family-name:var(--font-display)] mb-2">Tag / pill system</p>
               <p className="wx-text-body-secondary text-[var(--wx-muted)] mb-4 leading-relaxed max-w-[min(40rem,var(--layout-max-width-sm))]">
-                Tool chips read as compact buttons; focus areas lean on a subtle marquee row at meta size. Both patterns hang off <TokenBadge>.wx-case-tags</TokenBadge> inside the aside.
+                Tool chips read as compact buttons; the Focus row marquees warm nugget pills (<TokenBadge>--wx-text-nugget-warm</TokenBadge>{" "}
+                + <TokenBadge>--wx-border-muted</TokenBadge>) inside a clipped track—no negative margins. Both patterns hang off{" "}
+                <TokenBadge>.wx-case-tags</TokenBadge> inside the aside.
               </p>
               <div className="p-5 rounded-[8px] ring-1 ring-[color:var(--wx-border-soft)] bg-[var(--wx-surface-soft)] space-y-4">
                 <div>
