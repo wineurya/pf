@@ -2206,10 +2206,11 @@
   vertical-align: baseline;
 }
 
-/* Clip frame: fixed cap height; grid stacks entering/exiting words in one cell (sync crossfade). */
+/* Clip frame: fixed cap height; word + sparkle share one positioned box so the mark stays centered on the slot. */
 .site-canvas .wx-headline-rotate__mask {
+  position: relative;
   display: inline-grid;
-  grid-template-columns: max-content;
+  grid-template-columns: 1fr;
   grid-template-rows: 1fr;
   justify-items: center;
   align-items: end;
@@ -2234,9 +2235,12 @@
 .site-canvas .wx-headline-rotate__word {
   grid-area: 1 / 1;
   align-self: end;
+  justify-self: center;
   width: max-content;
   max-width: 100%;
   line-height: 1;
+  position: relative;
+  z-index: 2;
   transform-origin: 50% 100%;
   background-image: var(--wx-headline-word-gradient);
   background-size: 120% 120%;

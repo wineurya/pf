@@ -1222,7 +1222,11 @@ function useHeadlineRotateSlotWidth(reduceMotion) {
 }
 
 function AsideHeroHeadlineAliveRow({ reduceMotion, activeWord, rotateSlotWidthPx }) {
-  const maskStyle = rotateSlotWidthPx != null ? { minWidth: `${rotateSlotWidthPx}px` } : undefined;
+  /** Fixed slot width (max word) + `1fr` track centers every word in the same box; sparkle anchors to this box. */
+  const maskStyle =
+    rotateSlotWidthPx != null
+      ? { width: `${rotateSlotWidthPx}px`, minWidth: `${rotateSlotWidthPx}px` }
+      : undefined;
   const wordMotion = reduceMotion
     ? { duration: 0 }
     : { duration: HEADLINE_WORD_ENTER_DURATION, ease: [0.16, 0.82, 0.24, 1] };
@@ -1245,26 +1249,26 @@ function AsideHeroHeadlineAliveRow({ reduceMotion, activeWord, rotateSlotWidthPx
                 {activeWord}
               </motion.span>
             </AnimatePresence>
+            <span
+              key={activeWord}
+              className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
+              aria-hidden
+            >
+              <motion.span
+                key={activeWord}
+                className="wx-sparkle__spin"
+                initial={reduceMotion ? false : { rotate: -320, scale: 0.88 }}
+                animate={{ rotate: 0, scale: 1 }}
+                transition={sparkleMotion}
+              >
+                <MaskedFigmaIcon
+                  className="wx-sparkle__img shrink-0 translate-y-px select-none"
+                  src={SITE_FIGMA_ASSETS.logoMark}
+                  background="var(--wx-gradient-accent)"
+                />
+              </motion.span>
+            </span>
           </span>
-        </span>
-        <span
-          key={activeWord}
-          className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
-          aria-hidden
-        >
-          <motion.span
-            key={activeWord}
-            className="wx-sparkle__spin"
-            initial={reduceMotion ? false : { rotate: -320, scale: 0.88 }}
-            animate={{ rotate: 0, scale: 1 }}
-            transition={sparkleMotion}
-          >
-            <MaskedFigmaIcon
-              className="wx-sparkle__img shrink-0 translate-y-px select-none"
-              src={SITE_FIGMA_ASSETS.logoMark}
-              background="var(--wx-gradient-accent)"
-            />
-          </motion.span>
         </span>
       </span>
     </span>
