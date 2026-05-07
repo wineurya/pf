@@ -2700,3 +2700,28 @@
 .site-canvas #site-panels .wx-form-input {
   border-radius: 8px;
 }
+
+/*
+ * Stroke cleanup — main panels rail leans on tonal fills + spacing instead of
+ * 1px borders so the column reads calmer (Apple-style). Focus rings on inputs
+ * + FAQ summaries are intentionally untouched for accessibility.
+ */
+.site-canvas #site-panels .wx-work-card--figma,
+.site-canvas #site-panels .wx-work-card--figma.wx-work-card--footer-warm,
+.site-canvas #site-panels .wx-approach-step-card,
+.site-canvas #site-panels .wx-approach-folder-visual__paper,
+.site-canvas #site-panels .wx-work-card-v2__nugget,
+.site-canvas #site-panels .wx-work-card--footer-warm .wx-work-card-v2__nugget,
+.site-canvas #site-panels .wx-work-card--footer-warm .wx-work-card-v2__nugget--on-dark {
+  border-color: transparent;
+}
+
+.site-canvas #site-panels .wx-faq-bubble {
+  box-shadow: none;
+}
+
+.site-canvas #site-panels .wx-faq-item,
+.site-canvas #site-panels .wx-faq-item:last-child {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
