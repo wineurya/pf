@@ -134,6 +134,9 @@ const NUGGET_ROW_MOTION = {
   yFrom: -14,
 };
 
+/** Shared ease for in-view / hover sprinkles site-wide on this page. */
+const WX_SPRINKLE_EASE = [0.22, 1, 0.36, 1];
+
 /**
  * `lucide-animated` icons: replay built-in path motion on an interval (ref disables their hover; see package).
  * Stagger first tick per chip; tune if animations overlap.
@@ -1364,14 +1367,17 @@ function StackToolIcon({ tool }) {
   return null;
 }
 
-function StackNuggetItem({ t }) {
+function StackNuggetItem({ t, reduceMotion }) {
   return (
-    <a
+    <motion.a
       href={t.href}
       target="_blank"
       rel="noreferrer"
       className="wx-stack-nugget"
       style={{ "--wx-stack-accent": t.brandHex }}
+      whileHover={reduceMotion ? undefined : { y: -2, scale: 1.03 }}
+      whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+      transition={{ type: "tween", duration: 0.22, ease: WX_SPRINKLE_EASE }}
     >
       {/* Logo well: always page-bg so monochrome SVG reads regardless of chip colour */}
       <span className="wx-stack-nugget__logo-wrap">
@@ -1380,11 +1386,11 @@ function StackNuggetItem({ t }) {
       <span className="wx-stack-nugget__meta">
         <span className="wx-stack-nugget__label">{t.label}</span>
       </span>
-    </a>
+    </motion.a>
   );
 }
 
-function StackMarqueeLane({ laneIndex, tools }) {
+function StackMarqueeLane({ laneIndex, tools, reduceMotion }) {
   const reverse = laneIndex % 2 === 1;
   return (
     <div className="wx-stack-marquee">
@@ -1396,7 +1402,7 @@ function StackMarqueeLane({ laneIndex, tools }) {
       >
         {tools.map((t) => (
           <div key={`${laneIndex}-${t.label}`} className="wx-stack-marquee__item">
-            <StackNuggetItem t={t} />
+            <StackNuggetItem t={t} reduceMotion={reduceMotion} />
           </div>
         ))}
         {tools.map((t) => (
@@ -1405,7 +1411,7 @@ function StackMarqueeLane({ laneIndex, tools }) {
             className="wx-stack-marquee__item"
             aria-hidden
           >
-            <StackNuggetItem t={t} />
+            <StackNuggetItem t={t} reduceMotion={reduceMotion} />
           </div>
         ))}
       </div>
@@ -1413,11 +1419,11 @@ function StackMarqueeLane({ laneIndex, tools }) {
   );
 }
 
-function StackToolkitNuggets() {
+function StackToolkitNuggets({ reduceMotion }) {
   return (
     <div className="wx-stack-marquee-stack" role="region" aria-label="Tools and stack">
       {SITE_STACK_MARQUEE_LAYERS.map((tools, i) => (
-        <StackMarqueeLane key={i} laneIndex={i} tools={tools} />
+        <StackMarqueeLane key={i} laneIndex={i} tools={tools} reduceMotion={reduceMotion} />
       ))}
     </div>
   );
@@ -1975,22 +1981,62 @@ function AsideAvailabilityDot({ reduceMotion }) {
   );
 }
 
+function asideIntroMotionVariants(reduceMotion) {
+  if (reduceMotion) {
+    return {
+      container: { hidden: {}, show: {} },
+      item: {
+        hidden: { opacity: 1, y: 0 },
+        show: { opacity: 1, y: 0, transition: { duration: 0 } },
+      },
+    };
+  }
+  return {
+    container: {
+      hidden: {},
+      show: {
+        transition: { staggerChildren: 0.08, delayChildren: 0.06 },
+      },
+    },
+    item: {
+      hidden: { opacity: 0, y: 14 },
+      show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.52, ease: WX_SPRINKLE_EASE },
+      },
+    },
+  };
+}
+
 function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
+  const mv = asideIntroMotionVariants(reduceMotion);
+  const hoverBtn = reduceMotion ? undefined : { y: -1 };
   return (
     <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
-      <div className="relative flex w-full flex-col gap-5 text-left">
-        <div className="wx-text-eyebrow flex items-center gap-2 text-[var(--wx-muted)]">
+      <motion.div
+        className="relative flex w-full flex-col gap-5 text-left"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.22, margin: "0px 0px -6% 0px" }}
+        variants={mv.container}
+      >
+        <motion.div
+          variants={mv.item}
+          className="wx-text-eyebrow flex items-center gap-2 text-[var(--wx-muted)]"
+        >
           <AsideAvailabilityDot reduceMotion={reduceMotion} />
           <p>{SITE_HERO.eyebrow}</p>
-        </div>
-        <div className="flex flex-col gap-3">
+        </motion.div>
+        <motion.div variants={mv.item} className="flex flex-col gap-3">
           <AsideHeroHeadline reduceMotion={reduceMotion} />
           <p className="wx-text-body-secondary text-[var(--wx-muted)]">{SITE_HERO.subhead}</p>
-        </div>
-        <div className="flex flex-wrap gap-3 sm:gap-4">
+        </motion.div>
+        <motion.div variants={mv.item} className="flex flex-wrap gap-3 sm:gap-4">
           <motion.button
             type="button"
             className="wx-btn-primary"
+            whileHover={hoverBtn}
             whileTap={reduceMotion ? undefined : { scale: 0.97 }}
             transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
             onClick={() => scrollToSection("section-contact", 3)}
@@ -2000,14 +2046,18 @@ function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
           <motion.button
             type="button"
             className="wx-btn-secondary"
+            whileHover={hoverBtn}
             whileTap={reduceMotion ? undefined : { scale: 0.97 }}
             transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
             onClick={() => scrollToSection("section-work", 0)}
           >
             {SITE_HERO.secondaryCta.label}
           </motion.button>
-        </div>
-        <dl className="flex flex-col gap-3 wx-text-meta text-[var(--wx-muted)] [&_dd]:m-0">
+        </motion.div>
+        <motion.dl
+          variants={mv.item}
+          className="flex flex-col gap-3 wx-text-meta text-[var(--wx-muted)] [&_dd]:m-0"
+        >
           <div className="flex items-start gap-2.5">
             <HugeiconsIcon
               icon={Calendar01Icon}
@@ -2028,8 +2078,8 @@ function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
               <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.note}</dd>
             </div>
           </div>
-        </dl>
-      </div>
+        </motion.dl>
+      </motion.div>
     </div>
   );
 }
@@ -2040,7 +2090,7 @@ function ExplorationPageAsideFooter({ reduceMotion }) {
       <div>
         <p className="wx-aside-footer__label">Stack</p>
         <div className="mt-2">
-          <StackToolkitNuggets />
+          <StackToolkitNuggets reduceMotion={reduceMotion} />
         </div>
       </div>
       <div>
@@ -2154,6 +2204,18 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
   );
 }
 
+function StudioBentoCell({ className, reduceMotion, children }) {
+  return (
+    <motion.div
+      className={className}
+      whileHover={reduceMotion ? undefined : { scale: 1.02 }}
+      transition={{ type: "tween", duration: 0.28, ease: WX_SPRINKLE_EASE }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function ExplorationMainStudioSection({ reduceMotion }) {
   const topCell =
     "flex min-h-[14rem] w-full items-center justify-center rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[16rem] lg:min-h-[18rem]";
@@ -2174,23 +2236,23 @@ function ExplorationMainStudioSection({ reduceMotion }) {
         className="flex w-full min-w-0 flex-col gap-[var(--wx-gallery-gap)]"
       >
         <div className="grid gap-[var(--wx-gallery-gap)] lg:grid-cols-2">
-          <div className={topCell}>
+          <StudioBentoCell className={topCell} reduceMotion={reduceMotion}>
             <p className={placeholderCls}>placeholder</p>
-          </div>
-          <div className={topCell}>
+          </StudioBentoCell>
+          <StudioBentoCell className={topCell} reduceMotion={reduceMotion}>
             <p className={placeholderCls}>placeholder</p>
-          </div>
+          </StudioBentoCell>
         </div>
         <div className="grid gap-[var(--wx-gallery-gap)] sm:grid-cols-3">
-          <div className={bottomCell}>
+          <StudioBentoCell className={bottomCell} reduceMotion={reduceMotion}>
             <p className={placeholderCls}>placeholder</p>
-          </div>
-          <div className={bottomCell}>
+          </StudioBentoCell>
+          <StudioBentoCell className={bottomCell} reduceMotion={reduceMotion}>
             <p className={placeholderCls}>placeholder</p>
-          </div>
-          <div className={bottomCell}>
+          </StudioBentoCell>
+          <StudioBentoCell className={bottomCell} reduceMotion={reduceMotion}>
             <p className={placeholderCls}>placeholder</p>
-          </div>
+          </StudioBentoCell>
         </div>
       </RevealCard>
       {SITE_TESTIMONIALS.length > 0 ? (
@@ -2198,13 +2260,26 @@ function ExplorationMainStudioSection({ reduceMotion }) {
           reduceMotion={reduceMotion}
           className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-10"
         >
-          <figure className="space-y-5">
-            <HugeiconsIcon
-              icon={QuoteUpIcon}
-              size={26}
-              strokeWidth={1.4}
-              className="[&_path]:!stroke-[url(#wx-grad)]"
-            />
+          <motion.figure
+            className="space-y-5"
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.32 }}
+            transition={{ duration: 0.52, ease: WX_SPRINKLE_EASE }}
+          >
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.92, rotate: -8 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.45, ease: WX_SPRINKLE_EASE, delay: reduceMotion ? 0 : 0.04 }}
+            >
+              <HugeiconsIcon
+                icon={QuoteUpIcon}
+                size={26}
+                strokeWidth={1.4}
+                className="[&_path]:!stroke-[url(#wx-grad)]"
+              />
+            </motion.div>
             <svg width="0" height="0" className="absolute">
               <linearGradient id="wx-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="var(--wx-primary)" />
@@ -2220,7 +2295,7 @@ function ExplorationMainStudioSection({ reduceMotion }) {
               <span aria-hidden>·</span>
               <span>{SITE_TESTIMONIALS[0].role}</span>
             </figcaption>
-          </figure>
+          </motion.figure>
         </RevealCard>
       ) : null}
     </section>
@@ -2246,8 +2321,18 @@ const APPROACH_STEPS = [
   },
 ];
 
-function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual }) {
+function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual, stepIndex }) {
   const [folderMotionActive, setFolderMotionActive] = useState(false);
+  const stepLiMotion = {
+    initial: reduceMotion ? false : { opacity: 0, y: 22 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.2 },
+    transition: {
+      duration: reduceMotion ? 0 : 0.48,
+      delay: reduceMotion ? 0 : stepIndex * 0.09,
+      ease: WX_SPRINKLE_EASE,
+    },
+  };
 
   const textBlock = (
     <>
@@ -2261,7 +2346,7 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual 
 
   if (showFolderVisual) {
     return (
-      <li
+      <motion.li
         className={clsx("wx-approach-step-card", "wx-approach-step-card--with-folder-visual", className)}
         style={{ "--wx-approach-accent": step.accent }}
         data-approach-folder-card
@@ -2269,6 +2354,7 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual 
           if (!reduceMotion) setFolderMotionActive(true);
         }}
         onPointerLeave={() => setFolderMotionActive(false)}
+        {...stepLiMotion}
       >
         <div className="wx-approach-step-card__text-clip">{textBlock}</div>
         <div className="wx-approach-step-card__folder-slot w-full" aria-hidden>
@@ -2276,14 +2362,18 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual 
             <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} active={folderMotionActive} />
           </div>
         </div>
-      </li>
+      </motion.li>
     );
   }
 
   return (
-    <li className={clsx("wx-approach-step-card", className)} style={{ "--wx-approach-accent": step.accent }}>
+    <motion.li
+      className={clsx("wx-approach-step-card", className)}
+      style={{ "--wx-approach-accent": step.accent }}
+      {...stepLiMotion}
+    >
       {textBlock}
-    </li>
+    </motion.li>
   );
 }
 
@@ -2303,15 +2393,22 @@ function ExplorationMainApproachSection({ reduceMotion }) {
           className="wx-approach-3up-with-visual space-y-6 sm:space-y-8"
           data-approach="research-bento"
         >
-          <div className="max-w-2xl space-y-2 lg:space-y-3">
+          <motion.div
+            className="max-w-2xl space-y-2 lg:space-y-3"
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.38 }}
+            transition={{ duration: 0.5, ease: WX_SPRINKLE_EASE }}
+          >
             <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
             <h2 className="wx-text-section-title text-[var(--wx-ink)]">Research first, every time.</h2>
-          </div>
+          </motion.div>
           <ol className="wx-approach-steps-bento">
             {APPROACH_STEPS.map((step, index) => (
               <ApproachStepListItem
                 key={step.title}
                 step={step}
+                stepIndex={index}
                 reduceMotion={reduceMotion}
                 showFolderVisual={Boolean(step.showFolderVisual)}
                 className={index === APPROACH_STEPS.length - 1 ? "wx-approach-step-card--bento-wide" : undefined}
@@ -2325,12 +2422,23 @@ function ExplorationMainApproachSection({ reduceMotion }) {
         className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
       >
         <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
-          {SITE_STATS.map((stat) => (
-            <div key={stat.label} className="space-y-2">
+          {SITE_STATS.map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              className="space-y-2"
+              initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.28 }}
+              transition={{
+                duration: reduceMotion ? 0 : 0.42,
+                delay: reduceMotion ? 0 : i * 0.07,
+                ease: WX_SPRINKLE_EASE,
+              }}
+            >
               <p className="wx-stat-value">{stat.value}</p>
               <p className="wx-text-sm font-medium text-[var(--wx-ink)]">{stat.label}</p>
               <p className="wx-text-meta wx-text-meta--relaxed text-[var(--wx-muted)]">{stat.hint}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </RevealCard>
@@ -2338,10 +2446,16 @@ function ExplorationMainApproachSection({ reduceMotion }) {
         reduceMotion={reduceMotion}
         className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
       >
-        <div className="mb-6 space-y-2">
+        <motion.div
+          className="mb-6 space-y-2"
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.45, ease: WX_SPRINKLE_EASE }}
+        >
           <p className="wx-text-section-kicker text-[var(--wx-muted)]">FAQ</p>
           <h3 className="wx-text-subsection-title text-[var(--wx-ink)]">Questions, answered.</h3>
-        </div>
+        </motion.div>
         <FaqAccordion reduceMotion={reduceMotion} />
       </RevealCard>
     </section>
@@ -2360,8 +2474,20 @@ function ExplorationMainContactSection({ reduceMotion }) {
         reduceMotion={reduceMotion}
         className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] ring-1 ring-[color:var(--wx-ring-subtle)]"
       >
-        <div className="grid gap-6 p-6 sm:gap-8 sm:p-8 lg:gap-10 lg:p-10">
-          <div className="space-y-4 lg:space-y-5">
+        <motion.div
+          className="grid gap-6 p-6 sm:gap-8 sm:p-8 lg:gap-10 lg:p-10"
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.18 }}
+          transition={{ duration: 0.55, ease: WX_SPRINKLE_EASE }}
+        >
+          <motion.div
+            className="space-y-4 lg:space-y-5"
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.48, ease: WX_SPRINKLE_EASE, delay: reduceMotion ? 0 : 0.04 }}
+          >
             <p className="wx-text-section-kicker text-[var(--wx-muted)]">Contact</p>
             <h2 className="wx-text-section-title text-[var(--wx-ink)]">
               Tell me what you&apos;re building.
@@ -2370,39 +2496,60 @@ function ExplorationMainContactSection({ reduceMotion }) {
               A short brief gets you a faster, more useful reply — two business days, every time. If we&apos;re not the
               right fit, I&apos;ll say so quickly and point you somewhere better.
             </p>
-          </div>
+          </motion.div>
           <QualificationForm reduceMotion={reduceMotion} />
-          <div className="wx-text-meta flex flex-wrap items-center gap-3 border-t border-[color:var(--wx-border-soft)] pt-5 text-[var(--wx-muted)]">
+          <motion.div
+            className="wx-text-meta flex flex-wrap items-center gap-3 border-t border-[color:var(--wx-border-soft)] pt-5 text-[var(--wx-muted)]"
+            initial={reduceMotion ? false : { opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.4, ease: WX_SPRINKLE_EASE, delay: reduceMotion ? 0 : 0.08 }}
+          >
             <span>Prefer email?</span>
-            <a
+            <motion.a
               href="mailto:wineurya30@gmail.com"
               className="inline-flex items-center gap-1.5 text-[var(--wx-ink)] underline-offset-4 hover:underline"
+              whileHover={reduceMotion ? undefined : { x: 3 }}
+              transition={{ type: "tween", duration: 0.22, ease: WX_SPRINKLE_EASE }}
             >
               <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={1.6} />
               wineurya30@gmail.com
-            </a>
+            </motion.a>
             <span aria-hidden>·</span>
             <span>Same questions, same two-day reply.</span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </RevealCard>
-      <div className="wx-text-meta flex flex-wrap items-center justify-between gap-3 px-1 pt-2 text-[var(--wx-muted)]">
+      <motion.div
+        className="wx-text-meta flex flex-wrap items-center justify-between gap-3 px-1 pt-2 text-[var(--wx-muted)]"
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.45 }}
+        transition={{ duration: 0.45, ease: WX_SPRINKLE_EASE, delay: reduceMotion ? 0 : 0.06 }}
+      >
         <p>© {new Date().getFullYear()} Wineury Almonte</p>
         <p className="flex items-center gap-3">
-          <a
+          <motion.a
             className="hover:text-[var(--wx-ink)]"
             href="https://www.linkedin.com/in/wineury"
             rel="noreferrer"
             target="_blank"
+            whileHover={reduceMotion ? undefined : { y: -2 }}
+            transition={{ type: "tween", duration: 0.2, ease: WX_SPRINKLE_EASE }}
           >
             LinkedIn
-          </a>
+          </motion.a>
           <span aria-hidden>·</span>
-          <a className="hover:text-[var(--wx-ink)]" href="mailto:wineurya30@gmail.com">
+          <motion.a
+            className="hover:text-[var(--wx-ink)]"
+            href="mailto:wineurya30@gmail.com"
+            whileHover={reduceMotion ? undefined : { y: -2 }}
+            transition={{ type: "tween", duration: 0.2, ease: WX_SPRINKLE_EASE }}
+          >
             Email
-          </a>
+          </motion.a>
         </p>
-      </div>
+      </motion.div>
     </section>
   );
 }

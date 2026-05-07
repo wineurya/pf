@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { motion } from "motion/react";
 import { SITE_FIGMA_ASSETS } from "@/exploration/siteContent.js";
 import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
 import { navigateWithViewTransition } from "@/lib/navigateViewTransition.js";
@@ -26,10 +27,16 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
     }
   }, [lenis, reduceMotion]);
 
+  const tapScale = reduceMotion ? undefined : { scale: 0.98 };
+  const hoverLift = reduceMotion ? undefined : { y: -1 };
+
   return (
-    <a
+    <motion.a
       href="/"
       className="group relative inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
+      whileTap={tapScale}
+      whileHover={hoverLift}
+      transition={{ type: "tween", duration: 0.2, ease: [0.3, 0, 0, 1] }}
       onClick={(e) => {
         e.preventDefault();
         if (location.pathname !== "/") {
@@ -58,6 +65,6 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
           <span className="tracking-tight">almonte</span>
         </span>
       </span>
-    </a>
+    </motion.a>
   );
 }
