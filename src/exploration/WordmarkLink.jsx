@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "motion/react";
 import { SITE_FIGMA_ASSETS } from "@/exploration/siteContent.js";
 import { MaskedFigmaIcon, WX_WORDMARK_MARK_GRADIENT } from "@/exploration/MaskedFigmaIcon.jsx";
@@ -7,6 +7,8 @@ import { useLenis } from "@/providers/LenisProvider.jsx";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
 
 const WORDMARK_LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
+
+const WORDMARK_HOVER_EASE = [0.22, 1, 0.36, 1];
 
 /**
  * “wineury almonte” mark — its own node so view transitions or motion can target it
@@ -17,6 +19,9 @@ const WORDMARK_LENIS_EASE_IN_OUT = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
 export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
   const lenis = useLenis();
   const reduceMotion = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const markActive = hovered || focused;
 
   const scrollDocumentTop = useCallback(() => {
     const duration = reduceMotion ? 0 : 1.35;
@@ -28,15 +33,22 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
   }, [lenis, reduceMotion]);
 
   const tapScale = reduceMotion ? undefined : { scale: 0.98 };
-  const hoverLift = reduceMotion ? undefined : { y: -1 };
+  const hoverOpacity = reduceMotion ? undefined : { opacity: 0.82 };
+  const linkTransition = { duration: 0.2, ease: [0.3, 0, 0, 1] };
+  const markSpin = reduceMotion || !markActive ? 0 : 12;
 
   return (
     <motion.a
       href="/"
       className="group relative inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
+      whileHover={hoverOpacity}
+      whileFocus={reduceMotion ? undefined : { opacity: 0.82 }}
       whileTap={tapScale}
-      whileHover={hoverLift}
-      transition={{ type: "tween", duration: 0.2, ease: [0.3, 0, 0, 1] }}
+      transition={linkTransition}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       onClick={(e) => {
         e.preventDefault();
         if (location.pathname !== "/") {
@@ -57,11 +69,18 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
       <span className="wx-text-wordmark flex flex-col gap-0 text-[var(--wx-ink)]">
         <span className="tracking-tight">wineury</span>
         <span className="-mt-px flex items-center gap-1">
-          <MaskedFigmaIcon
-            src={SITE_FIGMA_ASSETS.logoMark}
-            className="size-3 shrink-0 translate-y-px select-none"
-            background={WX_WORDMARK_MARK_GRADIENT}
-          />
+          <motion.span
+            className="inline-flex shrink-0 origin-center will-change-transform"
+            aria-hidden
+            animate={{ rotate: markSpin }}
+            transition={{ duration: reduceMotion ? 0 : 0.38, ease: WORDMARK_HOVER_EASE }}
+          >
+            <MaskedFigmaIcon
+              src={SITE_FIGMA_ASSETS.logoMark}
+              className="size-3 shrink-0 translate-y-px select-none"
+              background={WX_WORDMARK_MARK_GRADIENT}
+            />
+          </motion.span>
           <span className="tracking-tight">almonte</span>
         </span>
       </span>
