@@ -52,14 +52,12 @@ import { useLenis } from "@/providers/LenisProvider.jsx";
 import {
   SITE_AVAILABILITY,
   SITE_CONTACT_SOCIALS,
-  SITE_EXTRA_IMAGES,
   SITE_FAQ,
   SITE_FIGMA_ASSETS,
   SITE_HERO,
   SITE_IMAGE_FALLBACKS,
   SITE_QUALIFICATION_FIELDS,
   SECTION_IDS,
-  SITE_SERVICES,
   SITE_STATS,
   SECTION_TABS,
   SITE_STACK_MARQUEE_LAYERS,
@@ -2157,6 +2155,12 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
 }
 
 function ExplorationMainStudioSection({ reduceMotion }) {
+  const topCell =
+    "flex min-h-[14rem] items-center justify-center rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] px-6 py-10 ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[16rem] lg:min-h-[18rem]";
+  const bottomCell =
+    "flex min-h-[10rem] items-center justify-center rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] px-6 py-8 ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[12rem]";
+  const placeholderCls = "wx-text-body-secondary text-center text-[var(--wx-muted)]";
+
   return (
     <section
       id="section-studio"
@@ -2166,51 +2170,27 @@ function ExplorationMainStudioSection({ reduceMotion }) {
     >
       <RevealCard
         reduceMotion={reduceMotion}
-        aria-labelledby="studio-bento-intro-heading site-services-heading"
+        aria-label="Studio — placeholder bento layout"
         className="flex flex-col gap-[var(--wx-gallery-gap)] overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-8"
       >
-        {/* Bento tier 1: two tiles (intro · visual) */}
-        <div className="grid gap-[var(--wx-gallery-gap)] lg:grid-cols-2 lg:items-stretch">
-          <div className="flex flex-col justify-center space-y-3 lg:space-y-4 lg:py-0.5">
-            <p className="wx-text-section-kicker text-[var(--wx-muted)]">Studio</p>
-            <h2 id="studio-bento-intro-heading" className="wx-text-section-title text-[var(--wx-ink)]">
-              Research-led design, built end to end.
-            </h2>
-            <p className="wx-text-body-secondary text-[var(--wx-muted)]">
-              Product designer working across research, interaction, and shipping UI. I design in Figma and build in
-              React, so detail doesn&rsquo;t get lost between the sketch and the code.
-            </p>
+        <div className="grid gap-[var(--wx-gallery-gap)] lg:grid-cols-2">
+          <div className={topCell}>
+            <p className={placeholderCls}>placeholder</p>
           </div>
-          <div className="wx-gallery-frame min-h-[12rem] overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:min-h-[14rem]">
-            <img
-              className="h-full min-h-[12rem] w-full object-cover lg:min-h-[14rem]"
-              src={SITE_EXTRA_IMAGES.marble}
-              alt="Abstract marble light forms"
-              loading="lazy"
-              decoding="async"
-            />
+          <div className={topCell}>
+            <p className={placeholderCls}>placeholder</p>
           </div>
         </div>
-
-        {/* Bento tier 2: three-up; additional services span full width below */}
-        <div className="space-y-4 border-t border-[color:var(--wx-border-soft)] pt-[var(--wx-gallery-gap)]">
-          <p id="site-services-heading" className="wx-text-section-kicker text-[var(--wx-muted)]">
-            Services
-          </p>
-          <ul className="grid gap-[var(--wx-gallery-gap)] sm:grid-cols-3" aria-labelledby="site-services-heading">
-            {SITE_SERVICES.map((svc, idx) => (
-              <li
-                key={svc.slug}
-                className={clsx(
-                  "flex flex-col justify-between rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6",
-                  idx >= 3 && "sm:col-span-3",
-                )}
-              >
-                <p className="wx-text-service-title text-[var(--wx-ink)]">{svc.title}</p>
-                <p className="mt-3 wx-text-sm-tight text-[var(--wx-muted)] sm:mt-4">{svc.body}</p>
-              </li>
-            ))}
-          </ul>
+        <div className="grid gap-[var(--wx-gallery-gap)] sm:grid-cols-3">
+          <div className={bottomCell}>
+            <p className={placeholderCls}>placeholder</p>
+          </div>
+          <div className={bottomCell}>
+            <p className={placeholderCls}>placeholder</p>
+          </div>
+          <div className={bottomCell}>
+            <p className={placeholderCls}>placeholder</p>
+          </div>
         </div>
       </RevealCard>
       {SITE_TESTIMONIALS.length > 0 ? (
