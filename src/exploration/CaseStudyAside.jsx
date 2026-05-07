@@ -72,12 +72,48 @@ function CaseStudyTitleBlock({ year, title, lede }) {
   );
 }
 
-function CaseStudyAboutBlock({ about }) {
-  if (!about) return null;
+function CaseStudyAboutBlock({ paragraphs }) {
+  if (!paragraphs?.length) return null;
   return (
     <div className="space-y-2">
       <p className="wx-aside-footer__label">About</p>
-      <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{about}</p>
+      <div className="space-y-2">
+        {paragraphs.map((p, i) => (
+          <p key={i} className="wx-text-body-secondary w-full text-[var(--wx-muted)]">
+            {p}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CaseStudyProblemBlock({ problem }) {
+  if (!problem?.beats?.length) return null;
+  return (
+    <div className="space-y-3">
+      <p className="wx-aside-footer__label">{problem.label ?? "The Problem"}</p>
+      {problem.lead ? (
+        <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{problem.lead}</p>
+      ) : null}
+      <ul className="list-none space-y-3 p-0">
+        {problem.beats.map((b) => (
+          <li key={b.title} className="space-y-1">
+            <p className="wx-text-sm font-medium text-[var(--wx-ink)]">{b.title}</p>
+            <p className="wx-text-body-secondary text-[var(--wx-muted)]">{b.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function CaseStudyOutcomeBlock({ outcome }) {
+  if (!outcome?.trim()) return null;
+  return (
+    <div className="space-y-2">
+      <p className="wx-aside-footer__label">Outcome</p>
+      <p className="wx-text-body-secondary w-full text-[var(--wx-muted)]">{outcome}</p>
     </div>
   );
 }
@@ -170,9 +206,18 @@ function CaseStudyAsideMeta({ industry, role, team, duration }) {
 /** Dedupe preserves first-seen order within each rail */
 function asideTagRails(editorialMeta, gridEntry) {
   const toolLabels = editorialMeta?.toolLabels?.filter(Boolean) ?? [];
-  const highlightLabels = gridEntry?.nuggets?.map((n) => n.label).filter(Boolean) ?? [];
+  const fromMeta = editorialMeta?.highlightLabels?.filter(Boolean) ?? [];
+  const fromGrid = gridEntry?.nuggets?.map((n) => n.label).filter(Boolean) ?? [];
+  const highlightLabels = fromMeta.length ? fromMeta : fromGrid;
   const uniq = (labels) => [...new Set(labels)];
   return { toolLabels: uniq(toolLabels), highlightLabels: uniq(highlightLabels) };
+}
+
+function asideAboutParagraphs(editorialMeta, gridEntry) {
+  const fromMeta = editorialMeta?.aboutParagraphs?.filter(Boolean) ?? [];
+  if (fromMeta.length) return fromMeta;
+  const single = editorialMeta?.about?.trim() || gridEntry?.summary?.trim();
+  return single ? [single] : [];
 }
 
 /**
@@ -185,11 +230,16 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const year = gridEntry?.year?.trim();
   const role = gridEntry?.role?.trim();
   const industry = editorialMeta?.industry?.trim();
-  const about = editorialMeta?.about?.trim() || gridEntry?.summary?.trim();
+  const aboutParagraphs = asideAboutParagraphs(editorialMeta, gridEntry);
   const team = editorialMeta?.team?.trim();
   const duration = editorialMeta?.duration?.trim();
+  const outcome = editorialMeta?.outcome?.trim();
 
-  const showAboutSection = Boolean(about) && !asideAboutRepeatsLede(def.lede, about);
+  const showAboutSection =
+    aboutParagraphs.length > 0 &&
+    !asideAboutRepeatsLede(def.lede, aboutParagraphs.length === 1 ? aboutParagraphs[0] : aboutParagraphs.join(" "));
+  const showProblemSection = Boolean(editorialMeta?.problem?.beats?.length);
+  const showOutcomeSection = Boolean(outcome);
   const hasMeta = Boolean(role || industry || team || duration);
   const hasTagRails = toolLabels.length > 0 || highlightLabels.length > 0;
   const hasFooterCluster = hasMeta || hasTagRails;
@@ -220,7 +270,9 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
           <div className="mt-9 flex w-full min-w-0 shrink-0 flex-col items-start justify-start lg:mt-12 lg:min-h-0 lg:py-2">
             <div className="space-y-5">
               <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
-              {showAboutSection ? <CaseStudyAboutBlock about={about} /> : null}
+              {showAboutSection ? <CaseStudyAboutBlock paragraphs={aboutParagraphs} /> : null}
+              {showProblemSection ? <CaseStudyProblemBlock problem={editorialMeta.problem} /> : null}
+              {showOutcomeSection ? <CaseStudyOutcomeBlock outcome={outcome} /> : null}
             </div>
           </div>
 

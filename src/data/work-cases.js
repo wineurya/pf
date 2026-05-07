@@ -5,6 +5,26 @@
  */
 import { SITE_EXTRA_IMAGES, SITE_WORK } from "@/exploration/siteContent.js";
 
+const INCITY_ABOUT_PARAGRAPHS = [
+  "Plagued with issues, ATL311 was the system Atlanta residents relied on to report non-emergency problems. Too many reports were forgotten, left incomplete, or closed without a real fix.",
+  "InCity targets those failures—with city updates, interactive map points, and case tracking that keeps people informed from report to resolution.",
+];
+
+const INCITY_PROBLEM_BEATS = [
+  {
+    title: "Desktop-first design",
+    body: "A desktop-centric UI loads mobile users with small targets and buried navigation.",
+  },
+  {
+    title: "Buried workflows",
+    body: "Reporting is scattered across multiple steps—up to eight before a submission is sent.",
+  },
+  {
+    title: "Opaque status updates",
+    body: "Without timely feedback, people can't tell whether their case is moving forward.",
+  },
+];
+
 /** @type {Record<string, { template: 'hero' | 'steps' | 'editorial'; title: string; kicker: string; lede: string; heroImage?: string; backLabel?: string; steps?: { title: string; blurb: string; image: string }[]; strips?: { caption: string; image: string }[] }>} */
 export const WORK_CASE_PAGES = {
   avance: {
@@ -78,16 +98,30 @@ export const WORK_CASE_PAGES = {
     template: "hero",
     title: "InCity",
     kicker: "Civic · Mobile",
-    lede: "Platform to improve community reporting and compliance. Geotagged reports, standardized checklists, and real-time transit updates — designed for residents, not for the back office.",
+    lede: "Mobile-first civic reporting for Atlanta—shorter paths to submit, understandable status, and case tracking so residents complete what they start instead of abandoning it mid-flow.",
     heroImage: "/work/incity-hero.png",
     backLabel: "Index",
     editorialMeta: {
-      industry: "Civic Tech · Government Services",
-      about:
-        "InCity is a mobile-first reporting platform that modernizes non-emergency city service requests for Atlanta residents. It streamlines geotagged reports, request tracking, and real-time city updates to support transparency and community involvement.",
+      industry: "Civic tech · Government services",
+      aboutParagraphs: INCITY_ABOUT_PARAGRAPHS,
+      problem: {
+        label: "The problem",
+        lead:
+          "ATL311's desktop-first experience buries critical reporting paths. Residents hit tiny controls, hidden menus, and long sequences—then walk away.",
+        beats: INCITY_PROBLEM_BEATS,
+      },
+      outcome:
+        "Task completion time dropped by about 75%, error rate fell from roughly 30% to near 5%, and abandoned submissions were eliminated. The work was also recognized by the Assistant City Manager of Kennesaw, who noted the impact if the system were implemented.",
       team: "6 people",
       duration: "Feb 2025 – Apr 2025",
-      toolLabels: ["UX Design", "Accessibility", "User Research", "Information Architecture", "Usability Testing"],
+      toolLabels: ["Figma", "FigJam", "Lottie", "Adobe After Effects", "Adobe Illustrator"],
+      highlightLabels: [
+        "Wireframing",
+        "Prototyping",
+        "Literature review",
+        "Competitive auditing",
+        "Motion",
+      ],
     },
   },
   siren: {
