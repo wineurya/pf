@@ -10,7 +10,7 @@
   --wx-warm-body-ink: oklch(0.4 0.02 50 / 0.82);
   /* Raster mock — no drop-shadow on alpha PNG (outline-forward shell). */
   /* Must match AsideHeroHeadline word enter duration (motion) */
-  --wx-headline-word-enter-duration: 0.26s;
+  --wx-headline-word-enter-duration: 0.42s;
   /* Sparkle rises just after the word (tiny delay); brief blur flash then opacity/transform fade */
   --wx-sparkle-rise-delay: 0.07s;
   --wx-sparkle-rise-duration: 0.92s;
@@ -2148,6 +2148,22 @@
   border-radius: inherit;
 }
 
+/* Selected pill: borrow the CTA's body — accent fill + top highlight gradient + inset shine
+   + 1px accent ring + soft accent glow. Anchored to --wx-tab-accent so the four section colors
+   (blue / violet / teal / amber) stay live. */
+.site-canvas .wx-tab__fill--accent {
+  background-color: var(--wx-tab-accent);
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wx-white) 14%, transparent) 0%,
+    transparent 100%
+  );
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, var(--wx-white) 22%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--wx-tab-accent) 92%, var(--wx-black)),
+    0 2px 4px color-mix(in srgb, var(--wx-tab-accent) 25%, transparent);
+}
+
 /* Fallback if JS is late; Motion drives the label reveal. */
 .site-canvas .wx-tab-label-text {
   transition: opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1);
@@ -2207,15 +2223,22 @@
   vertical-align: baseline;
 }
 
-/* Clip frame: fixed cap height; word + sparkle share one positioned box so the mark stays centered on the slot. */
+/* Clip frame: fixed cap height; vertical clip hides the slide-up/down animation, horizontal stays
+   visible so a wider incoming word isn't cropped while the slot tweens to its new width.
+   Words are pinned to the slot's start edge so they don't drift horizontally as the slot resizes.
+   `overflow-clip-margin-block` gives the entry/exit blur halo a few pixels of breathing room past
+   the cap-height edges so it doesn't read as hard-clipped while the word is fully on-screen.
+   Width is animated by Framer Motion (see AsideHeroHeadlineAliveRow), not by CSS. */
 .site-canvas .wx-headline-rotate__mask {
   position: relative;
   display: inline-grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  justify-items: center;
+  justify-items: start;
   align-items: end;
-  overflow: hidden;
+  overflow-x: visible;
+  overflow-y: clip;
+  overflow-clip-margin: 0.32em;
   width: max-content;
   max-width: 100%;
   height: 1em;
@@ -2223,8 +2246,11 @@
   vertical-align: baseline;
 }
 
-/* Off-DOM-line width sample for `AsideHeroHeadline` — matches gradient word metrics. */
-.site-canvas .wx-headline-rotate__measure {
+/* Off-DOM-line width sample for `AsideHeroHeadline` — matches gradient word metrics.
+   Selector is chained so it wins over `.wx-headline-rotate__word` (same specificity, later in
+   the cascade), which would otherwise force `position: relative` and leave the measure span
+   taking inline space — pushing the visible headline to the right. */
+.site-canvas .wx-headline-rotate__word.wx-headline-rotate__measure {
   position: absolute;
   left: -9999px;
   top: 0;
@@ -2236,13 +2262,14 @@
 .site-canvas .wx-headline-rotate__word {
   grid-area: 1 / 1;
   align-self: end;
-  justify-self: center;
+  justify-self: start;
   width: max-content;
   max-width: 100%;
   line-height: 1;
   position: relative;
   z-index: 2;
-  transform-origin: 50% 100%;
+  transform-origin: 0% 100%;
+  will-change: transform, opacity, filter;
   background-image: var(--wx-headline-word-gradient);
   background-size: 120% 120%;
   background-position: 40% 50%;

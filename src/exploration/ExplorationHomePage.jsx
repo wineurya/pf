@@ -1187,88 +1187,100 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
 
 const HEADLINE_ROTATE_WORDS = ["clear", "human", "accessible", "intentional"];
 /** Keep in sync with `--wx-headline-word-enter-duration` in site-canvas.css */
-const HEADLINE_WORD_ENTER_DURATION = 0.26;
+const HEADLINE_WORD_ENTER_DURATION = 0.42;
 
 function useHeadlineRotateSlotWidth(reduceMotion) {
   const maskSlotMeasureRef = useRef(null);
-  const [rotateSlotWidthPx, setRotateSlotWidthPx] = useState(null);
+  const [wordWidthsPx, setWordWidthsPx] = useState(null);
 
   useLayoutEffect(() => {
     if (reduceMotion) {
-      setRotateSlotWidthPx(null);
+      setWordWidthsPx(null);
       return undefined;
     }
-    const measureMaxSlotWidth = () => {
+    const measurePerWord = () => {
       const el = maskSlotMeasureRef.current;
       if (!el) return;
-      let max = 0;
+      const widths = {};
       for (const word of HEADLINE_ROTATE_WORDS) {
         el.textContent = word;
-        max = Math.max(max, el.getBoundingClientRect().width);
+        const w = el.getBoundingClientRect().width;
+        if (Number.isFinite(w) && w > 0) widths[word] = w;
       }
-      setRotateSlotWidthPx(Number.isFinite(max) && max > 0 ? max : null);
+      setWordWidthsPx(widths);
     };
-    measureMaxSlotWidth();
+    measurePerWord();
     const fonts = document.fonts;
     if (fonts?.ready) {
-      void fonts.ready.then(measureMaxSlotWidth).catch(() => {});
+      void fonts.ready.then(measurePerWord).catch(() => {});
     }
-    const onResize = () => measureMaxSlotWidth();
+    const onResize = () => measurePerWord();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [reduceMotion]);
 
-  return { maskSlotMeasureRef, rotateSlotWidthPx };
+  return { maskSlotMeasureRef, wordWidthsPx };
 }
 
 function AsideHeroHeadlineAliveRow({ reduceMotion, activeWord, rotateSlotWidthPx }) {
-  /** Fixed slot width (max word) + `1fr` track centers every word in the same box; sparkle anchors to this box. */
-  const maskStyle =
-    rotateSlotWidthPx != null
-      ? { width: `${rotateSlotWidthPx}px`, minWidth: `${rotateSlotWidthPx}px` }
-      : undefined;
-  const wordMotion = reduceMotion
+  /** Slot width is driven by Framer Motion so it stays in lockstep with the word entry.
+   *  Words are pinned to the slot's start edge (justify-self: start in CSS) — eliminates the
+   *  horizontal drift the centered layout caused while the slot width was tweening.
+   *  Sparkle's left anchor is set to half the active word's natural width (in px), which does
+   *  NOT tween with the slot — so the sparkle pops to the new word's center without sliding. */
+  const wordTransition = reduceMotion
     ? { duration: 0 }
-    : { duration: HEADLINE_WORD_ENTER_DURATION, ease: [0.16, 0.82, 0.24, 1] };
-  const sparkleMotion = reduceMotion ? { duration: 0 } : { duration: 0.88, ease: [0.11, 0.92, 0.18, 1] };
+    : { duration: HEADLINE_WORD_ENTER_DURATION, ease: [0.22, 0.61, 0.24, 1] };
+  const slotTransition = reduceMotion
+    ? { duration: 0 }
+    : { duration: HEADLINE_WORD_ENTER_DURATION, ease: [0.22, 0.61, 0.24, 1] };
+  const sparkleSpinMotion = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.88, ease: [0.11, 0.92, 0.18, 1] };
+  const sparkleStyle =
+    rotateSlotWidthPx != null ? { left: `${rotateSlotWidthPx / 2}px` } : undefined;
 
   return (
     <span className="wx-alive">
       <span className="wx-headline-word-wrap">
         <span className="wx-headline-rotate" aria-live="polite">
-          <span className="wx-headline-rotate__mask" style={maskStyle}>
+          <motion.span
+            className="wx-headline-rotate__mask"
+            animate={rotateSlotWidthPx != null ? { width: rotateSlotWidthPx } : undefined}
+            transition={slotTransition}
+          >
             <AnimatePresence mode="sync" initial={false}>
               <motion.span
                 key={activeWord}
                 className="wx-headline-rotate__word"
-                initial={reduceMotion ? false : { y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={reduceMotion ? undefined : { y: "-100%", opacity: 0 }}
-                transition={wordMotion}
+                initial={reduceMotion ? false : { y: "60%", opacity: 0, filter: "blur(8px)" }}
+                animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                exit={reduceMotion ? undefined : { y: "-60%", opacity: 0, filter: "blur(8px)" }}
+                transition={wordTransition}
               >
                 {activeWord}
               </motion.span>
             </AnimatePresence>
-            <span
-              key={activeWord}
-              className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
-              aria-hidden
-            >
-              <motion.span
-                key={activeWord}
-                className="wx-sparkle__spin"
-                initial={reduceMotion ? false : { rotate: -320, scale: 0.88 }}
-                animate={{ rotate: 0, scale: 1 }}
-                transition={sparkleMotion}
-              >
-                <MaskedFigmaIcon
-                  className="wx-sparkle__img shrink-0 translate-y-px select-none"
-                  src={SITE_FIGMA_ASSETS.logoMark}
-                  background="var(--wx-gradient-accent)"
-                />
-              </motion.span>
-            </span>
-          </span>
+          </motion.span>
+        </span>
+        <span
+          key={activeWord}
+          className={clsx("wx-sparkle", !reduceMotion && "wx-sparkle--run")}
+          style={sparkleStyle}
+          aria-hidden
+        >
+          <motion.span
+            className="wx-sparkle__spin"
+            initial={reduceMotion ? false : { rotate: -320, scale: 0.88 }}
+            animate={{ rotate: 0, scale: 1 }}
+            transition={sparkleSpinMotion}
+          >
+            <MaskedFigmaIcon
+              className="wx-sparkle__img shrink-0 translate-y-px select-none"
+              src={SITE_FIGMA_ASSETS.logoMark}
+              background="var(--wx-gradient-accent)"
+            />
+          </motion.span>
         </span>
       </span>
     </span>
@@ -1277,7 +1289,7 @@ function AsideHeroHeadlineAliveRow({ reduceMotion, activeWord, rotateSlotWidthPx
 
 function AsideHeroHeadline({ reduceMotion }) {
   const [wordIndex, setWordIndex] = useState(0);
-  const { maskSlotMeasureRef, rotateSlotWidthPx } = useHeadlineRotateSlotWidth(reduceMotion);
+  const { maskSlotMeasureRef, wordWidthsPx } = useHeadlineRotateSlotWidth(reduceMotion);
 
   useEffect(() => {
     if (reduceMotion) return undefined;
@@ -1289,6 +1301,7 @@ function AsideHeroHeadline({ reduceMotion }) {
 
   const idx = reduceMotion ? 0 : wordIndex;
   const activeWord = HEADLINE_ROTATE_WORDS[idx];
+  const rotateSlotWidthPx = wordWidthsPx?.[activeWord] ?? null;
 
   return (
     <h1 className="wx-headline relative block w-full max-w-full font-medium leading-none tracking-tight text-[var(--wx-ink)]">

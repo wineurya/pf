@@ -124,11 +124,7 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, labelVars
       />
       <motion.span
         aria-hidden
-        className="wx-tab__fill pointer-events-none absolute inset-0 -z-10"
-        style={{
-          backgroundColor: "var(--wx-tab-accent)",
-          boxShadow: "0 0 0 1px var(--wx-tab-accent)",
-        }}
+        className="wx-tab__fill wx-tab__fill--accent pointer-events-none absolute inset-0 -z-10"
         initial={false}
         animate={{ opacity: selected ? 1 : 0 }}
         transition={
