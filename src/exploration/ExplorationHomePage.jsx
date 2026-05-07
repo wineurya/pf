@@ -1254,9 +1254,9 @@ function AsideHeroHeadlineAliveRow({ reduceMotion, activeWord, rotateSlotWidthPx
               <motion.span
                 key={activeWord}
                 className="wx-headline-rotate__word"
-                initial={reduceMotion ? false : { y: "60%", opacity: 0, filter: "blur(8px)" }}
+                initial={reduceMotion ? false : { y: "60%", opacity: 0, filter: "blur(5px)" }}
                 animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                exit={reduceMotion ? undefined : { y: "-60%", opacity: 0, filter: "blur(8px)" }}
+                exit={reduceMotion ? undefined : { y: "-60%", opacity: 0, filter: "blur(5px)" }}
                 transition={wordTransition}
               >
                 {activeWord}
@@ -2043,16 +2043,26 @@ function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
               {SITE_HERO.secondaryCta.label}
             </motion.button>
           </div>
-          <dl className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 wx-text-meta text-[var(--wx-muted)]">
-            <div className="flex items-center gap-1.5">
-              <HugeiconsIcon icon={Calendar01Icon} size={14} strokeWidth={1.6} />
-              <dt className="sr-only">Availability</dt>
-              <dd>{SITE_AVAILABILITY.opening}</dd>
+          <dl className="mt-4 flex flex-col gap-3 wx-text-meta text-[var(--wx-muted)] [&_dd]:m-0">
+            <div className="flex items-start gap-2.5">
+              <HugeiconsIcon
+                icon={Calendar01Icon}
+                size={14}
+                strokeWidth={1.6}
+                className="mt-0.5 shrink-0 text-[color-mix(in_srgb,var(--wx-muted)_72%,transparent)]"
+                aria-hidden
+              />
+              <div className="min-w-0">
+                <dt className="sr-only">Availability</dt>
+                <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.opening}</dd>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="size-1.5 rounded-full bg-[var(--wx-gradient-accent)]" aria-hidden />
-              <dt className="sr-only">Engagements</dt>
-              <dd>{SITE_AVAILABILITY.note}</dd>
+            <div className="flex items-start gap-2.5">
+              <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-[var(--wx-gradient-accent)]" aria-hidden />
+              <div className="min-w-0">
+                <dt className="sr-only">Engagements</dt>
+                <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.note}</dd>
+              </div>
             </div>
           </dl>
         </div>
