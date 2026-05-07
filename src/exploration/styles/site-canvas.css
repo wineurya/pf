@@ -24,14 +24,16 @@
   --wx-work-card-footer-rail: 40rem;
 }
 
-/* Exploration ↔ case study: isolate aside + panel column so route VT can animate them smoothly (see `work-case.css`). */
+/* Exploration ↔ case study: isolate aside + panel column so route VT can animate them smoothly (see `work-case.css`).
+   Panels VT **only on home** (`data-site-region="panels"`). Case study uses `case-panels`; naming it caused Lenis scroll
+   to fight the VT snapshot layer (horizontal drift + opacity flashes). */
 @supports (view-transition-name: none) {
   .site-canvas.wx-exploration-root aside[data-site-region="aside"],
   .site-canvas.wx-exploration-root aside[data-site-region="case-aside"] {
     view-transition-name: wx-explore-aside;
   }
 
-  .site-canvas.wx-exploration-root .site-vt--panels#site-panels {
+  .site-canvas.wx-exploration-root .site-vt--panels#site-panels[data-site-region="panels"] {
     view-transition-name: wx-explore-panels;
   }
 }
