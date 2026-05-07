@@ -2211,7 +2211,7 @@
   display: inline-grid;
   grid-template-columns: max-content;
   grid-template-rows: 1fr;
-  justify-items: start;
+  justify-items: center;
   align-items: end;
   overflow: hidden;
   width: max-content;
@@ -2219,6 +2219,16 @@
   height: 1em;
   line-height: 1;
   vertical-align: baseline;
+}
+
+/* Off-DOM-line width sample for `AsideHeroHeadline` — matches gradient word metrics. */
+.site-canvas .wx-headline-rotate__measure {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .site-canvas .wx-headline-rotate__word {
