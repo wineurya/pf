@@ -2045,6 +2045,18 @@
   transition: border-color 320ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Single control (e.g. case study back affordance) — same shell as section tabs, intrinsic width. */
+.site-canvas .wx-tab-track.wx-tab-track--single {
+  width: auto;
+  max-width: 100%;
+}
+
+.site-canvas .wx-tab-track.wx-tab-track--single .wx-tab-track__scroll {
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+}
+
 /** Scroll lives inside so outer radius clips cleanly (avoid oval / broken caps). */
 .site-canvas .wx-tab-track__scroll {
   display: flex;
@@ -2097,6 +2109,39 @@
 .site-canvas .wx-tab:focus-visible {
   outline: 2px solid var(--wx-tab-accent, var(--wx-primary));
   outline-offset: 2px;
+}
+
+/* Case back link: one always-selected pill (mirrors `SectionTabPillButton` layering). */
+.site-canvas a.wx-tab.wx-tab--back {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: auto;
+  padding-inline: 0.45rem 0.6rem;
+  text-decoration: none;
+  color: var(--wx-tab-idle-fg);
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-canvas a.wx-tab.wx-tab--back:hover {
+  filter: brightness(1.05);
+}
+
+.site-canvas a.wx-tab.wx-tab--back:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-canvas a.wx-tab.wx-tab--back:active {
+    transform: none;
+  }
 }
 
 .site-canvas .wx-tab__fill {
