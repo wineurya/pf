@@ -262,7 +262,7 @@ function MetricRadialLinesViz({ color, fill = 1, remainderColor = 'var(--kx-bord
   const vb = 76
   const cx = vb / 2
   const cy = vb / 2
-  const n = 14
+  const n = 17
   const r0 = 15.5
   const r1 = 31
   const lines = useMemo(() => {
@@ -299,7 +299,7 @@ function MetricRadialLinesViz({ color, fill = 1, remainderColor = 'var(--kx-bord
               x2={x1}
               y2={y1}
               stroke={stroke}
-              strokeWidth={3.35}
+              strokeWidth={3.05}
               strokeLinecap="round"
               opacity={opacity}
             />
