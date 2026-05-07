@@ -2068,20 +2068,19 @@
   /* Floor prevents icon from being crushed if track math is off */
   min-width: var(--wx-tab-pill-height);
   height: var(--wx-tab-pill-height);
-  padding-inline: 0.5rem;
+  /* Same inset every state — avoids the selected pill looking “roomier” than idles */
+  padding-inline: 0.375rem;
   border-radius: calc(var(--wx-radius-segment) - var(--wx-tab-rail-inset));
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   transition:
     border-radius 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    flex 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    padding 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    flex 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Active tab claims 3× the flex space of an idle slot. */
 .site-canvas .wx-tab[aria-selected="true"] {
   flex: 3;
-  padding-inline: 0.875rem;
 }
 
 .site-canvas .wx-tab:hover[aria-selected="false"] {

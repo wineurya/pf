@@ -54,7 +54,7 @@ function labelVariants(reduceMotion) {
       },
       show: {
         maxWidth: WX_TAB_LABEL_MAX_W,
-        marginLeft: 8,
+        marginLeft: 6,
         transition: { duration: 0 },
       },
     };
@@ -67,7 +67,7 @@ function labelVariants(reduceMotion) {
     },
     show: {
       maxWidth: WX_TAB_LABEL_MAX_W,
-      marginLeft: 8,
+      marginLeft: 6,
       transition: {
         staggerChildren: 0.032,
         delayChildren: 0,
@@ -153,7 +153,7 @@ function SectionTabPillButton({ tab, i, selected, reduceMotion, pillT, labelVars
 
         {/* Label always mounted — avoids AnimatePresence race on fast clicks */}
         <motion.span
-          className="wx-tab-label-text overflow-hidden whitespace-nowrap pr-0.5 tracking-tight"
+          className="wx-tab-label-text overflow-hidden whitespace-nowrap pr-px tracking-tight"
           style={{ display: "inline-block" }}
           variants={labelVars}
           initial={false}
