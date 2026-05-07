@@ -2156,9 +2156,9 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
 
 function ExplorationMainStudioSection({ reduceMotion }) {
   const topCell =
-    "flex min-h-[14rem] items-center justify-center rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] px-6 py-10 ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[16rem] lg:min-h-[18rem]";
+    "flex min-h-[14rem] w-full items-center justify-center rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[16rem] lg:min-h-[18rem]";
   const bottomCell =
-    "flex min-h-[10rem] items-center justify-center rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] px-6 py-8 ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[12rem]";
+    "flex min-h-[10rem] w-full items-center justify-center rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[12rem]";
   const placeholderCls = "wx-text-body-secondary text-center text-[var(--wx-muted)]";
 
   return (
@@ -2171,7 +2171,7 @@ function ExplorationMainStudioSection({ reduceMotion }) {
       <RevealCard
         reduceMotion={reduceMotion}
         aria-label="Studio — placeholder bento layout"
-        className="flex flex-col gap-[var(--wx-gallery-gap)] overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-8"
+        className="flex w-full min-w-0 flex-col gap-[var(--wx-gallery-gap)]"
       >
         <div className="grid gap-[var(--wx-gallery-gap)] lg:grid-cols-2">
           <div className={topCell}>
