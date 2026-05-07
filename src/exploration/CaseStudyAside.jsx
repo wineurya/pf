@@ -210,12 +210,11 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
         {/*
-         * Mirrors `ExplorationPageAside` shell; editorial block is top-aligned (`justify-start`
-         * / `items-start`) with natural column height (`h-fit`) so copy measures full width.
-         * Meta + tag rails — `mt-auto` when present; no border divider between zones.
+         * Fills the padded column (`flex-1 min-h-0`) so `justify-between` opens space between
+         * the editorial stack and the meta/tag footer; copy stays start-aligned via `items-start`.
          */}
-        <div className="site-vt--aside flex h-fit min-h-0 w-full min-w-0 flex-col items-start justify-start">
-          <div className="mt-9 flex w-full min-w-0 flex-1 flex-col items-start justify-start lg:mt-12 lg:min-h-0 lg:py-2">
+        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col items-start justify-between">
+          <div className="mt-9 flex w-full min-w-0 shrink-0 flex-col items-start justify-start lg:mt-12 lg:min-h-0 lg:py-2">
             <div className="space-y-5">
               <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
               {showAboutSection ? <CaseStudyAboutBlock about={about} /> : null}
@@ -224,7 +223,7 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
 
           {hasFooterCluster ? (
             <div
-              className="mt-auto w-full min-w-0 space-y-6 pt-8 lg:space-y-7 lg:pt-10"
+              className="w-full min-w-0 shrink-0 space-y-6 pt-8 lg:space-y-7 lg:pt-10"
               data-site-region="case-aside-footer"
             >
               {hasMeta ? (
