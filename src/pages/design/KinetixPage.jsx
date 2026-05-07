@@ -262,14 +262,16 @@ function MetricRadialLinesViz({ color, fill = 1, remainderColor = 'var(--kx-bord
   const vb = 76
   const cx = vb / 2
   const cy = vb / 2
-  const n = 32
-  const r0 = 12.5
-  const r1 = 29.5
+  const n = 14
+  const r0 = 15.5
+  const r1 = 31
   const lines = useMemo(() => {
     const t = Math.max(0, Math.min(1, fill))
     const greenCount = Math.round(n * t)
+    const arc = Math.PI * 2 * 0.92
+    const mid = -Math.PI / 2
     return Array.from({ length: n }, (_, i) => {
-      const a = (i / n) * Math.PI * 2 - Math.PI / 2
+      const a = n <= 1 ? mid : mid - arc / 2 + (i / (n - 1)) * arc
       const c = Math.cos(a)
       const s = Math.sin(a)
       const active = i < greenCount
@@ -288,16 +290,6 @@ function MetricRadialLinesViz({ color, fill = 1, remainderColor = 'var(--kx-bord
   return (
     <div className="kx-metric-viz-radial-outer" aria-hidden="true">
       <svg className="kx-metric-viz-radial-svg" viewBox={`0 0 ${vb} ${vb}`} preserveAspectRatio="xMidYMid meet">
-        <circle
-          cx={cx}
-          cy={cy}
-          r={31}
-          fill="none"
-          stroke="var(--kx-border-strong)"
-          strokeWidth={1.15}
-          opacity={0.42}
-        />
-        <circle cx={cx} cy={cy} r={4.75} fill={color} fillOpacity={0.14} />
         <g transform={`translate(${cx} ${cy})`}>
           {lines.map(({ x0, y0, x1, y1, stroke, opacity, i }) => (
             <line
@@ -307,7 +299,7 @@ function MetricRadialLinesViz({ color, fill = 1, remainderColor = 'var(--kx-bord
               x2={x1}
               y2={y1}
               stroke={stroke}
-              strokeWidth={2.05}
+              strokeWidth={3.35}
               strokeLinecap="round"
               opacity={opacity}
             />
