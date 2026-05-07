@@ -5,28 +5,10 @@ import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
 function MetaBlock({ label, value }) {
   if (!value) return null;
   return (
-    <div className="min-w-0 space-y-1">
+    <div className="min-w-0 space-y-1.5">
       <p className="wx-aside-footer__label">{label}</p>
       <p className="wx-text-sm font-medium tracking-tight text-[var(--wx-ink)]">{value}</p>
     </div>
-  );
-}
-
-/**
- * Apple Settings-style row separator.
- * Container has no `gap`; padding+border on each section creates the rhythm so first
- * + last sections sit flush with the column.
- */
-function AsideSection({ children, className }) {
-  return (
-    <section
-      className={clsx(
-        "border-t border-[color:var(--wx-border-soft)] pt-6 first:border-t-0 first:pt-0 lg:pt-7",
-        className,
-      )}
-    >
-      {children}
-    </section>
   );
 }
 
@@ -71,15 +53,15 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
 
 function CaseStudyTitleBlock({ year, title, lede }) {
   return (
-    <div className="space-y-3">
-      <div className="space-y-1.5">
+    <div className="flex flex-col gap-5 lg:gap-6">
+      <div className="flex flex-col gap-2">
         {year ? <p className="wx-aside-footer__label">{year}</p> : null}
-        <h1 className="wx-text-section-title font-semibold leading-tight tracking-tight text-[var(--wx-ink)]">
+        <h1 className="wx-text-section-title font-semibold leading-[1.05] tracking-tight text-[var(--wx-ink)]">
           {title}
         </h1>
       </div>
       {lede ? (
-        <p className="wx-text-body-secondary text-[var(--wx-muted)]">{lede}</p>
+        <p className="wx-text-body-secondary max-w-[34ch] text-balance text-[var(--wx-ink)]">{lede}</p>
       ) : null}
     </div>
   );
@@ -88,9 +70,9 @@ function CaseStudyTitleBlock({ year, title, lede }) {
 function CaseStudyAboutBlock({ about }) {
   if (!about) return null;
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-2.5">
       <p className="wx-aside-footer__label">About</p>
-      <p className="wx-text-body-secondary text-[var(--wx-muted)]">{about}</p>
+      <p className="wx-text-body-secondary max-w-[42ch] text-[var(--wx-muted)]">{about}</p>
     </div>
   );
 }
@@ -141,7 +123,7 @@ function CaseStudyAsideMeta({ industry, role, team, duration, kind }) {
   ].filter((item) => item.value);
   if (!items.length) return null;
   return (
-    <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-6">
       {items.map((item) => (
         <MetaBlock key={item.label} label={item.label} value={item.value} />
       ))}
@@ -173,6 +155,9 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
   const duration = editorialMeta?.duration?.trim();
 
   const showAboutSection = Boolean(about) && !asideAboutRepeatsLede(def.lede, about);
+  const hasMeta = Boolean(role || kind || industry || team || duration);
+  const hasTagRails = toolLabels.length > 0 || highlightLabels.length > 0;
+  const hasFooterCluster = hasMeta || hasTagRails;
 
   return (
     <aside
@@ -192,31 +177,41 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         <div className="wx-mobile-nav-spacer max-sm:block sm:hidden" aria-hidden />
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
-        <div className="site-vt--aside mt-9 flex min-h-0 w-full min-w-0 flex-1 flex-col lg:mt-12 lg:py-2">
-          <AsideSection>
+        {/*
+         * Two-cluster layout (copedesign / onepagelove rhythm):
+         *   • Editorial cluster (title + lede + about) leads at the top
+         *   • Meta + tag rails are anchored to the bottom of the sticky column on lg (`mt-auto`)
+         * One hairline divider replaces the previous per-section borders so the column reads
+         * as composed editorial, not a stack of equal cards.
+         */}
+        <div className="site-vt--aside mt-10 flex min-h-0 w-full min-w-0 flex-1 flex-col gap-10 lg:mt-14 lg:gap-14 lg:py-1">
+          <div className="flex flex-col gap-8 lg:gap-10">
             <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
-          </AsideSection>
+            {showAboutSection ? <CaseStudyAboutBlock about={about} /> : null}
+          </div>
 
-          {showAboutSection ? (
-            <AsideSection>
-              <CaseStudyAboutBlock about={about} />
-            </AsideSection>
-          ) : null}
+          {hasFooterCluster ? (
+            <div
+              className={clsx(
+                "flex flex-col gap-8 border-t border-[color:var(--wx-border-soft)] pt-8",
+                "lg:mt-auto lg:gap-9 lg:pt-9",
+              )}
+              data-site-region="case-aside-footer"
+            >
+              {hasMeta ? (
+                <CaseStudyAsideMeta
+                  industry={industry}
+                  role={role}
+                  team={team}
+                  duration={duration}
+                  kind={kind}
+                />
+              ) : null}
 
-          <AsideSection>
-            <CaseStudyAsideMeta
-              industry={industry}
-              role={role}
-              team={team}
-              duration={duration}
-              kind={kind}
-            />
-          </AsideSection>
-
-          {toolLabels.length || highlightLabels.length ? (
-            <AsideSection>
-              <CaseStudyTagPills toolLabels={toolLabels} highlightLabels={highlightLabels} />
-            </AsideSection>
+              {hasTagRails ? (
+                <CaseStudyTagPills toolLabels={toolLabels} highlightLabels={highlightLabels} />
+              ) : null}
+            </div>
           ) : null}
         </div>
       </div>
