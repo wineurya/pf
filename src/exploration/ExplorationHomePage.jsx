@@ -1584,42 +1584,10 @@ function FaqAccordion({ reduceMotion }) {
 
 /* =====================================================================
    Commercial-clarity components
-   - Trust strip, productized service cards, P→D→O case story, How-I-work
-     fallback, and qualified-contact form. All accents driven by the four
-     wx-accent tokens (primary, teal, violet, amber) so the palette stays
-     coherent across nuggets, icons, and hovers.
+   - Studio bento (intro + services), trust strip, qualified-contact form.
+     All accents driven by the four wx-accent tokens (primary, teal, violet,
+     amber) so the palette stays coherent across nuggets, icons, and hovers.
    ===================================================================== */
-
-/**
- * ServicesList — calm typographic list. Title + a single sentence.
- * No prices, no codes, no icons, no cards. Pricing lives in the FAQ.
- * Pattern follows Reynolds / Rusli / Carignan.
- */
-function ServicesList({ reduceMotion }) {
-  return (
-    <RevealCard
-      reduceMotion={reduceMotion}
-      as="section"
-      aria-labelledby="site-services-heading"
-      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
-    >
-      <p
-        id="site-services-heading"
-        className="wx-text-section-kicker text-[var(--wx-muted)]"
-      >
-        Services
-      </p>
-      <ul className="mt-6 divide-y divide-[color:var(--wx-border-soft)]">
-        {SITE_SERVICES.map((svc) => (
-          <li key={svc.slug} className="wx-service-row py-4 first:pt-2 last:pb-2 sm:py-5">
-            <p className="wx-text-service-title text-[var(--wx-ink)]">{svc.title}</p>
-            <p className="mt-1 wx-text-sm-tight text-[var(--wx-muted)]">{svc.body}</p>
-          </li>
-        ))}
-      </ul>
-    </RevealCard>
-  );
-}
 
 function QualificationFormFieldInput({ field }) {
   if (field.type === "textarea") {
@@ -2201,28 +2169,53 @@ function ExplorationMainStudioSection({ reduceMotion }) {
     >
       <RevealCard
         reduceMotion={reduceMotion}
-        className="grid gap-6 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:gap-7 lg:grid-cols-5 lg:items-center lg:gap-10 lg:p-8"
+        aria-labelledby="studio-bento-intro-heading site-services-heading"
+        className="flex flex-col gap-[var(--wx-gallery-gap)] overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] p-6 ring-1 ring-[color:var(--wx-ring-subtle)] sm:p-8 lg:p-8"
       >
-        <div className="space-y-3 lg:col-span-3 lg:space-y-4">
-          <p className="wx-text-section-kicker text-[var(--wx-muted)]">Studio</p>
-          <h2 className="wx-text-section-title text-[var(--wx-ink)]">
-            Research-led design, built end to end.
-          </h2>
-          <p className="wx-text-body-secondary text-[var(--wx-muted)]">
-            Product designer working across research, interaction, and shipping UI. I design in Figma and build in
-            React, so detail doesn&rsquo;t get lost between the sketch and the code.
-          </p>
+        {/* Bento tier 1: two tiles (intro · visual) */}
+        <div className="grid gap-[var(--wx-gallery-gap)] lg:grid-cols-2 lg:items-stretch">
+          <div className="flex flex-col justify-center space-y-3 lg:space-y-4 lg:py-0.5">
+            <p className="wx-text-section-kicker text-[var(--wx-muted)]">Studio</p>
+            <h2 id="studio-bento-intro-heading" className="wx-text-section-title text-[var(--wx-ink)]">
+              Research-led design, built end to end.
+            </h2>
+            <p className="wx-text-body-secondary text-[var(--wx-muted)]">
+              Product designer working across research, interaction, and shipping UI. I design in Figma and build in
+              React, so detail doesn&rsquo;t get lost between the sketch and the code.
+            </p>
+          </div>
+          <div className="wx-gallery-frame min-h-[12rem] overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:min-h-[14rem]">
+            <img
+              className="h-full min-h-[12rem] w-full object-cover lg:min-h-[14rem]"
+              src={SITE_EXTRA_IMAGES.marble}
+              alt="Abstract marble light forms"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         </div>
-        <div className="wx-gallery-frame overflow-hidden rounded-[calc(var(--wx-radius-card)-2px)] lg:col-span-2">
-          <img
-            src={SITE_EXTRA_IMAGES.marble}
-            alt="Abstract marble light forms"
-            loading="lazy"
-            decoding="async"
-          />
+
+        {/* Bento tier 2: three-up; additional services span full width below */}
+        <div className="space-y-4 border-t border-[color:var(--wx-border-soft)] pt-[var(--wx-gallery-gap)]">
+          <p id="site-services-heading" className="wx-text-section-kicker text-[var(--wx-muted)]">
+            Services
+          </p>
+          <ul className="grid gap-[var(--wx-gallery-gap)] sm:grid-cols-3" aria-labelledby="site-services-heading">
+            {SITE_SERVICES.map((svc, idx) => (
+              <li
+                key={svc.slug}
+                className={clsx(
+                  "flex flex-col justify-between rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6",
+                  idx >= 3 && "sm:col-span-3",
+                )}
+              >
+                <p className="wx-text-service-title text-[var(--wx-ink)]">{svc.title}</p>
+                <p className="mt-3 wx-text-sm-tight text-[var(--wx-muted)] sm:mt-4">{svc.body}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </RevealCard>
-      <ServicesList reduceMotion={reduceMotion} />
       {SITE_TESTIMONIALS.length > 0 ? (
         <RevealCard
           reduceMotion={reduceMotion}
