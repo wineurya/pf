@@ -18,7 +18,7 @@ function normalizeToolLabel(label) {
 function resolveToolIconFile(label) {
   const t = normalizeToolLabel(label);
   if (t === "figma") return "figma.svg";
-  if (t === "figjam") return "figjam.svg";
+  if (t === "figjam") return "figjam-board.svg";
   if (t === "lottie" || t === "lottiefiles") return "lottiefiles-mark.svg";
   if (t === "lottie motion" || t === "lottie + motion") return "lottie-motion.svg";
   if (t === "after effects" || t === "adobe after effects") return "adobe-after-effects.svg";
