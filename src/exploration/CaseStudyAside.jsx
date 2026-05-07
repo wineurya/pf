@@ -210,10 +210,10 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
         {/*
-         * Fills the padded column (`flex-1 min-h-0`) so `justify-between` opens space between
+         * Fills the padded column (`flex-1 min-h-0 h-full`) so `justify-between` opens space between
          * the editorial stack and the meta/tag footer; copy stays start-aligned via `items-start`.
          */}
-        <div className="site-vt--aside flex min-h-0 w-full min-w-0 flex-1 flex-col items-start justify-between">
+        <div className="site-vt--aside flex h-full min-h-0 w-full min-w-0 flex-1 flex-col items-start justify-between">
           <div className="mt-9 flex w-full min-w-0 shrink-0 flex-col items-start justify-start lg:mt-12 lg:min-h-0 lg:py-2">
             <div className="space-y-5">
               <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
