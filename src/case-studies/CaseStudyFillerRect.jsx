@@ -2,27 +2,27 @@ import { clsx } from "clsx";
 
 /**
  * Rounded placeholder media frame — stands in for chapter / hero / step art until
- * final assets ship. Inspired by the Figma "Testing 10:5" right-column rhythm
- * (rounded-12, neutral fill, varied aspect ratios stacked vertically).
+ * final assets ship. Fill-only (no hairline border); default radius 8px (`rounded-lg`).
  *
  * Defaults to 5:4 to match prior call sites; pass `ratio` (e.g. "16/9", "4/5")
  * for variety, or `style={{ aspectRatio }}` for arbitrary values.
  */
 export function CaseStudyFillerRect({ className, ratio = "5/4", rounded = "lg", style }) {
   const radiusClass =
-    rounded === "xl"
-      ? "rounded-2xl"
+    rounded === "none"
+      ? "rounded-none"
       : rounded === "md"
       ? "rounded-md"
-      : rounded === "none"
-      ? "rounded-none"
-      : "rounded-xl"; /* default ~12px feel */
+      : rounded === "xl"
+      ? "rounded-xl"
+      : rounded === "2xl"
+      ? "rounded-2xl"
+      : "rounded-lg"; /* default `lg` = 8px */
   return (
     <div
       className={clsx(
-        "pointer-events-none w-full max-w-full select-none",
+        "pointer-events-none w-full max-w-full select-none overflow-hidden",
         radiusClass,
-        "border border-[color:var(--wx-border-soft)]",
         "bg-[color-mix(in_srgb,var(--wx-muted)_10%,var(--wx-page-bg))]",
         className,
       )}
