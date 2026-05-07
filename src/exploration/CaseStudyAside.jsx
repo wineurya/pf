@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
 import { CaseStudyToolBrandIcon } from "@/exploration/CaseStudyToolBrandIcon.jsx";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
+import { useReducedMotion } from "@/exploration/useReducedMotion.js";
 
 function MetaBlock({ label, value }) {
   if (!value) return null;
@@ -15,7 +16,50 @@ function MetaBlock({ label, value }) {
   );
 }
 
-function CaseStudyTagPills({ toolLabels, highlightLabels }) {
+function CaseStudyFocusHighlightRail({ highlights, reduceMotion }) {
+  const durationSec = Math.min(56, Math.max(26, highlights.length * 11));
+
+  if (reduceMotion) {
+    return (
+      <ul className="wx-case-tags__group wx-case-tags__group--focus" aria-labelledby="case-tags-focus">
+        {highlights.map((tag) => (
+          <li key={`hi-${tag}`}>
+            <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  return (
+    <>
+      <ul className="wx-case-tags__focus-sr-list sr-only" aria-labelledby="case-tags-focus">
+        {highlights.map((tag) => (
+          <li key={`focus-sr-${tag}`}>{tag}</li>
+        ))}
+      </ul>
+      <div className="wx-case-tags__focus-marquee" aria-hidden>
+        <ul
+          className="wx-case-tags__focus-marquee-strip"
+          style={{ "--wx-case-focus-marquee-s": `${durationSec}s` }}
+        >
+          {highlights.map((tag, i) => (
+            <li key={`marq-a-${i}-${tag}`}>
+              <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
+            </li>
+          ))}
+          {highlights.map((tag, i) => (
+            <li key={`marq-b-${i}-${tag}`} aria-hidden>
+              <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+}
+
+function CaseStudyTagPills({ toolLabels, highlightLabels, reduceMotion }) {
   const tools = toolLabels ?? [];
   const highlights = highlightLabels ?? [];
   if (!tools.length && !highlights.length) return null;
@@ -43,13 +87,7 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
           <p id="case-tags-focus" className="wx-case-tags__label">
             Focus
           </p>
-          <ul className="wx-case-tags__group wx-case-tags__group--focus" aria-labelledby="case-tags-focus">
-            {highlights.map((tag) => (
-              <li key={`hi-${tag}`}>
-                <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
-              </li>
-            ))}
-          </ul>
+          <CaseStudyFocusHighlightRail highlights={highlights} reduceMotion={reduceMotion} />
         </div>
       ) : null}
     </div>
@@ -213,6 +251,7 @@ function asideOutcomeParagraphs(editorialMeta) {
  * Column shell matches `ExplorationPageAside` (same lg aside basis, padding, sticky height, header wrapper).
  */
 export function CaseStudyAside({ def, gridEntry, location, navigate, tagRails }) {
+  const reduceMotion = useReducedMotion();
   const editorialMeta = def.editorialMeta ?? null;
   const { toolLabels, highlightLabels } = tagRails ?? getCaseStudyTagRails(editorialMeta, gridEntry);
   const role = gridEntry?.role?.trim();
@@ -281,7 +320,11 @@ export function CaseStudyAside({ def, gridEntry, location, navigate, tagRails })
               ) : null}
 
               {hasTagRails ? (
-                <CaseStudyTagPills toolLabels={toolLabels} highlightLabels={highlightLabels} />
+                <CaseStudyTagPills
+                  toolLabels={toolLabels}
+                  highlightLabels={highlightLabels}
+                  reduceMotion={reduceMotion}
+                />
               ) : null}
             </div>
           ) : null}
