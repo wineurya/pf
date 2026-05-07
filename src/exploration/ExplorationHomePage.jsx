@@ -2056,24 +2056,22 @@ function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
         </motion.div>
         <motion.dl
           variants={mv.item}
-          className="flex flex-col gap-3 wx-text-meta text-[var(--wx-muted)] [&_dd]:m-0"
+          className="wx-aside-availability-lines wx-text-meta text-[var(--wx-muted)]"
         >
-          <div className="flex items-start gap-2.5">
-            <HugeiconsIcon
-              icon={Calendar01Icon}
-              size={14}
-              strokeWidth={1.6}
-              className="mt-0.5 shrink-0 text-[color-mix(in_srgb,var(--wx-muted)_72%,transparent)]"
-              aria-hidden
-            />
-            <div className="min-w-0">
+          <div className="wx-aside-availability-lines__row">
+            <span className="wx-aside-availability-lines__icon">
+              <HugeiconsIcon icon={Calendar01Icon} size={14} strokeWidth={1.6} aria-hidden />
+            </span>
+            <div className="wx-aside-availability-lines__body">
               <dt className="sr-only">Availability</dt>
               <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.opening}</dd>
             </div>
           </div>
-          <div className="flex items-start gap-2.5">
-            <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-[var(--wx-gradient-accent)]" aria-hidden />
-            <div className="min-w-0">
+          <div className="wx-aside-availability-lines__row">
+            <span className="wx-aside-availability-lines__icon">
+              <HugeiconsIcon icon={Briefcase01Icon} size={14} strokeWidth={1.6} aria-hidden />
+            </span>
+            <div className="wx-aside-availability-lines__body">
               <dt className="sr-only">Engagements</dt>
               <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.note}</dd>
             </div>

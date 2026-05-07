@@ -252,6 +252,42 @@
   }
 }
 
+/* Aside — calendar / capacity lines under hero CTAs (aligned icon column, body meta). */
+.site-canvas .wx-aside-availability-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  margin: 0;
+  min-width: 0;
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+}
+
+.site-canvas .wx-aside-availability-lines__row {
+  display: grid;
+  grid-template-columns: 0.875rem minmax(0, 1fr);
+  column-gap: var(--spacing-2);
+  align-items: start;
+}
+
+.site-canvas .wx-aside-availability-lines__icon {
+  display: flex;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in srgb, var(--wx-muted) 72%, transparent);
+}
+
+.site-canvas .wx-aside-availability-lines__body {
+  min-width: 0;
+}
+
+.site-canvas .wx-aside-availability-lines dd {
+  margin: 0;
+}
+
 .wx-text-meta {
   font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
   font-size: var(--wx-text-meta-size);
