@@ -1715,10 +1715,31 @@ function useImageLoadScrollTriggerRefresh() {
 function useHashScrollToSection(location, scrollToSection) {
   useEffect(() => {
     if (location.pathname !== "/") return;
-    const id = (location.hash || "").replace("#", "");
+    const id = (location.hash || "").replace(/^#/, "");
     if (!id.startsWith("section-")) return;
-    const t = window.setTimeout(() => scrollToSection(id), 80);
-    return () => window.clearTimeout(t);
+
+    let cancelled = false;
+    let rafId = 0;
+    let attempts = 0;
+    const maxAttempts = 180;
+
+    const tryScroll = () => {
+      if (cancelled) return;
+      attempts += 1;
+      if (document.getElementById(id)) {
+        scrollToSection(id);
+        return;
+      }
+      if (attempts >= maxAttempts) return;
+      rafId = window.requestAnimationFrame(tryScroll);
+    };
+
+    rafId = window.requestAnimationFrame(tryScroll);
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(rafId);
+    };
   }, [location.hash, location.pathname, scrollToSection]);
 }
 

@@ -117,7 +117,7 @@ function CaseStudyAsideTopRow({ location, navigate }) {
       <div className="site-vt--nav flex w-full min-w-0 flex-nowrap items-center justify-between gap-3 min-h-14 sm:gap-4">
         <WordmarkLink location={location} navigate={navigate} />
         <ViewTransitionLink
-          to="/#section-work"
+          to={{ pathname: "/", hash: "section-work" }}
           className={clsx(
             "wx-text-meta shrink-0 font-medium text-[var(--wx-muted)] outline-none transition-colors",
             "hover:text-[var(--wx-primary)]",
@@ -181,7 +181,7 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         "border-b border-[color:var(--wx-border-soft)] bg-[var(--wx-page-bg)]",
         "lg:grow-0 lg:shrink-0 lg:flex-none lg:sticky lg:top-0",
         "lg:h-svh lg:max-h-svh lg:overflow-y-auto lg:overscroll-contain",
-        "lg:border-b-0 lg:border-r",
+        "lg:border-b-0",
         /* Same width token as home exploration — keeps wordmark / chrome aligned across routes */
         "lg:w-[var(--wx-explore-aside-basis)]",
       )}

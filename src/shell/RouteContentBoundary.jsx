@@ -12,9 +12,13 @@ export function RouteContentBoundary({ children }) {
   const lenis = useLenis();
 
   useEffect(() => {
+    const hashId = (location.hash || "").replace(/^#/, "");
+    const deferResetForHomeSection =
+      location.pathname === "/" && hashId.startsWith("section-");
+    if (deferResetForHomeSection) return;
     if (lenis) lenis.scrollTo(0, { immediate: true });
     else window.scrollTo(0, 0);
-  }, [location.pathname, lenis]);
+  }, [location.pathname, location.hash, lenis]);
 
   return (
     <div key={location.pathname} className="min-h-dvh" data-app-route-boundary>
