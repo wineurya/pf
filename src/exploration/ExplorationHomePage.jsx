@@ -2015,59 +2015,57 @@ function AsideAvailabilityDot({ reduceMotion }) {
 function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
   return (
     <div className="mt-9 flex w-full min-w-0 flex-1 flex-col justify-center lg:mt-12 lg:min-h-0 lg:py-2">
-      <div className="relative w-full space-y-5 text-left">
+      <div className="relative flex w-full flex-col gap-5 text-left">
         <div className="wx-text-eyebrow flex items-center gap-2 text-[var(--wx-muted)]">
           <AsideAvailabilityDot reduceMotion={reduceMotion} />
           <p>{SITE_HERO.eyebrow}</p>
         </div>
-        <div className="w-full space-y-5">
-          <div className="relative">
-            <AsideHeroHeadline reduceMotion={reduceMotion} />
-            <p className="mt-2 wx-text-body-secondary text-[var(--wx-muted)]">{SITE_HERO.subhead}</p>
-          </div>
-          <div className="flex flex-wrap gap-3 sm:gap-4">
-            <motion.button
-              type="button"
-              className="wx-btn-primary"
-              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-              transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-              onClick={() => scrollToSection("section-contact", 3)}
-            >
-              {SITE_HERO.primaryCta.label}
-            </motion.button>
-            <motion.button
-              type="button"
-              className="wx-btn-secondary"
-              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-              transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
-              onClick={() => scrollToSection("section-work", 0)}
-            >
-              {SITE_HERO.secondaryCta.label}
-            </motion.button>
-          </div>
-          <dl className="mt-4 flex flex-col gap-3 wx-text-meta text-[var(--wx-muted)] [&_dd]:m-0">
-            <div className="flex items-start gap-2.5">
-              <HugeiconsIcon
-                icon={Calendar01Icon}
-                size={14}
-                strokeWidth={1.6}
-                className="mt-0.5 shrink-0 text-[color-mix(in_srgb,var(--wx-muted)_72%,transparent)]"
-                aria-hidden
-              />
-              <div className="min-w-0">
-                <dt className="sr-only">Availability</dt>
-                <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.opening}</dd>
-              </div>
-            </div>
-            <div className="flex items-start gap-2.5">
-              <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-[var(--wx-gradient-accent)]" aria-hidden />
-              <div className="min-w-0">
-                <dt className="sr-only">Engagements</dt>
-                <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.note}</dd>
-              </div>
-            </div>
-          </dl>
+        <div className="flex flex-col gap-3">
+          <AsideHeroHeadline reduceMotion={reduceMotion} />
+          <p className="wx-text-body-secondary text-[var(--wx-muted)]">{SITE_HERO.subhead}</p>
         </div>
+        <div className="flex flex-wrap gap-3 sm:gap-4">
+          <motion.button
+            type="button"
+            className="wx-btn-primary"
+            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+            transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+            onClick={() => scrollToSection("section-contact", 3)}
+          >
+            {SITE_HERO.primaryCta.label}
+          </motion.button>
+          <motion.button
+            type="button"
+            className="wx-btn-secondary"
+            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+            transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+            onClick={() => scrollToSection("section-work", 0)}
+          >
+            {SITE_HERO.secondaryCta.label}
+          </motion.button>
+        </div>
+        <dl className="flex flex-col gap-3 wx-text-meta text-[var(--wx-muted)] [&_dd]:m-0">
+          <div className="flex items-start gap-2.5">
+            <HugeiconsIcon
+              icon={Calendar01Icon}
+              size={14}
+              strokeWidth={1.6}
+              className="mt-0.5 shrink-0 text-[color-mix(in_srgb,var(--wx-muted)_72%,transparent)]"
+              aria-hidden
+            />
+            <div className="min-w-0">
+              <dt className="sr-only">Availability</dt>
+              <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.opening}</dd>
+            </div>
+          </div>
+          <div className="flex items-start gap-2.5">
+            <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-[var(--wx-gradient-accent)]" aria-hidden />
+            <div className="min-w-0">
+              <dt className="sr-only">Engagements</dt>
+              <dd className="wx-text-meta--relaxed text-pretty">{SITE_AVAILABILITY.note}</dd>
+            </div>
+          </div>
+        </dl>
       </div>
     </div>
   );
