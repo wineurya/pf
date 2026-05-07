@@ -2020,12 +2020,15 @@
    not a literal recreation of any one file.
    ========================= */
 .site-canvas .wx-tab-track {
+  /* Must live on this element (not only the inner scroll row) so width: calc(...) resolves. */
+  --wx-tab-rail-inset: 4px;
   position: relative;
   overflow: hidden;
   border-radius: var(--wx-radius-segment);
   /* Fixed width = 3 idle icons + longest label ("Approach") + gaps + padding.
      Keeps the surrounding layout stable across all tab selections. */
   width: calc(3 * var(--wx-tab-pill-height) + 7.5rem + 3 * 3px + 2 * var(--wx-tab-rail-inset));
+  box-sizing: border-box;
   /* Mostly flat fill; light blur reads as UI chrome, not heavy glass. */
   background-color: color-mix(in srgb, var(--wx-tab-track-solid) 90%, var(--wx-page-bg));
   border: 1px solid var(--wx-border-faint);
@@ -2037,7 +2040,6 @@
 
 /** Scroll lives inside so outer radius clips cleanly (avoid oval / broken caps). */
 .site-canvas .wx-tab-track__scroll {
-  --wx-tab-rail-inset: 4px;
   display: flex;
   width: 100%;
   flex-wrap: nowrap;

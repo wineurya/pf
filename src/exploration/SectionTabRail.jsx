@@ -9,7 +9,6 @@ import {
   WX_NAV_TAB_LABEL_COLLAPSE_TWEEN,
   WX_NAV_TAB_LABEL_EXPAND_DURATION_S,
   WX_NAV_TAB_LABEL_EXPAND_TWEEN,
-  WX_NAV_TAB_RAIL_LAYOUT_TWEEN,
   wxNavTabTransition,
 } from "@/exploration/navMotion.js";
 
@@ -188,13 +187,10 @@ export function SectionTabRail({
 }) {
   const pillT = tabPillTransition ?? wxNavTabTransition(reduceMotion);
   const labelVars = labelVariants(reduceMotion);
-  const railTransition = reduceMotion ? { duration: 0 } : WX_NAV_TAB_RAIL_LAYOUT_TWEEN;
 
   return (
-    <motion.div
-      layout
-      transition={railTransition}
-      className="wx-tab-track min-w-0 max-w-full shrink"
+    <div
+      className="wx-tab-track min-w-0 max-w-full shrink-0"
       role="tablist"
       aria-label="Sections"
       onKeyDown={(e) => handleTabListKeyDown(e, selectedIndex, onSelectSection)}
@@ -216,6 +212,6 @@ export function SectionTabRail({
           );
         })}
       </div>
-    </motion.div>
+    </div>
   );
 }

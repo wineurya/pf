@@ -23,13 +23,6 @@ export const WX_NAV_TAB_LABEL_COLLAPSE_TWEEN = {
   marginLeft: { type: "tween", duration: WX_NAV_TAB_LABEL_COLLAPSE_DURATION_S, ease: WX_NAV_EASE_OUT },
 };
 
-/** Rail layout follows tab widths — single ease, between expand and collapse feel */
-export const WX_NAV_TAB_RAIL_LAYOUT_TWEEN = {
-  type: "tween",
-  duration: 0.38,
-  ease: WX_NAV_EASE_OUT,
-};
-
 export function wxNavTabTransition(reduceMotion) {
   return reduceMotion ? { duration: 0 } : WX_NAV_TAB_SPRING;
 }
