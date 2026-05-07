@@ -26,7 +26,7 @@ function MediaRowFrames({ row }) {
   return (
     <div
       className={clsx(
-        "flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-stretch",
+        "flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-start",
         row.gap === "lg" ? "sm:gap-4" : "sm:gap-3",
       )}
     >
