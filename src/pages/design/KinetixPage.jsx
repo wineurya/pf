@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import {
   LayoutDashboard, Zap, Map, ShieldCheck, FileText, Settings,
@@ -120,8 +120,7 @@ const METRICS = [
     label: 'Confidence', value: '98%', sub: 'model accuracy',
     trend: 'good', trendLabel: '2.1%', trendSuffix: 'vs baseline', trendIcon: null,
     viz: {
-      kind: 'donut',
-      percent: 98,
+      kind: 'radial',
       color: '#16A34A',
     },
   },
@@ -254,6 +253,71 @@ function MetricDonutViz({ percent, color }) {
         transform={`rotate(-90 ${cx} ${cy})`}
       />
     </svg>
+  )
+}
+
+function MetricRadialLinesViz({ color }) {
+  const reduce = useReducedMotion()
+  const vb = 76
+  const cx = vb / 2
+  const cy = vb / 2
+  const n = 32
+  const r0 = 12.5
+  const r1 = 29.5
+  const lines = useMemo(() => {
+    return Array.from({ length: n }, (_, i) => {
+      const a = (i / n) * Math.PI * 2 - Math.PI / 2
+      const c = Math.cos(a)
+      const s = Math.sin(a)
+      const t = n > 1 ? i / (n - 1) : 0
+      const opacity = 0.18 + t * 0.82
+      return {
+        x0: c * r0,
+        y0: s * r0,
+        x1: c * r1,
+        y1: s * r1,
+        opacity,
+        i,
+      }
+    })
+  }, [n, r0, r1])
+
+  return (
+    <div className="kx-metric-viz-radial-outer" aria-hidden="true">
+      <svg className="kx-metric-viz-radial-base" viewBox={`0 0 ${vb} ${vb}`} preserveAspectRatio="xMidYMid meet">
+        <circle
+          cx={cx}
+          cy={cy}
+          r={31}
+          fill="none"
+          stroke="var(--kx-border-strong)"
+          strokeWidth={1.15}
+          opacity={0.42}
+        />
+        <circle cx={cx} cy={cy} r={4.75} fill={color} fillOpacity={0.14} />
+      </svg>
+      <svg
+        className={`kx-metric-viz-radial-rotor${reduce ? '' : ' kx-metric-viz-radial-rotor--anim'}`}
+        viewBox={`0 0 ${vb} ${vb}`}
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <g transform={`translate(${cx} ${cy})`}>
+          {lines.map(({ x0, y0, x1, y1, opacity, i }) => (
+            <line
+              key={i}
+              x1={x0}
+              y1={y0}
+              x2={x1}
+              y2={y1}
+              stroke={color}
+              strokeWidth={2.05}
+              strokeLinecap="round"
+              opacity={opacity}
+            />
+          ))}
+        </g>
+      </svg>
+    </div>
   )
 }
 
@@ -522,6 +586,12 @@ function MetricCards() {
           vizNode = (
             <div className="kx-metric-viz-slot kx-metric-viz-slot-funnel" aria-hidden="true">
               <MetricFunnelViz steps={viz.steps} activeStep={viz.activeStep} />
+            </div>
+          )
+        } else if (viz.kind === 'radial') {
+          vizNode = (
+            <div className="kx-metric-viz-slot kx-metric-viz-slot-radial" aria-hidden="true">
+              <MetricRadialLinesViz color={viz.color} />
             </div>
           )
         } else if (viz.kind === 'bars') {
