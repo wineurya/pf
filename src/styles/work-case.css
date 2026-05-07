@@ -150,6 +150,18 @@
 [data-site-region="case-aside"] .wx-case-tags__group--tools {
   gap: 22px;
   align-items: center;
+  line-height: 0;
+}
+
+[data-site-region="case-aside"] .wx-case-tags__group--tools > li {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
 }
 
 [data-site-region="case-aside"] .wx-case-tags__group:not(.wx-case-tags__group--tools) {
@@ -235,9 +247,10 @@
 }
 
 [data-site-region="case-aside"] .wx-case-tags__tool-mark {
-  display: inline-flex;
-  width: 24px;
-  height: 24px;
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -246,10 +259,13 @@
 
 [data-site-region="case-aside"] .wx-case-tags__tool-mark__icon {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   flex-shrink: 0;
   object-fit: contain;
+  object-position: center;
 }
 
 /* Focus chips — ~4% ink fill; py-1 + px-2.5 rhythm aligns DS Tag/pill demo */
