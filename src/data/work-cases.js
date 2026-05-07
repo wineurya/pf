@@ -6,8 +6,12 @@
 import { SITE_EXTRA_IMAGES, SITE_WORK } from "@/exploration/siteContent.js";
 
 const INCITY_ABOUT_PARAGRAPHS = [
-  "Atlanta relied on ATL311 for non-emergency reports, but too many tickets stalled—unfinished, forgotten, or closed without a real fix.",
-  "InCity targets that gap with timely city updates, map context, and case tracking from report through resolution.",
+  "ATL311 was Atlanta's go-to channel for non-emergency reports, but too many tickets stalled. Reports went unfinished, forgotten, or closed without a real fix.",
+  "InCity rebuilds that flow with live city updates, map context, and case tracking from first report to resolution.",
+];
+
+const INCITY_OUTCOME_PARAGRAPHS = [
+  "Task completion ran about 75% faster, errors dropped from roughly 30% to 5%, and abandoned submissions stopped showing up.",
 ];
 
 /** @type {Record<string, { template: 'hero' | 'steps' | 'editorial'; title: string; kicker: string; lede: string; heroImage?: string; backLabel?: string; steps?: { title: string; blurb: string; image: string }[]; strips?: { caption: string; image: string }[] }>} */
@@ -16,16 +20,18 @@ export const WORK_CASE_PAGES = {
     template: "hero",
     title: "Avance",
     kicker: "Coaching · Mobile",
-    lede: "Plain-language goals become a plan, a deadline, and a coach in your corner when the search goes quiet or progress slows.",
+    lede: "Mobile coaching for goals you can say out loud.",
     heroImage: "/work/avance-hero.png",
     backLabel: "Index",
     editorialMeta: {
       industry: "Coaching · Consumer mobile",
-      about:
-        "Avance is a coach-shaped mobile flow: plain-language goals, a visible plan and deadline, and coaching prompts when momentum stalls — without the weight of a traditional LMS.",
+      aboutParagraphs: [
+        "Most goal apps lean on streaks. When the streak breaks, the app stops getting opened.",
+        "Avance pairs the goal with a real plan, real dates, and a coach who checks in when progress slows. Closer to working with a person than running a timer.",
+      ],
       team: "Solo concept",
       duration: "Mar 2025 – May 2025",
-      toolLabels: ["Figma", "After Effects", "Motion Design"],
+      toolLabels: ["Figma", "After Effects", "Claude", "Cursor", "Firebase"],
     },
     /** Chapter defs remain available for templates/export; aside navigation rail removed. */
     chapters: [
@@ -83,14 +89,13 @@ export const WORK_CASE_PAGES = {
     template: "hero",
     title: "InCity",
     kicker: "Civic · Mobile",
-    lede: "Mobile-first civic reporting for Atlanta—shorter paths to submit, understandable status, and case tracking so residents complete what they start instead of abandoning it mid-flow.",
+    lede: "Mobile-first civic reporting for Atlanta. Shorter paths to submit, clearer status, and case tracking that holds the line until resolution.",
     heroImage: "/work/incity-hero.png",
     backLabel: "Index",
     editorialMeta: {
       industry: "Civic tech · Government services",
       aboutParagraphs: INCITY_ABOUT_PARAGRAPHS,
-      outcome:
-        "About 75% faster completion, errors near 5% (down from roughly 30%), and abandoned submissions eliminated. The Assistant City Manager of Kennesaw cited the work for its citywide potential.",
+      outcomeParagraphs: INCITY_OUTCOME_PARAGRAPHS,
       team: "6 people",
       duration: "Feb 2025 – Apr 2025",
       toolLabels: ["Figma", "FigJam", "Lottie", "Adobe After Effects", "Adobe Illustrator"],
@@ -107,12 +112,14 @@ export const WORK_CASE_PAGES = {
     template: "steps",
     title: "Siren",
     kicker: "Safety · Product",
-    lede: "From trust signals to verification — a stepped look at the flow, not a wall of text.",
+    lede: "Trust signals and verification, walked one step at a time so the safety story reads clearly without a wall of text.",
     backLabel: "Index",
     editorialMeta: {
       industry: "Safety · Product",
-      about:
-        "Siren is a trust-and-safety surface for products where users sign on uncomfortable terms. The work focuses on verification flows that read calm, not interrogative — and on guardrails that catch the wrong action before it ships.",
+      aboutParagraphs: [
+        "Siren is a trust-and-safety surface for products where users sign up on uncomfortable terms. Most safety UI defaults to interrogation, which loses people early.",
+        "The work focuses on verification flows that read calm, and guardrails that catch the wrong action before it ships.",
+      ],
       team: "Solo concept",
       duration: "2024",
       toolLabels: ["Trust & Safety", "Interaction", "Usability"],
@@ -122,12 +129,14 @@ export const WORK_CASE_PAGES = {
     template: "editorial",
     title: "Resolutions",
     kicker: "Product · Habit",
-    lede: "A scroll-first pass: rhythm, stills, and space — the copy stays out of the way.",
+    lede: "An editorial pass on a habit product. Rhythm and stills carry the story so the copy can stay out of the way.",
     backLabel: "Index",
     editorialMeta: {
       industry: "Product · Habit",
-      about:
-        "Resolutions is an editorial pass on a habit product — pacing, stills, and stage rather than a feature dump. Each stage maps to a real user moment instead of a screen tour.",
+      aboutParagraphs: [
+        "Most habit apps front-load checklists and streaks before the user has a reason to care.",
+        "Resolutions takes a scroll-first pass: each stage maps to a real moment in the user's week, not a screen tour, and pacing carries the weight before features do.",
+      ],
       team: "Solo concept",
       duration: "2023",
       toolLabels: ["Editorial", "Motion", "Brand"],
