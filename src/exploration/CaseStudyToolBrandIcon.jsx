@@ -1,49 +1,14 @@
 /**
- * Product marks from Simple Icons (MIT) — https://github.com/simple-icons/simple-icons
- * Rendered at a fixed 24×24 viewport for case-study aside tooling rows.
+ * Case-study “Tools” row — raster/vector marks from UXWing (free commercial use).
+ * @see https://uxwing.com/license/
+ *
+ * Bundle under `public/case-tool-icons/`. Download originals from UXWing (named on each file’s page).
+ * FigJam → board icon; Lottie / motion → animation-motion icon (no official Lottie glyph on UXWing).
  */
-import { Wrench } from "lucide-react";
-
-function SvgFrame({ children, className, ...rest }) {
-  return (
-    <svg className={className} width={24} height={24} viewBox="0 0 24 24" aria-hidden focusable="false" {...rest}>
-      {children}
-    </svg>
-  );
-}
-
-function IconFigma() {
-  return (
-    <SvgFrame>
-      <path
-        fill="currentColor"
-        d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z"
-      />
-    </SvgFrame>
-  );
-}
-
-function IconAfterEffects() {
-  return (
-    <SvgFrame>
-      <path
-        fill="#9999FF"
-        d="M8.54 10.73c-.1-.31-.19-.61-.29-.92s-.19-.6-.27-.89c-.08-.28-.15-.54-.22-.78h-.02c-.09.43-.2.86-.34 1.29-.15.48-.3.98-.46 1.48-.13.51-.29.98-.44 1.4h2.54c-.06-.21-.14-.46-.23-.72-.09-.27-.18-.56-.27-.86zm8.58-.29c-.55-.03-1.07.26-1.33.76-.12.23-.19.47-.22.72h2.109c.26 0 .45 0 .57-.01.08-.01.16-.03.23-.08v-.1c0-.13-.021-.25-.061-.37-.178-.56-.708-.94-1.298-.92zM19.75.3H4.25C1.9.3 0 2.2 0 4.55v14.9c0 2.35 1.9 4.25 4.25 4.25h15.5c2.35 0 4.25-1.9 4.25-4.25V4.55C24 2.2 22.1.3 19.75.3zm-7.04 16.511h-2.09c-.07.01-.14-.041-.16-.11l-.82-2.4H5.92l-.76 2.36c-.02.09-.1.15-.19.14H3.09c-.11 0-.14-.06-.11-.18L6.2 7.39c.03-.1.06-.19.1-.31.04-.21.06-.43.06-.65-.01-.05.03-.1.08-.11h2.59c.07 0 .12.03.13.08l3.65 10.25c.03.11.001.161-.1.161zm7.851-3.991c-.021.189-.031.33-.041.42-.01.07-.069.13-.14.13-.06 0-.17.01-.33.021-.159.02-.35.029-.579.029-.23 0-.471-.04-.73-.04h-3.17c.039.31.14.62.31.89.181.271.431.48.729.601.4.17.841.26 1.281.25.35-.011.699-.04 1.039-.11.311-.039.61-.119.891-.23.05-.039.08-.02.08.08v1.531c0 .039-.01.08-.021.119-.021.03-.04.051-.069.07-.32.14-.65.24-1 .3-.471.09-.94.13-1.42.12-.761 0-1.4-.12-1.92-.35-.49-.211-.921-.541-1.261-.95-.319-.39-.55-.83-.69-1.31-.14-.471-.209-.961-.209-1.461 0-.539.08-1.07.25-1.59.16-.5.41-.96.75-1.37.33-.4.739-.72 1.209-.95.471-.23 1.03-.31 1.67-.31.531-.01 1.06.09 1.55.31.41.18.77.45 1.05.8.26.34.47.72.601 1.14.129.4.189.81.189 1.22 0 .24-.01.45-.019.64z"
-      />
-    </SvgFrame>
-  );
-}
-
-/** Motion / timeline stack — Adobe Premiere Pro mark (Simple Icons). */
-function IconPremierePro() {
-  return (
-    <SvgFrame>
-      <path
-        fill="#EA77FF"
-        d="M10.15 8.42a2.93 2.93 0 00-1.18-.2 13.9 13.9 0 00-1.09.02v3.36l.39.02h.53c.39 0 .78-.06 1.15-.18.32-.09.6-.28.82-.53.21-.25.31-.59.31-1.03a1.45 1.45 0 00-.93-1.46zM19.75.3H4.25A4.25 4.25 0 000 4.55v14.9c0 2.35 1.9 4.25 4.25 4.25h15.5c2.35 0 4.25-1.9 4.25-4.25V4.55C24 2.2 22.1.3 19.75.3zm-7.09 11.65c-.4.56-.96.98-1.61 1.22-.68.25-1.43.34-2.25.34l-.5-.01-.43-.01v3.21a.12.12 0 01-.11.14H5.82c-.08 0-.12-.04-.12-.13V6.42c0-.07.03-.11.1-.11l.56-.01.76-.02.87-.02.91-.01c.82 0 1.5.1 2.06.31.5.17.96.45 1.34.82.32.32.57.71.73 1.14.15.42.23.85.23 1.3 0 .86-.2 1.57-.6 2.13zm6.82-3.15v1.95c0 .08-.05.11-.16.11a4.35 4.35 0 00-1.92.37c-.19.09-.37.21-.51.37v5.1c0 .1-.04.14-.13.14h-1.97a.14.14 0 01-.16-.12v-5.58l-.01-.75-.02-.78c0-.23-.02-.45-.04-.68a.1.1 0 01.07-.11h1.78c.1 0 .18.07.2.16a3.03 3.03 0 01.13.92c.3-.35.67-.64 1.08-.86a3.1 3.1 0 011.52-.39c.07-.01.13.04.14.11v.04z"
-      />
-    </SvgFrame>
-  );
+function toolIconUrl(file) {
+  const base = import.meta.env.BASE_URL;
+  const root = base.endsWith("/") ? base : `${base}/`;
+  return `${root}case-tool-icons/${file}`;
 }
 
 function normalizeToolLabel(label) {
@@ -53,19 +18,29 @@ function normalizeToolLabel(label) {
     .replace(/\s+/g, " ");
 }
 
-function resolveBrandIcon(label) {
+function resolveUxwingFile(label) {
   const t = normalizeToolLabel(label);
-  if (t === "figma") return IconFigma;
-  if (t === "after effects" || t === "adobe after effects") return IconAfterEffects;
-  /* “Motion design” has no single standard glyph; Premiere Pro is the motion-timeline mark in the Adobe stack. */
-  if (t === "motion design") return IconPremierePro;
+  if (t === "figma") return "figma.svg";
+  if (t === "figjam") return "figjam-board.svg";
+  if (t === "lottie") return "lottie-motion.svg";
+  if (t === "after effects" || t === "adobe after effects") return "adobe-after-effects.svg";
+  if (t === "illustrator" || t === "adobe illustrator") return "adobe-illustrator.svg";
+  if (t === "motion design" || t === "premiere pro" || t === "adobe premiere pro") return "lottie-motion.svg";
   return null;
 }
 
 export function CaseStudyToolBrandIcon({ label, className }) {
-  const IconComponent = resolveBrandIcon(label);
-  if (IconComponent) {
-    return <IconComponent className={className} />;
-  }
-  return <Wrench className={className} size={24} strokeWidth={1.5} aria-hidden focusable="false" />;
+  const file = resolveUxwingFile(label) ?? "fallback-wrench.svg";
+  return (
+    <img
+      src={toolIconUrl(file)}
+      width={24}
+      height={24}
+      alt=""
+      className={className}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+    />
+  );
 }
