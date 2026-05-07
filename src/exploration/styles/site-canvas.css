@@ -24,10 +24,15 @@
   --wx-work-card-footer-rail: 40rem;
 }
 
-/* Defensive: home `#site-panels` opts out of any future named view-transition group. */
+/* Exploration ↔ case study: isolate aside + panel column so route VT can animate them smoothly (see `work-case.css`). */
 @supports (view-transition-name: none) {
+  .site-canvas.wx-exploration-root aside[data-site-region="aside"],
+  .site-canvas.wx-exploration-root aside[data-site-region="case-aside"] {
+    view-transition-name: wx-explore-aside;
+  }
+
   .site-canvas.wx-exploration-root .site-vt--panels#site-panels {
-    view-transition-name: none;
+    view-transition-name: wx-explore-panels;
   }
 }
 

@@ -399,28 +399,87 @@
   line-height: 1.45;
 }
 
-/* Route view-transitions: quick fast→slow crossfade. */
+/* Route view-transitions — exploration home ↔ case study (`navigateWithViewTransition`).
+   Aside + panels are named in `site-canvas.css`; root handles remaining backdrop. */
 @supports (view-transition-name: none) {
   :root {
-    --wx-vt-route: 0.32s;
+    --wx-vt-route: 0.52s;
+    --wx-vt-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --wx-vt-ease-out-strong: cubic-bezier(0.4, 0, 1, 1);
+    --wx-vt-panels-nudge: 0.85rem;
   }
 
-  @keyframes wcase-vt-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+  @keyframes wx-vt-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
   }
 
-  @keyframes wcase-vt-fade-out {
-    from { opacity: 1; }
-    to   { opacity: 0; }
+  @keyframes wx-vt-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes wx-vt-panels-leave {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(calc(var(--wx-vt-panels-nudge) * -1));
+    }
+  }
+
+  @keyframes wx-vt-panels-enter {
+    from {
+      opacity: 0;
+      transform: translateX(var(--wx-vt-panels-nudge));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   ::view-transition-old(root) {
-    animation: wcase-vt-fade-out var(--wx-vt-route) cubic-bezier(0.4, 0, 1, 1) both;
+    animation: wx-vt-fade-out var(--wx-vt-route) var(--wx-vt-ease-out-strong) both;
   }
 
   ::view-transition-new(root) {
-    animation: wcase-vt-fade-in var(--wx-vt-route) cubic-bezier(0.23, 1, 0.32, 1) both;
+    animation: wx-vt-fade-in var(--wx-vt-route) var(--wx-vt-ease) both;
+  }
+
+  ::view-transition-old(wx-explore-aside) {
+    animation: wx-vt-fade-out calc(var(--wx-vt-route) * 0.92) var(--wx-vt-ease-out-strong) both;
+  }
+
+  ::view-transition-new(wx-explore-aside) {
+    animation: wx-vt-fade-in calc(var(--wx-vt-route) * 0.92) var(--wx-vt-ease) both;
+  }
+
+  ::view-transition-old(wx-explore-panels) {
+    animation: wx-vt-panels-leave var(--wx-vt-route) var(--wx-vt-ease) both;
+  }
+
+  ::view-transition-new(wx-explore-panels) {
+    animation: wx-vt-panels-enter var(--wx-vt-route) var(--wx-vt-ease) both;
+  }
+
+  /* Left rail reads continuous while the gallery column carries directional motion */
+  ::view-transition-group(wx-explore-aside) {
+    z-index: 2;
+  }
+
+  ::view-transition-group(wx-explore-panels) {
+    z-index: 1;
   }
 }
 
