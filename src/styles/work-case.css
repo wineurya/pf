@@ -146,6 +146,26 @@
   gap: 0.375rem 0.45rem;
 }
 
+[data-site-region="case-aside"] .wx-case-tags__group--tools {
+  gap: 0.625rem 0.75rem;
+  align-items: center;
+}
+
+[data-site-region="case-aside"] .wx-case-tags__tool-mark {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--wx-ink);
+}
+
+[data-site-region="case-aside"] .wx-case-tags__tool-mark__icon {
+  display: block;
+  flex-shrink: 0;
+}
+
 [data-site-region="case-aside"] .wx-case-tags__pill {
   display: inline-flex;
   align-items: center;
@@ -158,16 +178,9 @@
   letter-spacing: -0.015em;
 }
 
-[data-site-region="case-aside"] .wx-case-tags__pill--tool {
-  color: var(--wx-muted);
-  background-color: var(--wx-surface-soft);
-  border: 1px solid var(--wx-border-faint);
-}
-
 [data-site-region="case-aside"] .wx-case-tags__pill--highlight {
   color: var(--wx-ink);
   background-color: color-mix(in srgb, var(--wx-primary) 9%, var(--wx-page-bg));
-  border: 1px solid color-mix(in srgb, var(--wx-primary) 18%, transparent);
 }
 
 /* prose blocks (problem, outcome, reflection) */

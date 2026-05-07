@@ -2,6 +2,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
+import { CaseStudyToolBrandIcon } from "@/exploration/CaseStudyToolBrandIcon.jsx";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
 
 function MetaBlock({ label, value }) {
@@ -26,10 +27,12 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
           <p id="case-tags-tools" className="wx-case-tags__label">
             Tools
           </p>
-          <ul className="wx-case-tags__group" aria-labelledby="case-tags-tools">
+          <ul className="wx-case-tags__group wx-case-tags__group--tools" aria-labelledby="case-tags-tools">
             {tools.map((tag) => (
               <li key={`tool-${tag}`}>
-                <span className="wx-case-tags__pill wx-case-tags__pill--tool">{tag}</span>
+                <span className="wx-case-tags__tool-mark" title={tag} aria-label={tag}>
+                  <CaseStudyToolBrandIcon label={tag} className="wx-case-tags__tool-mark__icon" />
+                </span>
               </li>
             ))}
           </ul>
