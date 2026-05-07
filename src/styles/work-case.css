@@ -113,7 +113,7 @@
   max-width: 38ch;
 }
 
-/* Case aside — tools row + minimal Focus phrase (inline meta, no chips). */
+/* Case aside — tools row + Focus chips (soft pills). */
 [data-site-region="case-aside"] .wx-case-tags {
   display: flex;
   flex-direction: column;
@@ -163,13 +163,25 @@
   max-width: 100%;
 }
 
-[data-site-region="case-aside"] .wx-case-tags__group:not(.wx-case-tags__group--tools) > li:not(:last-child)::after {
+[data-site-region="case-aside"]
+  .wx-case-tags__group:not(.wx-case-tags__group--tools):not(.wx-case-tags__group--focus)
+  > li:not(:last-child)::after {
   content: "·";
   margin-inline-start: 0.35rem;
   color: var(--wx-mute-2);
   font-size: var(--wx-text-meta-size, 0.8125rem);
   font-weight: 400;
   pointer-events: none;
+}
+
+[data-site-region="case-aside"] .wx-case-tags__group--focus {
+  column-gap: 0.375rem;
+  row-gap: 0.375rem;
+  align-items: center;
+}
+
+[data-site-region="case-aside"] .wx-case-tags__group--focus > li {
+  align-items: center;
 }
 
 [data-site-region="case-aside"] .wx-case-tags__tool-mark {
@@ -190,21 +202,21 @@
   object-fit: contain;
 }
 
-/* Focus row — inline meta phrase (no chip chrome); tools block unchanged */
-[data-site-region="case-aside"] .wx-case-tags__pill {
-  display: inline;
+/* Focus row — soft pills (~12% ink fill), no stroke; tools block unchanged */
+[data-site-region="case-aside"] .wx-case-tags__group--focus .wx-case-tags__pill {
+  display: inline-flex;
+  align-items: center;
   max-width: 100%;
-  padding: 0;
-  border-radius: 0;
+  padding: 0.1875rem 0.5625rem;
+  border: none;
+  border-radius: 999px;
+  box-shadow: none;
   font-size: var(--wx-text-meta-size, 0.8125rem);
-  font-weight: 400;
+  font-weight: 500;
   line-height: var(--wx-text-meta-leading, 1.35);
-  letter-spacing: -0.01em;
-}
-
-[data-site-region="case-aside"] .wx-case-tags__pill--highlight {
-  color: var(--wx-muted);
-  background-color: transparent;
+  letter-spacing: -0.012em;
+  color: var(--wx-ink);
+  background-color: color-mix(in srgb, var(--wx-ink) 12%, transparent);
 }
 
 /* Shared aside chrome — applies to both the home `[data-site-region="aside"]`

@@ -43,7 +43,7 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
           <p id="case-tags-focus" className="wx-case-tags__label">
             Focus
           </p>
-          <ul className="wx-case-tags__group" aria-labelledby="case-tags-focus">
+          <ul className="wx-case-tags__group wx-case-tags__group--focus" aria-labelledby="case-tags-focus">
             {highlights.map((tag) => (
               <li key={`hi-${tag}`}>
                 <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
