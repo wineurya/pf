@@ -6,7 +6,7 @@ import { ResolutionsCaseStudy } from "@/case-studies/ResolutionsCaseStudy.jsx";
 import { SirenCaseStudy } from "@/case-studies/SirenCaseStudy.jsx";
 import { ExplorationBody, ExplorationMainPanels } from "@/exploration/layout/ExplorationLayout.jsx";
 import { WorkCaseLayout } from "@/exploration/layout/WorkCaseLayout.jsx";
-import { CaseStudyAside } from "@/exploration/CaseStudyAside.jsx";
+import { CaseStudyAside, getCaseStudyTagRails } from "@/exploration/CaseStudyAside.jsx";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
 
 const CASE_STUDY_BY_SLUG = {
@@ -22,9 +22,16 @@ const CASE_STUDY_BY_SLUG = {
  * • RIGHT: media-led gallery the case study renders.
  */
 function CaseStudyShell({ def, gridEntry, CaseStudy, location, navigate }) {
+  const tagRails = getCaseStudyTagRails(def.editorialMeta ?? null, gridEntry);
   return (
     <ExplorationBody>
-      <CaseStudyAside def={def} gridEntry={gridEntry} location={location} navigate={navigate} />
+      <CaseStudyAside
+        def={def}
+        gridEntry={gridEntry}
+        location={location}
+        navigate={navigate}
+        tagRails={tagRails}
+      />
       <ExplorationMainPanels
         as="main"
         data-site-region="case-panels"

@@ -113,17 +113,17 @@
   max-width: 38ch;
 }
 
-/* WorkCasePage aside — grouped tools vs focus chips. Quiet by design (less-is-more). */
+/* Case aside — tools row + minimal Focus phrase (inline meta, no chips). */
 [data-site-region="case-aside"] .wx-case-tags {
   display: flex;
   flex-direction: column;
-  gap: 1.125rem;
+  gap: clamp(0.75rem, 0.5rem + 0.6vw, 1rem);
 }
 
 [data-site-region="case-aside"] .wx-case-tags__block {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: clamp(0.35rem, 0.25rem + 0.3vw, 0.5rem);
 }
 
 /* Match `wx-aside-footer__label` so every aside eyebrow reads the same */
@@ -143,17 +143,39 @@
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.375rem 0.45rem;
+  align-items: baseline;
+  gap: 0;
 }
 
 [data-site-region="case-aside"] .wx-case-tags__group--tools {
-  gap: 0.625rem 0.75rem;
+  gap: 16px;
   align-items: center;
+}
+
+[data-site-region="case-aside"] .wx-case-tags__group:not(.wx-case-tags__group--tools) {
+  column-gap: 0;
+  row-gap: 0.25rem;
+}
+
+[data-site-region="case-aside"] .wx-case-tags__group:not(.wx-case-tags__group--tools) > li {
+  display: inline-flex;
+  align-items: baseline;
+  max-width: 100%;
+}
+
+[data-site-region="case-aside"] .wx-case-tags__group:not(.wx-case-tags__group--tools) > li:not(:last-child)::after {
+  content: "·";
+  margin-inline-start: 0.35rem;
+  color: var(--wx-mute-2);
+  font-size: var(--wx-text-meta-size, 0.8125rem);
+  font-weight: 400;
+  pointer-events: none;
 }
 
 [data-site-region="case-aside"] .wx-case-tags__tool-mark {
   display: inline-flex;
-  max-height: 32px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -162,28 +184,207 @@
 
 [data-site-region="case-aside"] .wx-case-tags__tool-mark__icon {
   display: block;
+  width: 100%;
+  height: 100%;
   flex-shrink: 0;
-  max-height: 32px;
-  width: auto;
-  height: auto;
   object-fit: contain;
 }
 
+/* Focus row — inline meta phrase (no chip chrome); tools block unchanged */
 [data-site-region="case-aside"] .wx-case-tags__pill {
-  display: inline-flex;
-  align-items: center;
+  display: inline;
   max-width: 100%;
-  padding: 0.1875rem 0.5625rem;
-  border-radius: 6px;
+  padding: 0;
+  border-radius: 0;
   font-size: var(--wx-text-meta-size, 0.8125rem);
-  font-weight: 500;
-  line-height: 1.38;
-  letter-spacing: -0.015em;
+  font-weight: 400;
+  line-height: var(--wx-text-meta-leading, 1.35);
+  letter-spacing: -0.01em;
 }
 
 [data-site-region="case-aside"] .wx-case-tags__pill--highlight {
+  color: var(--wx-muted);
+  background-color: transparent;
+}
+
+/* Shared aside chrome — applies to both the home `[data-site-region="aside"]`
+   and the case study `[data-site-region="case-aside"]` so wordmark + content
+   start at the same vertical rhythm and the route transition reads as a
+   single spread, not two pages.
+
+   Bars run the full body height; heading sits above each bar. Bar colors
+   use the marketing primary (blue) and a confident success green. */
+:root {
+  /* Outer column padding — used by both the home aside and the case aside.
+     Grows with viewport height so 13" laptops stay readable while big
+     monitors get the full marketing margin. */
+  --wx-aside-pad-y-mobile: 2.5rem;
+  --wx-aside-pad-y-sm: 2.5rem;
+  --wx-aside-pad-y-lg: clamp(1.75rem, 1rem + 1.5vh, 3rem);
+  /*
+   * #site-panels (lg): first surface lines up with the tab rail — the rail is shorter
+   * than `min-h-14` and sits vertically centered in the nav row (ExplorationNavRow /
+   * CaseStudyAsideTopRow). Matches exploration `min-h-14` (= 3.5rem).
+   */
+  --wx-panels-pad-top-lg: calc(
+    var(--wx-aside-pad-y-lg) + (3.5rem - var(--wx-tab-track-outer-height)) / 2
+  );
+  /* Content rhythm inside the case-aside column. Tightened so the title block
+     reads as a single object before the gist/outcome blocks split off. */
+  --wx-case-aside-mt: clamp(0.85rem, 0.4rem + 1vh, 1.5rem);
+  --wx-case-aside-stack-gap: clamp(0.85rem, 0.4rem + 1.1vh, 1.4rem);
+  --wx-case-aside-footer-gap: clamp(0.55rem, 0.2rem + 0.8vh, 1rem);
+  --wx-case-aside-footer-pad-top: clamp(0.65rem, 0.2rem + 1vh, 1.1rem);
+  --wx-case-aside-meta-gap-x: clamp(1rem, 0.5rem + 1.4vw, 1.5rem);
+  --wx-case-aside-meta-gap-y: clamp(0.6rem, 0.4rem + 0.6vh, 0.95rem);
+
+  /* Title block — page identifier. Title sits dominant; lede matches home aside subhead. */
+  --wx-case-aside-title-stack-gap: clamp(0.5rem, 0.3rem + 0.5vh, 0.8rem);
+  --wx-case-aside-title-inner-gap: clamp(0.2rem, 0.1rem + 0.2vh, 0.4rem);
+  --wx-case-aside-title-size: clamp(1.875rem, 1.1rem + 2.2vw, 2.625rem);
+
+  /* Gist + outcome blocks — bar layout; body copy matches `.wx-text-body-secondary` + `--wx-muted`. */
+  --wx-case-aside-bar-width: clamp(3px, 0.32vw, 4px);
+  --wx-case-aside-bar-radius: 999px;
+  --wx-case-aside-bar-gist: var(--wx-primary);
+  --wx-case-aside-bar-outcome: #16a34a;
+  --wx-case-aside-block-gap: clamp(0.45rem, 0.25rem + 0.4vh, 0.7rem);
+  --wx-case-aside-body-gap: clamp(0.4rem, 0.2rem + 0.45vh, 0.75rem);
+  --wx-case-aside-body-pad: clamp(0.75rem, 0.55rem + 0.6vw, 1rem);
+  --wx-case-aside-heading-size: clamp(0.9375rem, 0.78rem + 0.4vw, 1.0625rem);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wx-case-aside-block-gap);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-block__heading {
+  margin: 0;
+  font-size: var(--wx-case-aside-heading-size);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.012em;
   color: var(--wx-ink);
-  background-color: color-mix(in srgb, var(--wx-primary) 9%, var(--wx-page-bg));
+}
+
+[data-site-region="case-aside"] .wx-case-aside-block__body {
+  position: relative;
+  padding-left: calc(var(--wx-case-aside-body-pad) + var(--wx-case-aside-bar-width));
+  display: flex;
+  flex-direction: column;
+  gap: var(--wx-case-aside-body-gap);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-block__body::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--wx-case-aside-bar-width);
+  border-radius: var(--wx-case-aside-bar-radius);
+  background-color: var(--wx-case-aside-bar-color, var(--wx-primary));
+}
+
+[data-site-region="case-aside"] .wx-case-aside-block--gist .wx-case-aside-block__body {
+  --wx-case-aside-bar-color: var(--wx-case-aside-bar-gist);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-block--outcome .wx-case-aside-block__body {
+  --wx-case-aside-bar-color: var(--wx-case-aside-bar-outcome);
+}
+
+/* Same pairing as exploration aside: `.wx-text-body-secondary text-[var(--wx-muted)]` */
+[data-site-region="case-aside"] .wx-case-aside-title__lede,
+[data-site-region="case-aside"] .wx-case-aside-block__para {
+  margin: 0;
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-text-body-secondary-size);
+  line-height: var(--wx-text-body-secondary-leading);
+  font-weight: 400;
+  font-synthesis: none;
+  color: var(--wx-muted);
+}
+
+@media (width >= 40rem) {
+  [data-site-region="case-aside"] .wx-case-aside-title__lede,
+  [data-site-region="case-aside"] .wx-case-aside-block__para {
+    font-size: var(--wx-text-body-secondary-size-sm);
+    line-height: var(--wx-text-body-secondary-leading-sm);
+  }
+}
+
+[data-site-region="case-aside"] .wx-case-aside-block__para + .wx-case-aside-block__para {
+  margin-top: 0;
+}
+
+/* Shared aside shell padding — same vertical rhythm on home + case study
+   so the route transition reads as one column, not two. */
+.wx-aside-shell {
+  padding-top: var(--wx-aside-pad-y-mobile);
+  padding-bottom: var(--wx-aside-pad-y-mobile);
+}
+
+@media (width >= 40rem) {
+  .wx-aside-shell {
+    padding-top: var(--wx-aside-pad-y-sm);
+    padding-bottom: var(--wx-aside-pad-y-sm);
+  }
+}
+
+@media (width >= 64rem) {
+  .wx-aside-shell {
+    padding-top: var(--wx-aside-pad-y-lg);
+    padding-bottom: var(--wx-aside-pad-y-lg);
+  }
+}
+
+[data-site-region="case-aside"] .wx-case-aside-stack {
+  margin-top: var(--wx-case-aside-mt);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-stack__inner > * + * {
+  margin-top: var(--wx-case-aside-stack-gap);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-footer > * + * {
+  margin-top: var(--wx-case-aside-footer-gap);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-footer {
+  padding-top: var(--wx-case-aside-footer-pad-top);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-meta {
+  column-gap: var(--wx-case-aside-meta-gap-x);
+  row-gap: var(--wx-case-aside-meta-gap-y);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-meta__item {
+  min-width: 0;
+}
+
+[data-site-region="case-aside"] .wx-case-aside-meta__item > * + * {
+  margin-top: 0.25rem;
+}
+
+[data-site-region="case-aside"] .wx-case-aside-title > * + * {
+  margin-top: var(--wx-case-aside-title-stack-gap);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-title__stack > * + * {
+  margin-top: var(--wx-case-aside-title-inner-gap);
+}
+
+[data-site-region="case-aside"] .wx-case-aside-title__heading {
+  margin: 0;
+  font-family: var(--font-display, ui-rounded, system-ui, sans-serif);
+  font-size: var(--wx-case-aside-title-size);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: var(--wx-ink);
 }
 
 /* prose blocks (problem, outcome, reflection) */
@@ -415,14 +616,14 @@
   line-height: 1.45;
 }
 
-/* Route view-transitions — exploration home ↔ case study (`navigateWithViewTransition`).
-   Aside + panels are named in `site-canvas.css`; root handles remaining backdrop. */
+/* Route view-transitions — exploration home ↔ case study.
+   Symmetric cross-fade in both directions: same duration, same ease, same
+   ordering. No directional translation — those make one direction read as
+   "advance" and the other as "snap." */
 @supports (view-transition-name: none) {
   :root {
-    --wx-vt-route: 0.52s;
-    --wx-vt-ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --wx-vt-ease-out-strong: cubic-bezier(0.4, 0, 1, 1);
-    --wx-vt-panels-nudge: 0.85rem;
+    --wx-vt-route: 0.4s;
+    --wx-vt-ease: cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   @keyframes wx-vt-fade-out {
@@ -443,53 +644,25 @@
     }
   }
 
-  @keyframes wx-vt-panels-leave {
-    from {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateX(calc(var(--wx-vt-panels-nudge) * -1));
-    }
-  }
-
-  @keyframes wx-vt-panels-enter {
-    from {
-      opacity: 0;
-      transform: translateX(var(--wx-vt-panels-nudge));
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  ::view-transition-old(root) {
-    animation: wx-vt-fade-out var(--wx-vt-route) var(--wx-vt-ease-out-strong) both;
-  }
-
+  /* Backdrop holds — fewer competing fades. */
+  ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation: wx-vt-fade-in var(--wx-vt-route) var(--wx-vt-ease) both;
+    animation: none;
   }
 
-  ::view-transition-old(wx-explore-aside) {
-    animation: wx-vt-fade-out calc(var(--wx-vt-route) * 0.92) var(--wx-vt-ease-out-strong) both;
-  }
-
-  ::view-transition-new(wx-explore-aside) {
-    animation: wx-vt-fade-in calc(var(--wx-vt-route) * 0.92) var(--wx-vt-ease) both;
-  }
-
+  /* Cross-fade with a brief overlap so the page is never fully blank. Both
+     aside + panels run on the exact same timing in both directions. */
+  ::view-transition-old(wx-explore-aside),
   ::view-transition-old(wx-explore-panels) {
-    animation: wx-vt-panels-leave var(--wx-vt-route) var(--wx-vt-ease) both;
+    animation: wx-vt-fade-out calc(var(--wx-vt-route) * 0.55) var(--wx-vt-ease) both;
   }
 
+  ::view-transition-new(wx-explore-aside),
   ::view-transition-new(wx-explore-panels) {
-    animation: wx-vt-panels-enter var(--wx-vt-route) var(--wx-vt-ease) both;
+    animation: wx-vt-fade-in calc(var(--wx-vt-route) * 0.7) var(--wx-vt-ease)
+      calc(var(--wx-vt-route) * 0.3) both;
   }
 
-  /* Left rail reads continuous while the gallery column carries directional motion */
   ::view-transition-group(wx-explore-aside) {
     z-index: 2;
   }

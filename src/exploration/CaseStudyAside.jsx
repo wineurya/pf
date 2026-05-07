@@ -10,7 +10,7 @@ function MetaBlock({ label, value }) {
   return (
     <div className="wx-case-aside-meta__item">
       <p className="wx-aside-footer__label">{label}</p>
-      <p className="wx-text-sm font-medium tracking-tight text-[var(--wx-ink)]">{value}</p>
+      <p className="wx-text-sm font-medium tracking-normal text-[var(--wx-ink)]">{value}</p>
     </div>
   );
 }
@@ -56,11 +56,10 @@ function CaseStudyTagPills({ toolLabels, highlightLabels }) {
   );
 }
 
-function CaseStudyTitleBlock({ year, title, lede }) {
+function CaseStudyTitleBlock({ title, lede }) {
   return (
     <div className="wx-case-aside-title">
       <div className="wx-case-aside-title__stack">
-        {year ? <p className="wx-aside-footer__label">{year}</p> : null}
         <h1 className="wx-case-aside-title__heading">{title}</h1>
       </div>
       {lede ? <p className="wx-case-aside-title__lede">{lede}</p> : null}
@@ -186,7 +185,7 @@ function CaseStudyAsideMeta({ industry, role, team, duration }) {
 }
 
 /** Dedupe preserves first-seen order within each rail */
-function asideTagRails(editorialMeta, gridEntry) {
+export function getCaseStudyTagRails(editorialMeta, gridEntry) {
   const toolLabels = editorialMeta?.toolLabels?.filter(Boolean) ?? [];
   const fromMeta = editorialMeta?.highlightLabels?.filter(Boolean) ?? [];
   const fromGrid = gridEntry?.nuggets?.map((n) => n.label).filter(Boolean) ?? [];
@@ -210,13 +209,12 @@ function asideOutcomeParagraphs(editorialMeta) {
 }
 
 /**
- * Editorial source-of-truth for a case study route — title, year, lede, meta, tags.
+ * Editorial source-of-truth for a case study route — title, lede, meta, tags.
  * Column shell matches `ExplorationPageAside` (same lg aside basis, padding, sticky height, header wrapper).
  */
-export function CaseStudyAside({ def, gridEntry, location, navigate }) {
+export function CaseStudyAside({ def, gridEntry, location, navigate, tagRails }) {
   const editorialMeta = def.editorialMeta ?? null;
-  const { toolLabels, highlightLabels } = asideTagRails(editorialMeta, gridEntry);
-  const year = gridEntry?.year?.trim();
+  const { toolLabels, highlightLabels } = tagRails ?? getCaseStudyTagRails(editorialMeta, gridEntry);
   const role = gridEntry?.role?.trim();
   const industry = editorialMeta?.industry?.trim();
   const aboutParagraphs = asideAboutParagraphs(editorialMeta, gridEntry);
@@ -258,7 +256,7 @@ export function CaseStudyAside({ def, gridEntry, location, navigate }) {
         <div className="site-vt--aside flex h-full min-h-0 w-full min-w-0 flex-1 flex-col items-start justify-between">
           <div className="wx-case-aside-stack flex w-full min-w-0 shrink-0 flex-col items-start justify-start lg:min-h-0">
             <div className="wx-case-aside-stack__inner w-full">
-              <CaseStudyTitleBlock year={year} title={def.title} lede={def.lede} />
+              <CaseStudyTitleBlock title={def.title} lede={def.lede} />
               {showAboutSection ? (
                 <CaseStudyGistBlock title={def.title} paragraphs={aboutParagraphs} />
               ) : null}
