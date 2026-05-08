@@ -50,6 +50,9 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       onClick={(e) => {
+        if (e.button !== 0 || e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
+          return;
+        }
         e.preventDefault();
         if (location.pathname !== "/") {
           navigateWithViewTransition(navigate, "/");

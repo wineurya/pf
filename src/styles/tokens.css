@@ -43,8 +43,9 @@
   --leading-relaxed: 1.625;
   --leading-loose: 2;
 
-  --tracking-tighter: -0.05em;
-  --tracking-tight: -0.025em;
+  /* Portfolio rule: letter-spacing ≥ 0 (no negative optical tightening). */
+  --tracking-tighter: 0em;
+  --tracking-tight: 0em;
   --tracking-normal: 0em;
   --tracking-wide: 0.025em;
   --tracking-wider: 0.05em;

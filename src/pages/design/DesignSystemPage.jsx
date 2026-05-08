@@ -29,28 +29,28 @@ const COLOR_GROUPS = [
     items: [
       {
         name: "Page BG",
-        token: "--wx-page-bg",
+        cssVar: "--wx-page-bg",
         primitive: "--color-neutral-0",
         bg: "var(--wx-page-bg)",
         usage: "Root page background",
       },
       {
         name: "White",
-        token: "--wx-white",
+        cssVar: "--wx-white",
         primitive: "--color-neutral-0",
         bg: "var(--wx-white)",
         usage: "Card surfaces, inputs",
       },
       {
         name: "Surface",
-        token: "--wx-surface",
+        cssVar: "--wx-surface",
         primitive: "--color-neutral-100",
         bg: "var(--wx-surface)",
         usage: "Chips, filled tabs, subtle wells",
       },
       {
         name: "Surface Soft",
-        token: "--wx-surface-soft",
+        cssVar: "--wx-surface-soft",
         primitive: "--color-neutral-50",
         bg: "var(--wx-surface-soft)",
         usage: "Hover fills, inactive sections",
@@ -63,21 +63,21 @@ const COLOR_GROUPS = [
     items: [
       {
         name: "Ink",
-        token: "--wx-ink",
+        cssVar: "--wx-ink",
         primitive: "--color-neutral-900",
         bg: "var(--wx-ink)",
         usage: "Primary body text, headings",
       },
       {
         name: "Muted",
-        token: "--wx-muted",
+        cssVar: "--wx-muted",
         primitive: "--color-neutral-600",
         bg: "var(--wx-muted)",
         usage: "Labels, secondary copy, captions",
       },
       {
         name: "Mute 2",
-        token: "--wx-mute-2",
+        cssVar: "--wx-mute-2",
         primitive: "--color-neutral-500",
         bg: "var(--wx-mute-2)",
         usage: "Tertiary text, placeholders",
@@ -90,25 +90,25 @@ const COLOR_GROUPS = [
     items: [
       {
         name: "Primary",
-        token: "--wx-primary",
+        cssVar: "--wx-primary",
         bg: "var(--wx-primary)",
         usage: "CTAs, links, active states",
       },
       {
         name: "Teal",
-        token: "--wx-accent-teal",
+        cssVar: "--wx-accent-teal",
         bg: "var(--wx-accent-teal)",
         usage: "Tool tags, alternate accent",
       },
       {
         name: "Violet",
-        token: "--wx-accent-violet",
+        cssVar: "--wx-accent-violet",
         bg: "var(--wx-accent-violet)",
         usage: "Gradient, highlight variant",
       },
       {
         name: "Amber",
-        token: "--wx-accent-amber",
+        cssVar: "--wx-accent-amber",
         bg: "var(--wx-accent-amber)",
         usage: "Warnings, warm highlights",
       },
@@ -117,16 +117,16 @@ const COLOR_GROUPS = [
 ];
 
 const BORDER_TOKENS = [
-  { name: "Hairline",    token: "--wx-border-hairline", opacity: "4.5%", usage: "Ultra-fine separators" },
-  { name: "Faint",       token: "--wx-border-faint",    opacity: "5%",   usage: "Card inner outlines" },
-  { name: "Soft",        token: "--wx-border-soft",     opacity: "6%",   usage: "Section dividers, card edges" },
-  { name: "Muted",       token: "--wx-border-muted",    opacity: "8%",   usage: "Input rings, hover outlines" },
-  { name: "Outline Ink", token: "--wx-outline-ink",     opacity: "12%",  usage: "Button rings, strong outlines" },
+  { name: "Hairline",    cssVar: "--wx-border-hairline", opacity: "4.5%", usage: "Ultra-fine separators" },
+  { name: "Faint",       cssVar: "--wx-border-faint",    opacity: "5%",   usage: "Card inner outlines" },
+  { name: "Soft",        cssVar: "--wx-border-soft",     opacity: "6%",   usage: "Section dividers, card edges" },
+  { name: "Muted",       cssVar: "--wx-border-muted",    opacity: "8%",   usage: "Input rings, hover outlines" },
+  { name: "Outline Ink", cssVar: "--wx-outline-ink",     opacity: "12%",  usage: "Button rings, strong outlines" },
 ];
 
 const FONT_FAMILIES = [
   {
-    token: "--font-display",
+    cssVar: "--font-display",
     label: "Display / titles",
     stack:
       "ui-rounded, SF Pro Rounded, SF Pro Display, SF Pro Text, system-ui…",
@@ -135,7 +135,7 @@ const FONT_FAMILIES = [
     mono: false,
   },
   {
-    token: "--font-body",
+    cssVar: "--font-body",
     label: "Body",
     stack: "SF Pro Text, SF Pro Display, system-ui…",
     usage: "Paragraphs, meta, UI chrome, kickers, inputs — SF Pro only (no Rounded).",
@@ -143,7 +143,7 @@ const FONT_FAMILIES = [
     mono: false,
   },
   {
-    token: "--font-mono",
+    cssVar: "--font-mono",
     label: "Mono",
     stack: "ui-monospace, SF Mono, Menlo, Monaco, Consolas…",
     usage: "Code, token values, tabular data",
@@ -155,7 +155,7 @@ const FONT_FAMILIES = [
 const TYPE_SCALE = [
   {
     label: "Meta",
-    token: "--wx-text-meta-size",
+    cssVar: "--wx-text-meta-size",
     size: "13px",
     className: "wx-text-meta",
     sample: "Coaching · Consumer mobile — 2024",
@@ -163,7 +163,7 @@ const TYPE_SCALE = [
   },
   {
     label: "Overline",
-    token: "--wx-text-overline-size",
+    cssVar: "--wx-text-overline-size",
     size: "12px",
     className: "wx-text-overline wx-text-section-kicker",
     sample: "SELECTED WORK",
@@ -171,7 +171,7 @@ const TYPE_SCALE = [
   },
   {
     label: "Small",
-    token: "--wx-text-sm-size",
+    cssVar: "--wx-text-sm-size",
     size: "14px",
     className: "wx-text-sm",
     sample: "Dense UI body, stat labels, tabs, case steps",
@@ -179,7 +179,7 @@ const TYPE_SCALE = [
   },
   {
     label: "Body Secondary",
-    token: "--wx-text-body-secondary-size",
+    cssVar: "--wx-text-body-secondary-size",
     size: "15 → 16px",
     className: "wx-text-body-secondary",
     sample: "Subheads, card summaries, case ledes, FAQ answers, studio intro.",
@@ -187,7 +187,7 @@ const TYPE_SCALE = [
   },
   {
     label: "Pullquote",
-    token: "--wx-text-pullquote-size",
+    cssVar: "--wx-text-pullquote-size",
     size: "17 → 20px",
     className: "wx-text-pullquote",
     sample: "Highlighted insight or editorial callout.",
@@ -195,7 +195,7 @@ const TYPE_SCALE = [
   },
   {
     label: "Section Title",
-    token: "--wx-text-section-title-size",
+    cssVar: "--wx-text-section-title-size",
     size: "24 → 30px",
     className: "wx-text-section-title",
     sample: "Work",
@@ -203,7 +203,7 @@ const TYPE_SCALE = [
   },
   {
     label: "Page Title",
-    token: "--wx-text-page-title-size",
+    cssVar: "--wx-text-page-title-size",
     size: "30 → 36px",
     className: "wx-text-page-title",
     sample: "Avance",
@@ -212,8 +212,8 @@ const TYPE_SCALE = [
 ];
 
 const LETTER_SPACING = [
-  { label: "Tighter",   value: "-0.05em",  tw: "tracking-tighter" },
-  { label: "Tight",     value: "-0.025em", tw: "tracking-tight" },
+  { label: "Tighter",   value: "0em", tw: "tracking-tighter" },
+  { label: "Tight",     value: "0em", tw: "tracking-tight" },
   { label: "Normal",    value: "0em",      tw: "tracking-normal" },
   { label: "Wide",      value: "0.025em",  tw: "tracking-wide" },
   { label: "Wider",     value: "0.05em",   tw: "tracking-wider" },
@@ -230,14 +230,14 @@ const LINE_HEIGHTS = [
 ];
 
 const FLUID_SPACING = [
-  { token: "--space-fluid-xs",  label: "xs",  range: "4 – 8px",    maxPx: 8   },
-  { token: "--space-fluid-sm",  label: "sm",  range: "8 – 16px",   maxPx: 16  },
-  { token: "--space-fluid-md",  label: "md",  range: "16 – 24px",  maxPx: 24  },
-  { token: "--space-fluid-lg",  label: "lg",  range: "24 – 40px",  maxPx: 40  },
-  { token: "--space-fluid-xl",  label: "xl",  range: "32 – 64px",  maxPx: 64  },
-  { token: "--space-fluid-2xl", label: "2xl", range: "48 – 96px",  maxPx: 96  },
-  { token: "--space-fluid-3xl", label: "3xl", range: "64 – 128px", maxPx: 128 },
-  { token: "--space-fluid-4xl", label: "4xl", range: "96 – 192px", maxPx: 192 },
+  { cssVar: "--space-fluid-xs",  label: "xs",  range: "4 – 8px",    maxPx: 8   },
+  { cssVar: "--space-fluid-sm",  label: "sm",  range: "8 – 16px",   maxPx: 16  },
+  { cssVar: "--space-fluid-md",  label: "md",  range: "16 – 24px",  maxPx: 24  },
+  { cssVar: "--space-fluid-lg",  label: "lg",  range: "24 – 40px",  maxPx: 40  },
+  { cssVar: "--space-fluid-xl",  label: "xl",  range: "32 – 64px",  maxPx: 64  },
+  { cssVar: "--space-fluid-2xl", label: "2xl", range: "48 – 96px",  maxPx: 96  },
+  { cssVar: "--space-fluid-3xl", label: "3xl", range: "64 – 128px", maxPx: 128 },
+  { cssVar: "--space-fluid-4xl", label: "4xl", range: "96 – 192px", maxPx: 192 },
 ];
 
 /** Subset of `@theme` `--spacing-*` in tokens.css — Tailwind `p-*`, `gap-*`, `m-*` map here. */
@@ -254,72 +254,72 @@ const SPACING_THEME_SAMPLES = [
 ];
 
 const BREAKPOINT_TOKENS = [
-  { token: "--breakpoint-xs",  value: "23.4375rem (~375px)", tw: "xs",  usage: "Device reference; not always a Tailwind prefix" },
-  { token: "--breakpoint-sm",  value: "40rem (640px)",       tw: "sm",  usage: "First conventional jump — type and density" },
-  { token: "--breakpoint-md",  value: "48rem (768px)",       tw: "md",  usage: "Tablet split, two-column aside" },
-  { token: "--breakpoint-lg",  value: "64rem (1024px)",      tw: "lg",  usage: "Desktop exploration chrome" },
-  { token: "--breakpoint-xl",  value: "80rem (1280px)",      tw: "xl",  usage: "Wide layout, max-width alignment" },
-  { token: "--breakpoint-2xl", value: "96rem (1536px)",      tw: "2xl", usage: "Extra-wide displays" },
-  { token: "--breakpoint-3xl", value: "120rem (1920px)",     tw: "3xl", usage: "Ultra-wide / large canvases" },
+  { cssVar: "--breakpoint-xs",  value: "23.4375rem (~375px)", tw: "xs",  usage: "Device reference; not always a Tailwind prefix" },
+  { cssVar: "--breakpoint-sm",  value: "40rem (640px)",       tw: "sm",  usage: "First conventional jump — type and density" },
+  { cssVar: "--breakpoint-md",  value: "48rem (768px)",       tw: "md",  usage: "Tablet split, two-column aside" },
+  { cssVar: "--breakpoint-lg",  value: "64rem (1024px)",      tw: "lg",  usage: "Desktop exploration chrome" },
+  { cssVar: "--breakpoint-xl",  value: "80rem (1280px)",      tw: "xl",  usage: "Wide layout, max-width alignment" },
+  { cssVar: "--breakpoint-2xl", value: "96rem (1536px)",      tw: "2xl", usage: "Extra-wide displays" },
+  { cssVar: "--breakpoint-3xl", value: "120rem (1920px)",     tw: "3xl", usage: "Ultra-wide / large canvases" },
 ];
 
 const LAYOUT_TOKENS = [
-  { token: "--wx-pad-x",               value: "clamp(1.25rem, 4vw, 3.75rem)", label: "Page padding X",       usage: "Horizontal inset on exploration / site-canvas shells" },
-  { token: "--wx-space-section",       value: "clamp(1.75rem, 4vw, 2.5rem)", label: "Section spacing",       usage: "Vertical gap between stacked aside / section blocks" },
-  { token: "--layout-gutter",          value: "clamp(1rem, 4vw, 3rem)",      label: "Layout gutter",        usage: "Global gutter when not using --wx-pad-x" },
-  { token: "--layout-max-width",       value: "80rem",                      label: "Max width",            usage: "Primary marketing column cap (1280px)" },
-  { token: "--layout-max-width-sm",    value: "40rem",                      label: "Max width (SM)",       usage: "Reading column, narrow forms" },
-  { token: "--layout-max-width-lg",    value: "96rem",                      label: "Max width (LG)",       usage: "Wide bands, bento-style shells" },
-  { token: "--wx-explore-aside-basis", value: "min(42%, 36rem)",             label: "Aside basis",           usage: "Left rail in work / case split layout" },
-  { token: "--wx-max-copy",            value: "31.3125rem",                 label: "Max copy width",        usage: "Overlay text rail before it meets the mock" },
-  { token: "--wx-work-overlay-pad-x",  value: "clamp(1rem, 3.5vw, 1.5rem)", label: "Work overlay pad X",    usage: "Card scrim / footer copy horizontal inset" },
-  { token: "--wx-work-overlay-pad-y",  value: "clamp(1rem, 3vw, 1.375rem)", label: "Work overlay pad Y",   usage: "Card scrim / footer copy vertical inset" },
-  { token: "--wx-work-copy-gap",       value: "0.5rem",                     label: "Work copy stack gap",   usage: "Title ↔ one-liner inside overlays" },
-  { token: "--wx-gallery-gap",         value: "12px",                       label: "Gallery gap",           usage: "Gallery grid gutter between frames" },
+  { cssVar: "--wx-pad-x",               value: "clamp(1.25rem, 4vw, 3.75rem)", label: "Page padding X",       usage: "Horizontal inset on exploration / site-canvas shells" },
+  { cssVar: "--wx-space-section",       value: "clamp(1.75rem, 4vw, 2.5rem)", label: "Section spacing",       usage: "Vertical gap between stacked aside / section blocks" },
+  { cssVar: "--layout-gutter",          value: "clamp(1rem, 4vw, 3rem)",      label: "Layout gutter",        usage: "Global gutter when not using --wx-pad-x" },
+  { cssVar: "--layout-max-width",       value: "80rem",                      label: "Max width",            usage: "Primary marketing column cap (1280px)" },
+  { cssVar: "--layout-max-width-sm",    value: "40rem",                      label: "Max width (SM)",       usage: "Reading column, narrow forms" },
+  { cssVar: "--layout-max-width-lg",    value: "96rem",                      label: "Max width (LG)",       usage: "Wide bands, bento-style shells" },
+  { cssVar: "--wx-explore-aside-basis", value: "min(42%, 36rem)",             label: "Aside basis",           usage: "Left rail in work / case split layout" },
+  { cssVar: "--wx-max-copy",            value: "31.3125rem",                 label: "Max copy width",        usage: "Overlay text rail before it meets the mock" },
+  { cssVar: "--wx-work-overlay-pad-x",  value: "clamp(1rem, 3.5vw, 1.5rem)", label: "Work overlay pad X",    usage: "Card scrim / footer copy horizontal inset" },
+  { cssVar: "--wx-work-overlay-pad-y",  value: "clamp(1rem, 3vw, 1.375rem)", label: "Work overlay pad Y",   usage: "Card scrim / footer copy vertical inset" },
+  { cssVar: "--wx-work-copy-gap",       value: "0.5rem",                     label: "Work copy stack gap",   usage: "Title ↔ one-liner inside overlays" },
+  { cssVar: "--wx-gallery-gap",         value: "12px",                       label: "Gallery gap",           usage: "Gallery grid gutter between frames" },
 ];
 
 const RADIUS_TOKENS = [
-  { token: "--radius-xs",          value: "2px",            label: "XS",          usage: "Fine chip corners" },
-  { token: "--radius-sm",          value: "4px",            label: "SM",          usage: "Inputs, subtle cards" },
-  { token: "--radius-md",          value: "6px",            label: "MD",          usage: "Buttons, small panels" },
-  { token: "--wx-radius-card",     value: "8px",            label: "Card",        usage: "Work cards, case wells" },
-  { token: "--wx-radius-segment",  value: "12px",           label: "Segment",     usage: "Active tab pill" },
-  { token: "--wx-radius-track",    value: "16px",           label: "Track",       usage: "Tab track container" },
-  { token: "--radius-3xl",         value: "24px",           label: "3XL",         usage: "Large decorative shapes" },
-  { token: "--radius-pill",        value: "624.9375rem",    label: "Pill",        usage: "Avatar chips, full pill" },
+  { cssVar: "--radius-xs",          value: "2px",            label: "XS",          usage: "Fine chip corners" },
+  { cssVar: "--radius-sm",          value: "4px",            label: "SM",          usage: "Inputs, subtle cards" },
+  { cssVar: "--radius-md",          value: "6px",            label: "MD",          usage: "Buttons, small panels" },
+  { cssVar: "--wx-radius-card",     value: "8px",            label: "Card",        usage: "Work cards, case wells" },
+  { cssVar: "--wx-radius-segment",  value: "12px",           label: "Segment",     usage: "Active tab pill" },
+  { cssVar: "--wx-radius-track",    value: "16px",           label: "Track",       usage: "Tab track container" },
+  { cssVar: "--radius-3xl",         value: "24px",           label: "3XL",         usage: "Large decorative shapes" },
+  { cssVar: "--radius-pill",        value: "624.9375rem",    label: "Pill",        usage: "Avatar chips, full pill" },
 ];
 
 const DURATION_TOKENS = [
-  { token: "--duration-instant",  value: "0ms",   label: "Instant",  barPct: 0,   usage: "Visibility toggles" },
-  { token: "--duration-fast",     value: "100ms", label: "Fast",     barPct: 12,  usage: "Icon swaps, checkboxes" },
-  { token: "--duration-normal",   value: "200ms", label: "Normal",   barPct: 25,  usage: "Hover states" },
-  { token: "--duration-moderate", value: "300ms", label: "Moderate", barPct: 37,  usage: "Panel slides, menus" },
-  { token: "--duration-slow",     value: "400ms", label: "Slow",     barPct: 50,  usage: "Tab transitions" },
-  { token: "--duration-slower",   value: "600ms", label: "Slower",   barPct: 75,  usage: "Page-level motion" },
-  { token: "--duration-slowest",  value: "800ms", label: "Slowest",  barPct: 100, usage: "Cinematic reveals" },
+  { cssVar: "--duration-instant",  value: "0ms",   label: "Instant",  barPct: 0,   usage: "Visibility toggles" },
+  { cssVar: "--duration-fast",     value: "100ms", label: "Fast",     barPct: 12,  usage: "Icon swaps, checkboxes" },
+  { cssVar: "--duration-normal",   value: "200ms", label: "Normal",   barPct: 25,  usage: "Hover states" },
+  { cssVar: "--duration-moderate", value: "300ms", label: "Moderate", barPct: 37,  usage: "Panel slides, menus" },
+  { cssVar: "--duration-slow",     value: "400ms", label: "Slow",     barPct: 50,  usage: "Tab transitions" },
+  { cssVar: "--duration-slower",   value: "600ms", label: "Slower",   barPct: 75,  usage: "Page-level motion" },
+  { cssVar: "--duration-slowest",  value: "800ms", label: "Slowest",  barPct: 100, usage: "Cinematic reveals" },
 ];
 
 const EASING_TOKENS = [
-  { token: "--ease-fluid",          value: "cubic-bezier(0.3, 0, 0, 1)",          label: "Fluid",          usage: "Default UI motion — smooth deceleration" },
-  { token: "--ease-snappy",         value: "cubic-bezier(0.2, 0, 0, 1)",          label: "Snappy",         usage: "Tight, immediate UI responses" },
-  { token: "--ease-spring",         value: "cubic-bezier(0.34, 1.56, 0.64, 1)",   label: "Spring",         usage: "Menus, drawers, popovers — slight overshoot" },
-  { token: "--ease-bounce",         value: "cubic-bezier(0.68, -0.55, 0.265, 1.55)", label: "Bounce",      usage: "Playful entries, badge pop-ins" },
-  { token: "--ease-expo-out",       value: "cubic-bezier(0.19, 1, 0.22, 1)",      label: "Expo Out",       usage: "Hero reveals, page transitions" },
-  { token: "--ease-back-out",       value: "cubic-bezier(0.175, 0.885, 0.32, 1.275)", label: "Back Out",   usage: "Scale-up reveals with pull-back" },
-  { token: "--ease-ui-strong-out",  value: "cubic-bezier(0.23, 1, 0.32, 1)",      label: "UI Strong Out",  usage: "Full-screen layout morphs, crossfades" },
-  { token: "--ease-morph-in-out",   value: "cubic-bezier(0.77, 0, 0.175, 1)",     label: "Morph In/Out",   usage: "Drawer-like moves, content swaps" },
+  { cssVar: "--ease-fluid",          value: "cubic-bezier(0.3, 0, 0, 1)",          label: "Fluid",          usage: "Default UI motion — smooth deceleration" },
+  { cssVar: "--ease-snappy",         value: "cubic-bezier(0.2, 0, 0, 1)",          label: "Snappy",         usage: "Tight, immediate UI responses" },
+  { cssVar: "--ease-spring",         value: "cubic-bezier(0.34, 1.56, 0.64, 1)",   label: "Spring",         usage: "Menus, drawers, popovers — slight overshoot" },
+  { cssVar: "--ease-bounce",         value: "cubic-bezier(0.68, -0.55, 0.265, 1.55)", label: "Bounce",      usage: "Playful entries, badge pop-ins" },
+  { cssVar: "--ease-expo-out",       value: "cubic-bezier(0.19, 1, 0.22, 1)",      label: "Expo Out",       usage: "Hero reveals, page transitions" },
+  { cssVar: "--ease-back-out",       value: "cubic-bezier(0.175, 0.885, 0.32, 1.275)", label: "Back Out",   usage: "Scale-up reveals with pull-back" },
+  { cssVar: "--ease-ui-strong-out",  value: "cubic-bezier(0.23, 1, 0.32, 1)",      label: "UI Strong Out",  usage: "Full-screen layout morphs, crossfades" },
+  { cssVar: "--ease-morph-in-out",   value: "cubic-bezier(0.77, 0, 0.175, 1)",     label: "Morph In/Out",   usage: "Drawer-like moves, content swaps" },
 ];
 
 const COMPONENT_TOKENS = [
-  { token: "--wx-radius-card",     value: "8px",            label: "Card radius",        where: "Work cards, MetaBlock wells" },
-  { token: "--wx-radius-segment",  value: "12px",           label: "Segment radius",     where: "Active tab in SectionTabRail" },
-  { token: "--wx-radius-track",    value: "16px",           label: "Track radius",       where: "Tab container in SectionTabRail" },
-  { token: "--wx-tab-pill-height", value: "2.375rem / 38px",label: "Tab height",         where: "SectionTabRail" },
-  { token: "--wx-gallery-gap",     value: "12px",           label: "Gallery gap",        where: "Work card grid gutter" },
-  { token: "--wx-text-aside-footer-size", value: "0.625rem / 10px", label: "Aside label size", where: "MetaBlock label, tag group headers" },
-  { token: "--wx-text-kicker-tracking",   value: "0.18em",          label: "Kicker tracking",  where: "Section kickers, overline elements" },
-  { token: "--wx-text-nugget",            value: "0.75rem",         label: "Work nugget type", where: "Default work-card chips (sentence case)" },
-  { token: "--wx-text-nugget-warm",       value: "0.7rem",          label: "Work nugget (warm)", where: "Warm-footer / Figma-style pill chips" },
+  { cssVar: "--wx-radius-card",     value: "8px",            label: "Card radius",        where: "Work cards, MetaBlock wells" },
+  { cssVar: "--wx-radius-segment",  value: "12px",           label: "Segment radius",     where: "Active tab in SectionTabRail" },
+  { cssVar: "--wx-radius-track",    value: "16px",           label: "Track radius",       where: "Tab container in SectionTabRail" },
+  { cssVar: "--wx-tab-pill-height", value: "2.375rem / 38px",label: "Tab height",         where: "SectionTabRail" },
+  { cssVar: "--wx-gallery-gap",     value: "12px",           label: "Gallery gap",        where: "Work card grid gutter" },
+  { cssVar: "--wx-text-aside-footer-size", value: "0.625rem / 10px", label: "Aside label size", where: "MetaBlock label, tag group headers" },
+  { cssVar: "--wx-text-kicker-tracking",   value: "0.18em",          label: "Kicker tracking",  where: "Section kickers, overline elements" },
+  { cssVar: "--wx-text-nugget",            value: "0.75rem",         label: "Work nugget type", where: "Default work-card chips (sentence case)" },
+  { cssVar: "--wx-text-nugget-warm",       value: "0.7rem",          label: "Work nugget (warm)", where: "Warm-footer / Figma-style pill chips" },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -353,7 +353,7 @@ function swatchInsetRing(oklchL) {
 }
 
 /** One row per token — same geometry as Border rows (swatch + copy + badge column). */
-function ColorTokenRow({ label, token, primitive, usage, bg, oklchL }) {
+function ColorTokenRow({ label, cssVar, primitive, usage, bg, oklchL }) {
   const swatchBg =
     oklchL !== undefined ? { backgroundColor: `oklch(${oklchL} 0 0)` } : { background: bg };
 
@@ -387,7 +387,7 @@ function ColorTokenRow({ label, token, primitive, usage, bg, oklchL }) {
         ) : null}
       </div>
       <div className="shrink-0 pt-0.5 text-right">
-        <TokenBadge>{token}</TokenBadge>
+        <TokenBadge>{cssVar}</TokenBadge>
       </div>
     </div>
   );
@@ -455,7 +455,7 @@ export default function DesignSystemPage() {
         </div>
       </header>
 
-      <main id="main" className="mx-auto max-w-[900px] px-[var(--wx-pad-x)] pb-32">
+      <div className="mx-auto max-w-[900px] px-[var(--wx-pad-x)] pb-32">
 
         {/* ── Hero ───────────────────────────────────────────────────────── */}
         <section className="pt-16 pb-14 lg:pt-20 lg:pb-16" aria-labelledby="design-system-title">
@@ -543,7 +543,7 @@ export default function DesignSystemPage() {
                   <ColorTokenRow
                     key={step}
                     label={`Neutral ${step}`}
-                    token={`--color-neutral-${step}`}
+                    cssVar={`--color-neutral-${step}`}
                     usage={usage}
                     oklchL={oklchL}
                   />
@@ -558,9 +558,9 @@ export default function DesignSystemPage() {
                 <div className="divide-y divide-[color:var(--wx-border-faint)] rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] overflow-hidden bg-[var(--wx-page-bg)]">
                   {group.items.map((item) => (
                     <ColorTokenRow
-                      key={item.token}
+                      key={item.cssVar}
                       label={item.name}
-                      token={item.token}
+                      cssVar={item.cssVar}
                       primitive={item.primitive}
                       usage={item.usage}
                       bg={item.bg}
@@ -583,10 +583,10 @@ export default function DesignSystemPage() {
               />
               <div className="divide-y divide-[color:var(--wx-border-faint)] rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] overflow-hidden bg-[var(--wx-page-bg)]">
                 {BORDER_TOKENS.map((b) => (
-                  <div key={b.token} className="flex items-start gap-4 px-3 py-3">
+                  <div key={b.cssVar} className="flex items-start gap-4 px-3 py-3">
                     <div
                       className="size-10 shrink-0 rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)]"
-                      style={{ border: `2px solid var(${b.token})` }}
+                      style={{ border: `2px solid var(${b.cssVar})` }}
                       aria-hidden
                     />
                     <div className="flex-1 min-w-0 space-y-1">
@@ -597,7 +597,7 @@ export default function DesignSystemPage() {
                       </p>
                     </div>
                     <div className="shrink-0 pt-0.5 text-right">
-                      <TokenBadge>{b.token}</TokenBadge>
+                      <TokenBadge>{b.cssVar}</TokenBadge>
                     </div>
                   </div>
                 ))}
@@ -655,7 +655,7 @@ export default function DesignSystemPage() {
               <div className="space-y-0">
                 {FONT_FAMILIES.map((fam) => (
                   <div
-                    key={fam.token}
+                    key={fam.cssVar}
                     className="flex items-start justify-between gap-6 py-4 border-b border-[color:var(--wx-border-faint)] last:border-0"
                   >
                     <div className="min-w-0">
@@ -669,7 +669,7 @@ export default function DesignSystemPage() {
                     </div>
                     <div className="shrink-0 text-right space-y-1 pt-0.5">
                       <p className="wx-text-sm font-semibold text-[var(--wx-ink)]">{fam.label}</p>
-                      <TokenBadge>{fam.token}</TokenBadge>
+                      <TokenBadge>{fam.cssVar}</TokenBadge>
                     </div>
                   </div>
                 ))}
@@ -686,7 +686,7 @@ export default function DesignSystemPage() {
               <div className="space-y-0">
                 {TYPE_SCALE.map((step) => (
                   <div
-                    key={step.token}
+                    key={step.cssVar}
                     className="py-5 border-b border-[color:var(--wx-border-faint)] last:border-0"
                   >
                     <div className="flex items-start justify-between gap-4 mb-1.5">
@@ -700,7 +700,7 @@ export default function DesignSystemPage() {
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-snug">{step.usage}</p>
-                      <TokenBadge>{step.token}</TokenBadge>
+                      <TokenBadge>{step.cssVar}</TokenBadge>
                     </div>
                   </div>
                 ))}
@@ -798,7 +798,7 @@ export default function DesignSystemPage() {
               </p>
               <div className="space-y-3">
                 {FLUID_SPACING.map((s) => (
-                  <div key={s.token} className="flex items-center gap-4">
+                  <div key={s.cssVar} className="flex items-center gap-4">
                     <span className="font-mono text-xs text-[var(--wx-muted)] w-6 shrink-0">{s.label}</span>
                     <div className="flex-1 h-5 bg-[var(--wx-surface)] rounded relative overflow-hidden">
                       <div
@@ -808,7 +808,7 @@ export default function DesignSystemPage() {
                     </div>
                     <div className="flex items-center justify-between gap-3 shrink-0 w-44">
                       <span className="wx-text-meta text-[var(--wx-muted)]">{s.range}</span>
-                      <TokenBadge>{s.token}</TokenBadge>
+                      <TokenBadge>{s.cssVar}</TokenBadge>
                     </div>
                   </div>
                 ))}
@@ -851,7 +851,7 @@ export default function DesignSystemPage() {
               <div className="space-y-0">
                 {LAYOUT_TOKENS.map((t) => (
                   <div
-                    key={t.token}
+                    key={t.cssVar}
                     className="flex items-start justify-between gap-6 py-3.5 border-b border-[color:var(--wx-border-faint)] last:border-0"
                   >
                     <div className="min-w-0">
@@ -859,7 +859,7 @@ export default function DesignSystemPage() {
                       <p className="wx-text-body-secondary text-[var(--wx-muted)] mt-1 leading-snug">{t.usage}</p>
                     </div>
                     <div className="shrink-0 text-right space-y-1">
-                      <TokenBadge>{t.token}</TokenBadge>
+                      <TokenBadge>{t.cssVar}</TokenBadge>
                       <p className="font-mono text-[10px] text-[var(--wx-muted)] block">{t.value}</p>
                     </div>
                   </div>
@@ -875,7 +875,7 @@ export default function DesignSystemPage() {
               </p>
               <div className="divide-y divide-[color:var(--wx-border-faint)] rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] overflow-hidden bg-[var(--wx-page-bg)]">
                 {BREAKPOINT_TOKENS.map((b) => (
-                  <div key={b.token} className="flex items-start gap-4 px-3 py-3">
+                  <div key={b.cssVar} className="flex items-start gap-4 px-3 py-3">
                     <div className="size-10 shrink-0 rounded-[var(--wx-radius-card)] bg-[var(--wx-surface)] ring-1 ring-[color:var(--wx-outline-ink)] flex items-center justify-center">
                       <span className="font-mono text-[10px] font-semibold text-[var(--wx-ink)]">{b.tw}</span>
                     </div>
@@ -884,7 +884,7 @@ export default function DesignSystemPage() {
                       <p className="font-mono text-[10px] text-[var(--wx-mute-2)]">{b.value}</p>
                     </div>
                     <div className="shrink-0 pt-0.5 text-right">
-                      <TokenBadge>{b.token}</TokenBadge>
+                      <TokenBadge>{b.cssVar}</TokenBadge>
                     </div>
                   </div>
                 ))}
@@ -915,7 +915,7 @@ export default function DesignSystemPage() {
           <div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {RADIUS_TOKENS.map((r) => (
-                <div key={r.token} className="space-y-2.5">
+                <div key={r.cssVar} className="space-y-2.5">
                   <div
                     className="w-full h-14 bg-[var(--wx-surface)] ring-1 ring-[color:var(--wx-border-soft)]"
                     style={{ borderRadius: r.value.includes("rem") || r.value.endsWith("px") ? r.value : undefined }}
@@ -924,7 +924,7 @@ export default function DesignSystemPage() {
                     <p className="text-xs font-semibold text-[var(--wx-ink)]">{r.label}</p>
                     <p className="font-mono text-[10px] text-[var(--wx-muted)]">{r.value}</p>
                     <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-tight">{r.usage}</p>
-                    <TokenBadge>{r.token}</TokenBadge>
+                    <TokenBadge>{r.cssVar}</TokenBadge>
                   </div>
                 </div>
               ))}
@@ -959,7 +959,7 @@ export default function DesignSystemPage() {
               </p>
               <div className="space-y-3">
                 {DURATION_TOKENS.map((d) => (
-                  <div key={d.token} className="flex items-center gap-3">
+                  <div key={d.cssVar} className="flex items-center gap-3">
                     <span className="font-mono text-xs text-[var(--wx-muted)] w-12 shrink-0 text-right tabular-nums">
                       {d.value}
                     </span>
@@ -989,12 +989,12 @@ export default function DesignSystemPage() {
               <div className="space-y-0">
                 {EASING_TOKENS.map((e) => (
                   <div
-                    key={e.token}
+                    key={e.cssVar}
                     className="py-4 border-b border-[color:var(--wx-border-faint)] last:border-0"
                   >
                     <div className="flex items-start justify-between gap-4 mb-1">
                       <p className="text-sm font-medium text-[var(--wx-ink)]">{e.label}</p>
-                      <TokenBadge>{e.token}</TokenBadge>
+                      <TokenBadge>{e.cssVar}</TokenBadge>
                     </div>
                     <p className="wx-text-body-secondary text-[var(--wx-muted)] leading-snug">{e.usage}</p>
                     <p className="font-mono text-[10px] text-[var(--wx-muted)] mt-1 opacity-60">{e.value}</p>
@@ -1184,7 +1184,7 @@ export default function DesignSystemPage() {
               <div className="space-y-0">
                 {COMPONENT_TOKENS.map((t) => (
                   <div
-                    key={t.token}
+                    key={t.cssVar}
                     className="flex items-start justify-between gap-6 py-3.5 border-b border-[color:var(--wx-border-faint)] last:border-0"
                   >
                     <div className="min-w-0">
@@ -1192,7 +1192,7 @@ export default function DesignSystemPage() {
                       <p className="wx-text-body-secondary text-[var(--wx-muted)] mt-1 leading-snug">{t.where}</p>
                     </div>
                     <div className="shrink-0 text-right space-y-1">
-                      <TokenBadge>{t.token}</TokenBadge>
+                      <TokenBadge>{t.cssVar}</TokenBadge>
                       <p className="font-mono text-[10px] text-[var(--wx-muted)] block">{t.value}</p>
                     </div>
                   </div>
@@ -1216,7 +1216,7 @@ export default function DesignSystemPage() {
             Back to work
           </Link>
         </footer>
-      </main>
+      </div>
     </div>
   );
 }

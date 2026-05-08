@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import {
   LayoutDashboard, Zap, Map, ShieldCheck, FileText, Settings,
@@ -10,8 +10,56 @@ import {
 } from 'lucide-react'
 import './KinetixPage.css'
 
+/** Modal overlay — deliberate ease-out in, sharper ease-in out (purposeful continuity). */
+const KX_MODAL_BACKDROP_EASE_OUT = [0.16, 1, 0.3, 1]
+const KX_MODAL_BACKDROP_EASE_IN = [0.55, 0, 1, 0.45]
+
+function backdropVariantsFrom(reduce) {
+  return reduce
+    ? { hidden: { opacity: 1 }, visible: { opacity: 1 }, exit: { opacity: 1 } }
+    : {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { duration: 0.26, ease: KX_MODAL_BACKDROP_EASE_OUT } },
+        exit: { opacity: 0, transition: { duration: 0.2, ease: KX_MODAL_BACKDROP_EASE_IN } },
+      }
+}
+
+function panelVariantsFrom(reduce) {
+  return reduce
+    ? { hidden: {}, visible: {}, exit: {} }
+    : {
+        hidden: { opacity: 0, scale: 0.94, y: 18 },
+        visible: {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          transition: { type: 'spring', stiffness: 392, damping: 33, mass: 0.9 },
+        },
+        exit: {
+          opacity: 0,
+          scale: 0.986,
+          y: 10,
+          transition: { duration: 0.22, ease: KX_MODAL_BACKDROP_EASE_IN },
+        },
+      }
+}
+
 /** Shared easing for Kinetix load choreography */
 const KX_EASE = [0.32, 0.72, 0, 1]
+
+function modalRibbonItemFrom(reduce, step = 0) {
+  if (reduce) return { hidden: {}, visible: {} }
+  const delay = 0.06 + step * 0.046
+  return {
+    hidden: { opacity: 0, y: 14 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.36, ease: KX_EASE, delay },
+    },
+  }
+}
+
 
 function kxSlideFadeVariants(reduce, { x = 0, y = 8 } = {}) {
   return {
@@ -141,7 +189,10 @@ const METRICS = [
     viz: {
       kind: 'bars',
       color: '#2563EB',
-      heights: [0.12, 0.16, 0.21, 0.24, 0.31, 0.37, 0.44, 0.53, 0.62, 0.71, 0.84, 0.93],
+      heights: [
+        0.29, 0.36, 0.44, 0.53, 0.59, 0.56,
+        0.64, 0.51, 0.72, 0.82, 0.88, 0.67,
+      ],
     },
   },
 ]
@@ -328,16 +379,34 @@ function MetricFunnelViz({ steps, activeStep }) {
 }
 
 function MetricBarsViz({ heights, color }) {
-  const max = heights.length ? Math.max(...heights) : 1
-  const norm = max > 0 ? heights.map((v) => v / max) : heights
+  if (!heights.length) return null
+
+  const max = Math.max(...heights)
+  const min = Math.min(...heights)
+  const denom = Math.max(max - min, max * 0.14)
 
   return (
     <div className="kx-metric-viz-bars" aria-hidden="true">
-      {norm.map((v, i) => (
-        <div key={String(i)} className="kx-viz-bar-wrap">
-          <div className="kx-viz-bar" style={{ height: `${Math.max(v * 100, 4)}%`, background: color }} />
-        </div>
-      ))}
+      {heights.map((raw, i) => {
+        const t = denom > 0 ? Math.max(0, Math.min(1, (raw - min) / denom)) : 1
+        const pct = Math.round((12 + t * 84) * 10) / 10
+        const left = heights.length <= 1 ? 1 : i / (heights.length - 1)
+        const recencyOpacity = 0.54 + left * 0.42
+
+        return (
+          <div key={String(i)} className="kx-viz-bar-wrap">
+            <span className="kx-viz-bar-track" aria-hidden="true" style={{ '--kx-bar-fill': color }} />
+            <div
+              className="kx-viz-bar"
+              style={{
+                height: `${pct}%`,
+                '--kx-bar-fill': color,
+                '--kx-bar-opacity': String(recencyOpacity),
+              }}
+            />
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -453,7 +522,7 @@ function Sidebar({ active, setActive, expanded, onToggle }) {
 
 // ─── Top bar ──────────────────────────────────────────────────────────────────
 
-function TopBar({ simState, onRunSim, onViewReport }) {
+function TopBar({ simState, onRunSim, onViewReport, reportOpen }) {
   const reduce = useReducedMotion()
   const barItem = kxSlideFadeVariants(reduce, { x: 0, y: -6 })
   const barStagger = kxStaggerContainer(reduce, { stagger: 0.04, delayChildren: reduce ? 0 : 0.03 })
@@ -501,10 +570,23 @@ function TopBar({ simState, onRunSim, onViewReport }) {
 
         <div className="kx-divider-v" />
 
-        <button className="kx-view-report-btn" onClick={onViewReport}>
+        <motion.button
+          type="button"
+          className="kx-view-report-btn"
+          onClick={onViewReport}
+          aria-haspopup="dialog"
+          aria-expanded={reportOpen}
+          aria-controls="kx-report-dialog"
+          whileHover={reduce ? undefined : { y: -0.6 }}
+          whileTap={reduce ? undefined : { scale: 0.98 }}
+          transition={{
+            duration: reduce ? 0 : 0.22,
+            ease: KX_EASE,
+          }}
+        >
           <FileText size={13} />
           <span>View Report</span>
-        </button>
+        </motion.button>
 
         <button className="kx-icon-btn" aria-label="Notifications">
           <Bell size={14} />
@@ -1076,41 +1158,79 @@ function RecsRow({ expanded, onToggle }) {
 
 function ReportModal({ onClose }) {
   const reduce = useReducedMotion()
+  const closeRef = useRef(null)
+  const backdropVariants = backdropVariantsFrom(reduce)
+  const sheetVariants = panelVariantsFrom(reduce)
+
+  useEffect(() => {
+    const prevFocused = document.activeElement
+    const focusT = window.setTimeout(() => closeRef.current?.focus(), reduce ? 0 : 50)
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.clearTimeout(focusT)
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+      if (prevFocused instanceof HTMLElement) prevFocused.focus()
+    }
+  }, [onClose, reduce])
+
   return (
     <motion.div
       className="kx-modal-backdrop"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: reduce ? 0 : 0.18, ease: KX_EASE }}
+      variants={backdropVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
       onClick={onClose}
+      role="presentation"
     >
       <motion.div
         className="kx-modal"
-        initial={{ scale: 0.96, y: 10, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.97, y: 6, opacity: 0 }}
-        transition={
-          reduce
-            ? { duration: 0 }
-            : { type: 'spring', stiffness: 360, damping: 30 }
-        }
+        variants={sheetVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
         onClick={(e) => e.stopPropagation()}
+        id="kx-report-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label="Simulation report"
+        aria-labelledby="kx-report-modal-title"
       >
-        <div className="kx-modal-head">
+        <motion.div
+          className="kx-modal-head"
+          variants={modalRibbonItemFrom(reduce, 0)}
+          initial="hidden"
+          animate="visible"
+        >
           <div>
-            <div className="kx-modal-title">Simulation Report</div>
+            <div id="kx-report-modal-title" className="kx-modal-title">Simulation Report</div>
             <div className="kx-modal-subtitle">Checkout Redesign · 10,000 sessions · Apr 28, 2026</div>
           </div>
-          <button className="kx-modal-close" onClick={onClose} aria-label="Close report">
+          <button
+            ref={closeRef}
+            type="button"
+            className="kx-modal-close"
+            onClick={onClose}
+            aria-label="Close report"
+          >
             <X size={13} />
           </button>
-        </div>
+        </motion.div>
 
-        <div className="kx-modal-body">
+        <motion.div
+          className="kx-modal-body"
+          variants={modalRibbonItemFrom(reduce, 1)}
+          initial="hidden"
+          animate="visible"
+        >
           <div className="kx-modal-score-block">
             <div className="kx-modal-score-num">82</div>
             <div>
@@ -1125,10 +1245,16 @@ function ReportModal({ onClose }) {
             <div className="kx-modal-section-title">Top Issues</div>
             {ISSUES.slice(0, 3).map((issue) => (
               <div key={issue.id} className="kx-modal-issue-row">
-                <div style={{
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: issue.color, flexShrink: 0,
-                }} />
+                <div
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    background: issue.color,
+                    flexShrink: 0,
+                  }}
+                  aria-hidden
+                />
                 <span className="kx-modal-issue-label">{issue.title}</span>
                 <SeverityPill s={issue.severity} />
                 <span style={{ fontSize: 11, color: 'var(--kx-text-faint)' }}>{issue.conf}</span>
@@ -1145,16 +1271,21 @@ function ReportModal({ onClose }) {
               Prioritize CTA repositioning and payment field consolidation. Together these two changes address the highest-friction moments and are estimated to improve checkout completion by 14–22%.
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="kx-modal-foot">
-          <button className="kx-export-btn">
+        <motion.div
+          className="kx-modal-foot"
+          variants={modalRibbonItemFrom(reduce, 2)}
+          initial="hidden"
+          animate="visible"
+        >
+          <button type="button" className="kx-export-btn">
             <Download size={13} /> Export Report
           </button>
-          <button className="kx-modal-done-btn" onClick={onClose}>
+          <button type="button" className="kx-modal-done-btn" onClick={onClose}>
             Done
           </button>
-        </div>
+        </motion.div>
       </motion.div>
     </motion.div>
   )
@@ -1193,6 +1324,7 @@ export default function KinetixPage() {
         <TopBar
           simState={simState}
           onRunSim={handleRunSim}
+          reportOpen={showReport}
           onViewReport={() => setShowReport(true)}
         />
 

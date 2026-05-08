@@ -76,13 +76,11 @@ function navigateWithHomeVtRevealMerge(navigate, target, navOpts) {
     return;
   }
 
-  navigate(
-    {
-      ...target,
-      state: { ...target.state, ...navState, ...homeVtRevealState },
-    },
-    restNavOpts,
-  );
+  const { state: targetState, ...targetTo } = target;
+  navigate(targetTo, {
+    ...restNavOpts,
+    state: { ...targetState, ...navState, ...homeVtRevealState },
+  });
 }
 
 /**

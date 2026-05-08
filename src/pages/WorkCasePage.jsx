@@ -33,7 +33,7 @@ function CaseStudyShell({ def, gridEntry, CaseStudy, location, navigate }) {
         tagRails={tagRails}
       />
       <ExplorationMainPanels
-        as="main"
+        as="section"
         data-site-region="case-panels"
         aria-label={`${def.title} — case study media`}
       >

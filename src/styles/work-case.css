@@ -74,7 +74,7 @@
   font-family: var(--font-display, var(--font-body));
   font-size: clamp(2.25rem, 5vw, 3.25rem);
   font-weight: 500;
-  letter-spacing: -0.035em;
+  letter-spacing: 0em;
   line-height: 1.02;
   color: var(--wx-ink);
   margin: 0;
@@ -107,7 +107,7 @@
 .wcase-summary {
   font-size: clamp(1.05rem, 1.4vw, 1.18rem);
   line-height: 1.55;
-  letter-spacing: -0.012em;
+  letter-spacing: 0em;
   color: var(--wx-ink);
   margin: 0.5rem 0 0;
   max-width: 38ch;
@@ -373,7 +373,7 @@
   font-size: var(--wx-case-aside-heading-size);
   line-height: 1.25;
   font-weight: 600;
-  letter-spacing: -0.012em;
+  letter-spacing: 0em;
   color: var(--wx-ink);
 }
 
@@ -490,7 +490,7 @@
   font-family: var(--font-display, ui-rounded, system-ui, sans-serif);
   font-size: var(--wx-case-aside-title-size);
   line-height: 1.05;
-  letter-spacing: -0.025em;
+  letter-spacing: 0em;
   font-weight: 600;
   color: var(--wx-ink);
 }
@@ -565,7 +565,7 @@
 .wcase-beat__label {
   font-size: 1rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0em;
   color: var(--wx-ink);
   margin: 0;
 }
@@ -590,7 +590,7 @@
   color: var(--wx-white);
   font-size: var(--wx-text-meta-size, 0.8125rem);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0em;
   text-decoration: none;
   background-size: 180% 180%;
   background-position: 0% 50%;
@@ -638,7 +638,7 @@
   grid-row: 2;
   font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 500;
-  letter-spacing: -0.025em;
+  letter-spacing: 0em;
   line-height: 1.05;
 }
 

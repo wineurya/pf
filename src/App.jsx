@@ -10,6 +10,9 @@ const ExplorationHomePage = lazy(() =>
 const WorkCasePage = lazy(() =>
   import("@/pages/WorkCasePage.jsx").then((m) => ({ default: m.WorkCasePage })),
 );
+const NotFound = lazy(() =>
+  import("@/pages/NotFound.jsx").then((m) => ({ default: m.NotFound })),
+);
 const KinetixPage = lazy(() => import("@/pages/design/KinetixPage.jsx"));
 const LogoExplorationPage = lazy(() => import("@/pages/design/LogoExplorationPage.jsx"));
 const DesignSystemPage = lazy(() => import("@/pages/design/DesignSystemPage.jsx"));
@@ -43,6 +46,7 @@ export default function App() {
               <Route index element={<ExplorationHomePage />} />
               <Route path="work/:slug" element={<WorkCasePage />} />
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </CanvasRoot>

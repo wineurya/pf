@@ -85,7 +85,7 @@
   --kx-weight-regular: var(--kx-weight-display);
   --kx-weight-strong:  var(--kx-weight-display-strong);
 
-  /* Tracking tokens — em-relative, maps Figma px tracking at typical sizes */
+  /* Tracking tokens — em-relative (letter-spacing ≥ 0 on this surface). */
   --kx-tracking-display:        0.008em; /* ~0.1px on 12.5px   */
   --kx-tracking-display-tight:  0.005em; /* ~0.063px on 12.5px */
   --kx-tracking-display-tag:    0.01em;  /* ~0.1px on 10px chips */
@@ -99,11 +99,11 @@
   --kx-tracking-cta:            0.04em;
   --kx-tracking-modal-overline: 0.09em;
   --kx-tracking-accent-line:    0.02em;
-  --kx-tracking-num-display:    -0.025em;
-  --kx-tracking-num-hero:       -0.04em;
-  --kx-tracking-ui-tabular:    -0.02em;
-  --kx-tracking-ui-heading:    -0.005em;
-  --kx-tracking-modal-title:   -0.01em;
+  --kx-tracking-num-display:    0em;
+  --kx-tracking-num-hero:       0em;
+  --kx-tracking-ui-tabular:    0em;
+  --kx-tracking-ui-heading:    0em;
+  --kx-tracking-modal-title:   0em;
 
   /* Surfaces, phone chrome, ink rgba, blue washes */
   --kx-surface-warm:    #FFFEFD;
@@ -516,15 +516,17 @@
   margin-left: auto;
   width: 18px;
   height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   font-size: 10px;
   font-weight: var(--kx-weight-strong);
   color: var(--kx-chip-fg);
   background: var(--kx-chip-red);
   border-radius: var(--kx-radius-full);
-  line-height: var(--kx-leading-none);
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  padding: 0;
   box-shadow: 0 0 14px rgba(220, 38, 38, 0.22);
   transition: transform 0.18s var(--kx-ease), filter 0.18s var(--kx-ease);
 }
@@ -728,12 +730,13 @@
   background: var(--kx-chip-gray);
   color: var(--kx-chip-fg);
   font-size: 9.5px;
-  line-height: var(--kx-leading-normal);
+  line-height: 1;
   font-weight: var(--kx-weight-display-strong);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: var(--kx-tracking-display-tag);
+  display: grid;
+  place-items: center;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  padding: 0;
   box-shadow: 0 0 7px rgba(71, 85, 105, 0.18);
 }
 
@@ -1153,11 +1156,20 @@
   height: 100%;
 }
 
-.kx-metric-viz-slot-funnel,
-.kx-metric-viz-slot-bars {
+.kx-metric-viz-slot-funnel {
   height: 100%;
   justify-content: flex-end;
   padding-block: 2px 4px;
+}
+
+.kx-metric-viz-slot-bars {
+  justify-content: flex-start;
+  padding-block: 0;
+}
+
+.kx-metric-viz-slot-bars > .kx-metric-viz-bars {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .kx-metric-viz-slot::after {
@@ -1199,7 +1211,7 @@
   width: 100%;
   max-width: 18px;
   margin-inline: auto;
-  border-radius: 4px 4px 2px 2px;
+  border-radius: 0;
   background: linear-gradient(180deg, var(--kx-surface-soft) 0%, var(--kx-border) 100%);
   border: 1px solid var(--kx-border);
   transition: transform 0.16s var(--kx-ease), border-color 0.16s var(--kx-ease);
@@ -1213,25 +1225,52 @@
 .kx-viz-funnel-num {
   font-size: 9px;
   font-weight: var(--kx-weight-strong);
-  letter-spacing: var(--kx-tracking-display-tag);
+  letter-spacing: 0;
   color: var(--kx-text-faint);
   font-variant-numeric: tabular-nums;
+  display: grid;
+  place-items: center;
+  min-width: 1.35rem;
+  min-height: 1.125rem;
+  padding: 0 5px;
+  line-height: 1;
+  border-radius: 0;
+  border: 1px solid var(--kx-border-faint);
+  background: var(--kx-surface-soft);
+  box-sizing: border-box;
 }
 
 .kx-viz-funnel-step-active .kx-viz-funnel-num {
   color: var(--kx-text-muted);
+  border-color: color-mix(in srgb, var(--kx-chip-amber) 35%, var(--kx-border-strong));
+  background: color-mix(in srgb, var(--kx-chip-amber) 14%, var(--kx-surface));
 }
 
-/* Micro volume histogram (sessions) */
+/* Micro volume histogram (sessions) — column tracks + gradient fills */
 .kx-metric-viz-bars {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 3px;
+  gap: 5px;
   width: 100%;
   flex: 1;
-  min-height: 62px;
-  padding-inline: 1px;
+  align-self: stretch;
+  position: relative;
+  min-height: 70px;
+  padding-block: 0 5px;
+  padding-inline: 2px;
+}
+
+.kx-metric-viz-bars::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 1px;
+  height: 1px;
+  background: var(--kx-border-strong);
+  opacity: 0.35;
+  border-radius: var(--kx-radius-xs);
 }
 
 .kx-viz-bar-wrap {
@@ -1241,14 +1280,43 @@
   align-items: flex-end;
   justify-content: center;
   min-width: 0;
+  position: relative;
+}
+
+.kx-viz-bar-track {
+  pointer-events: none;
+  display: block;
+  position: absolute;
+  inset: 0;
+  bottom: 1px;
+  border-radius: 5px 5px var(--kx-radius-xs) var(--kx-radius-xs);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--kx-bar-fill) 6%, var(--kx-border-faint)) 0%,
+      color-mix(in srgb, var(--kx-bar-fill) 13%, var(--kx-surface-soft)) 92%,
+      color-mix(in srgb, var(--kx-bar-fill) 20%, var(--kx-border-faint)) 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--kx-bar-fill) 12%, var(--kx-border-faint));
+  opacity: 0.65;
 }
 
 .kx-viz-bar {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  max-width: 10px;
-  border-radius: 3px 3px 1px 1px;
-  opacity: 0.88;
-  box-shadow: 0 -1px 0 color-mix(in srgb, var(--kx-text) 8%, transparent) inset;
+  min-width: 2px;
+  border-radius: 5px 5px var(--kx-radius-xs) var(--kx-radius-xs);
+  opacity: var(--kx-bar-opacity, 0.9);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--kx-bar-fill) 38%, var(--kx-surface)) 0%,
+    color-mix(in srgb, var(--kx-bar-fill) 88%, transparent) 45%,
+    var(--kx-bar-fill) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--kx-surface) 55%, transparent),
+    inset 0 -10px 12px -14px color-mix(in srgb, var(--kx-text) 14%, transparent);
 }
 
 /* ── Center two-column grid ─────────────────────────────────────────────────── */
@@ -1799,20 +1867,47 @@
   }
 }
 
-/* Issue markers on phone */
+/*
+ * Shared index chip: markers, annotations, insights total, filter tab counts
+ * (white outline, grid-centered tabular digit).
+ */
+.kx-annotation-num,
+.kx-issue-marker,
+.kx-insights-total,
+.kx-mini-tab span {
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid var(--kx-chip-fg);
+  display: grid;
+  place-items: center;
+  font-weight: var(--kx-weight-strong);
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--kx-chip-fg);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.kx-annotation-num,
 .kx-issue-marker {
-  position: absolute;
   width: 18px;
   height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8.5px;
-  font-weight: var(--kx-weight-strong);
-  color: white;
+  font-size: 8px;
+}
+
+.kx-insights-total {
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+  background: var(--kx-chip-gray);
+  align-self: center;
+}
+
+
+.kx-issue-marker {
+  position: absolute;
   z-index: 8;
-  border: 2px solid white;
 }
 
 /* Side annotations — Figma node 218:437 */
@@ -1845,24 +1940,6 @@
 .kx-annotation:hover {
   border-color: var(--kx-border-strong);
   background: var(--kx-surface-warm);
-}
-
-.kx-annotation-num {
-  box-sizing: border-box;
-  width: 18px;
-  height: 18px;
-  border-radius: 9px;
-  border: 2px solid white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  font-weight: var(--kx-weight-strong);
-  line-height: 12px;
-  letter-spacing: var(--kx-tracking-ui-tabular);
-  color: white;
-  flex-shrink: 0;
-  padding: 2px 2px 3px;
 }
 
 .kx-annotation-body {
@@ -2011,7 +2088,7 @@
 }
 
 .kx-insights-head {
-  align-items: flex-start;
+  align-items: center;
   padding: 13px 14px 12px;
 }
 
@@ -2023,20 +2100,6 @@
 .kx-insights-summary {
   font-size: 11px;
   color: var(--kx-text-faint);
-}
-
-.kx-insights-total {
-  width: 22px;
-  height: 22px;
-  border-radius: var(--kx-radius-full);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--kx-chip-gray);
-  color: var(--kx-chip-fg);
-  font-size: 10.5px;
-  font-weight: var(--kx-weight-strong);
-  line-height: var(--kx-leading-none);
 }
 
 .kx-insights-tabs {
@@ -2070,14 +2133,8 @@
 .kx-mini-tab span {
   width: 17px;
   height: 17px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   font-size: 9px;
-  font-weight: var(--kx-weight-strong);
-  color: var(--kx-chip-fg);
   background: var(--kx-chip-gray);
-  border-radius: var(--kx-radius-full);
   transition: transform 0.18s var(--kx-ease), filter 0.18s var(--kx-ease);
 }
 
@@ -2324,6 +2381,8 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  /* compositor hints — opacity/transform driven by Motion */
+  transform: translateZ(0);
 }
 .kx-modal {
   background: var(--kx-surface);
@@ -2331,11 +2390,28 @@
   border-radius: var(--kx-radius-lg);
   width: 100%;
   max-width: 540px;
-  box-shadow: 0 24px 48px -12px var(--kx-ink-18);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 86%, transparent),
+    0 24px 48px -12px var(--kx-ink-18);
   overflow: hidden;
-  max-height: 90vh;
+  max-height: min(90dvh, 640px);
   display: flex;
   flex-direction: column;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kx-modal-backdrop {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .kx-modal-backdrop {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: color-mix(in srgb, var(--kx-bg) 15%, rgb(15 17 21 / 0.58));
+  }
 }
 
 .kx-modal-head {
