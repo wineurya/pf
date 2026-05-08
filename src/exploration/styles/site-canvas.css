@@ -379,7 +379,7 @@
   font-size: var(--wx-text-pullquote-size);
   line-height: var(--wx-text-pullquote-leading);
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: 0em;
   font-synthesis: none;
 }
 
@@ -411,7 +411,7 @@
   font-size: var(--wx-text-section-title-size);
   line-height: var(--wx-text-section-title-leading);
   font-weight: 500;
-  letter-spacing: -0.025em;
+  letter-spacing: 0em;
   font-synthesis: none;
 }
 
@@ -426,7 +426,7 @@
   font-size: var(--wx-text-subsection-title-size);
   line-height: var(--wx-text-subsection-title-leading);
   font-weight: 500;
-  letter-spacing: -0.025em;
+  letter-spacing: 0em;
   font-synthesis: none;
 }
 
@@ -441,7 +441,7 @@
   font-size: var(--wx-text-page-title-size);
   line-height: var(--wx-text-page-title-leading);
   font-weight: 500;
-  letter-spacing: -0.025em;
+  letter-spacing: 0em;
   font-synthesis: none;
 }
 
@@ -456,7 +456,7 @@
   font-size: var(--wx-text-chapter-title-size);
   line-height: var(--wx-text-chapter-title-leading);
   font-weight: 500;
-  letter-spacing: -0.025em;
+  letter-spacing: 0em;
   font-synthesis: none;
 }
 
@@ -695,7 +695,7 @@
   line-height: 1.3;
   font-weight: 600;
   color: var(--wx-ink);
-  letter-spacing: -0.02em;
+  letter-spacing: 0em;
   text-wrap: pretty;
   font-synthesis: none;
 }
@@ -1290,7 +1290,7 @@
   text-align: left;
 }
 
-/* One-line footer: mark + title + rotating microcopy */
+/* One-line footer: mark + title + rotating microcopy (single 14×20 stripe; title matches cycle size) */
 .site-canvas .wx-work-card-v2__footer-line {
   box-sizing: border-box;
   margin: 0;
@@ -1302,35 +1302,32 @@
   width: 100%;
   max-width: min(100%, var(--wx-work-card-footer-rail));
   text-align: left;
-  font-family: var(--font-display, ui-rounded, system-ui, sans-serif);
-  font-size: clamp(0.9875rem, 2.5vw, 1.125rem);
-  /* One line-height for mark / title / cycle so flex cross-axis centers share the same metrics */
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0em;
   font-synthesis: none;
 }
 
-.site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__title {
-  font-size: 1em;
-  line-height: 1.2;
-  letter-spacing: -0.03em;
-  align-self: center;
+/* Beats `.wx-work-card--footer-minimal .wx-work-card-v2__title` so this row stays 14px */
+.site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__title.wx-work-card-v2__footer-line-title {
+  flex-shrink: 0;
+  font-family: var(--font-display, ui-rounded, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0em;
 }
 
 .site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__footer-line-cycle-clip {
   position: relative;
-  align-self: center;
   flex: 1 1 auto;
   min-width: 0;
-  min-height: 1.2em;
-  display: flex;
-  align-items: center;
-  line-height: 1.2;
+  /* Fixed line box (14px / 20px) — stable flex alignment next to title */
+  height: 20px;
+  display: block;
 }
 
 .site-canvas .wx-work-card-v2__footer-line .wx-work-card-v2__footer-line-cycle-clip > .block {
-  flex: 1 1 auto;
-  min-width: 0;
+  display: block;
 }
 
 /* Tighter type block — no reserved stutter/extend tower; quip is one line */
@@ -1360,10 +1357,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: inherit;
-  font-size: 1em;
-  line-height: inherit;
-  letter-spacing: inherit;
+  font-family: var(--font-body, ui-rounded, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0em;
   font-weight: 400;
   color: var(--wx-muted);
   font-synthesis: none;
@@ -1620,7 +1617,7 @@
   text-shadow: none;
   font-size: var(--wx-text-sm-size);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0em;
   transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1689,7 +1686,7 @@
   font-size: clamp(0.9875rem, 2.5vw, 1.125rem);
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.03em;
+  letter-spacing: 0em;
   color: var(--wx-ink);
 }
 
@@ -1978,7 +1975,7 @@
   font-size: var(--wx-text-ui-14);
   line-height: var(--wx-text-ui-14-lh);
   font-weight: 500;
-  letter-spacing: -0.022em;
+  letter-spacing: 0em;
   color: var(--wx-ink);
 }
 
@@ -2040,7 +2037,7 @@
   margin-left: 0.2rem;
   padding-right: 0.15rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0em;
 }
 
 /* Home exploration only: in-aside nav; fixed to viewport on small screens (spacer in layout) */
@@ -2195,7 +2192,7 @@
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 1;
-  letter-spacing: -0.015em;
+  letter-spacing: 0em;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -2237,7 +2234,7 @@
 /* Fallback if JS is late; Motion drives the label reveal. */
 .site-canvas .wx-tab-label-text {
   transition: opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1);
-  /* Tight tracking + subpixel width — avoid trimming the last glyph. */
+  /* Soft end padding — avoid trimming the last glyph at subpixel widths. */
   padding-inline-end: 0.1em;
 }
 
@@ -2576,7 +2573,7 @@
   font-family: var(--font-display, ui-rounded, system-ui, sans-serif);
   font-size: var(--wx-stat-value-size);
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0em;
   font-weight: 500;
   color: var(--wx-ink);
   font-variant-numeric: tabular-nums;
@@ -2624,7 +2621,7 @@
   font-size: var(--wx-text-faq-bubble-line-size);
   line-height: var(--wx-text-faq-bubble-line-leading);
   color: var(--wx-imessage-bubble-text);
-  letter-spacing: -0.01em;
+  letter-spacing: 0em;
 }
 
 .site-canvas .wx-faq-bubble__answer {
