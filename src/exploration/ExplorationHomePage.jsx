@@ -2082,19 +2082,30 @@ function ExplorationPageAsideCopy({ reduceMotion, scrollToSection }) {
   );
 }
 
+/**
+ * Aside stack marquee (`StackToolkitNuggets`) — currently shelved while the aside footer is tightened.
+ * Flip to `true` to restore the two-lane marquee + “Stack” label.
+ */
+const SHOW_EXPLORATION_ASIDE_STACK = false;
+
 function ExplorationPageAsideFooter({ reduceMotion }) {
   return (
-    <div className="mt-auto w-full min-w-0 space-y-6 pt-8 lg:space-y-7 lg:pt-10">
-      <div>
-        <p className="wx-aside-footer__label">Stack</p>
-        <div className="mt-2">
-          <StackToolkitNuggets reduceMotion={reduceMotion} />
+    <div
+      className={clsx(
+        "mt-auto w-full min-w-0 pt-8 lg:pt-10",
+        SHOW_EXPLORATION_ASIDE_STACK && "space-y-6 lg:space-y-7",
+      )}
+    >
+      {SHOW_EXPLORATION_ASIDE_STACK ? (
+        <div>
+          <p className="wx-aside-footer__label">Stack</p>
+          <div className="mt-2">
+            <StackToolkitNuggets reduceMotion={reduceMotion} />
+          </div>
         </div>
-      </div>
-      <div>
-        <div className="mt-1">
-          <AsideContactRow reduceMotion={reduceMotion} />
-        </div>
+      ) : null}
+      <div className={SHOW_EXPLORATION_ASIDE_STACK ? "mt-1" : undefined}>
+        <AsideContactRow reduceMotion={reduceMotion} />
       </div>
     </div>
   );
