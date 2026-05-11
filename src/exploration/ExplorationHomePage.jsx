@@ -3,24 +3,13 @@ import { flushSync } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  BookUserIcon,
   Briefcase01Icon,
   Calendar01Icon,
   CodeCircleIcon,
   ComputerDesk01Icon,
-  FallingStarIcon,
-  FigmaIcon,
-  FramerIcon,
-  GridTableIcon,
-  GridViewIcon,
-  Layers01Icon,
   Layout01Icon,
-  LayoutThreeColumnIcon,
-  LayoutTwoColumnIcon,
-  MagicWand01Icon,
   Mail01Icon,
   PenTool01Icon,
-  QuoteUpIcon,
 } from "@hugeicons/core-free-icons";
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { EnvelopeSimple } from "@phosphor-icons/react/dist/csr/EnvelopeSimple";
@@ -77,26 +66,7 @@ import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
 import { ApproachStepFolderHoverVisual } from "@/exploration/ApproachStepFolderVisual.jsx";
 import { ApproachStepTechStackVisual } from "@/exploration/ApproachStepTechStackVisual.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
-
-const NUGGET_ICON_MAP = {
-  CodeCircleIcon,
-  FramerIcon,
-  FigmaIcon,
-  Layout01Icon,
-  Layers01Icon,
-  PenTool01Icon,
-  MagicWand01Icon,
-  FallingStarIcon,
-  GridViewIcon,
-  ComputerDesk01Icon,
-  GridTableIcon,
-  LayoutThreeColumnIcon,
-  LayoutTwoColumnIcon,
-  Calendar01Icon,
-  QuoteUpIcon,
-  Mail01Icon,
-  BookUserIcon,
-};
+import { NUGGET_HUGEICON_MAP as NUGGET_ICON_MAP } from "@/exploration/nuggetHugeicons.js";
 
 /**
  * Lucide Animated — https://lucide-animated.com (npm: `lucide-animated`). Icons animate on hover.

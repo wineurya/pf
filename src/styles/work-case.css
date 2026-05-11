@@ -298,6 +298,7 @@
 [data-site-region="case-aside"] .wx-case-tags__focus-marquee .wx-case-tags__pill {
   display: inline-flex;
   align-items: center;
+  gap: 0.35em;
   max-width: 100%;
   box-sizing: border-box;
   min-height: 1.75rem;
@@ -313,6 +314,16 @@
   letter-spacing: 0.04em;
   color: var(--wx-ink);
   background-color: var(--wx-white);
+}
+
+[data-site-region="case-aside"] .wx-case-tags__pill__icon {
+  display: block;
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--wx-ink) 68%, transparent);
+}
+
+[data-site-region="case-aside"] .wx-case-tags__pill__text {
+  min-width: 0;
 }
 
 /* Shared aside chrome — applies to both the home `[data-site-region="aside"]`

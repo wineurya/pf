@@ -2,6 +2,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { clsx } from "clsx";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
+import { CaseStudyFocusHighlightIcon } from "@/exploration/CaseStudyFocusHighlightIcon.jsx";
 import { CaseStudyToolBrandIcon } from "@/exploration/CaseStudyToolBrandIcon.jsx";
 import { WordmarkLink } from "@/exploration/WordmarkLink.jsx";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
@@ -24,7 +25,10 @@ function CaseStudyFocusHighlightRail({ highlights, reduceMotion }) {
       <ul className="wx-case-tags__group wx-case-tags__group--focus" aria-labelledby="case-tags-focus">
         {highlights.map((tag) => (
           <li key={`hi-${tag}`}>
-            <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
+            <span className="wx-case-tags__pill wx-case-tags__pill--highlight">
+              <CaseStudyFocusHighlightIcon label={tag} />
+              <span className="wx-case-tags__pill__text">{tag}</span>
+            </span>
           </li>
         ))}
       </ul>
@@ -45,12 +49,18 @@ function CaseStudyFocusHighlightRail({ highlights, reduceMotion }) {
         >
           {highlights.map((tag, i) => (
             <li key={`marq-a-${i}-${tag}`}>
-              <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
+              <span className="wx-case-tags__pill wx-case-tags__pill--highlight">
+                <CaseStudyFocusHighlightIcon label={tag} />
+                <span className="wx-case-tags__pill__text">{tag}</span>
+              </span>
             </li>
           ))}
           {highlights.map((tag, i) => (
             <li key={`marq-b-${i}-${tag}`} aria-hidden>
-              <span className="wx-case-tags__pill wx-case-tags__pill--highlight">{tag}</span>
+              <span className="wx-case-tags__pill wx-case-tags__pill--highlight">
+                <CaseStudyFocusHighlightIcon label={tag} />
+                <span className="wx-case-tags__pill__text">{tag}</span>
+              </span>
             </li>
           ))}
         </ul>
