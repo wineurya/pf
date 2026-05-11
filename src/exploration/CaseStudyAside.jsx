@@ -289,10 +289,10 @@ export function CaseStudyAside({ def, gridEntry, location, navigate, tagRails })
         <CaseStudyAsideTopRow location={location} navigate={navigate} />
 
         {/*
-         * Fills the padded column (`flex-1 min-h-0 h-full`) so `justify-between` opens space between
-         * the editorial stack and the meta/tag footer; copy stays start-aligned via `items-start`.
+         * Same pattern as home `site-vt--aside`: `flex-1` column + `mt-auto` on the footer cluster
+         * so meta/tags stay bottom-aligned when the column is shorter than the viewport.
          */}
-        <div className="site-vt--aside flex h-full min-h-0 w-full min-w-0 flex-1 flex-col items-start justify-between">
+        <div className="site-vt--aside flex h-full min-h-0 w-full min-w-0 flex-1 flex-col items-start">
           <div className="wx-case-aside-stack flex w-full min-w-0 shrink-0 flex-col items-start justify-start lg:min-h-0">
             <div className="wx-case-aside-stack__inner w-full">
               <CaseStudyTitleBlock title={def.title} lede={def.lede} />
@@ -307,7 +307,7 @@ export function CaseStudyAside({ def, gridEntry, location, navigate, tagRails })
 
           {hasFooterCluster ? (
             <div
-              className="wx-case-aside-footer w-full min-w-0 shrink-0"
+              className="wx-case-aside-footer mt-auto w-full min-w-0 shrink-0"
               data-site-region="case-aside-footer"
             >
               {hasMeta ? (
