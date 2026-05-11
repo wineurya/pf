@@ -57,8 +57,8 @@ import {
   SITE_HERO,
   SITE_IMAGE_FALLBACKS,
   SITE_QUALIFICATION_FIELDS,
+  SITE_SERVICES,
   SECTION_IDS,
-  SITE_STATS,
   SECTION_TABS,
   SITE_STACK_MARQUEE_LAYERS,
   SITE_TESTIMONIALS,
@@ -1188,7 +1188,7 @@ export function WorkCard({ entry, reduceMotion, onEmptyProjectClick, onOpenNavOn
   );
 }
 
-const HEADLINE_ROTATE_WORDS = ["clear", "human", "accessible", "intentional"];
+const HEADLINE_ROTATE_WORDS = ["clear", "usable", "alive", "shippable"];
 /** Keep in sync with `--wx-headline-word-enter-duration` in site-canvas.css */
 const HEADLINE_WORD_ENTER_DURATION = 0.42;
 
@@ -1666,7 +1666,7 @@ function QualificationForm({ reduceMotion }) {
       lines.push(`${field.label}: ${value}`);
     }
     const body = encodeURIComponent(lines.join("\n\n"));
-    const subject = encodeURIComponent("Project brief — wineury.design");
+    const subject = encodeURIComponent("Hiring / project brief - wineury.design");
     setSubmitted(true);
     window.location.href = `mailto:wineurya30@gmail.com?subject=${subject}&body=${body}`;
   };
@@ -1691,7 +1691,7 @@ function QualificationForm({ reduceMotion }) {
     <form
       onSubmit={handleSubmit}
       className="grid gap-4 sm:grid-cols-2 sm:gap-5"
-      aria-label="Project qualification form"
+      aria-label="Hiring and project brief form"
     >
       {SITE_QUALIFICATION_FIELDS.map((field) => {
         const isFullWidth = field.type === "textarea" || field.id === "name" || field.id === "links";
@@ -2213,24 +2213,106 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
   );
 }
 
-function StudioBentoCell({ className, reduceMotion, children }) {
+function StudioBenefitVisual({ kind }) {
+  const shell =
+    "relative mt-5 h-44 overflow-hidden rounded-[calc(var(--wx-radius-card)-4px)] bg-[var(--wx-surface-soft)] ring-1 ring-[color:var(--wx-border-soft)]";
+  const chip =
+    "wx-text-meta inline-flex items-center rounded-full bg-[var(--wx-white)] px-2.5 py-1 font-medium text-[var(--wx-ink)] ring-1 ring-[color:var(--wx-border-soft)]";
+
+  if (kind === "frames") {
+    return (
+      <div className={shell} aria-hidden>
+        <div className="absolute inset-5 grid grid-cols-[0.84fr_1fr] gap-3">
+          <div className="rounded-[10px] bg-[var(--wx-white)] p-3 ring-1 ring-[color:var(--wx-border-soft)]">
+            <span className="block h-3 w-16 rounded-full bg-[color:var(--wx-approach-accent)] opacity-25" />
+            <span className="mt-5 block h-16 rounded-[8px] bg-[var(--wx-page-bg)] ring-1 ring-[color:var(--wx-border-soft)]" />
+          </div>
+          <div className="grid gap-3">
+            <span className="rounded-[10px] bg-[var(--wx-white)] ring-1 ring-[color:var(--wx-border-soft)]" />
+            <span className="rounded-[10px] bg-[var(--wx-white)] ring-1 ring-[color:var(--wx-border-soft)]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === "prototype") {
+    return (
+      <div className={shell} aria-hidden>
+        <div className="absolute left-1/2 top-5 h-32 w-24 -translate-x-1/2 rounded-[18px] bg-[var(--wx-white)] p-3 ring-1 ring-[color:var(--wx-border-soft)]">
+          <span className="mx-auto block h-1 w-8 rounded-full bg-[var(--wx-border-soft)]" />
+          <span className="mt-5 block h-7 rounded-[9px] bg-[color:var(--wx-approach-accent)] opacity-20" />
+          <span className="mt-3 block h-3 rounded-full bg-[var(--wx-surface-soft)]" />
+          <span className="mt-2 block h-3 w-2/3 rounded-full bg-[var(--wx-surface-soft)]" />
+        </div>
+        <span className="absolute bottom-8 right-[30%] h-7 w-7 rounded-full bg-[var(--wx-white)] ring-1 ring-[color:var(--wx-border-soft)]" />
+      </div>
+    );
+  }
+
+  if (kind === "handoff") {
+    return (
+      <div className={shell} aria-hidden>
+        <div className="absolute inset-5 rounded-[10px] bg-[var(--wx-white)] p-4 ring-1 ring-[color:var(--wx-border-soft)]">
+          <div className="flex flex-wrap gap-2">
+            <span className={chip}>states</span>
+            <span className={chip}>tokens</span>
+            <span className={chip}>edge cases</span>
+          </div>
+          <div className="mt-5 space-y-2">
+            <span className="block h-2.5 w-10/12 rounded-full bg-[var(--wx-surface-soft)]" />
+            <span className="block h-2.5 w-7/12 rounded-full bg-[color:var(--wx-approach-accent)] opacity-20" />
+            <span className="block h-2.5 w-9/12 rounded-full bg-[var(--wx-surface-soft)]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <motion.div
-      className={className}
-      whileHover={reduceMotion ? undefined : { scale: 1.02 }}
-      transition={{ type: "tween", duration: 0.28, ease: WX_SPRINKLE_EASE }}
-    >
-      {children}
-    </motion.div>
+    <div className={shell} aria-hidden>
+      <div className="absolute inset-x-5 top-5 space-y-3">
+        {["User call", "Flow audit", "Signal map"].map((label, index) => (
+          <div
+            key={label}
+            className="flex items-center justify-between rounded-[10px] bg-[var(--wx-white)] px-3 py-2.5 ring-1 ring-[color:var(--wx-border-soft)]"
+          >
+            <span className="wx-text-meta font-medium text-[var(--wx-ink)]">{label}</span>
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ background: index === 1 ? "var(--wx-approach-accent)" : "var(--wx-border-soft)" }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
-function ExplorationMainStudioSection({ reduceMotion }) {
-  const topCell =
-    "flex min-h-[14rem] w-full items-center justify-center rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[16rem] lg:min-h-[18rem]";
-  const bottomCell =
-    "flex min-h-[10rem] w-full items-center justify-center rounded-[var(--wx-radius-card)] ring-1 ring-[color:var(--wx-border-soft)] sm:min-h-[12rem]";
-  const placeholderCls = "wx-text-body-secondary text-center text-[var(--wx-muted)]";
+function StudioBenefitCard({ item, index, reduceMotion }) {
+  return (
+    <motion.article
+      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6"
+      style={{ "--wx-approach-accent": item.accent }}
+      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.24 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.46,
+        delay: reduceMotion ? 0 : index * 0.05,
+        ease: WX_SPRINKLE_EASE,
+      }}
+    >
+      <p className="wx-text-section-kicker text-[var(--wx-muted)]">{String(index + 1).padStart(2, "0")}</p>
+      <h3 className="mt-2 wx-text-subsection-title text-[var(--wx-ink)]">{item.title}</h3>
+      <p className="mt-3 wx-text-body-secondary text-[var(--wx-muted)]">{item.body}</p>
+      <StudioBenefitVisual kind={item.visual} />
+    </motion.article>
+  );
+}
+
+function ExplorationMainStudioSection({ reduceMotion, scrollToSection }) {
+  const hoverBtn = reduceMotion ? undefined : { y: -1 };
 
   return (
     <section
@@ -2241,29 +2323,40 @@ function ExplorationMainStudioSection({ reduceMotion }) {
     >
       <RevealCard
         reduceMotion={reduceMotion}
-        aria-label="Studio — placeholder bento layout"
-        className="flex w-full min-w-0 flex-col gap-[var(--wx-gallery-gap)]"
+        className="grid gap-5 overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end sm:p-6 lg:p-8"
       >
-        <div className="grid gap-[var(--wx-gallery-gap)] lg:grid-cols-2">
-          <StudioBentoCell className={topCell} reduceMotion={reduceMotion}>
-            <p className={placeholderCls}>placeholder</p>
-          </StudioBentoCell>
-          <StudioBentoCell className={topCell} reduceMotion={reduceMotion}>
-            <p className={placeholderCls}>placeholder</p>
-          </StudioBentoCell>
-        </div>
-        <div className="grid gap-[var(--wx-gallery-gap)] sm:grid-cols-3">
-          <StudioBentoCell className={bottomCell} reduceMotion={reduceMotion}>
-            <p className={placeholderCls}>placeholder</p>
-          </StudioBentoCell>
-          <StudioBentoCell className={bottomCell} reduceMotion={reduceMotion}>
-            <p className={placeholderCls}>placeholder</p>
-          </StudioBentoCell>
-          <StudioBentoCell className={bottomCell} reduceMotion={reduceMotion}>
-            <p className={placeholderCls}>placeholder</p>
-          </StudioBentoCell>
-        </div>
+        <motion.div
+          className="flex max-w-2xl flex-col gap-3"
+          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.32 }}
+          transition={{ duration: reduceMotion ? 0 : 0.52, ease: WX_SPRINKLE_EASE }}
+        >
+          <p className="wx-text-section-kicker text-[var(--wx-muted)]">Studio</p>
+          <h2 className="wx-text-section-title text-[var(--wx-ink)]">
+            Useful imagination, grounded in product work.
+          </h2>
+          <p className="wx-text-body-secondary text-[var(--wx-muted)]">
+            A compact product-design studio inside one portfolio: research, flows, prototypes, motion, and build-ready notes.
+          </p>
+        </motion.div>
+        <motion.button
+          type="button"
+          className="wx-btn-secondary justify-self-start sm:justify-self-end"
+          whileHover={hoverBtn}
+          whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+          transition={{ type: "tween", duration: 0.15, ease: [0.3, 0, 0, 1] }}
+          onClick={() => scrollToSection("section-contact", 3)}
+        >
+          Get in touch
+          <ArrowUpRight size={16} weight="bold" aria-hidden />
+        </motion.button>
       </RevealCard>
+      <div className="grid gap-[var(--wx-gallery-gap)] md:grid-cols-2">
+        {SITE_SERVICES.map((item, index) => (
+          <StudioBenefitCard key={item.slug} item={item} index={index} reduceMotion={reduceMotion} />
+        ))}
+      </div>
       {SITE_TESTIMONIALS.length > 0 ? (
         <RevealCard
           reduceMotion={reduceMotion}
@@ -2313,24 +2406,62 @@ function ExplorationMainStudioSection({ reduceMotion }) {
 
 const APPROACH_STEPS = [
   {
-    title: "Listen for the real problem",
-    body: "Before touching the interface, I look for the friction underneath it through conversations, patterns, audits, and the small details people usually work around.",
+    title: "Listen",
+    body: "Start with user signal, business goals, product constraints, and the workarounds already happening.",
     accent: "#ea580c",
-    showFolderVisual: true,
+    /** Hover: animated folder + papers ({@link ApproachStepFolderHoverVisual}). */
+    folderHoverVisual: true,
   },
   {
-    title: "Turn insight into direction",
-    body: "I translate messy findings into flows, wireframes, and prototypes that make the next step easier to see, test, and build toward.",
+    title: "Map",
+    body: "Turn the messy middle into flows, states, and decisions the team can critique before visual polish.",
     accent: "var(--wx-primary)",
+    visual: "map",
   },
   {
-    title: "Refine until it feels right",
-    body: "I test what is working, fix what still feels unclear, and keep tightening the experience until it feels usable, accessible, and ready to hand off.",
+    title: "Prototype",
+    body: "Make the risky moments clickable so motion, feedback, and comprehension can be tested early.",
+    accent: "var(--wx-accent-violet)",
+    visual: "prototype",
+  },
+  {
+    title: "Hand off",
+    body: "Package the UI with states, specs, and front-end notes so the details make it into the build.",
     accent: "var(--wx-accent-teal)",
+    visual: "handoff",
   },
 ];
 
-function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual, stepIndex }) {
+function ProcessRoughVisual({ variant }) {
+  const task = {
+    map: { status: "In Progress", phase: "Structure", title: "Flow map", date: "Day 3" },
+    prototype: { status: "Review", phase: "Prototype", title: "Clickable build", date: "Day 7" },
+    handoff: { status: "Done", phase: "Ship", title: "States + specs", date: "Day 10" },
+  }[variant];
+
+  return (
+    <div className={clsx("wx-process-rough-visual", `wx-process-rough-visual--${variant}`)}>
+      <div className="absolute inset-4 rounded-[12px] bg-[var(--wx-white)] p-3 ring-1 ring-[color:var(--wx-border-soft)]">
+        <div className="flex items-center justify-between gap-2">
+          <span className="wx-text-meta rounded-full bg-[var(--wx-surface-soft)] px-2.5 py-1 font-medium text-[var(--wx-ink)]">
+            {task.status}
+          </span>
+          <span className="wx-text-meta text-[var(--wx-muted)]">{task.date}</span>
+        </div>
+        <div className="mt-5 space-y-2">
+          <p className="wx-text-meta font-medium text-[color:var(--wx-approach-accent)]">{task.phase}</p>
+          <p className="wx-text-sm font-semibold text-[var(--wx-ink)]">{task.title}</p>
+          <span className="block h-2.5 w-10/12 rounded-full bg-[var(--wx-surface-soft)]" />
+          <span className="block h-2.5 w-7/12 rounded-full bg-[var(--wx-surface-soft)]" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ApproachStepListItem({ step, className, reduceMotion, stepIndex }) {
+  const folderHoverVisual = Boolean(step.folderHoverVisual);
+  const hasProcessVisual = Boolean(step.visual);
   const [folderMotionActive, setFolderMotionActive] = useState(false);
   const stepLiMotion = {
     initial: reduceMotion ? false : { opacity: 0, y: 22 },
@@ -2353,22 +2484,49 @@ function ApproachStepListItem({ step, className, reduceMotion, showFolderVisual,
     </>
   );
 
-  if (showFolderVisual) {
+  if (folderHoverVisual) {
     return (
       <motion.li
-        className={clsx("wx-approach-step-card", "wx-approach-step-card--with-folder-visual", className)}
+        className={clsx(
+          "wx-approach-step-card",
+          "wx-approach-step-card--with-folder-visual",
+          className,
+        )}
         style={{ "--wx-approach-accent": step.accent }}
         data-approach-folder-card
+        {...stepLiMotion}
         onPointerEnter={() => {
           if (!reduceMotion) setFolderMotionActive(true);
         }}
         onPointerLeave={() => setFolderMotionActive(false)}
-        {...stepLiMotion}
       >
         <div className="wx-approach-step-card__text-clip">{textBlock}</div>
         <div className="wx-approach-step-card__folder-slot w-full" aria-hidden>
           <div className="wx-approach-step-card__folder-visual-inner">
             <ApproachStepFolderHoverVisual reduceMotion={reduceMotion} active={folderMotionActive} />
+          </div>
+        </div>
+      </motion.li>
+    );
+  }
+
+  if (hasProcessVisual) {
+    return (
+      <motion.li
+        className={clsx(
+          "wx-approach-step-card",
+          "wx-approach-step-card--with-folder-visual",
+          "wx-approach-step-card--visual-static",
+          className,
+        )}
+        style={{ "--wx-approach-accent": step.accent }}
+        data-approach-folder-card
+        {...stepLiMotion}
+      >
+        <div className="wx-approach-step-card__text-clip">{textBlock}</div>
+        <div className="wx-approach-step-card__folder-slot w-full" aria-hidden>
+          <div className="wx-approach-step-card__folder-visual-inner">
+            <ProcessRoughVisual variant={step.visual} />
           </div>
         </div>
       </motion.li>
@@ -2409,8 +2567,11 @@ function ExplorationMainApproachSection({ reduceMotion }) {
             viewport={{ once: true, amount: 0.38 }}
             transition={{ duration: 0.5, ease: WX_SPRINKLE_EASE }}
           >
-            <p className="wx-text-section-kicker text-[var(--wx-muted)]">Approach</p>
-            <h2 className="wx-text-section-title text-[var(--wx-ink)]">Research first, every time.</h2>
+            <p className="wx-text-section-kicker text-[var(--wx-muted)]">Process</p>
+            <h2 className="wx-text-section-title text-[var(--wx-ink)]">No-surprises process.</h2>
+            <p className="wx-text-body-secondary text-[var(--wx-muted)]">
+              The work stays visible: what is planned, what is moving, what needs review, and what is ready for build.
+            </p>
           </motion.div>
           <ol className="wx-approach-steps-bento">
             {APPROACH_STEPS.map((step, index) => (
@@ -2419,36 +2580,10 @@ function ExplorationMainApproachSection({ reduceMotion }) {
                 step={step}
                 stepIndex={index}
                 reduceMotion={reduceMotion}
-                showFolderVisual={Boolean(step.showFolderVisual)}
                 className={index === APPROACH_STEPS.length - 1 ? "wx-approach-step-card--bento-wide" : undefined}
               />
             ))}
           </ol>
-        </div>
-      </RevealCard>
-      <RevealCard
-        reduceMotion={reduceMotion}
-        className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-6 ring-1 ring-[color:var(--wx-border-soft)] sm:p-8 lg:p-10"
-      >
-        <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
-          {SITE_STATS.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              className="space-y-2"
-              initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.28 }}
-              transition={{
-                duration: reduceMotion ? 0 : 0.42,
-                delay: reduceMotion ? 0 : i * 0.07,
-                ease: WX_SPRINKLE_EASE,
-              }}
-            >
-              <p className="wx-stat-value">{stat.value}</p>
-              <p className="wx-text-sm font-medium text-[var(--wx-ink)]">{stat.label}</p>
-              <p className="wx-text-meta wx-text-meta--relaxed text-[var(--wx-muted)]">{stat.hint}</p>
-            </motion.div>
-          ))}
         </div>
       </RevealCard>
       <RevealCard
@@ -2502,8 +2637,8 @@ function ExplorationMainContactSection({ reduceMotion }) {
               Tell me what you&apos;re building.
             </h2>
             <p className="max-w-xl wx-text-body-secondary text-[var(--wx-muted)]">
-              A short brief gets you a faster, more useful reply — two business days, every time. If we&apos;re not the
-              right fit, I&apos;ll say so quickly and point you somewhere better.
+              Send the role, product, or flow that needs clarity. I&apos;ll reply with the most useful next step:
+              a quick conversation, a focused sprint, or a straight answer if I am not the right fit.
             </p>
           </motion.div>
           <QualificationForm reduceMotion={reduceMotion} />
@@ -2525,7 +2660,7 @@ function ExplorationMainContactSection({ reduceMotion }) {
               wineurya30@gmail.com
             </motion.a>
             <span aria-hidden>·</span>
-            <span>Same questions, same two-day reply.</span>
+            <span>Open to full-time roles, contract sprints, and focused product work.</span>
           </motion.div>
         </motion.div>
       </RevealCard>
@@ -2572,6 +2707,7 @@ function ExplorationPageMainColumn(p) {
     emptyCanvasOpacityTransition,
     onMainPanelsOpacityComplete,
     setEmptyProjectFocus,
+    scrollToSection,
   } = p;
   const panelsInitialMount =
     reduceMotion || skipHomePanelsVtReveal
@@ -2594,7 +2730,7 @@ function ExplorationPageMainColumn(p) {
       className={clsx("isolate", emptyProjectFocus && emptyCanvasSettled && EMPTY_CANVAS_MAIN_GEOM_LG)}
     >
       <ExplorationMainWorkSection reduceMotion={reduceMotion} setEmptyProjectFocus={setEmptyProjectFocus} />
-      <ExplorationMainStudioSection reduceMotion={reduceMotion} />
+      <ExplorationMainStudioSection reduceMotion={reduceMotion} scrollToSection={scrollToSection} />
       <ExplorationMainApproachSection reduceMotion={reduceMotion} />
       <ExplorationMainContactSection reduceMotion={reduceMotion} />
     </ExplorationMainPanels>
@@ -2635,6 +2771,7 @@ export function ExplorationHomePage() {
           emptyCanvasOpacityTransition={m.emptyCanvasOpacityTransition}
           onMainPanelsOpacityComplete={m.onMainPanelsOpacityComplete}
           setEmptyProjectFocus={m.setEmptyProjectFocus}
+          scrollToSection={m.scrollToSection}
         />
       </ExplorationBody>
     </ExplorationRoot>
