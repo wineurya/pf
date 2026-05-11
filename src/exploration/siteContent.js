@@ -419,6 +419,22 @@ export const SITE_STACK_MARQUEE_LAYERS = [
   ],
 ];
 
+/**
+ * Approach “Prototype” step — compact chip grid; same tool metadata as the stack marquee
+ * ({@link SITE_STACK_MARQUEE_LAYERS}) plus a shorter label where needed.
+ */
+export const SITE_APPROACH_PROTOTYPE_STACK = (() => {
+  const [designLane, buildLane] = SITE_STACK_MARQUEE_LAYERS;
+  return [
+    designLane[0],
+    designLane[5],
+    buildLane[2],
+    buildLane[3],
+    { ...buildLane[5], label: "Tailwind" },
+    buildLane[6],
+  ];
+})();
+
 /** Flat list for search / reuse; marquees use {@link SITE_STACK_MARQUEE_LAYERS}. */
 export const SITE_STACK_TOOLS = SITE_STACK_MARQUEE_LAYERS.flat();
 

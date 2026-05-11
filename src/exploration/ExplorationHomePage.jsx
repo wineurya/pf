@@ -56,6 +56,7 @@ import {
   SITE_FIGMA_ASSETS,
   SITE_HERO,
   SITE_IMAGE_FALLBACKS,
+  SITE_APPROACH_PROTOTYPE_STACK,
   SITE_QUALIFICATION_FIELDS,
   SECTION_IDS,
   SECTION_TABS,
@@ -74,6 +75,7 @@ import { ExplorationNavRow } from "@/exploration/ExplorationNavRow.jsx";
 import { wxNavRailFadeTransition, wxNavTabTransition } from "@/exploration/navMotion.js";
 import { MaskedFigmaIcon } from "@/exploration/MaskedFigmaIcon.jsx";
 import { ApproachStepFolderHoverVisual } from "@/exploration/ApproachStepFolderVisual.jsx";
+import { ApproachStepTechStackVisual } from "@/exploration/ApproachStepTechStackVisual.jsx";
 import { runWorkCardStutterSequence } from "@/exploration/workCardStutterTypewriter.js";
 
 const NUGGET_ICON_MAP = {
@@ -2316,9 +2318,9 @@ const APPROACH_STEPS = [
   },
   {
     title: "Prototype",
-    body: "Make the risky moments clickable so motion, feedback, and comprehension can be tested early.",
+    body: "Make the risky moments clickable in a shared stack—motion, feedback, and comprehension get tested where they ship.",
     accent: "var(--wx-accent-violet)",
-    visual: "prototype",
+    visual: "techstack",
   },
   {
     title: "Hand off",
@@ -2331,9 +2333,10 @@ const APPROACH_STEPS = [
 function ProcessRoughVisual({ variant }) {
   const task = {
     map: { status: "In Progress", phase: "Structure", title: "Flow map", date: "Day 3" },
-    prototype: { status: "Review", phase: "Prototype", title: "Clickable build", date: "Day 7" },
     handoff: { status: "Done", phase: "Ship", title: "States + specs", date: "Day 10" },
   }[variant];
+
+  if (!task) return null;
 
   return (
     <div className={clsx("wx-process-rough-visual", `wx-process-rough-visual--${variant}`)}>
@@ -2422,7 +2425,11 @@ function ApproachStepListItem({ step, className, reduceMotion, stepIndex }) {
         <div className="wx-approach-step-card__text-clip">{textBlock}</div>
         <div className="wx-approach-step-card__folder-slot w-full" aria-hidden>
           <div className="wx-approach-step-card__folder-visual-inner">
-            <ProcessRoughVisual variant={step.visual} />
+            {step.visual === "techstack" ? (
+              <ApproachStepTechStackVisual tools={SITE_APPROACH_PROTOTYPE_STACK} reduceMotion={reduceMotion} />
+            ) : (
+              <ProcessRoughVisual variant={step.visual} />
+            )}
           </div>
         </div>
       </motion.li>
