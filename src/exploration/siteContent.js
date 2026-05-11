@@ -9,7 +9,7 @@ export const SECTION_IDS = [
 export const SECTION_TABS = [
   { id: "work", label: "Work", sectionId: "section-work" },
   { id: "studio", label: "Studio", sectionId: "section-studio" },
-  { id: "approach", label: "Approach", sectionId: "section-approach" },
+  { id: "approach", label: "Process", sectionId: "section-approach" },
   { id: "contact", label: "Contact", sectionId: "section-contact" },
 ];
 
@@ -56,10 +56,10 @@ export const SITE_EXTRA_IMAGES = {
 
 /** Hero copy — calm baseline. One promise, one CTA, one secondary anchor. */
 export const SITE_HERO = {
-  eyebrow: "Available for projects",
+  eyebrow: "Available for work",
   headline: "Designs that feel",
   subhead:
-    "Independent product designer working at the seam between research and shipped UI — for teams who care how it actually feels to use.",
+    "Atlanta-based product designer shaping clear flows, prototypes, and motion-rich UI.",
   primaryCta: { label: "Get in touch", href: "#section-contact" },
   secondaryCta: { label: "View work", href: "#section-work" },
 };
@@ -433,99 +433,39 @@ export const SITE_CONTACT_SOCIALS = [
 ];
 
 /**
- * Services — a flat list, not a sales menu. One line each. No prices, no codes,
- * no icons, no timelines on the surface. Buyers who care about scope or budget
- * email and ask. The references (Reynolds, Rusli, Carignan) all do this.
- * Pricing lives in the FAQ; scope lives in the SOW.
- */
-export const SITE_SERVICES = [
-  {
-    slug: "discovery",
-    title: "Discovery sprints",
-    body: "Interviews, usability tests, friction maps. Two weeks.",
-  },
-  {
-    slug: "landing",
-    title: "Conversion landing systems",
-    body: "Designed and built in React. Three weeks.",
-  },
-  {
-    slug: "revamp",
-    title: "Product UX revamps",
-    body: "Research, prototype, validate, ship. Four to eight weeks.",
-  },
-  {
-    slug: "retainer",
-    title: "Design partner retainers",
-    body: "Embedded weekly. Monthly. Three-month minimum.",
-  },
-];
-
-/**
  * Empty until a real, attributable quote is captured. Rendering code should
  * gracefully skip the testimonial card when this array is empty.
  */
 export const SITE_TESTIMONIALS = [];
 
-/** Stats row — calm, factual, buyer-relevant (not vanity craft signals). */
-export const SITE_STATS = [
-  {
-    value: "4-8 wk",
-    label: "Typical scope",
-    hint: "Enough time to learn the flow, shape the UI, and leave a build-ready path.",
-  },
-  {
-    value: "1-2 rounds",
-    label: "User checks",
-    hint: "Fast validation while the structure is still easy to change.",
-  },
-  {
-    value: "Dev-ready",
-    label: "Handoff",
-    hint: "Annotated states, edge cases, and front-end notes for a cleaner build.",
-  },
-];
-
 /** FAQ — questions people actually ask before hiring or collaborating. */
 export const SITE_FAQ = [
   {
-    q: "What does a project cost?",
-    a: "Engagements range from $1.2k for a one-week audit to $11k+ for a full product UX revamp with shipped front-end. Retainers from $5.5k/month, three-month minimum. Email me with what you're working on and I'll send a fitted scope.",
-  },
-  {
-    q: "What won't you take on?",
-    a: "Sixty-page strategy decks before any pixels. Process for the sake of process. Work where research isn't welcome. Designs that can't actually be built. If we're not a fit, I'll say so quickly.",
-  },
-  {
-    q: "What if I don't know my outcome metrics yet?",
-    a: "We'll define them in week one. For most product engagements that means task completion, time-on-task, and a confidence survey before and after — measured with five to seven test participants. You'll leave the project knowing what moved.",
+    q: "Are you open to full-time or contract?",
+    a: "Open to both: product design roles, focused UX sprints, and motion-heavy UI work.",
   },
   {
     q: "What do you need from me to get started?",
-    a: "A short brief: the problem, who it's for, any deadlines, and links to what exists today (Figma, staging, or a doc). From there I'll suggest a lightweight plan and the first milestone.",
+    a: "A short note with the role, product, deadline, and any links worth seeing.",
   },
   {
     q: "How do you work day to day?",
-    a: "Async updates with regular checkpoints — shared Figma, notes from research, and prototypes you can click. For bigger decisions we'll align on a call; otherwise I keep momentum in the file.",
+    a: "Shared Figma, tight checkpoints, prototypes when needed, and clear handoff notes.",
   },
   {
     q: "Do you design and build?",
-    a: "Yes. I design in Figma and ship UI in React with Tailwind (and motion where it helps). That keeps interaction detail from getting lost between design and code.",
-  },
-  {
-    q: "Are you open to contract or full-time?",
-    a: "Open to both — contract sprints for a defined scope, or full-time product design roles with research and prototyping in the loop. Tell me what you're hiring for and we'll see if it's a fit.",
+    a: "Yes. I design in Figma and can ship UI in React when the project needs production-level interaction detail.",
   },
   {
     q: "Where are you based?",
-    a: "Atlanta, GA — remote-first and happy to overlap EST hours with your team.",
+    a: "Atlanta, GA. Remote-first, with EST overlap for teams that need regular checkpoints.",
   },
 ];
 
 /** Availability — lightweight calendar cue. */
 export const SITE_AVAILABILITY = {
-  note: "Taking 2 new engagements this quarter.",
-  opening: "Next opening: July 2026",
+  note: "Open to product design roles, contract sprints, and motion-heavy UI work.",
+  opening: "Atlanta, GA / remote-first / EST overlap",
 };
 
 /**
@@ -536,10 +476,10 @@ export const SITE_QUALIFICATION_FIELDS = [
   { id: "name", label: "Your name", type: "text", required: true, placeholder: "First and last" },
   {
     id: "focus",
-    label: "What are you working on?",
+    label: "What are you hiring for?",
     type: "textarea",
     required: true,
-    placeholder: "A few sentences. What it is, what's stuck, when you'd like to start.",
+    placeholder: "Role, product problem, prototype, or messy flow.",
   },
-  { id: "links", label: "Links (optional)", type: "text", placeholder: "Figma, staging, repo, anything I should see" },
+  { id: "links", label: "Links (optional)", type: "text", placeholder: "Job post, Figma, staging, notes" },
 ];

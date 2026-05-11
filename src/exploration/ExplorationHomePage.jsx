@@ -57,7 +57,6 @@ import {
   SITE_HERO,
   SITE_IMAGE_FALLBACKS,
   SITE_QUALIFICATION_FIELDS,
-  SITE_SERVICES,
   SECTION_IDS,
   SECTION_TABS,
   SITE_STACK_MARQUEE_LAYERS,
@@ -2213,104 +2212,6 @@ function ExplorationMainWorkSection({ reduceMotion, setEmptyProjectFocus }) {
   );
 }
 
-function StudioBenefitVisual({ kind }) {
-  const shell =
-    "relative mt-5 h-44 overflow-hidden rounded-[calc(var(--wx-radius-card)-4px)] bg-[var(--wx-surface-soft)] ring-1 ring-[color:var(--wx-border-soft)]";
-  const chip =
-    "wx-text-meta inline-flex items-center rounded-full bg-[var(--wx-white)] px-2.5 py-1 font-medium text-[var(--wx-ink)] ring-1 ring-[color:var(--wx-border-soft)]";
-
-  if (kind === "frames") {
-    return (
-      <div className={shell} aria-hidden>
-        <div className="absolute inset-5 grid grid-cols-[0.84fr_1fr] gap-3">
-          <div className="rounded-[10px] bg-[var(--wx-white)] p-3 ring-1 ring-[color:var(--wx-border-soft)]">
-            <span className="block h-3 w-16 rounded-full bg-[color:var(--wx-approach-accent)] opacity-25" />
-            <span className="mt-5 block h-16 rounded-[8px] bg-[var(--wx-page-bg)] ring-1 ring-[color:var(--wx-border-soft)]" />
-          </div>
-          <div className="grid gap-3">
-            <span className="rounded-[10px] bg-[var(--wx-white)] ring-1 ring-[color:var(--wx-border-soft)]" />
-            <span className="rounded-[10px] bg-[var(--wx-white)] ring-1 ring-[color:var(--wx-border-soft)]" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (kind === "prototype") {
-    return (
-      <div className={shell} aria-hidden>
-        <div className="absolute left-1/2 top-5 h-32 w-24 -translate-x-1/2 rounded-[18px] bg-[var(--wx-white)] p-3 ring-1 ring-[color:var(--wx-border-soft)]">
-          <span className="mx-auto block h-1 w-8 rounded-full bg-[var(--wx-border-soft)]" />
-          <span className="mt-5 block h-7 rounded-[9px] bg-[color:var(--wx-approach-accent)] opacity-20" />
-          <span className="mt-3 block h-3 rounded-full bg-[var(--wx-surface-soft)]" />
-          <span className="mt-2 block h-3 w-2/3 rounded-full bg-[var(--wx-surface-soft)]" />
-        </div>
-        <span className="absolute bottom-8 right-[30%] h-7 w-7 rounded-full bg-[var(--wx-white)] ring-1 ring-[color:var(--wx-border-soft)]" />
-      </div>
-    );
-  }
-
-  if (kind === "handoff") {
-    return (
-      <div className={shell} aria-hidden>
-        <div className="absolute inset-5 rounded-[10px] bg-[var(--wx-white)] p-4 ring-1 ring-[color:var(--wx-border-soft)]">
-          <div className="flex flex-wrap gap-2">
-            <span className={chip}>states</span>
-            <span className={chip}>tokens</span>
-            <span className={chip}>edge cases</span>
-          </div>
-          <div className="mt-5 space-y-2">
-            <span className="block h-2.5 w-10/12 rounded-full bg-[var(--wx-surface-soft)]" />
-            <span className="block h-2.5 w-7/12 rounded-full bg-[color:var(--wx-approach-accent)] opacity-20" />
-            <span className="block h-2.5 w-9/12 rounded-full bg-[var(--wx-surface-soft)]" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={shell} aria-hidden>
-      <div className="absolute inset-x-5 top-5 space-y-3">
-        {["User call", "Flow audit", "Signal map"].map((label, index) => (
-          <div
-            key={label}
-            className="flex items-center justify-between rounded-[10px] bg-[var(--wx-white)] px-3 py-2.5 ring-1 ring-[color:var(--wx-border-soft)]"
-          >
-            <span className="wx-text-meta font-medium text-[var(--wx-ink)]">{label}</span>
-            <span
-              className="h-2.5 w-2.5 rounded-full"
-              style={{ background: index === 1 ? "var(--wx-approach-accent)" : "var(--wx-border-soft)" }}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function StudioBenefitCard({ item, index, reduceMotion }) {
-  return (
-    <motion.article
-      className="overflow-hidden rounded-[var(--wx-radius-card)] bg-[var(--wx-page-bg)] p-5 ring-1 ring-[color:var(--wx-border-soft)] sm:p-6"
-      style={{ "--wx-approach-accent": item.accent }}
-      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.24 }}
-      transition={{
-        duration: reduceMotion ? 0 : 0.46,
-        delay: reduceMotion ? 0 : index * 0.05,
-        ease: WX_SPRINKLE_EASE,
-      }}
-    >
-      <p className="wx-text-section-kicker text-[var(--wx-muted)]">{String(index + 1).padStart(2, "0")}</p>
-      <h3 className="mt-2 wx-text-subsection-title text-[var(--wx-ink)]">{item.title}</h3>
-      <p className="mt-3 wx-text-body-secondary text-[var(--wx-muted)]">{item.body}</p>
-      <StudioBenefitVisual kind={item.visual} />
-    </motion.article>
-  );
-}
-
 function ExplorationMainStudioSection({ reduceMotion, scrollToSection }) {
   const hoverBtn = reduceMotion ? undefined : { y: -1 };
 
@@ -2352,11 +2253,6 @@ function ExplorationMainStudioSection({ reduceMotion, scrollToSection }) {
           <ArrowUpRight size={16} weight="bold" aria-hidden />
         </motion.button>
       </RevealCard>
-      <div className="grid gap-[var(--wx-gallery-gap)] md:grid-cols-2">
-        {SITE_SERVICES.map((item, index) => (
-          <StudioBenefitCard key={item.slug} item={item} index={index} reduceMotion={reduceMotion} />
-        ))}
-      </div>
       {SITE_TESTIMONIALS.length > 0 ? (
         <RevealCard
           reduceMotion={reduceMotion}
