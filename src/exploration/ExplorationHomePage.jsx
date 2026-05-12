@@ -35,6 +35,7 @@ import {
 } from "lucide-animated";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ViewTransitionLink } from "@/components/ViewTransitionLink.jsx";
+import { useMeasure } from "@/hooks/useMeasure.js";
 import { WX_SKIP_HOME_PANELS_ENTER_KEY } from "@/lib/navigateViewTransition.js";
 import { queueScrollTriggerRefresh } from "@/lib/gsap.js";
 import { useLenis } from "@/providers/LenisProvider.jsx";
@@ -1404,6 +1405,15 @@ function ContactPill({ c, reduceMotion, labelEase }) {
   const Icon = CONTACT_ROW_ICONS[c.icon];
   const external = c.href.startsWith("http");
   const [open, setOpen] = useState(false);
+  const [labelMeasureRef, labelBounds] = useMeasure();
+
+  const labelWidth = reduceMotion
+    ? "auto"
+    : !open
+      ? 0
+      : labelBounds.width > 0
+        ? labelBounds.width
+        : "auto";
 
   return (
     <motion.a
@@ -1425,19 +1435,20 @@ function ContactPill({ c, reduceMotion, labelEase }) {
         className="wx-contact-pill__label"
         aria-hidden
         initial={false}
-        animate={
-          reduceMotion
-            ? { width: "auto", opacity: 1 }
-            : { width: open ? "auto" : 0, opacity: open ? 1 : 0 }
-        }
+        animate={{
+          width: labelWidth,
+          opacity: reduceMotion ? 1 : open ? 1 : 0,
+        }}
         transition={
           reduceMotion
             ? { duration: 0 }
             : { duration: 0.2, ease: labelEase }
         }
-        style={{ overflow: "hidden", whiteSpace: "nowrap" }}
+        style={{ display: "inline-block", overflow: "hidden", verticalAlign: "middle" }}
       >
-        {c.label}
+        <span ref={labelMeasureRef} className="inline-block whitespace-nowrap">
+          {c.label}
+        </span>
       </motion.span>
     </motion.a>
   );
@@ -1475,7 +1486,19 @@ function faqBubbleT(reduceMotion) {
 }
 
 function FaqAccordionRow({ item, idx, isOpen, onToggle, reduceMotion, panelTransition }) {
-  const openAnim = { height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 };
+  const [panelMeasureRef, panelBounds] = useMeasure();
+
+  const panelHeight = reduceMotion
+    ? isOpen
+      ? "auto"
+      : 0
+    : !isOpen
+      ? 0
+      : panelBounds.height > 0
+        ? panelBounds.height
+        : "auto";
+
+  const openAnim = { height: panelHeight, opacity: isOpen ? 1 : 0 };
   const bubbleAnim = isOpen
     ? { opacity: 1, y: 0, scale: 1 }
     : { opacity: 0, y: 10, scale: 0.97 };
@@ -1508,7 +1531,7 @@ function FaqAccordionRow({ item, idx, isOpen, onToggle, reduceMotion, panelTrans
         transition={panelTransition}
         style={{ overflow: "hidden" }}
       >
-        <div className="wx-faq-panel-inner">
+        <div ref={panelMeasureRef} className="wx-faq-panel-inner">
           <div className="wx-faq-answer-row">
             <div className="wx-faq-avatar-placeholder" aria-hidden />
             <motion.div
