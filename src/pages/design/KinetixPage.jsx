@@ -157,11 +157,10 @@ const METRICS = [
     label: 'Friction Score', value: '82', sub: '/ 100',
     trend: 'warn', trendLabel: '-4.2%', trendSuffix: 'in friction', trendIcon: TrendingDown,
     viz: {
-      kind: 'spark',
+      kind: 'arc',
       color: '#D97706',
-      points: [
-        0.52, 0.56, 0.51, 0.62, 0.58, 0.68, 0.64, 0.72, 0.69, 0.76, 0.74, 0.8,
-      ],
+      colorStart: '#FBBF24',
+      percent: 82,
     },
   },
   {
@@ -305,6 +304,66 @@ function MetricDonutViz({ percent, color }) {
         strokeLinecap="round"
         transform={`rotate(-90 ${cx} ${cy})`}
       />
+    </svg>
+  )
+}
+
+/** Arc gauge — 270° dial with progress fill. Literal cue from watch-face
+ *  inspirations (speedometer, temperature). Anchored at bottom: empty space
+ *  faces down so the gauge "sits". */
+function MetricArcGauge({ percent, color, colorStart }) {
+  const size = 76
+  const sw = 7
+  const r = (size - sw) / 2 - 1
+  const cx = size / 2
+  const cy = size / 2 + 4
+  const startA = Math.PI * 0.75   // bottom-left (7:30)
+  const sweep = Math.PI * 1.5      // 270°
+  const p = Math.max(0, Math.min(100, percent)) / 100
+  const endA = startA + sweep
+  const progA = startA + sweep * p
+
+  const polar = (a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)]
+  const [sx, sy] = polar(startA)
+  const [ex, ey] = polar(endA)
+  const [px, py] = polar(progA)
+
+  const largeBg = sweep > Math.PI ? 1 : 0
+  const largeFg = (sweep * p) > Math.PI ? 1 : 0
+  const gid = `kx-arc-${String(color).replace(/[^a-zA-Z0-9]/g, '')}`
+
+  return (
+    <svg
+      viewBox={`0 0 ${size} ${size}`}
+      preserveAspectRatio="xMidYMid meet"
+      width="100%"
+      height="100%"
+      className="kx-metric-viz-arc"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stopColor={colorStart || color} />
+          <stop offset="100%" stopColor={color} />
+        </linearGradient>
+      </defs>
+      <path
+        d={`M ${sx.toFixed(2)} ${sy.toFixed(2)} A ${r} ${r} 0 ${largeBg} 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`}
+        fill="none"
+        stroke="var(--kx-border-strong)"
+        strokeWidth={sw}
+        strokeLinecap="round"
+        opacity={0.42}
+      />
+      <path
+        d={`M ${sx.toFixed(2)} ${sy.toFixed(2)} A ${r} ${r} 0 ${largeFg} 1 ${px.toFixed(2)} ${py.toFixed(2)}`}
+        fill="none"
+        stroke={`url(#${gid})`}
+        strokeWidth={sw}
+        strokeLinecap="round"
+      />
+      <circle cx={px} cy={py} r={sw / 1.9} fill={color} />
+      <circle cx={px} cy={py} r={sw / 1.9 + 2.5} fill={color} fillOpacity={0.16} />
     </svg>
   )
 }
@@ -651,6 +710,12 @@ function MetricCards() {
           vizNode = (
             <div className="kx-metric-viz-slot kx-metric-viz-slot-donut" aria-hidden="true">
               <MetricDonutViz percent={viz.percent} color={viz.color} />
+            </div>
+          )
+        } else if (viz.kind === 'arc') {
+          vizNode = (
+            <div className="kx-metric-viz-slot kx-metric-viz-slot-arc" aria-hidden="true">
+              <MetricArcGauge percent={viz.percent} color={viz.color} colorStart={viz.colorStart} />
             </div>
           )
         } else if (viz.kind === 'funnel') {

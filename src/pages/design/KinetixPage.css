@@ -1156,6 +1156,20 @@
   height: 100%;
 }
 
+/* Arc gauge — literal speedometer/temperature dial from watch-face inspirations */
+.kx-metric-viz-slot-arc {
+  justify-content: center;
+  align-items: center;
+}
+
+.kx-metric-viz-arc {
+  display: block;
+  width: clamp(72px, 92%, 86px);
+  height: clamp(72px, 92%, 86px);
+  margin-inline: auto 0;
+  flex-shrink: 0;
+}
+
 .kx-metric-viz-slot-funnel {
   height: 100%;
   justify-content: flex-end;
