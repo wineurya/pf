@@ -1850,7 +1850,7 @@ function useScrollToSectionForExploration(lenis, reduceMotion, setEmptyProjectFo
   );
 }
 
-function useExplorationLayoutModel() {
+export function useExplorationLayoutModel() {
   const lenis = useLenis();
   const navigate = useNavigate();
   const location = useLocation();
@@ -2082,7 +2082,7 @@ function ExplorationPageAsideFooter({ reduceMotion }) {
   );
 }
 
-function ExplorationPageAside(p) {
+export function ExplorationPageAside(p) {
   const {
     emptyProjectFocus,
     emptyCanvasSettled,
@@ -2571,7 +2571,7 @@ function ExplorationMainContactSection({ reduceMotion }) {
   );
 }
 
-function ExplorationPageMainColumn(p) {
+export function ExplorationPageMainColumn(p) {
   const {
     emptyProjectFocus,
     emptyCanvasSettled,

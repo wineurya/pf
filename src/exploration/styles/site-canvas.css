@@ -546,16 +546,19 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .site-canvas .wx-approach-step-card--with-folder-visual {
+  .site-canvas .wx-approach-step-card--with-folder-visual,
+  .site-canvas .wx-approach-step-card--techstack-full {
     transition: border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .site-canvas .wx-approach-step-card--with-folder-visual > * {
+  .site-canvas .wx-approach-step-card--with-folder-visual > *,
+  .site-canvas .wx-approach-step-card--techstack-full > * {
     position: relative;
     z-index: 1;
   }
 
-  .site-canvas .wx-approach-step-card--with-folder-visual::before {
+  .site-canvas .wx-approach-step-card--with-folder-visual::before,
+  .site-canvas .wx-approach-step-card--techstack-full::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -564,14 +567,15 @@
     pointer-events: none;
     opacity: 0;
     background: radial-gradient(
-      ellipse 125% 90% at 50% 100%,
+      ellipse 125% 90% at 50% 0%,
       color-mix(in srgb, var(--wx-approach-accent, #ea580c) 15%, var(--wx-white)) 0%,
       var(--wx-white) 62%
     );
     transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .site-canvas .wx-approach-step-card--with-folder-visual::after {
+  .site-canvas .wx-approach-step-card--with-folder-visual::after,
+  .site-canvas .wx-approach-step-card--techstack-full::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -580,7 +584,7 @@
     pointer-events: none;
     opacity: 0;
     background: linear-gradient(
-      to top,
+      to bottom,
       color-mix(in srgb, var(--wx-approach-accent, #ea580c) 44%, var(--wx-border-soft)) 0%,
       color-mix(in srgb, var(--wx-approach-accent, #ea580c) 30%, var(--wx-border-soft)) 14%,
       color-mix(in srgb, var(--wx-approach-accent, #ea580c) 18%, var(--wx-border-soft)) 30%,
@@ -594,21 +598,24 @@
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    clip-path: inset(100% 0 0 0 round var(--wx-approach-card-clip-r));
+    clip-path: inset(0 0 100% 0 round var(--wx-approach-card-clip-r));
     transition:
       clip-path 0.55s cubic-bezier(0.22, 1, 0.36, 1),
       opacity 0.2s ease;
   }
 
-  .site-canvas .wx-approach-step-card--with-folder-visual:hover::before {
+  .site-canvas .wx-approach-step-card--with-folder-visual:hover::before,
+  .site-canvas .wx-approach-step-card--techstack-full:hover::before {
     opacity: 1;
   }
 
-  .site-canvas .wx-approach-step-card--with-folder-visual:hover {
+  .site-canvas .wx-approach-step-card--with-folder-visual:hover,
+  .site-canvas .wx-approach-step-card--techstack-full:hover {
     border-color: transparent;
   }
 
-  .site-canvas .wx-approach-step-card--with-folder-visual:hover::after {
+  .site-canvas .wx-approach-step-card--with-folder-visual:hover::after,
+  .site-canvas .wx-approach-step-card--techstack-full:hover::after {
     opacity: 1;
     clip-path: inset(0 0 0 0 round var(--wx-approach-card-clip-r));
   }
@@ -749,126 +756,335 @@
   overflow: visible;
 }
 
-/* Static process task-card visual inspired by compact production boards. */
+/* Rough process visuals — Map flow chart + Hand off spec sheet. Hairline frame,
+   subtle accent tint, naked schematic inside drawn with SVG. */
 .site-canvas .wx-process-rough-visual {
   position: relative;
-  width: min(18rem, 72%);
+  width: min(18rem, 78%);
   height: 9.5rem;
   flex-shrink: 0;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--wx-approach-accent, #ea580c) 18%, var(--wx-border-soft));
+  border: 1px solid color-mix(in srgb, var(--wx-approach-accent, #ea580c) 16%, var(--wx-border-soft));
   border-radius: 14px;
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 10%, var(--wx-white)) 0%,
-      var(--wx-white) 62%
+      color-mix(in srgb, var(--wx-approach-accent, #ea580c) 8%, var(--wx-white)) 0%,
+      var(--wx-white) 65%
     );
+  color: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 55%, var(--wx-ink));
 }
 
-.site-canvas .wx-process-rough-visual::before {
-  content: "";
-  position: absolute;
-  inset: 0.875rem;
-  border-radius: 10px;
-  border: 1px dashed color-mix(in srgb, var(--wx-approach-accent, #ea580c) 20%, var(--wx-border-soft));
-  opacity: 0.72;
-}
-
-/* Approach Prototype step — tech stack chip grid (see {@link ApproachStepTechStackVisual}). */
-.site-canvas .wx-approach-tech-stack-visual {
-  position: relative;
-  width: min(18rem, 72%);
-  height: 10.125rem;
-  flex-shrink: 0;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--wx-approach-accent, #7c3aed) 18%, var(--wx-border-soft));
-  border-radius: 14px;
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--wx-approach-accent, #7c3aed) 12%, var(--wx-white)) 0%,
-      var(--wx-white) 55%
-    );
-}
-
-.site-canvas .wx-approach-tech-stack-visual__chrome {
+.site-canvas .wx-process-rough-visual__svg {
   position: absolute;
   inset: 0.75rem;
+  width: calc(100% - 1.5rem);
+  height: calc(100% - 1.5rem);
+}
+
+.site-canvas .wx-process-rough-visual__node {
+  fill: var(--wx-white);
+  stroke: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 24%, var(--wx-border-soft));
+  stroke-width: 1;
+}
+
+.site-canvas .wx-process-rough-visual__node--decision {
+  fill: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 6%, var(--wx-white));
+  stroke-dasharray: 3 3;
+}
+
+.site-canvas .wx-process-rough-visual__node--component {
+  stroke-dasharray: 3 3;
+}
+
+.site-canvas .wx-process-rough-visual__bar {
+  fill: color-mix(in srgb, var(--wx-ink) 22%, var(--wx-surface-soft));
+}
+
+.site-canvas .wx-process-rough-visual__bar--soft {
+  fill: var(--wx-surface-soft);
+}
+
+.site-canvas .wx-process-rough-visual__dot {
+  fill: var(--wx-approach-accent, #ea580c);
+  opacity: 0.75;
+}
+
+.site-canvas .wx-process-rough-visual__edge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 70%, var(--wx-muted));
+  stroke-width: 1.25;
+  stroke-linecap: round;
+}
+
+.site-canvas .wx-process-rough-visual__edge--dashed {
+  stroke-dasharray: 4 3;
+}
+
+.site-canvas .wx-process-rough-visual__swatch {
+  stroke: color-mix(in srgb, var(--wx-ink) 14%, transparent);
+  stroke-width: 1;
+}
+
+.site-canvas .wx-process-rough-visual__swatch--a {
+  fill: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 55%, var(--wx-white));
+}
+
+.site-canvas .wx-process-rough-visual__swatch--b {
+  fill: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 25%, var(--wx-white));
+}
+
+.site-canvas .wx-process-rough-visual__swatch--c {
+  fill: color-mix(in srgb, var(--wx-ink) 88%, transparent);
+}
+
+.site-canvas .wx-process-rough-visual__swatch--d {
+  fill: var(--wx-surface-soft);
+}
+
+.site-canvas .wx-process-rough-visual__check {
+  fill: var(--wx-approach-accent, #ea580c);
+  opacity: 0.16;
+  stroke: var(--wx-approach-accent, #ea580c);
+  stroke-width: 1;
+}
+
+.site-canvas .wx-process-rough-visual__check-mark {
+  fill: none;
+  stroke: var(--wx-approach-accent, #ea580c);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.site-canvas .wx-process-rough-visual__component-dot {
+  fill: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 28%, var(--wx-surface-soft));
+}
+
+.site-canvas .wx-process-rough-visual__cta {
+  fill: color-mix(in srgb, var(--wx-approach-accent, #ea580c) 72%, var(--wx-ink));
+}
+
+/* Approach Prototype step — full-card layout from Figma Testing `309:51`:
+   title row at the top, ellipse arc filling the bottom; tool bubbles rotate
+   along the line, peak labeled by a chip. Accent driven by --wx-approach-accent. */
+.site-canvas .wx-approach-step-card--techstack-full {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.site-canvas .wx-approach-step-card--techstack-full.wx-approach-step-card--bento-wide {
+  padding: 0;
+}
+
+.site-canvas .wx-approach-tech-stack-visual--full-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  border: none;
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  gap: 0.75rem;
+  padding: 0 1.25rem 1.25rem 0;
+}
+
+@media (min-width: 40rem) {
+  .site-canvas .wx-approach-tech-stack-visual--full-card {
+    padding: 0 1.5rem 1.5rem 0;
+  }
+}
+
+.site-canvas .wx-approach-tech-stack-visual__card-head {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin-top: auto;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__card-title-row {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__card-accent {
+  width: 0.25rem;
+  flex-shrink: 0;
+  border-radius: 0 0.125rem 0.125rem 0;
+  background: var(--wx-approach-accent, var(--wx-accent-violet));
+}
+
+.site-canvas .wx-approach-tech-stack-visual__card-text {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  border-radius: 10px;
-  border: 1px dashed color-mix(in srgb, var(--wx-approach-accent, #7c3aed) 22%, var(--wx-border-soft));
-  padding: 0.5rem 0.5rem 0.45rem;
-  background: color-mix(in srgb, var(--wx-white) 92%, var(--wx-surface-soft));
+  flex: 1 1 0%;
+  min-width: 0;
 }
 
-.site-canvas .wx-approach-tech-stack-visual__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0 0.125rem;
-}
-
-.site-canvas .wx-approach-tech-stack-visual__head-kicker {
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: color-mix(in srgb, var(--wx-approach-accent, #7c3aed) 78%, var(--wx-ink));
-}
-
-.site-canvas .wx-approach-tech-stack-visual__list {
-  display: grid;
-  flex: 1;
-  min-height: 0;
-  list-style: none;
+.site-canvas .wx-approach-tech-stack-visual__card-title {
   margin: 0;
-  padding: 0.125rem;
-  gap: 0.35rem 0.4rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
-}
-
-.site-canvas .wx-approach-tech-stack-visual__item {
-  min-width: 0;
-}
-
-.site-canvas .wx-approach-tech-stack-visual__chip {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 0.35rem;
-  border-radius: 8px;
-  border: 1px solid var(--wx-border-soft);
-  background: var(--wx-white);
-  padding: 0.28rem 0.4rem;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--wx-black) 5%, transparent);
-}
-
-.site-canvas .wx-approach-tech-stack-visual__logo {
-  flex-shrink: 0;
-  width: 1.125rem;
-  height: 1.125rem;
-  object-fit: contain;
-}
-
-.site-canvas .wx-approach-tech-stack-visual__label {
-  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
-  font-size: 0.65rem;
+  font-family: var(--font-display, ui-rounded, system-ui, sans-serif);
+  font-size: 1.0625rem;
+  line-height: 1.3;
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: 0.01em;
   color: var(--wx-ink);
+  text-wrap: pretty;
+  font-synthesis: none;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__card-lede {
+  margin: 0;
+  font-size: var(--wx-text-sm-size);
+  line-height: 1.25rem;
+  color: var(--wx-muted);
+  text-wrap: pretty;
+  font-synthesis: none;
+}
+
+/* Visual stage — the top of the card. overflow-clip so bubbles + the wheel’s
+   bottom half spill off the card edges. */
+.site-canvas .wx-approach-tech-stack-visual__stage {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 7rem;
   overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.site-canvas .wx-approach-tech-stack-visual--full-card .wx-approach-tech-stack-visual__stage {
+  margin-left: -1px;
+  margin-right: -1px;
+  width: calc(100% + 2px);
+}
+
+/* Peak label — matches Case Study Focus pills: white fill, hairline border, ink text.
+   Positioned so its bottom edge sits 16px above the peak logo image. Peak logo center sits at
+   y = 60/120 of stage height; image is 32px tall, so image top = (60 - 16)/120 = 44/120. */
+.site-canvas .wx-approach-tech-stack-visual__chip {
+  position: absolute;
+  top: calc(44 / 120 * 100%);
+  left: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  padding: 0.3125rem 0.7rem;
+  border: 1px solid var(--wx-border-muted, var(--wx-border-soft));
+  border-radius: 999px;
+  background: var(--wx-white);
+  transform: translate(-50%, calc(-100% - 16px));
+  pointer-events: none;
   white-space: nowrap;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .site-canvas .wx-approach-tech-stack-visual__chip {
-    box-shadow: none;
-  }
+.site-canvas .wx-approach-tech-stack-visual__chip-text {
+  display: inline-block;
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+  font-size: var(--wx-text-nugget-warm, 0.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--wx-ink);
+}
+
+.site-canvas .wx-approach-tech-stack-visual__bubbles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+/* Naked logo on the wheel — no circle, motion writes x/y/scale/opacity straight to
+   the compositor. Anchored at (0,0); the -50% margins center the logo on its target. */
+.site-canvas .wx-approach-tech-stack-visual__slot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: -1.25rem;
+  margin-top: -1.25rem;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__logo {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__logo-fallback {
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--wx-muted);
+}
+
+/* Static stage — used when reduceMotion is true (and for Figma export via /figma/home).
+   Flat chip row: every tool visible and named, so the snapshot is useful even without animation.
+   Left padding matches the head accent + gap (0.25rem + 1rem) so chips line up under the card title. */
+.site-canvas .wx-approach-tech-stack-visual__stage--static {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 5.5rem;
+  padding: 0.75rem 0 0.75rem 1.25rem;
+  overflow: visible;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__static-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__static-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3125rem 0.6rem 0.3125rem 0.45rem;
+  border: 1px solid var(--wx-border-muted, var(--wx-border-soft));
+  border-radius: 999px;
+  background: var(--wx-white);
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+  font-size: var(--wx-text-nugget-warm, 0.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--wx-ink);
+}
+
+.site-canvas .wx-approach-tech-stack-visual__static-logo {
+  width: 1.125rem;
+  height: 1.125rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.site-canvas .wx-approach-tech-stack-visual__static-label {
+  letter-spacing: 0.01em;
 }
 
 /* Papers + pocket only — no folder back fill in Figma `294:14` (add treatment via `__stage` or a wrapper when ready). */
@@ -2597,6 +2813,31 @@
   .site-canvas .wx-sparkle--run {
     animation: none;
   }
+}
+
+/* App-level reduced motion (e.g. home forces `reduceMotion` without OS `prefers-reduced-motion`). */
+.site-canvas.wx-exploration-root--reduced .wx-headline-rotate__mask {
+  display: inline-block;
+  overflow: visible;
+  height: auto;
+  min-height: 0;
+  line-height: 1;
+}
+
+.site-canvas.wx-exploration-root--reduced .wx-headline-rotate__word {
+  animation: none;
+  background-size: 120% 120%;
+  background-position: 40% 50%;
+}
+
+.site-canvas.wx-exploration-root--reduced .wx-sparkle {
+  opacity: 0.92;
+  transform: translate3d(-50%, -0.25rem, 0);
+  filter: none;
+}
+
+.site-canvas.wx-exploration-root--reduced .wx-sparkle--run {
+  animation: none;
 }
 
 /* CTAs — premium solid primary with inner highlight and soft glow */
