@@ -35,7 +35,7 @@ export function StudioSection() {
             />
             <div className="absolute inset-0 rounded-t-3xl bg-gradient-to-b from-[rgba(255,255,255,0)] from-[86.754%] to-white" />
           </div>
-          <div className="relative z-10 flex min-h-[200px] flex-1 items-center justify-center overflow-hidden rounded-2xl bg-white/95 px-8 py-16 sm:px-[clamp(2rem,20vw,26rem)]">
+          <div className="relative z-10 flex min-h-[200px] flex-1 items-center justify-center overflow-hidden rounded-t-2xl rounded-b-none bg-white/95 px-8 py-16 sm:px-[clamp(2rem,20vw,26rem)]">
             <span className="font-[Inter,ui-sans-serif,system-ui,sans-serif] text-[12px] font-normal leading-normal text-[#171717]">
               Needs visuals
             </span>
