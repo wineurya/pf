@@ -57,7 +57,7 @@ export function FAQSection() {
           <span className="text-[#171717]">answered.</span>
         </h2>
       </div>
-      <div className="relative flex min-h-[280px] w-full flex-col px-4 sm:min-h-[400px] sm:px-12 lg:min-h-[577px]">
+      <div className="relative flex w-full min-h-[280px] flex-col px-4 sm:min-h-[400px] sm:px-12 lg:h-[577px] lg:min-h-[577px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <img src={REBUILD_ASSETS.faqFrame} alt="" className="size-full object-cover" />
           <div
@@ -70,8 +70,8 @@ export function FAQSection() {
             }}
           />
         </div>
-        <div className="relative z-10 flex flex-1 items-stretch justify-center bg-white sm:my-6 sm:mx-auto sm:max-w-2xl sm:rounded-xl sm:shadow-sm">
-          <div className="w-full px-4 py-2 sm:px-8 sm:py-6">
+        <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col bg-white sm:mx-auto sm:my-6 sm:max-w-2xl lg:m-0 lg:max-w-none">
+          <div className="flex min-h-0 flex-1 flex-col px-4 py-2 sm:px-8 sm:py-6">
             {REBUILD_FAQS.map((item) => (
               <FAQItem
                 key={item.id}
