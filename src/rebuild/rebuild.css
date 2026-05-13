@@ -8,12 +8,6 @@
   scroll-margin-top: var(--rebuild-scroll-pad);
 }
 
-@media (min-width: 1024px) {
-  .rebuild-page__aside {
-    max-height: min(100dvh, 900px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .rebuild-page * {
     scroll-behavior: auto;
