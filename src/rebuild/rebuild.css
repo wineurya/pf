@@ -1,6 +1,7 @@
 /* Isolated layout tweaks for Figma rebuild route — global tokens remain primary elsewhere. */
 .rebuild-page {
   --rebuild-scroll-pad: clamp(4rem, 12vw, 7rem);
+  overflow-x: clip;
 }
 
 .rebuild-page__main > section,

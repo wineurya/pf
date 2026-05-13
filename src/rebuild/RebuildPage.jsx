@@ -27,7 +27,7 @@ export default function RebuildPage() {
       </div>
 
       <div className="relative z-[1] mx-auto flex max-w-[1600px] flex-col gap-10 px-4 py-8 sm:px-6 sm:py-12 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:pl-16 lg:pr-6 lg:pt-12 lg:pb-12">
-        <aside className="rebuild-page__aside w-full shrink-0 lg:sticky lg:top-12 lg:h-[min(820px,calc(100dvh-3rem))] lg:min-h-0 lg:w-[419px] lg:overflow-y-auto lg:self-start">
+        <aside className="rebuild-page__aside w-full shrink-0 lg:sticky lg:top-12 lg:h-[min(820px,calc(100dvh-3rem))] lg:min-h-0 lg:w-[419px] lg:self-start">
           <RebuildAside />
         </aside>
 
