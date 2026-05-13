@@ -1,6 +1,5 @@
 import "@/rebuild/rebuild.css";
-import { Navbar } from "@/rebuild/components/Navbar.jsx";
-import { Hero } from "@/rebuild/components/Hero.jsx";
+import { RebuildAside } from "@/rebuild/components/RebuildAside.jsx";
 import { WorkSection } from "@/rebuild/components/WorkSection.jsx";
 import { StudioSection } from "@/rebuild/components/StudioSection.jsx";
 import { ProcessSection } from "@/rebuild/components/ProcessSection.jsx";
@@ -28,9 +27,8 @@ export default function RebuildPage() {
       </div>
 
       <div className="relative z-[1] mx-auto flex max-w-[1600px] flex-col gap-10 px-4 py-8 sm:px-6 sm:py-12 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:pl-16 lg:pr-6 lg:pt-12 lg:pb-12">
-        <aside className="rebuild-page__aside flex w-full shrink-0 flex-col gap-10 lg:sticky lg:top-12 lg:h-[min(820px,calc(100dvh-3rem))] lg:min-h-0 lg:w-[419px] lg:justify-between lg:overflow-y-auto lg:self-start lg:pr-6">
-          <Navbar />
-          <Hero />
+        <aside className="rebuild-page__aside w-full shrink-0 lg:sticky lg:top-12 lg:h-[min(820px,calc(100dvh-3rem))] lg:min-h-0 lg:w-[419px] lg:overflow-y-auto lg:self-start">
+          <RebuildAside />
         </aside>
 
         <div className="rebuild-page__main flex w-full min-w-0 flex-1 flex-col gap-10 overflow-x-clip rounded-b-3xl bg-white sm:gap-12 lg:px-12">
