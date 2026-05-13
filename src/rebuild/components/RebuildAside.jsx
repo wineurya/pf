@@ -20,6 +20,9 @@ const LETTER_STAGGER_S = 0.036;
 const LETTER_GRADIENT_CYCLE_S = 0.72;
 
 function RotatorLetter({ children, reduceMotion, index }) {
+  /** Random tilt per letter; remounts each cycle via parent key, so the scatter reshuffles. */
+  const [rotateOffset] = useState(() => Math.random() * 16 - 8);
+
   if (reduceMotion) {
     return <span className="inline-block">{children}</span>;
   }
@@ -28,11 +31,21 @@ function RotatorLetter({ children, reduceMotion, index }) {
   const easeSnap = [0.22, 1, 0.36, 1];
 
   return (
-    <span className="relative inline-block overflow-visible">
+    <motion.span
+      className="relative inline-block overflow-visible"
+      initial={{ y: 10, rotate: rotateOffset }}
+      animate={{ y: 0, rotate: 0 }}
+      transition={{
+        duration: 0.42,
+        delay: delayIn,
+        ease: easeSnap,
+      }}
+      style={{ transformOrigin: "50% 60%" }}
+    >
       <motion.span
         className="relative z-[1] inline-block text-[var(--wx-ink)]"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{
           duration: 0.33,
           delay: delayIn,
@@ -50,8 +63,8 @@ function RotatorLetter({ children, reduceMotion, index }) {
           backgroundClip: "text",
           WebkitTextFillColor: "transparent",
         }}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: [0, 1, 0], y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0] }}
         transition={{
           opacity: {
             duration: LETTER_GRADIENT_CYCLE_S,
@@ -59,12 +72,11 @@ function RotatorLetter({ children, reduceMotion, index }) {
             times: [0, 0.2, 1],
             ease: [0.25, 0.1, 0.25, 1],
           },
-          y: { duration: 0.33, delay: delayIn, ease: easeSnap },
         }}
       >
         {children}
       </motion.span>
-    </span>
+    </motion.span>
   );
 }
 
