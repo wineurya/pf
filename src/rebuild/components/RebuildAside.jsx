@@ -1,14 +1,125 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { clsx } from "clsx";
 import { SITE_CONTACT_SOCIALS } from "@/exploration/siteContent.js";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
 import { REBUILD_ASSETS, REBUILD_WORDMARK_DOT_GRADIENT } from "@/rebuild/data/assets.js";
+import { REBUILD_SECTION_KICKER_ACCENTS } from "@/rebuild/data/sectionKickers.js";
 import { RB_FONT_VAR, rbRegular, rbSemibold } from "@/rebuild/rebuildTypography.js";
 
-/** Node 320:396 — Frame 43. Tab accents + “clear” gradient from Figma MCP. */
-const CLEAR_GRADIENT =
-  "linear-gradient(125.29339608789654deg, rgb(37, 99, 235) 0%, rgb(124, 58, 237) 48%, rgb(13, 148, 136) 78%, rgb(217, 119, 6) 100%)";
+/**
+ * Hero headline rotator — `--wx-gradient-accent` over crisp `--wx-ink`.
+ * Letters stagger L→R; gradient sits above ink briefly then eases away with one smooth ramp.
+ */
+const ROTATOR_WORDS = ["clear", "intentional", "focused", "human"];
+
+const ROTATOR_INTERVAL_MS = 4800;
+/** Delay between adjacent letters (seconds). */
+const LETTER_STAGGER_S = 0.036;
+/** Per-letter gradient flash: rise → brief hold → fade to ink underneath. */
+const LETTER_GRADIENT_CYCLE_S = 0.72;
+
+function RotatorLetter({ children, reduceMotion, index }) {
+  if (reduceMotion) {
+    return <span className="inline-block">{children}</span>;
+  }
+
+  const delayIn = index * LETTER_STAGGER_S;
+  const easeSnap = [0.22, 1, 0.36, 1];
+
+  return (
+    <span className="relative inline-block overflow-visible">
+      <motion.span
+        className="relative z-[1] inline-block text-[var(--wx-ink)]"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.33,
+          delay: delayIn,
+          ease: easeSnap,
+        }}
+      >
+        {children}
+      </motion.span>
+      <motion.span
+        aria-hidden
+        className="pointer-events-none absolute left-0 top-0 z-[2] inline-block bg-clip-text text-transparent"
+        style={{
+          backgroundImage: "var(--wx-gradient-accent)",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: [0, 1, 0], y: 0 }}
+        transition={{
+          opacity: {
+            duration: LETTER_GRADIENT_CYCLE_S,
+            delay: delayIn,
+            times: [0, 0.2, 1],
+            ease: [0.25, 0.1, 0.25, 1],
+          },
+          y: { duration: 0.33, delay: delayIn, ease: easeSnap },
+        }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  );
+}
+
+function RebuildClearWordRotator({ reduceMotion }) {
+  const [index, setIndex] = useState(0);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (reduceMotion) return undefined;
+    const id = window.setInterval(() => {
+      setIndex((n) => (n + 1) % ROTATOR_WORDS.length);
+      setTick((t) => t + 1);
+    }, ROTATOR_INTERVAL_MS);
+    return () => window.clearInterval(id);
+  }, [reduceMotion]);
+
+  const word = ROTATOR_WORDS[index];
+  const letters = [...word];
+
+  if (reduceMotion) {
+    return (
+      <div className="relative flex shrink-0 flex-col justify-center text-[var(--wx-ink)]" data-node-id="320:418">
+        <p className="m-0 leading-[40px]">{ROTATOR_WORDS[0]}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="relative flex shrink-0 flex-col justify-center text-[var(--wx-ink)]"
+      data-node-id="320:418"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={tick}
+          className="relative inline-flex flex-row flex-wrap items-baseline gap-0 leading-[40px]"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="m-0 inline-flex flex-row flex-wrap items-baseline gap-0 font-[inherit]">
+            {letters.map((char, i) => (
+              <RotatorLetter key={`${tick}-${i}-${char}`} reduceMotion={reduceMotion} index={i}>
+                {char}
+              </RotatorLetter>
+            ))}
+          </p>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
 
 /** Top highlight on filled CTAs — uses `--wx-white` so dark theme stays on-token. */
 export const CTA_SURFACE_GLOSS =
@@ -31,9 +142,9 @@ const SECTION_TABS = [
     label: "Studio",
     nodeId: "320:485",
     collapsedClass: "w-[42.67px] max-sm:w-[38px]",
-    sectionTint: "rgb(124, 58, 237)",
-    accentBorder: "rgb(91, 33, 182)",
-    accentBg: `${CTA_SURFACE_GLOSS}, linear-gradient(90deg, rgb(124, 58, 237) 0%, rgb(124, 58, 237) 100%)`,
+    sectionTint: REBUILD_SECTION_KICKER_ACCENTS.studio,
+    accentBorder: "#e11d48",
+    accentBg: `${CTA_SURFACE_GLOSS}, linear-gradient(90deg, ${REBUILD_SECTION_KICKER_ACCENTS.studio} 0%, ${REBUILD_SECTION_KICKER_ACCENTS.studio} 100%)`,
     icon: REBUILD_ASSETS.navIconStudio,
     iconBox: "h-[17.03px] w-[17.03px]",
   },
@@ -262,7 +373,10 @@ export function RebuildAsideNav({ active }) {
                       selected ? "min-w-0 px-3 max-sm:px-2.5" : tab.collapsedClass,
                     )}
                   >
-                    <span className="absolute inset-0 rounded-[8px] bg-[#a3a3a3]" aria-hidden />
+                    <span
+                      className="pointer-events-none absolute inset-0 rounded-[8px] border border-[var(--wx-border-muted)] bg-[var(--wx-white)]"
+                      aria-hidden
+                    />
                     <motion.span
                       className="absolute inset-0 rounded-[8px]"
                       aria-hidden
@@ -308,7 +422,7 @@ export function RebuildAsideNav({ active }) {
                           <span className={clsx("relative shrink-0", tab.iconBox)}>
                             <img
                               alt=""
-                              className="pointer-events-none absolute inset-0 block size-full max-w-none object-contain"
+                              className="rebuild-nav-tab-icon pointer-events-none absolute inset-0 block size-full max-w-none object-contain"
                               src={tab.icon}
                               width={20}
                               height={20}
@@ -335,7 +449,7 @@ export function RebuildAside({ active }) {
   const ctaEase = reduceMotion ? { duration: 0 } : { duration: 0.42, ease: [0.2, 0.94, 0.32, 1] };
   return (
     <div
-      className="flex w-full min-h-0 flex-col items-start gap-8 max-sm:gap-10 sm:gap-10 max-[1431px]:px-4 max-sm:max-[1431px]:px-6 sm:max-[1431px]:px-6 min-[1432px]:gap-10 min-[1432px]:px-0"
+      className="flex w-full min-h-0 flex-col items-start gap-8 max-sm:gap-10 sm:gap-10 max-[1431px]:px-4 max-sm:max-[1431px]:px-6 sm:max-[1431px]:px-6 min-[1432px]:min-h-[var(--rebuild-aside-desktop-band-min)] min-[1432px]:gap-10 min-[1432px]:px-0"
       data-node-id="320:396"
       data-name="Frame 43"
     >
@@ -344,7 +458,7 @@ export function RebuildAside({ active }) {
       </div>
 
       <div
-        className="relative flex w-full max-[1431px]:shrink-0 min-w-0 shrink-0 flex-col items-start gap-8 max-sm:gap-10 sm:gap-10 text-left"
+        className="relative flex w-full max-[1431px]:shrink-0 min-w-0 flex-col items-start gap-8 max-sm:gap-10 sm:gap-10 text-left min-[1432px]:min-h-0 min-[1432px]:flex-1 min-[1432px]:justify-end min-[1432px]:gap-10"
         data-node-id="320:399"
       >
         <HeroGlowFrames />
@@ -395,13 +509,7 @@ export function RebuildAside({ active }) {
               <div className="relative flex shrink-0 flex-col justify-center text-[var(--wx-ink)]" data-node-id="320:397">
                 <p className="m-0 leading-[40px]">Designs that feel&nbsp;</p>
               </div>
-              <div
-                className="relative flex shrink-0 flex-col justify-center bg-clip-text text-transparent"
-                style={{ backgroundImage: CLEAR_GRADIENT }}
-                data-node-id="320:418"
-              >
-                <p className="m-0 leading-[40px]">clear</p>
-              </div>
+              <RebuildClearWordRotator reduceMotion={reduceMotion} />
             </div>
 
             <div
