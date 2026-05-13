@@ -1,0 +1,21 @@
+/* Isolated layout tweaks for Figma rebuild route — global tokens remain primary elsewhere. */
+.rebuild-page {
+  --rebuild-scroll-pad: clamp(4rem, 12vw, 7rem);
+}
+
+.rebuild-page__main > section,
+.rebuild-page__main > div {
+  scroll-margin-top: var(--rebuild-scroll-pad);
+}
+
+@media (min-width: 1024px) {
+  .rebuild-page__aside {
+    max-height: min(100dvh, 900px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rebuild-page * {
+    scroll-behavior: auto;
+  }
+}
