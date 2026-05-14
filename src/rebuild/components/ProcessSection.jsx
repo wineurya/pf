@@ -105,7 +105,7 @@ export function ProcessSection() {
             <span className="block text-[rgba(171,171,171,1)]">Making sure there are</span>
             <span className="block text-[var(--wx-ink)]">no surprises.</span>
           </h2>
-          <p className="m-0 max-w-xl flex-[1] font-[family-name:var(--font-body)] text-[16px] font-medium leading-6 tracking-[-0.5px] text-[var(--wx-muted)]">
+          <p className="m-0 pt-[2px] max-w-xl flex-[1] font-[family-name:var(--font-body)] text-[16px] font-medium leading-6 tracking-[-0.5px] text-[var(--wx-muted)]">
             The work stays visible: what is planned, what is moving, what needs review, and what is ready for build.
           </p>
         </div>

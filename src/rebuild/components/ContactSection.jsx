@@ -56,12 +56,12 @@ export function ContactSection({ activeSectionId }) {
           />
           <h2
             id="rebuild-contact-h"
-            className="m-0 mt-5 w-full max-w-none text-balance font-[family-name:var(--font-display)] text-[32px] font-black leading-8 tracking-[0]"
+            className="m-0 mt-5 w-full max-w-none text-balance font-[family-name:var(--font-display)] text-[32px] font-emphasis leading-[36px] tracking-[0]"
           >
             <span className="block text-[rgba(171,171,171,1)]">{REBUILD_CONTACT.headlineLead}</span>
             <span className="block text-[var(--wx-ink)]">{REBUILD_CONTACT.headlineAccent}</span>
           </h2>
-          <p className="m-0 mt-6 max-w-2xl text-pretty font-[family-name:var(--font-body)] text-[16px] font-medium leading-6 tracking-[-0.2px] text-[var(--wx-muted)]">
+          <p className="m-0 mt-6 max-w-2xl text-pretty font-[family-name:var(--font-body)] text-[16px] font-normal leading-[1.625] tracking-[-0.2px] text-[var(--wx-muted)]">
             {REBUILD_CONTACT.supporting}
           </p>
         </div>
@@ -78,7 +78,7 @@ export function ContactSection({ activeSectionId }) {
               style={{
                 backgroundImage: [
                   `${CTA_SURFACE_GLOSS}`,
-                  "linear-gradient(90deg, #d97706 0%, #d97706 100%)",
+                  "linear-gradient(90deg, var(--wx-accent-amber) 0%, var(--wx-accent-amber) 100%)",
                 ].join(", "),
               }}
             >
@@ -105,7 +105,7 @@ export function ContactSection({ activeSectionId }) {
             <button
               type="button"
               onClick={handleCopyEmail}
-              className="inline-flex min-h-12 items-center justify-between gap-3 rounded-xl border border-[var(--wx-border-soft)] bg-[var(--wx-white)] px-4 py-3 text-left font-[family-name:var(--font-body)] text-[14px] font-semibold text-[var(--wx-ink)] outline-offset-2 transition-[transform,border-color,color] duration-200 ease-out motion-safe:hover:-translate-y-px hover:border-[color-mix(in_srgb,#d97706_42%,var(--wx-border-soft))] hover:text-[#d97706] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-outline-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
+              className="inline-flex min-h-12 items-center justify-between gap-3 rounded-xl border border-[var(--wx-border-soft)] bg-[var(--wx-white)] px-4 py-3 text-left font-[family-name:var(--font-body)] text-[14px] font-semibold text-[var(--wx-ink)] outline-offset-2 transition-[transform,border-color,color] duration-200 ease-out motion-safe:hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--wx-accent-amber)_42%,var(--wx-border-soft))] hover:text-[var(--wx-accent-amber)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-outline-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
             >
               <span className="inline-flex items-center gap-2">
                 {isCopied ? (
@@ -123,7 +123,7 @@ export function ContactSection({ activeSectionId }) {
               href={linkedInHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-12 items-center justify-between gap-3 rounded-xl bg-transparent px-4 py-3 text-left font-[family-name:var(--font-body)] text-[14px] font-semibold text-[var(--wx-ink)] outline-offset-2 transition-[transform,color] duration-200 ease-out motion-safe:hover:-translate-y-px hover:text-[#d97706] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-outline-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
+              className="inline-flex min-h-12 items-center justify-between gap-3 rounded-xl bg-transparent px-4 py-3 text-left font-[family-name:var(--font-body)] text-[14px] font-semibold text-[var(--wx-ink)] outline-offset-2 transition-[transform,color] duration-200 ease-out motion-safe:hover:-translate-y-px hover:text-[var(--wx-accent-amber)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-outline-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
             >
               <span className="inline-flex items-center gap-2">
                 {REBUILD_CONTACT.actions.linkedIn}

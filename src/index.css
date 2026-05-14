@@ -1,3 +1,23 @@
+/*
+ * SF Pro — served from /public/fonts/ (local dev only; gitignored).
+ * local() fires first on macOS (system font) or after OS install; url() is the
+ * guaranteed fallback that bypasses Chrome's DirectWrite startup cache on Windows.
+ */
+@font-face { font-family: "SF Pro Rounded"; font-weight: 400; font-style: normal; src: local("SF Pro Rounded Regular"), local("SFProRounded-Regular"), url("/fonts/SF-Pro-Rounded-Regular.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Rounded"; font-weight: 500; font-style: normal; src: local("SF Pro Rounded Medium"), local("SFProRounded-Medium"), url("/fonts/SF-Pro-Rounded-Medium.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Rounded"; font-weight: 510; font-style: normal; src: local("SF Pro Rounded Medium"), local("SFProRounded-Medium"), url("/fonts/SF-Pro-Rounded-Medium.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Rounded"; font-weight: 590; font-style: normal; src: local("SF Pro Rounded Semibold"), local("SFProRounded-Semibold"), url("/fonts/SF-Pro-Rounded-Semibold.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Rounded"; font-weight: 600; font-style: normal; src: local("SF Pro Rounded Semibold"), local("SFProRounded-Semibold"), url("/fonts/SF-Pro-Rounded-Semibold.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Rounded"; font-weight: 700; font-style: normal; src: local("SF Pro Rounded Bold"), local("SFProRounded-Bold"), url("/fonts/SF-Pro-Rounded-Bold.otf") format("opentype"); font-display: swap; }
+
+@font-face { font-family: "SF Pro Text"; font-weight: 400; font-style: normal; src: local("SF Pro Text Regular"), local("SFProText-Regular"), url("/fonts/SF-Pro-Text-Regular.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Text"; font-weight: 400; font-style: italic; src: local("SF Pro Text Italic"), local("SFProText-RegularItalic"), url("/fonts/SF-Pro-Text-RegularItalic.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Text"; font-weight: 500; font-style: normal; src: local("SF Pro Text Medium"), local("SFProText-Medium"), url("/fonts/SF-Pro-Text-Medium.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Text"; font-weight: 510; font-style: normal; src: local("SF Pro Text Medium"), local("SFProText-Medium"), url("/fonts/SF-Pro-Text-Medium.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Text"; font-weight: 590; font-style: normal; src: local("SF Pro Text Semibold"), local("SFProText-Semibold"), url("/fonts/SF-Pro-Text-Semibold.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Text"; font-weight: 600; font-style: normal; src: local("SF Pro Text Semibold"), local("SFProText-Semibold"), url("/fonts/SF-Pro-Text-Semibold.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "SF Pro Text"; font-weight: 700; font-style: normal; src: local("SF Pro Text Bold"), local("SFProText-Bold"), url("/fonts/SF-Pro-Text-Bold.otf") format("opentype"); font-display: swap; }
+
 /* Self-hosted OFL fallbacks when SF Pro / ui-rounded are unavailable (Windows, Linux, Android). */
 /* Variable axes: Inter wght 100–900, Nunito wght 200–1000; italic uses matching @font-face (real italics, not synthesized). */
 @import "@fontsource/geist-mono/500.css";
@@ -35,11 +55,29 @@
     height: 100%;
   }
 
-  /* Firefox + standards; thin thumb / transparent track on every scrollport */
+  /* Thin thumb, no track — adapts to light/dark via currentColor */
   html,
   * {
     scrollbar-width: thin;
-    scrollbar-color: gray transparent;
+    scrollbar-color: color-mix(in srgb, currentColor 18%, transparent) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, currentColor 18%, transparent);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, currentColor 32%, transparent);
   }
 
   /* Mobile fixed nav — anchor scroll lands below the bar */

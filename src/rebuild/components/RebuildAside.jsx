@@ -176,9 +176,9 @@ const SECTION_TABS = [
     label: "Contact",
     nodeId: "320:504",
     collapsedClass: "w-[42.67px] max-sm:w-[38px]",
-    sectionTint: "rgb(217, 119, 6)",
-    accentBorder: "rgb(180, 83, 9)",
-    accentBg: `${CTA_SURFACE_GLOSS}, linear-gradient(90deg, rgb(217, 119, 6) 0%, rgb(217, 119, 6) 100%)`,
+    sectionTint: "var(--wx-accent-amber)",
+    accentBorder: "var(--wx-accent-amber-deep)",
+    accentBg: `${CTA_SURFACE_GLOSS}, linear-gradient(90deg, var(--wx-accent-amber) 0%, var(--wx-accent-amber) 100%)`,
     icon: REBUILD_ASSETS.navIconContact,
     iconBox: "h-[18.02px] w-[18.02px]",
   },
@@ -284,7 +284,18 @@ function WordmarkDot() {
  * declarative and we can re-introduce a tokenized halo later if we want.
  */
 function HeroGlowFrames() {
-  return null;
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
+      <div
+        className="absolute -inset-10"
+        style={{
+          background:
+            "radial-gradient(ellipse 90% 80% at 32% 68%, var(--wx-page-bg) 8%, color-mix(in srgb, var(--wx-page-bg) 52%, transparent) 46%, transparent 70%)",
+          filter: "blur(48px)",
+        }}
+      />
+    </div>
+  );
 }
 
 /** Wordmark + section tabs — used in-page (mobile sticky) and inside aside (desktop). */

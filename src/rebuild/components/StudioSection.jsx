@@ -20,7 +20,7 @@ export function StudioSection() {
               <span className="block text-[var(--wx-muted)]">Useful imagination,</span>
               <span className="block text-[var(--wx-ink)]">grounded in product work.</span>
             </h2>
-            <p className="m-0 max-w-xl flex-[1] font-[family-name:var(--font-body)] text-[16px] font-medium leading-6 tracking-[-0.5px] text-[var(--wx-muted)]">
+            <p className="m-0 pt-[2px] max-w-xl flex-[1] font-[family-name:var(--font-body)] text-[16px] font-medium leading-6 tracking-[-0.5px] text-[var(--wx-muted)]">
               A compact product-design studio inside one portfolio: research, flows, prototypes, motion, and
               build-ready notes.
             </p>

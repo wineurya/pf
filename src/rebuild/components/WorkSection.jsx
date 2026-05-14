@@ -1,4 +1,5 @@
-import { motion } from "motion/react";
+import { AnimatePresence, motion, useInView } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/exploration/useReducedMotion.js";
 import { REBUILD_ASSETS } from "@/rebuild/data/assets.js";
 
@@ -81,89 +82,105 @@ function clsRow(rowCls) {
   return `flex w-full max-w-[429px] flex-col justify-center ${rowCls}`;
 }
 
-const INCITY_PANEL =
-  "absolute left-1/2 top-1/2 z-[2] flex w-[min(100%,429px)] -translate-x-1/2 -translate-y-1/2 flex-col justify-end gap-4 px-3";
+const BUBBLE_TEXT = "m-0 font-[family-name:var(--font-body)] text-[16px] font-semibold leading-[21px] tracking-[-0.4px]";
 
-/** Stagger slide-up reveal for civic chat wire — prefers reduced motion fades only. */
+const INCITY_MSGS = [
+  {
+    id: "q1", dark: true, shadow: false, cls: "items-start",
+    node: (
+      <p className={`${BUBBLE_TEXT} text-right`}>
+        <span className="text-[rgba(255,255,255,0.48)]">See a </span>
+        <span className="text-white">city problem?</span>
+      </p>
+    ),
+  },
+  {
+    id: "a1", dark: false, shadow: false, cls: "items-end",
+    node: <p className={`${BUBBLE_TEXT} text-inherit`}>All the time!</p>,
+  },
+  {
+    id: "q2", dark: true, shadow: true, cls: "items-start",
+    node: (
+      <p className={`${BUBBLE_TEXT} text-right`}>
+        <span className="text-[rgba(255,255,255,0.48)]">Waiting on </span>
+        <span className="text-white">city updates?</span>
+      </p>
+    ),
+  },
+  {
+    id: "a2", dark: false, shadow: true, cls: "items-end",
+    node: <p className={`${BUBBLE_TEXT} text-inherit`}>Yes! So annoying!</p>,
+  },
+  {
+    id: "q3", dark: true, shadow: false, cls: "items-start",
+    node: (
+      <p className={`${BUBBLE_TEXT} text-right`}>
+        <span className="text-[rgba(255,255,255,0.48)]">Wish</span>
+        <span className="text-white"> reporting </span>
+        <span className="text-[rgba(255,255,255,0.48)]">was </span>
+        <span className="text-white">simpler?</span>
+      </p>
+    ),
+  },
+  {
+    id: "a3", dark: false, shadow: false, cls: "items-end",
+    node: <p className={`${BUBBLE_TEXT} text-inherit`}>Tell me you have a solution!</p>,
+  },
+];
+
+const BUBBLE_DELAYS_MS = [320, 980, 740, 1120, 860, 1000];
+const LOOP_PAUSE_MS = 2600;
+const INCITY_PANEL_BOTTOM =
+  "absolute bottom-[22%] left-1/2 -translate-x-1/2 z-[2] flex w-[min(100%,429px)] flex-col gap-3 px-3";
+
 function IncityConversation() {
   const reduceMotion = useReducedMotion();
+  const ref = useRef(null);
+  const inView = useInView(ref, { amount: 0.3 });
+  const [count, setCount] = useState(0);
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: reduceMotion
-        ? { staggerChildren: 0, delayChildren: 0 }
-        : { staggerChildren: 0.44, delayChildren: 0.22 },
-    },
-  };
+  useEffect(() => {
+    if (reduceMotion) return;
+    if (!inView) { setCount(0); return; }
+    if (count >= INCITY_MSGS.length) {
+      const t = setTimeout(() => setCount(0), LOOP_PAUSE_MS);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setCount((c) => c + 1), BUBBLE_DELAYS_MS[count] ?? 800);
+    return () => clearTimeout(t);
+  }, [inView, count, reduceMotion]);
 
-  const itemVariants = {
-    hidden: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 28 },
-    visible: reduceMotion
-      ? { opacity: 1, transition: { duration: 0.22, ease: "easeOut" } }
-      : {
-          opacity: 1,
-          y: 0,
-          transition: { type: "spring", stiffness: 380, damping: 34, mass: 0.92 },
-        },
-  };
+  const spring = { type: "spring", stiffness: 420, damping: 38, mass: 0.88 };
+
+  if (reduceMotion) {
+    return (
+      <div className={INCITY_PANEL_BOTTOM}>
+        {INCITY_MSGS.map((msg) => (
+          <div key={msg.id} className={clsRow(msg.cls)}>
+            <div className={incityBubbleChrome(msg.dark, msg.shadow)}>{msg.node}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <motion.div
-      className={INCITY_PANEL}
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.35 }}
-    >
-      <motion.div className={clsRow("items-start")} variants={itemVariants}>
-        <div className={incityBubbleChrome(true, false)}>
-          <p className="m-0 text-right font-[family-name:var(--font-body)] text-[16px] font-semibold leading-[21px] tracking-[-0.4px]">
-            <span className="text-[rgba(255,255,255,0.48)]">See a </span>
-            <span className="text-white">city problem?</span>
-          </p>
-        </div>
-      </motion.div>
-      <motion.div className={clsRow("items-end")} variants={itemVariants}>
-        <div className={incityBubbleChrome(false, false)}>
-          <p className="m-0 font-[family-name:var(--font-body)] text-[16px] font-semibold leading-[21px] tracking-[-0.4px] text-inherit">
-            All the time!
-          </p>
-        </div>
-      </motion.div>
-      <motion.div className={clsRow("items-start")} variants={itemVariants}>
-        <div className={incityBubbleChrome(true, true)}>
-          <p className="m-0 text-right font-[family-name:var(--font-body)] text-[16px] font-semibold leading-[21px] tracking-[-0.4px]">
-            <span className="text-[rgba(255,255,255,0.48)]">Waiting on </span>
-            <span className="text-white">city updates?</span>
-          </p>
-        </div>
-      </motion.div>
-      <motion.div className={clsRow("items-end")} variants={itemVariants}>
-        <div className={incityBubbleChrome(false, true)}>
-          <p className="m-0 font-[family-name:var(--font-body)] text-[16px] font-semibold leading-[21px] tracking-[-0.4px] text-inherit">
-            Yes! So annoying!
-          </p>
-        </div>
-      </motion.div>
-      <motion.div className={clsRow("items-start")} variants={itemVariants}>
-        <div className={incityBubbleChrome(true, false)}>
-          <p className="m-0 text-right font-[family-name:var(--font-body)] text-[16px] font-semibold leading-[21px] tracking-[-0.4px]">
-            <span className="text-[rgba(255,255,255,0.48)]">Wish</span>
-            <span className="text-white"> reporting </span>
-            <span className="text-[rgba(255,255,255,0.48)]">was </span>
-            <span className="text-white">simpler?</span>
-          </p>
-        </div>
-      </motion.div>
-      <motion.div className={clsRow("items-end")} variants={itemVariants}>
-        <div className={incityBubbleChrome(false, false)}>
-          <p className="m-0 font-[family-name:var(--font-body)] text-[16px] font-semibold leading-[21px] tracking-[-0.4px] text-inherit">
-            Tell me you have a solution!
-          </p>
-        </div>
-      </motion.div>
-    </motion.div>
+    <div ref={ref} className={INCITY_PANEL_BOTTOM}>
+      <AnimatePresence>
+        {INCITY_MSGS.slice(0, count).map((msg) => (
+          <motion.div
+            key={msg.id}
+            layout
+            initial={{ opacity: 0, y: 18, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: spring }}
+            exit={{ opacity: 0, scale: 0.88, transition: { duration: 0.18, ease: "easeIn" } }}
+            className={clsRow(msg.cls)}
+          >
+            <div className={incityBubbleChrome(msg.dark, msg.shadow)}>{msg.node}</div>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
   );
 }
 

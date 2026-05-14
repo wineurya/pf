@@ -27,7 +27,7 @@ function FAQItem({ item, isOpen, onToggle }) {
           aria-expanded={isOpen}
           aria-controls={panelId}
           onClick={() => onToggle(item.id)}
-          className="-mx-1 flex w-full items-center justify-between gap-5 rounded-xl px-1 py-4 text-left font-[family-name:var(--font-display)] text-[15px] font-semibold leading-snug text-[var(--wx-ink)] outline-offset-2 transition-colors duration-200 ease-out max-sm:text-[15px] hover:bg-[color-mix(in_srgb,var(--wx-ink)_3.5%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-outline-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)] motion-reduce:hover:bg-transparent sm:gap-6 sm:text-base"
+          className="flex w-full items-center justify-between gap-5 rounded-xl py-5 text-left font-[family-name:var(--font-display)] text-[15px] font-semibold leading-snug text-[var(--wx-ink)] outline-offset-2 transition-colors duration-200 ease-out max-sm:text-[15px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-outline-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)] sm:gap-6 sm:text-base"
         >
           <span className="min-w-0">{item.q}</span>
           <motion.span
@@ -54,7 +54,7 @@ function FAQItem({ item, isOpen, onToggle }) {
         style={{ overflow: "hidden" }}
         className="min-h-0"
       >
-        <p className="m-0 pb-5 pt-1 font-[family-name:var(--font-body)] text-[14px] font-normal leading-7 tracking-[-0.2px] text-[var(--wx-muted)] max-sm:text-[15px] sm:pb-[1.375rem] sm:text-[15px] sm:leading-7">
+        <p className="m-0 pb-6 pt-2 font-[family-name:var(--font-body)] text-[14px] font-normal leading-7 tracking-[-0.2px] text-[var(--wx-muted)] max-sm:text-[15px] sm:pb-6 sm:text-[15px] sm:leading-7">
           {item.a}
         </p>
       </motion.div>

@@ -290,6 +290,7 @@
   --wx-accent-teal: #0d9488;
   --wx-accent-violet: #7c3aed;
   --wx-accent-amber: #d97706;
+  --wx-accent-amber-deep: rgb(180, 83, 9);
   /**
    * Shared marketing ramp — primary-led; headline clip, sparkle mask, CTAs, meta dots.
    * Single surface avoids competing teal-backdrop + gradient stacks on controls.

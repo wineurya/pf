@@ -23,7 +23,7 @@ export const REBUILD_ASSETS = {
 };
 
 export const REBUILD_GRADIENT_WORD =
-  "linear-gradient(125.29339608789654deg, rgb(37, 99, 235) 0%, rgb(124, 58, 237) 48%, rgb(13, 148, 136) 78%, rgb(217, 119, 6) 100%)";
+  "linear-gradient(125.29339608789654deg, var(--wx-primary) 0%, var(--wx-accent-violet) 48%, var(--wx-accent-teal) 78%, var(--wx-accent-amber) 100%)";
 
 export const REBUILD_WORDMARK_DOT_GRADIENT =
-  "linear-gradient(124.99999947659859deg, rgb(37, 99, 235) 0%, rgb(124, 58, 237) 48%, rgb(13, 148, 136) 78%, rgb(217, 119, 6) 100%)";
+  "linear-gradient(124.99999947659859deg, var(--wx-primary) 0%, var(--wx-accent-violet) 48%, var(--wx-accent-teal) 78%, var(--wx-accent-amber) 100%)";

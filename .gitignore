@@ -36,3 +36,6 @@ figma/
 ae/Adobe After Effects Auto-Save/
 ae/Newton Auto-Save/
 .vercel
+
+# SF Pro fonts — Apple proprietary, local dev only, not for distribution
+public/fonts/SF-Pro*
