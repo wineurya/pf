@@ -1,3 +1,12 @@
+/* Self-hosted OFL fallbacks when SF Pro / ui-rounded are unavailable (Windows, Linux, Android). */
+/* Variable axes: Inter wght 100–900, Nunito wght 200–1000; italic uses matching @font-face (real italics, not synthesized). */
+@import "@fontsource/geist-mono/500.css";
+@import "@fontsource/geist-mono/600.css";
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource-variable/inter/wght-italic.css";
+@import "@fontsource-variable/nunito/wght.css";
+@import "@fontsource-variable/nunito/wght-italic.css";
+
 @import "tailwindcss";
 @import "./styles/tokens.css";
 @import "./styles/work-case.css";
@@ -6,6 +15,10 @@
 @layer base {
   :root {
     color-scheme: light dark;
+  }
+
+  html[data-theme="dark"] {
+    color-scheme: dark;
   }
 
   html[data-theme="light"] {

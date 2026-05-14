@@ -4,11 +4,11 @@
  */
 export const RB_FONT_VAR = { fontVariationSettings: "'wdth' 100" };
 
-/** SF Pro / Rounded Semibold — Figma `font-[590]` */
-export const rbSemibold = "font-[590]";
+/** SF-style semibold — Figma 590; `--font-weight-emphasis` in tokens (Inter/Nunito variable support 590). */
+export const rbSemibold = "font-emphasis";
 
-/** SF Pro Medium — Figma `font-[510]` (body supporting / metadata) */
-export const rbMedium = "font-[510]";
+/** SF-style medium — Figma 510; `--font-weight-supporting` in tokens. */
+export const rbMedium = "font-supporting";
 
 /** SF Pro Regular — Figma `font-normal` / 400 */
 export const rbRegular = "font-normal";

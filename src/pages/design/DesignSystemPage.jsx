@@ -637,8 +637,8 @@ export default function DesignSystemPage() {
             lead="Rounded display type carries headlines and standout numbers; SF Pro carries everything you actually read—paragraphs, labels, and dense UI. Match that split and the portfolio feels consistent rather than accidental."
             technicalNote={
               <>
-                Families are <TokenBadge>--font-display</TokenBadge> (SF Pro Rounded–led via <TokenBadge>ui-rounded</TokenBadge>) and <TokenBadge>--font-body</TokenBadge> (SF Pro Text / Display only),
-                defined in <TokenBadge>tokens.css</TokenBadge>. Utilities such as <TokenBadge>.wx-text-meta</TokenBadge> bind family, size, and line-height in{" "}
+                Families are <TokenBadge>--font-display</TokenBadge> (SF Pro Rounded–led via <TokenBadge>ui-rounded</TokenBadge>, then <TokenBadge>Nunito Variable</TokenBadge> / <TokenBadge>Inter</TokenBadge> as OFL fallbacks) and <TokenBadge>--font-body</TokenBadge> (SF Pro Text / Display, then <TokenBadge>Inter Variable</TokenBadge>),
+                defined in <TokenBadge>tokens.css</TokenBadge> with <TokenBadge>wght</TokenBadge> + <TokenBadge>wght-italic</TokenBadge> imports from <TokenBadge>@fontsource-variable</TokenBadge> in <TokenBadge>index.css</TokenBadge> (full weight axes; real italics). Figma/SF numeric weights <TokenBadge>510</TokenBadge> and <TokenBadge>590</TokenBadge> map to Tailwind <TokenBadge>font-supporting</TokenBadge> and <TokenBadge>font-emphasis</TokenBadge>. Utilities such as <TokenBadge>.wx-text-meta</TokenBadge> bind family, size, and line-height in{" "}
                 <TokenBadge>site-canvas.css</TokenBadge>.
               </>
             }

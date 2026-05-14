@@ -1,7 +1,25 @@
 /* Isolated layout tweaks for Figma rebuild route — global tokens remain primary elsewhere. */
 .rebuild-page {
+  --rebuild-page-bg-img-h: min(1004px, 90vh);
+  --rebuild-stack-max: 75rem; /* 1200px @ 16px — stacked aside/main; between doc-narrow and full layout-max */
+  /*
+   * Split layout (aside + main): min ~1432px viewport — see RebuildPage.
+   * Below split: single column; aside + main cap (--rebuild-stack-max) for measure + grid comfort.
+   */
   --rebuild-scroll-pad: clamp(4rem, 12vw, 7rem);
+  /*
+   * Mobile stack: spacer below fixed chrome (see RebuildPage) reserves layout height before aside/main.
+   */
+  --rebuild-mobile-nav-spacer: 128px;
+  /*
+   * Desktop split aside: sticky wordmark strip + hero. Min band = ⅗ of viewport under top-12
+   * clearance — shorter than full svh reduces end-of-scroll sticky “lift”; hero uses justify-end here.
+   */
+  --rebuild-aside-desktop-band-min: calc((100svh - 3rem) * 0.6);
   overflow-x: clip;
+  /*
+   * Phone-only polish: components use Tailwind max-sm (below --breakpoint-sm) to echo sm/tablet gaps, type, and padding — see RebuildPage + section modules.
+   */
 }
 
 .rebuild-page__main > section,
@@ -9,8 +27,106 @@
   scroll-margin-top: var(--rebuild-scroll-pad);
 }
 
+/*
+ * Process card icon capsule — inverted block treatment, no outline.
+ *   Light theme: fill = black ink, glyph = light (the MCP PNG is a light
+ *                glyph on transparency, so `filter: none` keeps it visible
+ *                against the black pill).
+ *   Dark  theme: fill = true white (literal, not the --wx-white token which
+ *                resolves to a dark-gray surface in dark mode), glyph =
+ *                black (`filter: invert(1)` flips the light PNG to black so
+ *                it reads against the white pill).
+ *
+ * If the design intent is actually "black-on-black in light mode" (no glyph
+ * visible), swap `filter: none` → `filter: brightness(0)` here so the glyph
+ * always renders as solid black and disappears against the black pill.
+ */
+.rebuild-process-card-icon-well {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background-color: var(--wx-black);
+  border: 0;
+}
+
+html[data-theme="dark"] .rebuild-process-card-icon-well {
+  background-color: #ffffff;
+}
+
+.rebuild-process-card-icon-well img {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  filter: none;
+}
+
+html[data-theme="dark"] .rebuild-process-card-icon-well img {
+  filter: invert(1);
+}
+
+/*
+ * Nav tab icons (idle state only — active tab shows the text label).
+ * Idle pill background is theme-driven (--wx-white):
+ *   - Light: white pill → invert light-glyph PNG to dark so it reads.
+ *   - Dark : dark-gray pill (--wx-white maps to oklch(0.19 0 0) in dark) →
+ *           keep the light glyph as-is for contrast.
+ */
+.rebuild-nav-tab-icon {
+  filter: invert(1);
+}
+
+html[data-theme="dark"] .rebuild-nav-tab-icon {
+  filter: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rebuild-page * {
     scroll-behavior: auto;
+  }
+}
+
+/*
+ * Fixed theme toggle anchor.
+ *  - 1-column (default, below 1432px): top-pinned so it sits beside the mobile
+ *    nav, on the right edge of the viewport but just LEFT of the tab pill
+ *    group (~240px wide when expanded; the offset below clears it with a
+ *    little breathing room).
+ *  - Split layout (>= 1432px): bottom-left as before.
+ * `max()` / `calc()` commas are unsafe inside Tailwind arbitrary classes, so
+ * these positions live here rather than on the JSX.
+ */
+.rebuild-persistent-theme-toggle-anchor {
+  /* `--rebuild-toggle-right` is set per-frame by RebuildPersistentThemeToggle
+     via ResizeObserver + window resize, so the toggle stays exactly N px to
+     the LEFT of the live mobile nav tab pill group regardless of viewport,
+     scrollbar width, or active-tab label width. Static fallback covers first
+     paint before the observer fires. */
+  position: fixed;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  pointer-events: none;
+  top: max(24px, env(safe-area-inset-top, 0px));
+  left: auto;
+  right: max(var(--rebuild-toggle-right, 268px), env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 1432px) {
+  .rebuild-persistent-theme-toggle-anchor {
+    align-items: flex-end;
+    justify-content: flex-start;
+    top: auto;
+    bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+    right: auto;
+    left: max(4rem, env(safe-area-inset-left, 0px));
+  }
+}
+
+@media (max-width: 1431px) {
+  .rebuild-mobile-header-pt {
+    padding-top: max(24px, env(safe-area-inset-top));
   }
 }

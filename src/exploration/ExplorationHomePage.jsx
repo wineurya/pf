@@ -1639,7 +1639,7 @@ function QualificationForm({ reduceMotion }) {
     const body = encodeURIComponent(lines.join("\n\n"));
     const subject = encodeURIComponent("Hiring / project brief - wineury.design");
     setSubmitted(true);
-    window.location.href = `mailto:wineurya30@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:contact@wineury.design?subject=${subject}&body=${body}`;
   };
 
   if (submitted) {
@@ -1650,8 +1650,8 @@ function QualificationForm({ reduceMotion }) {
       >
         Your brief is on its way. If your email client didn&apos;t open, send the same
         details to{" "}
-        <a className="wx-gradient-text underline-offset-4 hover:underline" href="mailto:wineurya30@gmail.com">
-          wineurya30@gmail.com
+        <a className="wx-gradient-text underline-offset-4 hover:underline" href="mailto:contact@wineury.design">
+          contact@wineury.design
         </a>
         . I&apos;ll reply within two business days.
       </div>
@@ -2524,13 +2524,13 @@ function ExplorationMainContactSection({ reduceMotion }) {
           >
             <span>Prefer email?</span>
             <motion.a
-              href="mailto:wineurya30@gmail.com"
+              href="mailto:contact@wineury.design"
               className="inline-flex items-center gap-1.5 text-[var(--wx-ink)] underline-offset-4 hover:underline"
               whileHover={reduceMotion ? undefined : { x: 3 }}
               transition={{ type: "tween", duration: 0.22, ease: WX_SPRINKLE_EASE }}
             >
               <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={1.6} />
-              wineurya30@gmail.com
+              contact@wineury.design
             </motion.a>
             <span aria-hidden>·</span>
             <span>Open to full-time roles, contract sprints, and focused product work.</span>
@@ -2559,7 +2559,7 @@ function ExplorationMainContactSection({ reduceMotion }) {
           <span aria-hidden>·</span>
           <motion.a
             className="hover:text-[var(--wx-ink)]"
-            href="mailto:wineurya30@gmail.com"
+            href="mailto:contact@wineury.design"
             whileHover={reduceMotion ? undefined : { y: -2 }}
             transition={{ type: "tween", duration: 0.2, ease: WX_SPRINKLE_EASE }}
           >

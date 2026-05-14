@@ -445,7 +445,7 @@ export const SITE_STACK_TOOLS = SITE_STACK_MARQUEE_LAYERS.flat();
 export const SITE_CONTACT_SOCIALS = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/wineury", icon: "linkedin" },
   { label: "Résumé", href: "/resume.pdf", icon: "resume" },
-  { label: "Email", href: "mailto:wineurya30@gmail.com", icon: "email" },
+  { label: "Email", href: "mailto:contact@wineury.design", icon: "email" },
 ];
 
 /**
