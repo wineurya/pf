@@ -29,6 +29,9 @@ dist-ssr
 # Figma — local exports / working copies; canonical plugin lives in figma-aetest-pills/
 figma/
 
+# Local visual-check artifacts
+.codex-screenshots/
+
 # After Effects
 ae/Adobe After Effects Auto-Save/
 ae/Newton Auto-Save/

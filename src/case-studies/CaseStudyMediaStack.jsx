@@ -38,10 +38,11 @@ function MediaRowFrames({ row }) {
           <div
             key={fi}
             className={clsx(
-              "flex min-h-0 min-w-0 flex-col sm:self-stretch",
+              "wx-case-media-frame flex min-h-0 min-w-0 flex-col sm:self-stretch",
               f.flex ? "min-w-0 flex-1" : null,
             )}
-            style={f.basis ? { flex: `0 0 ${f.basis}` } : undefined}
+            style={f.basis ? { ["--wx-case-frame-basis"]: f.basis } : undefined}
+            data-case-frame-basis={f.basis ? "" : undefined}
           >
             <CaseStudyFillerRect
               ratio={f.ratio ?? row.ratio ?? "16/10"}

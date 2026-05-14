@@ -814,3 +814,32 @@
     transition: none;
   }
 }
+
+/*
+ * Case study media stack — below `sm` (40rem) rows stack in a column. Inline
+ * `flex: 0 0 40%` was written for row direction (% = width); in a column that
+ * % targets height with an indefinite base, so frames collapse or scale wrongly.
+ * Above `sm`, restore width-based flex-basis. Fill-height frames rely on row
+ * stretch on desktop; when stacked, re-apply aspect-ratio from `--wx-case-filler-ar`
+ * so phone matches tablet framing.
+ */
+@media (width < 40rem) {
+  [data-case-stack="media"] .wx-case-media-frame[data-case-frame-basis] {
+    flex: 0 0 auto;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  [data-case-stack="media"] .wx-case-filler-rect[data-case-filler-fill-height] {
+    flex: none;
+    min-height: 0;
+    height: auto;
+    aspect-ratio: var(--wx-case-filler-ar);
+  }
+}
+
+@media (width >= 40rem) {
+  [data-case-stack="media"] .wx-case-media-frame[data-case-frame-basis] {
+    flex: 0 0 var(--wx-case-frame-basis);
+  }
+}
