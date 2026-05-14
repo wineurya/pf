@@ -19,6 +19,7 @@ const DesignSystemPage = lazy(() => import("@/pages/design/DesignSystemPage.jsx"
 const HomeStaticPage = lazy(() => import("@/pages/HomeStaticPage.jsx"));
 const WireframeHomePage = lazy(() => import("@/pages/WireframeHomePage.jsx"));
 const RebuildPage = lazy(() => import("@/rebuild/RebuildPage.jsx"));
+const WorktableTestPage = lazy(() => import("@/pages/WorktableTestPage.jsx"));
 
 function RouteFallback() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
             <Route path="/figma/home" element={<HomeStaticPage />} />
             <Route path="/wireframe/home" element={<WireframeHomePage />} />
             <Route path="/rebuild" element={<RebuildPage />} />
+            <Route path="/lab/worktable" element={<WorktableTestPage />} />
             <Route
               path="/design"
               element={<Navigate to="/design/kinetix" replace />}
