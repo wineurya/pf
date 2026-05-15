@@ -96,7 +96,7 @@ export function RebuildPersistentThemeToggle({ mode, onToggle }) {
             "motion-safe:hover:bg-[color-mix(in_srgb,var(--wx-ink)_4%,var(--wx-white))]",
           )}
         >
-          <span className="relative inline-flex size-5 items-center justify-center" aria-hidden>
+          <span className="relative inline-flex size-[17px] items-center justify-center" aria-hidden>
             <AnimatePresence mode="wait" initial={false}>
               {isDark ? (
                 <motion.span
@@ -111,7 +111,7 @@ export function RebuildPersistentThemeToggle({ mode, onToggle }) {
                   }
                   className="absolute inset-0 inline-flex items-center justify-center"
                 >
-                  <Sun size={20} weight="bold" />
+                  <Sun size={17} weight="bold" />
                 </motion.span>
               ) : (
                 <motion.span
@@ -126,7 +126,7 @@ export function RebuildPersistentThemeToggle({ mode, onToggle }) {
                   }
                   className="absolute inset-0 inline-flex items-center justify-center"
                 >
-                  <Moon size={20} weight="bold" />
+                  <Moon size={17} weight="bold" />
                 </motion.span>
               )}
             </AnimatePresence>
