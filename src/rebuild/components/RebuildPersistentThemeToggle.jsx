@@ -82,55 +82,57 @@ export function RebuildPersistentThemeToggle({ mode, onToggle }) {
       className="rebuild-persistent-theme-toggle-anchor"
       style={{ "--rebuild-toggle-right": `${navToggleRight}px` }}
     >
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-label={nextLabel}
-        title={nextLabel}
-        className={clsx(
-          "pointer-events-auto group relative inline-flex size-12 items-center justify-center overflow-hidden rounded-[8px]",
-          "bg-[var(--wx-white)] text-[var(--wx-ink)]",
-          "outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]",
-          "transition-transform duration-200 ease-out",
-          "motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0",
-        )}
-      >
-        <span className="relative inline-flex size-5 items-center justify-center" aria-hidden>
-          <AnimatePresence mode="wait" initial={false}>
-            {isDark ? (
-              <motion.span
-                key="sun"
-                initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: -50 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6, rotate: 50 }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0 }
-                    : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }
-                }
-                className="absolute inset-0 inline-flex items-center justify-center"
-              >
-                <Sun size={20} weight="bold" />
-              </motion.span>
-            ) : (
-              <motion.span
-                key="moon"
-                initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: 50 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6, rotate: -50 }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0 }
-                    : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }
-                }
-                className="absolute inset-0 inline-flex items-center justify-center"
-              >
-                <Moon size={20} weight="bold" />
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </span>
-      </button>
+      <div className="pointer-events-auto inline-flex rounded-[12px] border border-[var(--wx-border-soft)] bg-[color-mix(in_srgb,var(--wx-ink)_5.5%,var(--wx-white))] p-1 backdrop-blur-[2px]">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-label={nextLabel}
+          title={nextLabel}
+          className={clsx(
+            "group relative inline-flex size-[38px] items-center justify-center overflow-hidden rounded-[8px]",
+            "border border-[var(--wx-border-muted)] bg-[var(--wx-white)] text-[var(--wx-ink)]",
+            "outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]",
+            "transition-colors duration-200 ease-out",
+            "motion-safe:hover:bg-[color-mix(in_srgb,var(--wx-ink)_4%,var(--wx-white))]",
+          )}
+        >
+          <span className="relative inline-flex size-5 items-center justify-center" aria-hidden>
+            <AnimatePresence mode="wait" initial={false}>
+              {isDark ? (
+                <motion.span
+                  key="sun"
+                  initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: -50 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6, rotate: 50 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }
+                  }
+                  className="absolute inset-0 inline-flex items-center justify-center"
+                >
+                  <Sun size={20} weight="bold" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="moon"
+                  initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: 50 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6, rotate: -50 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { duration: 0.32, ease: [0.22, 1, 0.36, 1] }
+                  }
+                  className="absolute inset-0 inline-flex items-center justify-center"
+                >
+                  <Moon size={20} weight="bold" />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
