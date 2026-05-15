@@ -50,11 +50,11 @@ export function WorkCasePage() {
   const ctx = slug ? getWorkCasePageContext(slug) : null;
   const reduceMotion = useReducedMotion();
 
-  if (!ctx || !slug) return <Navigate to="/" replace />;
+  if (!ctx || !slug) return <Navigate to="/old" replace />;
 
   const { def, gridEntry } = ctx;
   const CaseStudy = CASE_STUDY_BY_SLUG[slug];
-  if (!CaseStudy) return <Navigate to="/" replace />;
+  if (!CaseStudy) return <Navigate to="/old" replace />;
 
   return (
     <WorkCaseLayout reduceMotion={reduceMotion}>

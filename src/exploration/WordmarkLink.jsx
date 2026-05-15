@@ -39,7 +39,7 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
 
   return (
     <motion.a
-      href="/"
+      href="/old"
       className="group relative inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-[var(--wx-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--wx-page-bg)]"
       whileHover={hoverOpacity}
       whileFocus={reduceMotion ? undefined : { opacity: 0.82 }}
@@ -54,8 +54,8 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
           return;
         }
         e.preventDefault();
-        if (location.pathname !== "/") {
-          navigateWithViewTransition(navigate, "/");
+        if (location.pathname !== "/old") {
+          navigateWithViewTransition(navigate, "/old");
           window.setTimeout(() => scrollDocumentTop(), 120);
           return;
         }
@@ -65,7 +65,7 @@ export function WordmarkLink({ location, navigate, onHomeWordmarkClick }) {
         }
         scrollDocumentTop();
         if (location.hash) {
-          navigate({ pathname: "/", hash: "" }, { replace: true });
+          navigate({ pathname: "/old", hash: "" }, { replace: true });
         }
       }}
     >

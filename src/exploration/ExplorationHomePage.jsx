@@ -1740,7 +1740,7 @@ function useImageLoadScrollTriggerRefresh() {
 
 function useHashScrollToSection(location, scrollToSection) {
   useEffect(() => {
-    if (location.pathname !== "/") return;
+    if (location.pathname !== "/old") return;
     const id = (location.hash || "").replace(/^#/, "");
     if (!id.startsWith("section-")) return;
 
@@ -1905,8 +1905,8 @@ export function useExplorationLayoutModel() {
       setEmptyProjectFocus(false);
     });
     setScrollIntentIndex(0);
-    if (location.pathname === "/" && location.hash) {
-      navigate({ pathname: "/", hash: "" }, { replace: true });
+    if (location.pathname === "/old" && location.hash) {
+      navigate({ pathname: "/old", hash: "" }, { replace: true });
     }
     const duration = reduceMotion ? 0 : 1.35;
     if (lenis) {

@@ -84,7 +84,7 @@ export const SITE_WORK = [
     workCardOpenNavOnlyView: false,
     /** Bottom-right Case Study + arrow (separate from card click / nav-only mode). */
     workCardCaseStudyConnector: true,
-    caseStudyPath: "/work/avance",
+    caseStudyPath: "/old/work/avance",
     /** Square mock (1:1). Other work cards default to 16:9. */
     workCardAspect: "1/1",
     /**
@@ -142,7 +142,7 @@ export const SITE_WORK = [
     workCardVariant: "showcase",
     workCardOpenNavOnlyView: false,
     workCardCaseStudyConnector: true,
-    caseStudyPath: "/work/incity",
+    caseStudyPath: "/old/work/incity",
     workCardAspect: "1/1",
     workCardFigmaNoImage: true,
     workCardImageHighPriority: false,
@@ -187,7 +187,7 @@ export const SITE_WORK = [
     workCardVariant: "showcase",
     workCardOpenNavOnlyView: false,
     workCardCaseStudyConnector: true,
-    caseStudyPath: "/work/siren",
+    caseStudyPath: "/old/work/siren",
     workCardAspect: "1/1",
     workCardFigmaNoImage: true,
     workCardImageHighPriority: false,
@@ -226,7 +226,7 @@ export const SITE_WORK = [
     workCardVariant: "showcase",
     workCardOpenNavOnlyView: false,
     workCardCaseStudyConnector: true,
-    caseStudyPath: "/work/resolutions",
+    caseStudyPath: "/old/work/resolutions",
     workCardAspect: "1/1",
     workCardFigmaNoImage: true,
     workCardImageHighPriority: false,

@@ -1,0 +1,472 @@
+/* Design System — page-only styles. Dark theme is forced via `data-theme="dark"`
+ * on the page root, so all surfaces resolve through the rebuild dark tokens.
+ *
+ * The 8-gray ramp is the ground truth, so we expose the literal hex values on
+ * the page root as `--ds-*` variables. This keeps every swatch / panel exactly
+ * on-spec, regardless of how the global tokens may evolve.
+ */
+
+.ds-page {
+  --ds-white: #ffffff;
+  --ds-gray-10: #7b7b7b; /* secondary text */
+  --ds-gray-6:  #3a3a3a; /* hairline */
+  --ds-gray-5:  #313131;
+  --ds-gray-4:  #2a2a2a;
+  --ds-gray-3:  #222222;
+  --ds-gray-2:  #191919; /* hover */
+  --ds-gray-1:  #111111; /* page background */
+
+  background: var(--ds-gray-1);
+  color: var(--ds-white);
+  font-family: var(--font-body);
+  min-height: 100dvh;
+  width: 100%;
+  overflow-x: clip;
+}
+
+/* Outer rhythm — matches rebuild's section gaps but on the dark surface. */
+.ds-shell {
+  margin-inline: auto;
+  max-width: 1280px;
+  padding-inline: clamp(20px, 4vw, 64px);
+  padding-block: clamp(64px, 10vw, 128px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(72px, 9vw, 112px);
+}
+
+/* Hero block ------------------------------------------------------------- */
+.ds-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 720px;
+}
+
+.ds-hero__kicker {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ds-white) 6%, transparent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ds-gray-10);
+}
+
+.ds-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.6vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--ds-white);
+  font-weight: 590;
+}
+
+.ds-hero__title em {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.ds-hero__body {
+  margin: 0;
+  color: var(--ds-gray-10);
+  font-size: 16px;
+  line-height: 1.55;
+  max-width: 60ch;
+}
+
+/* Section -------------------------------------------------------------- */
+.ds-section {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 3.4vw, 48px);
+}
+
+.ds-section__head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 60ch;
+}
+
+.ds-section__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ds-gray-10);
+}
+
+.ds-section__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--ds-white);
+  font-weight: 590;
+}
+
+.ds-section__body {
+  margin: 0;
+  color: var(--ds-gray-10);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* Color grid ------------------------------------------------------------- */
+.ds-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+}
+
+.ds-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+  text-align: center;
+}
+
+/* Swatch chip — circular like the spec; only ring-around-white when the
+ * swatch is literal white so it stays visible on the page surface. */
+.ds-swatch__chip {
+  width: clamp(112px, 14vw, 168px);
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 0.5px var(--ds-gray-6);
+}
+
+.ds-swatch[data-flagged="true"] .ds-swatch__chip {
+  box-shadow: inset 0 0 0 0.5px var(--ds-gray-6),
+              0 0 0 0.5px var(--ds-gray-6);
+}
+
+.ds-swatch__name {
+  font-family: var(--font-body);
+  font-weight: 590;
+  font-size: 15px;
+  color: var(--ds-white);
+}
+
+.ds-swatch__role {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ds-gray-10);
+  max-width: 22ch;
+}
+
+.ds-swatch__hex {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ds-gray-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--ds-white);
+}
+
+/* Accent strip --------------------------------------------------------- */
+.ds-accents {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.ds-accent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 18px 16px;
+  border-radius: 14px;
+  background: var(--ds-gray-2);
+}
+
+.ds-accent__pill {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, var(--ds-gray-1));
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 590;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ds-accent__role {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ds-gray-10);
+}
+
+.ds-accent__hex {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--ds-white);
+}
+
+/* Typography rows ------------------------------------------------------ */
+.ds-type-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-type-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 0.9fr;
+  gap: 24px;
+  padding-block: 22px;
+  align-items: end;
+}
+
+.ds-type-row + .ds-type-row {
+  border-top: 0.5px solid var(--ds-gray-6);
+}
+
+.ds-type-row__sample {
+  font-family: var(--font-display);
+  color: var(--ds-white);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  font-weight: 590;
+}
+
+.ds-type-row__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--ds-gray-10);
+  font-size: 13px;
+}
+
+.ds-type-row__role {
+  color: var(--ds-gray-10);
+  font-size: 13px;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .ds-type-row { grid-template-columns: 1fr; gap: 6px; }
+  .ds-type-row__role { text-align: left; }
+}
+
+/* Token tables --------------------------------------------------------- */
+.ds-table {
+  border-radius: 14px;
+  background: var(--ds-gray-2);
+  overflow: clip;
+}
+
+.ds-table__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.6fr;
+  gap: 16px;
+  padding: 16px 22px;
+  align-items: center;
+}
+
+.ds-table__row + .ds-table__row {
+  border-top: 0.5px solid var(--ds-gray-6);
+}
+
+.ds-table__token {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ds-white);
+}
+
+.ds-table__value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ds-gray-10);
+}
+
+.ds-table__role {
+  color: var(--ds-gray-10);
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .ds-table__row { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* Component preview grid ----------------------------------------------- */
+.ds-components {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.ds-component {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 22px 20px;
+  border-radius: 16px;
+  background: var(--ds-gray-2);
+}
+
+.ds-component__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ds-component__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ds-gray-10);
+}
+
+.ds-component__stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 10px;
+  background: var(--ds-gray-3);
+}
+
+/* Demo: section kicker pill — mirrors `RebuildSectionKicker`. */
+.ds-kicker-demo {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 590;
+}
+
+/* Demo: icon well — mirrors `.rebuild-process-card-icon-well` dark theme. */
+.ds-icon-well {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--ds-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds-icon-well > span {
+  width: 12px;
+  height: 2px;
+  background: var(--ds-gray-1);
+  border-radius: 999px;
+}
+
+/* Demo: pill button — filled. */
+.ds-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--ds-white);
+  color: var(--ds-gray-1);
+  font-size: 14px;
+  font-weight: 590;
+}
+.ds-pill--ghost {
+  background: var(--ds-gray-2);
+  color: var(--ds-white);
+}
+
+/* Demo: card (rounded top, fades into surface). */
+.ds-card-preview {
+  border-radius: 14px 14px 0 0;
+  background: var(--ds-gray-2);
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ds-card-preview__media {
+  height: 96px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--ds-gray-4), var(--ds-gray-3));
+}
+.ds-card-preview__title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 590;
+  color: var(--ds-white);
+}
+.ds-card-preview__body {
+  font-size: 13px;
+  color: var(--ds-gray-10);
+  line-height: 1.5;
+}
+
+/* Principles list ------------------------------------------------------ */
+.ds-principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.ds-principle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border-radius: 14px;
+  background: var(--ds-gray-2);
+}
+
+.ds-principle__title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 590;
+  color: var(--ds-white);
+}
+
+.ds-principle__body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ds-gray-10);
+}
+
+/* Footer ---------------------------------------------------------------- */
+.ds-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 32px;
+  border-top: 0.5px solid var(--ds-gray-6);
+  color: var(--ds-gray-10);
+  font-size: 13px;
+}
+
+.ds-footer a {
+  color: var(--ds-white);
+  text-decoration: none;
+}
+.ds-footer a:hover {
+  color: var(--ds-gray-10);
+}

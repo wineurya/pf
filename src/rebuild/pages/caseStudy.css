@@ -1,0 +1,110 @@
+/* Rebuild · Case Study — page-only styles.
+ *
+ * Inherits the rebuild outer shell (RebuildPage / rebuild.css). This file
+ * styles the aside masthead bits and the main-column bento grid.
+ *
+ * The main column is an editorial bento composition of empty frames. The grid
+ * uses a **rastered** track height (`grid-auto-rows`) and gives each tile an
+ * explicit `(column-span × row-span)` pair — no `aspect-ratio` anywhere. With
+ * `grid-auto-flow: dense`, the rendered order is designed so every horizontal
+ * band totals six column-units, which means no empty space inside the grid.
+ */
+
+/* ---------- Aside masthead ---------- */
+
+.cs-aside-meta-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wx-muted);
+  margin: 0;
+}
+
+.cs-aside-meta-value {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--wx-ink);
+  font-weight: 590;
+}
+
+.cs-aside-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--wx-ink) 5%, var(--wx-page-bg));
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--wx-muted);
+  line-height: 1.3;
+}
+
+/* ---------- Bento grid ---------- */
+
+.cs-bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: clamp(56px, 5.6vw, 88px); /* raster — every tile spans whole units */
+  gap: clamp(12px, 1.2vw, 18px);
+  grid-auto-flow: dense;
+  width: 100%;
+}
+
+.cs-bento-tile {
+  background: rgba(23, 23, 23, 0.12);
+  border-radius: 16px;
+  min-width: 0;
+}
+
+/* Shape vocabulary — each tile is (col-span × row-span). The composition order
+ * in `BENTO` (CaseStudyPage.jsx) is designed so each band totals 6 col-units. */
+.cs-bento-tile[data-shape="hero"]        { grid-column: span 6; grid-row: span 4; }
+.cs-bento-tile[data-shape="wide"]        { grid-column: span 4; grid-row: span 3; }
+.cs-bento-tile[data-shape="wide-tall"]   { grid-column: span 4; grid-row: span 4; }
+.cs-bento-tile[data-shape="wide-narrow"] { grid-column: span 4; grid-row: span 2; }
+.cs-bento-tile[data-shape="panorama"]    { grid-column: span 6; grid-row: span 3; }
+.cs-bento-tile[data-shape="half"]        { grid-column: span 3; grid-row: span 3; }
+.cs-bento-tile[data-shape="sq-md"]       { grid-column: span 3; grid-row: span 3; }
+.cs-bento-tile[data-shape="sq-sm"]       { grid-column: span 2; grid-row: span 2; }
+.cs-bento-tile[data-shape="tall"]        { grid-column: span 2; grid-row: span 4; }
+.cs-bento-tile[data-shape="portrait"]    { grid-column: span 2; grid-row: span 3; }
+
+/* Tablet (4-col raster) — shape spans remapped so bands still total 4 units. */
+@media (max-width: 1100px) {
+  .cs-bento {
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: clamp(60px, 8vw, 92px);
+  }
+  .cs-bento-tile[data-shape="hero"]        { grid-column: span 4; grid-row: span 3; }
+  .cs-bento-tile[data-shape="wide"]        { grid-column: span 4; grid-row: span 2; }
+  .cs-bento-tile[data-shape="wide-tall"]   { grid-column: span 4; grid-row: span 3; }
+  .cs-bento-tile[data-shape="wide-narrow"] { grid-column: span 4; grid-row: span 2; }
+  .cs-bento-tile[data-shape="panorama"]    { grid-column: span 4; grid-row: span 2; }
+  .cs-bento-tile[data-shape="half"]        { grid-column: span 2; grid-row: span 3; }
+  .cs-bento-tile[data-shape="sq-md"]       { grid-column: span 2; grid-row: span 3; }
+  .cs-bento-tile[data-shape="sq-sm"]       { grid-column: span 2; grid-row: span 2; }
+  .cs-bento-tile[data-shape="tall"]        { grid-column: span 2; grid-row: span 4; }
+  .cs-bento-tile[data-shape="portrait"]    { grid-column: span 2; grid-row: span 3; }
+}
+
+/* Phone (2-col raster) */
+@media (max-width: 640px) {
+  .cs-bento {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: clamp(64px, 22vw, 100px);
+    gap: 10px;
+  }
+  .cs-bento-tile[data-shape="hero"]        { grid-column: span 2; grid-row: span 3; }
+  .cs-bento-tile[data-shape="wide"]        { grid-column: span 2; grid-row: span 2; }
+  .cs-bento-tile[data-shape="wide-tall"]   { grid-column: span 2; grid-row: span 3; }
+  .cs-bento-tile[data-shape="wide-narrow"] { grid-column: span 2; grid-row: span 2; }
+  .cs-bento-tile[data-shape="panorama"]    { grid-column: span 2; grid-row: span 2; }
+  .cs-bento-tile[data-shape="half"]        { grid-column: span 1; grid-row: span 2; }
+  .cs-bento-tile[data-shape="sq-md"]       { grid-column: span 1; grid-row: span 2; }
+  .cs-bento-tile[data-shape="sq-sm"]       { grid-column: span 1; grid-row: span 2; }
+  .cs-bento-tile[data-shape="tall"]        { grid-column: span 1; grid-row: span 3; }
+  .cs-bento-tile[data-shape="portrait"]    { grid-column: span 1; grid-row: span 2; }
+}

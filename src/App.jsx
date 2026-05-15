@@ -19,7 +19,11 @@ const DesignSystemPage = lazy(() => import("@/pages/design/DesignSystemPage.jsx"
 const HomeStaticPage = lazy(() => import("@/pages/HomeStaticPage.jsx"));
 const WireframeHomePage = lazy(() => import("@/pages/WireframeHomePage.jsx"));
 const RebuildPage = lazy(() => import("@/rebuild/RebuildPage.jsx"));
+const RebuildDesignSystemPage = lazy(() => import("@/rebuild/pages/DesignSystemPage.jsx"));
+const RebuildCaseStudyPage = lazy(() => import("@/rebuild/pages/CaseStudyPage.jsx"));
 const WorktableTestPage = lazy(() => import("@/pages/WorktableTestPage.jsx"));
+const ProcessBentoDraftPage = lazy(() => import("@/pages/ProcessBentoDraftPage.jsx"));
+const QuietStudioPage = lazy(() => import("@/exploration/quietStudio/QuietStudioPage.jsx"));
 
 function RouteFallback() {
   return (
@@ -44,13 +48,18 @@ export default function App() {
             <Route path="/design/kinetix" element={<KinetixPage />} />
             <Route path="/figma/home" element={<HomeStaticPage />} />
             <Route path="/wireframe/home" element={<WireframeHomePage />} />
-            <Route path="/rebuild" element={<RebuildPage />} />
+            <Route path="/" element={<RebuildPage />} />
+            <Route path="/design-system" element={<RebuildDesignSystemPage />} />
+            <Route path="/case-study" element={<RebuildCaseStudyPage />} />
+            <Route path="/rebuild" element={<Navigate to="/" replace />} />
             <Route path="/lab/worktable" element={<WorktableTestPage />} />
+            <Route path="/lab/process-bento" element={<ProcessBentoDraftPage />} />
+            <Route path="/exploration/quiet-studio" element={<QuietStudioPage />} />
             <Route
               path="/design"
               element={<Navigate to="/design/kinetix" replace />}
             />
-            <Route path="/" element={<AnimatedOutlet />}>
+            <Route path="/old" element={<AnimatedOutlet />}>
               <Route index element={<ExplorationHomePage />} />
               <Route path="work/:slug" element={<WorkCasePage />} />
             </Route>

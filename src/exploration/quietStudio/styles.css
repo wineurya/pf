@@ -1,0 +1,285 @@
+/* Quiet Studio — custom styles that complement Tailwind utilities. */
+
+.qs-root {
+  --qs-ink: rgba(255, 255, 255, 1);
+  --qs-ink-soft: rgba(255, 255, 255, 0.64);
+  --qs-ink-mute: rgba(255, 255, 255, 0.42);
+  --qs-line: rgba(255, 255, 255, 0.12);
+  --qs-line-strong: rgba(255, 255, 255, 0.24);
+  --qs-bg: #000000;
+  --qs-bg-soft: #0a0a0a;
+  --qs-accent: #b6ff7d; /* soft green — picks up the eyebrow dot color */
+
+  background: var(--qs-bg);
+  color: var(--qs-ink);
+  font-family: var(--font-body);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Headline italic accent — Georgia, with a soft white glow.
+ * Mirrors the Figma text-shadow on "Open". */
+.qs-italic-accent {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  text-shadow: 0 0 42px rgba(255, 255, 255, 0.79);
+  letter-spacing: -0.01em;
+}
+
+/* Eyebrow dot — small soft-green pulse. */
+.qs-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--qs-accent);
+  box-shadow: 0 0 14px rgba(182, 255, 125, 0.5);
+}
+
+/* Hero bg image holder — covers the full hero with bottom-to-top dark fade. */
+.qs-hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.qs-hero-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 70%;
+  filter: saturate(0.92) brightness(0.96);
+}
+/* Top fade — keeps nav legible. */
+.qs-hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--qs-bg) 0%,
+    rgba(0, 0, 0, 0.86) 12%,
+    rgba(0, 0, 0, 0.42) 32%,
+    rgba(0, 0, 0, 0) 52%,
+    rgba(0, 0, 0, 0) 78%,
+    var(--qs-bg) 100%
+  );
+  z-index: 1;
+}
+/* Right-edge softening so the headline column stays calm against the photo. */
+.qs-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.18) 38%,
+    rgba(0, 0, 0, 0) 72%
+  );
+  z-index: 1;
+}
+
+/* Buttons --------------------------------------------------------------- */
+.qs-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+.qs-pill--filled {
+  background: #ffffff;
+  color: #0a0a0a;
+  box-shadow:
+    0 4px 4px rgba(255, 255, 255, 0.1),
+    0 15px 7.5px rgba(255, 255, 255, 0.09),
+    0 34px 10px rgba(255, 255, 255, 0.05),
+    0 61px 12px rgba(255, 255, 255, 0.01);
+}
+.qs-pill--filled:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 6px rgba(255, 255, 255, 0.12),
+    0 20px 10px rgba(255, 255, 255, 0.11),
+    0 42px 14px rgba(255, 255, 255, 0.06),
+    0 70px 14px rgba(255, 255, 255, 0.02);
+}
+.qs-pill--ghost {
+  background: transparent;
+  color: var(--qs-ink);
+  border: 1px solid var(--qs-line-strong);
+}
+.qs-pill--ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.42);
+  transform: translateY(-1px);
+}
+
+/* Nav link hover */
+.qs-nav-link {
+  position: relative;
+  color: var(--qs-ink-soft);
+  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  transition: color 200ms ease, background-color 200ms ease;
+}
+.qs-nav-link:hover {
+  color: var(--qs-ink);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Section frame — used by all sub-hero sections. */
+.qs-section {
+  position: relative;
+  width: 100%;
+  padding-inline: clamp(24px, 6vw, 152px);
+  padding-block: clamp(80px, 12vw, 160px);
+}
+
+.qs-section-kicker {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--qs-ink-mute);
+}
+
+.qs-section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5.2vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.qs-section-body {
+  color: var(--qs-ink-soft);
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+/* Subtle film-grain overlay applied on the hero only. */
+.qs-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.7'/></svg>");
+  background-size: 240px 240px;
+}
+
+/* Work piece — clickable row, hover lifts the title. */
+.qs-work-row {
+  display: grid;
+  grid-template-columns: 96px 220px 1fr;
+  gap: 32px;
+  align-items: baseline;
+  padding: 28px 0;
+  border-top: 1px solid var(--qs-line);
+  transition: padding 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.qs-work-row:last-child { border-bottom: 1px solid var(--qs-line); }
+.qs-work-row:hover { padding-inline: 8px; }
+.qs-work-row__year { color: var(--qs-ink-mute); font-size: 13px; letter-spacing: 0.04em; font-family: ui-monospace, monospace; }
+.qs-work-row__sector { color: var(--qs-ink-soft); font-size: 14px; }
+.qs-work-row__title {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--qs-ink);
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.qs-work-row__title em {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+.qs-work-row__summary {
+  color: var(--qs-ink-soft);
+  font-size: 15px;
+  line-height: 1.55;
+  margin-top: 8px;
+  max-width: 48ch;
+}
+.qs-work-row:hover .qs-work-row__title { transform: translateX(4px); }
+.qs-work-row__arrow {
+  color: var(--qs-ink-soft);
+  font-size: 18px;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), color 240ms;
+}
+.qs-work-row:hover .qs-work-row__arrow { transform: translateX(6px); color: var(--qs-ink); }
+
+/* Approach pillars — bordered cards. */
+.qs-pillar {
+  position: relative;
+  padding: 32px 28px 28px;
+  border: 1px solid var(--qs-line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%);
+  transition: border-color 240ms, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.qs-pillar:hover { border-color: var(--qs-line-strong); transform: translateY(-2px); }
+.qs-pillar__step {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--qs-accent);
+}
+.qs-pillar__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin: 14px 0 10px;
+}
+.qs-pillar__body { color: var(--qs-ink-soft); font-size: 15px; line-height: 1.55; }
+
+/* Journal entry */
+.qs-entry { display: flex; flex-direction: column; gap: 12px; padding-block: 26px; border-top: 1px solid var(--qs-line); }
+.qs-entry:last-child { border-bottom: 1px solid var(--qs-line); }
+.qs-entry__meta {
+  display: flex; gap: 12px; align-items: center;
+  color: var(--qs-ink-mute); font-size: 12px; letter-spacing: 0.04em;
+  font-family: ui-monospace, monospace;
+}
+.qs-entry__title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 26px);
+  letter-spacing: -0.015em;
+  line-height: 1.22;
+}
+.qs-entry__excerpt { color: var(--qs-ink-soft); font-size: 15px; line-height: 1.55; max-width: 60ch; }
+
+/* Contact callout */
+.qs-contact-card {
+  position: relative;
+  border: 1px solid var(--qs-line);
+  border-radius: 28px;
+  padding: clamp(48px, 6vw, 96px);
+  background: radial-gradient(ellipse 70% 110% at 14% -10%, rgba(182,255,125,0.10) 0%, rgba(0,0,0,0) 60%),
+              linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+  overflow: hidden;
+}
+
+/* Section dividers — minimal hairlines. */
+.qs-divider {
+  height: 1px;
+  width: 100%;
+  background: var(--qs-line);
+}

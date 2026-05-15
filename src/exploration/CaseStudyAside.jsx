@@ -171,7 +171,7 @@ function CaseStudyAsideTopRow({ location, navigate }) {
         <div className="wx-tab-track wx-tab-track--single min-w-0 shrink-0">
           <div className="wx-tab-track__scroll relative min-w-0">
             <ViewTransitionLink
-              to={{ pathname: "/", hash: "section-work" }}
+              to={{ pathname: "/old", hash: "section-work" }}
               className="wx-tab wx-tab--back"
               style={{ "--wx-tab-accent": "var(--wx-primary)" }}
               aria-label="Back to Work section"
