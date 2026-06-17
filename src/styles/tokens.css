@@ -31,15 +31,9 @@
   --text-display-size: 20px;
   --text-display-leading: 28px;
 
-  /* ---- Section title (eyebrow) — 12 / 16 -------------------------------- */
-  --text-section-title-size: 12px;
-  --text-section-title-leading: 16px;
-
   --weight: 400; /* Geist Regular — body default */
   --weight-medium: 500;
   --weight-display: 500;
-  --weight-section-title: 400; /* Section eyebrow / title */
-  --weight-section-header: 500; /* Section header — medium */
   --tracking: 0em;
 
   /* ---- Toast — Figma node 220:52 (black pill above the trigger) ------- */

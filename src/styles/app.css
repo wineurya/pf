@@ -1308,7 +1308,7 @@ main {
   font-variation-settings: var(--font-display-variation);
   font-size: var(--text-display-size);
   line-height: var(--text-display-leading);
-  font-weight: var(--weight-section-header);
+  font-weight: var(--weight-display);
   color: var(--text-strong);
   text-wrap: balance;
 }
@@ -1451,15 +1451,15 @@ main {
   scroll-margin-top: var(--space-10);
 }
 
-/* Section eyebrow — 12/16, muted.
+/* Section eyebrow — 12/16, one weight below body (400 vs 500), muted.
    Negative margin-bottom collapses the flex gap so the label sits ~8px
    above its first block; the 64px between sections does the breathing. */
 .cs__section-eyebrow {
   margin: 0;
   margin-bottom: calc(8px - var(--gap-section));
-  font-size: var(--text-section-title-size);
-  line-height: var(--text-section-title-leading);
-  font-weight: var(--weight-section-title);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
   color: var(--text-muted);
   letter-spacing: 0.04em;
 }
