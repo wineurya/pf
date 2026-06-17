@@ -15,7 +15,6 @@ import { FigmaLogo } from "@phosphor-icons/react/dist/csr/FigmaLogo";
 import { FireSimple } from "@phosphor-icons/react/dist/csr/FireSimple";
 import { FramerLogo } from "@phosphor-icons/react/dist/csr/FramerLogo";
 import { GridFour } from "@phosphor-icons/react/dist/csr/GridFour";
-import { Lightning } from "@phosphor-icons/react/dist/csr/Lightning";
 import { ListBullets } from "@phosphor-icons/react/dist/csr/ListBullets";
 import { Palette } from "@phosphor-icons/react/dist/csr/Palette";
 import { Sparkle } from "@phosphor-icons/react/dist/csr/Sparkle";
@@ -73,7 +72,21 @@ const IconClaudeai = makeIcon(Sparkle);
 const IconFigma = makeIcon(FigmaLogo);
 const IconFire1 = makeIcon(FireSimple);
 const IconFramer = makeIcon(FramerLogo);
-const IconRive = makeIcon(Lightning);
+function IconRive({ className, size = 14, ariaHidden }) {
+  return (
+    <svg
+      className={className}
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden={ariaHidden || undefined}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M5 3h8c3.314 0 6 2.686 6 6 0 2.416-1.43 4.507-3.504 5.484L19 21h-3.5l-3.19-6H8.5v6H5V3zm3.5 3v5.5H13a2.75 2.75 0 0 0 0-5.5H8.5z" />
+    </svg>
+  );
+}
 
 export {
   IconArrowLeft,

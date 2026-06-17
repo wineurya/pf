@@ -652,13 +652,13 @@ export const site = {
   about: [
     "I'm a 23-year-old product designer and researcher based in Atlanta.",
     [
-      "I'm currently exploring the next tool that can elevate an experience — whether that's ",
+      "I'm drawn to tools that change what's possible — whether that's ",
       { tool: "Figma", icon: "figma" },
       ", ",
       { tool: "Framer", icon: "framer" },
       ", ",
       { tool: "Rive", icon: "rive" },
-      ", or Blender. Lately the rotation is ",
+      ", or whatever I haven't tried yet. The current stack is ",
       { tool: "Claude", icon: "claude" },
       ", ",
       { tool: "Cursor", icon: "cursor" },
@@ -666,8 +666,8 @@ export const site = {
       { tool: "Firebase", icon: "firebase" },
       ".",
     ],
-    "Previously, I worked on mobile UX and behavioral tracking. I value restraint, rhythm, and the small moments that make a product feel inevitable.",
-    "My focus is on designing with empathy, refining my craft, and growing my impact. I'm always open to founding or product design roles at exciting startups.",
+    "I started in mobile UX and behavioral tracking. I think in systems — what stays coherent as a product grows, where the smallest decision carries the most weight, and what makes an interface feel like it was always supposed to be that way.",
+    "I'm open to founding or early product design roles — work that's still close to the core decisions and has room to shape what the product becomes.",
     [
       "Off the clock, I'm a devoted ",
       {
@@ -704,7 +704,7 @@ export const site = {
       },
       " bins, or hanging out with ",
       {
-        word: "my dogs",
+        word: "my family's dogs",
         photos: [
           { src: dogSpaniel, alt: "A Cavalier King Charles spaniel looking up", cap: "the gentleman" },
           { src: dogPoodle, alt: "A curly toy poodle standing on a wood floor", cap: "the menace" },
