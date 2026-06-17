@@ -1,0 +1,79 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+.vite
+*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Claude Code may mirror skills here; tracked copy is .agents/skills + skills-lock.json
+.claude/
+
+# Figma local exports and working copies
+figma/
+
+# Vercel
+.vercel
+
+# After Effects scratch
+**/Adobe After Effects Auto-Save/
+**/Newton Auto-Save/
+
+# SF Pro fonts: Apple proprietary, local dev only, not for distribution
+public/fonts/SF-Pro*
+
+# Private local context (research, inspiration, raw prompts, unfinished thinking)
+.agents/private/
+docs/private/
+private/
+scratch/
+research/
+
+# Archived previous app and private working context (kept local, not committed)
+old/
+.superpowers/
+docs/superpowers/
+
+# Agent scratch/cache
+.agent-scratch/
+.agent-cache/
+.codex/
+.cursor-private/
+claude-private/
+
+# Raw design/source exports
+raw/
+exports/
+*.fig
+*.psd
+*.aep
+*.prproj
+*.zip
+
+# Local screenshots and review artifacts
+.codex-screenshots/
+.agent-screenshots/
+visual-checks/

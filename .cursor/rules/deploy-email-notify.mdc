@@ -1,0 +1,32 @@
+---
+description: After pushing portfolio work, ensure deploy emails summarize changes in 3 to 4 lines.
+globs:
+  - src/**
+  - .github/workflows/deploy-vercel.yml
+  - scripts/deploy-notify-email.mjs
+alwaysApply: false
+---
+
+# Deploy email notifications
+
+When you **push to `main`** changes under deploy paths, GitHub Actions runs **Deploy to Vercel** and emails a summary if secrets are configured.
+
+## GitHub secrets (pick one provider)
+
+**Option A — Resend:** `RESEND_API_KEY`, `DEPLOY_NOTIFY_EMAIL`, optional `DEPLOY_FROM_EMAIL`
+
+**Option B — Gmail SMTP (no Resend):** `SMTP_USER`, `SMTP_PASS` (Google App Password), `DEPLOY_NOTIFY_EMAIL`, optional `DEPLOY_FROM_EMAIL`
+
+Resend is preferred when available; SMTP is the fallback when Resend signup/dashboard won't load.
+
+## Agent responsibilities
+
+1. **Commit messages that email well** — notify script includes up to **4 subject lines** from the push.
+
+2. **Push when deploy-worthy** — after push, tell the user deploy is in progress and they'll get an email if secrets exist.
+
+3. **If no push**, say so in chat — email only fires from CI.
+
+4. **On deploy failure**, share the GitHub Actions run URL.
+
+Do not claim an email was sent unless a push triggered the workflow and email secrets are configured.

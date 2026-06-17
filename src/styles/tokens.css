@@ -1,0 +1,242 @@
+/* =============================================================================
+   Design tokens
+
+   Two type layers:
+   - Body:  14 / 20 — Geist Medium (UI, meta, excerpts, lists)
+   - Display: 20 / 28 — Inter Display (name, leads, case titles)
+
+   Spacing: 20px paragraph rhythm, 28px around display-scale blocks, 40px sections.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---- Type families --------------------------------------------------- */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-sans);
+  --font-display:
+    "Inter Display", "Inter Variable", Inter,
+    ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Display optical size — Inter Display cut at larger sizes */
+  --font-display-variation: "opsz" 32, "wght" 500;
+
+  /* ---- Body scale — Geist 14 / 20 -------------------------------------- */
+  --text-size: 14px;
+  --text-leading: 20px;
+  /* Meta labels (row meta, tabs) stay on the body scale */
+  --text-sm-size: 14px;
+  --text-sm-leading: 20px;
+
+  /* ---- Display scale — Inter Display 20 / 28 --------------------------- */
+  --text-display-size: 20px;
+  --text-display-leading: 28px;
+
+  --weight: 500; /* Geist Medium — body default */
+  --weight-medium: 500;
+  --weight-display: 500;
+  --tracking: 0em;
+
+  /* ---- Toast — Figma node 220:52 (black pill above the trigger) ------- */
+  --toast-size: 13.4px;
+  --toast-leading: 19.2px;
+
+  /* ---- Spacing — 4px base; paragraph rhythm = 20px -------------------- */
+  --spacing: 4px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  --gap-paragraph: 20px; /* body-scale vertical gap between paragraphs / blocks */
+  --gap-display: 28px; /* display-scale rhythm — pairs with 20/28 type */
+  --gap-section: 40px; /* major section gap — Figma gap-[40px] */
+  --gap-section-lg: 64px; /* between case-study sections — wider breath */
+  --gap-list: 4px; /* between list rows — Figma gap-[4px] */
+  --gap-section-inner: 16px; /* inside Highlights / Thoughts sections */
+
+  /* Main column inset (margin cancels padding so the 576px column is unchanged) */
+  --content-main-pad: var(--space-5);
+
+  /* ---- Palette ------------------------------------------------------- */
+  --color-black: #000;
+  --color-white: #fff;
+  --bg: #fafafa;
+  --surface: #f0f0f0;
+  --surface-fill-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 72%, transparent),
+    0 2px 6px color-mix(in oklab, var(--color-black) 4%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-white) 55%, transparent);
+  /* About bento — soft white halo over the backdrop (more spread + blur). */
+  --bento-fill-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 78%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-white) 62%, transparent),
+    0 3px 52px 4px color-mix(in srgb, var(--color-white) 84%, transparent),
+    0 10px 88px 10px color-mix(in srgb, var(--color-white) 58%, transparent);
+  /* Exploration preview frames — 16px radius + soft white glow. */
+  --exp-card-fill-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 78%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-white) 62%, transparent),
+    0 2px 16px 3px color-mix(in srgb, var(--color-white) 82%, transparent),
+    0 8px 40px 6px color-mix(in srgb, var(--color-white) 52%, transparent);
+  --border-soft: #e8e8e8;
+
+  --foreground: #000;
+  --text-primary: var(--color-black);
+  --text-secondary: #8d8d8d;
+  --text-muted: #8d8d8d;
+  --text-subtle: #8d8d8d; /* Figma palette has a single muted gray */
+
+  --accent-link: #2e90fa;
+
+  /* Load-bearing body phrases (==phrase==): ink stays neutral/strong; only the
+     underline carries section accent. Each case-study section overrides
+     --mark-color with one Tailwind-600 hue. */
+  --mark-ink: var(--text-strong);
+  --mark-color: #d97706; /* amber-600 — default; sections override per accent */
+
+  /* Per-section accent hues (Tailwind-600). One source of truth, shared by the
+     load-bearing underlines (--mark-color) and the case-study dock's volume
+     fill / section dots. */
+  --accent-overview: #d97706; /* amber-600 */
+  --accent-ideation: #7c3aed; /* violet-600 */
+  --accent-problem: #dc2626; /* red-600 */
+  --accent-research: #ca8a04; /* yellow-600 */
+  --accent-personas: #db2777; /* pink-600 */
+  --accent-wireframes: #16a34a; /* green-600 */
+  --accent-design: #0891b2; /* cyan-600 */
+  --accent-features: #2563eb; /* blue-600 */
+  --accent-results: #0d9488; /* teal-600 */
+  --accent-sprint: #ea580c; /* orange-600 */
+  --accent-retro: #475569; /* slate-600 */
+
+  /* Inline tool mentions — Tailwind 600 palette per brand */
+  --tool-figma: #9333ea; /* purple-600 */
+  --tool-framer: #2563eb; /* blue-600 */
+  --tool-rive: #e11d48; /* rose-600 */
+  --tool-claude: #ea580c; /* orange-600 */
+  --tool-cursor: #475569; /* slate-600 */
+  --tool-firebase: #d97706; /* amber-600 */
+
+  /* ---- Semantic -------------------------------------------------------- */
+  --text-strong: var(--text-primary);
+  --text-default: var(--foreground);
+  --hover-lift: color-mix(in oklab, var(--color-black) 4%, transparent);
+  --selection-bg: color-mix(in oklab, var(--color-black) 12%, transparent);
+  --focus-ring: var(--color-black);
+
+  /* ---- Layout — Figma max-w-[576px] ---------------------------------- */
+  --content-max: 576px;
+  /* Case study breathes wider than the home column. Fluid so it never falls
+     below the prior 680px (keeps the offset rail from clipping on small
+     laptops) yet opens to a generous 880px on large screens. Only CSS reads
+     this now (the width morph is a plain max-width transition), so clamp() is
+     safe — no JS tween needs a fixed pixel target. */
+  --content-max-cs: clamp(680px, 64vw, 880px);
+
+  /* Case-study proximity rhythm now maps onto the canonical scale — no bespoke
+     values. tight = --space-3 (12), related = --gap-paragraph (20),
+     between-bands = --gap-section (40), between-body-sections = --gap-section-lg (64). */
+
+  --page-pad: clamp(1.25rem, 5vw, 2rem);
+  --rail-offset: clamp(8rem, 15vw, 12rem);
+
+  /* Mobile home — tighter top inset + room for the bottom section dock */
+  --shell-pad-top-mobile: var(--space-8);
+  --mobile-rail-h: 3rem;
+  --mobile-rail-gap: var(--space-4);
+  /* Capsule ends from fixed height — avoids 999px + width morph reading as an oval. */
+  --mobile-tab-radius: calc(var(--mobile-rail-h) / 2);
+  --mobile-dock-radius: calc(var(--mobile-rail-h) / 2 + var(--space-1));
+
+  /* ---- Radius ---------------------------------------------------------- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --corner-smooth: superellipse(2.3);
+  --corner-smooth-max: superellipse(3.2);
+
+  /* ---- Motion (Emil-style — strong curves, UI ≤300ms) ----------------- */
+  --dur-fast: 160ms;
+  --dur: 220ms;
+  --dur-layout: 320ms; /* column width — home ↔ case study */
+  --dur-theme: 300ms; /* light↔dark page crossfade. Doubles as the View-Transition
+                         freeze window — the live DOM is non-interactive behind the
+                         snapshot for exactly this long, so keep it short (≤300ms)
+                         or a theme tap feels like the page locked up on mobile.
+                         Keep in sync with SWITCH_MS in lib/theme.js. */
+  --dur-slow: 520ms;
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.15, 0.45, 1);
+  /* Color / hover — same punchy out-curve (replaces weak material ease). */
+  --ease-standard: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* ---- Focus ----------------------------------------------------------- */
+  --focus-width: 2px;
+  --focus-offset: 3px;
+
+}
+
+/* =============================================================================
+   Dark theme — ink and paper swap; grays hold. The two base colors invert so
+   every color-mix() derived token (fills, shadows, scrollbar) follows along.
+   ========================================================================== */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-black: #f2f2f2; /* "ink" on dark paper */
+  --color-white: #161616; /* card / surface base */
+  --bg: #0e0e0e;
+  --surface: #1c1c1c;
+  --border-soft: #262626;
+
+  --foreground: #f2f2f2;
+  --text-secondary: #8d8d8d;
+  --text-muted: #8d8d8d;
+  --text-subtle: #8d8d8d;
+
+  --hover-lift: color-mix(in oklab, #ffffff 7%, transparent);
+  --selection-bg: color-mix(in oklab, #ffffff 18%, transparent);
+  --focus-ring: var(--color-black);
+
+  /* White halos read as soot on dark paper — restate them as faint light. */
+  --surface-fill-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 9%, transparent),
+    0 2px 6px color-mix(in oklab, #000000 32%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 7%, transparent);
+  --bento-fill-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent),
+    0 3px 52px 4px color-mix(in srgb, #ffffff 4%, transparent),
+    0 10px 88px 10px color-mix(in srgb, #ffffff 3%, transparent);
+  --exp-card-fill-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent),
+    0 2px 16px 3px color-mix(in srgb, #ffffff 5%, transparent),
+    0 8px 40px 6px color-mix(in srgb, #ffffff 3%, transparent);
+
+  /* Tool mentions — Tailwind 400 for legibility on dark paper */
+  --tool-figma: #c084fc; /* purple-400 */
+  --tool-framer: #60a5fa; /* blue-400 */
+  --tool-rive: #fb7185; /* rose-400 */
+  --tool-claude: #fb923c; /* orange-400 */
+  --tool-cursor: #94a3b8; /* slate-400 */
+  --tool-firebase: #fbbf24; /* amber-400 */
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0.01ms;
+    --dur: 0.01ms;
+    --dur-slow: 0.01ms;
+  }
+}

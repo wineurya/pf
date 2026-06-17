@@ -1,0 +1,33 @@
+---
+description: Enforce the portfolio's design tokens, type system, and motion rules for UI work
+globs:
+  - src/**
+alwaysApply: false
+---
+
+# Design system
+
+This app uses plain CSS with design tokens. There is no Tailwind and no SF Pro.
+
+## Tokens
+
+- All tokens live in `src/styles/tokens.css` as CSS custom properties.
+- Color, surface, ink, border, and accent values come from those variables. Do not introduce one-off hex values where a token exists.
+- Spacing uses the `--space-*` scale. Radius uses the `--radius-*` scale.
+
+## Type
+
+Two tiers, both self-hosted via Fontsource:
+
+- Body: Geist Medium, 14 / 20, via `--font-body` and `--font-sans`.
+- Display: Inter, 20 / 28, via `--font-display` (name, leads, case titles).
+
+## Styling
+
+- Global styles are split across `src/styles/tokens.css`, `base.css`, and `app.css`. Exploration demos add `exploration-preview.css`.
+- Match the existing class naming (for example the `cs__*` case-study classes). Prefer extending existing patterns over new one-offs.
+
+## Motion
+
+- Animation uses Motion and GSAP. Honor `prefers-reduced-motion`: motion and the animated grain freeze, and entrance transitions collapse to instant.
+- Keep durations and easing consistent with the `MotionConfig` defaults in `src/main.jsx`.

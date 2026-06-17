@@ -1,0 +1,342 @@
+/**
+ * Wallet menu — fintech dropdown.
+ */
+
+.wm-root {
+  --wm-ink: #171717;
+  --wm-ink-idle: color-mix(in srgb, var(--wm-ink) 64%, transparent);
+  --wm-panel-width: 18rem;
+  --wm-panel-open-height: 22.25rem;
+  --wm-trigger-size: 2.25rem;
+  --wm-trigger-gap: 0.375rem;
+  --wm-menu-offset: 8px;
+  --wm-icon-slot: 1.375rem;
+  --wm-item-radius: 0.5rem;
+  --wm-panel-pad-x: 0.5rem;
+  --wm-panel-pad-y: 0.375rem;
+
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  color: var(--wm-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.wm-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-fluid-lg, clamp(2rem, 6vw, 4rem));
+}
+
+.wm-theme-panel {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--wx-border-hairline);
+  border-radius: 12px;
+  background: var(--wx-white);
+  padding: 8px;
+}
+
+.wm-theme-panel__label {
+  margin: 0;
+  padding: 4px 8px 8px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--wm-ink-idle);
+}
+
+.wm-theme-panel__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+
+.wm-theme-panel__swatch {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: var(--swatch, #ffffff);
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.wm-theme-panel__swatch:hover {
+  transform: scale(1.06);
+}
+
+.wm-theme-panel__swatch[data-active="true"] {
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 3px rgba(17, 17, 17, 0.28);
+}
+
+.wm-theme-panel__swatch[data-active="true"][data-tone="dark"] {
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.88),
+    0 0 0 3px rgba(255, 255, 255, 0.42);
+}
+
+.wm-theme-panel__swatch:focus-visible {
+  outline: 2px solid rgba(17, 17, 17, 0.24);
+  outline-offset: 2px;
+}
+
+.wm-scene {
+  position: relative;
+  width: min(var(--wm-panel-width), calc(100vw - 2rem));
+}
+
+/* Panel locus is what the stage centers — menu sits dead center when open. */
+.wm-locus {
+  position: relative;
+  width: 100%;
+  min-height: calc(var(--wm-panel-open-height) + var(--wm-menu-offset));
+}
+
+.wm-trigger {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--wm-trigger-gap));
+  z-index: 2;
+  transform: translateX(-50%);
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--wm-trigger-size);
+  height: var(--wm-trigger-size);
+  padding: 0;
+  border: 1px solid var(--wx-border-hairline);
+  border-radius: 8px;
+  background: var(--wx-white);
+  color: var(--wm-ink-idle);
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow:
+    0 1px 1px color-mix(in srgb, var(--wx-black) 3%, transparent),
+    0 4px 16px color-mix(in srgb, var(--wx-black) 5%, transparent);
+  transition:
+    color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 120ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.wm-trigger-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--wm-icon-slot);
+  height: var(--wm-icon-slot);
+}
+
+.wm-trigger-icon-layer {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform, filter, opacity;
+}
+
+.wm-trigger:hover,
+.wm-trigger[aria-expanded="true"] {
+  color: var(--wm-ink);
+  border-color: var(--wx-border-muted);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--wx-black) 4%, transparent),
+    0 10px 28px color-mix(in srgb, var(--wx-black) 8%, transparent);
+}
+
+.wm-trigger:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+.wm-trigger:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--wx-primary) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.wm-panel-anchor {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  padding-top: var(--wm-menu-offset);
+  width: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wm-panel-anchor[aria-hidden="false"] {
+  pointer-events: auto;
+}
+
+.wm-panel-shell {
+  position: relative;
+  width: 100%;
+  transform-origin: top center;
+  will-change: clip-path, opacity;
+}
+
+.wm-panel-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.wm-panel {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--wm-panel-pad-y) 0 10px;
+  border-radius: var(--wx-radius-track, 1rem);
+  border: 1px solid var(--wx-border-hairline);
+  background: var(--wx-white);
+  box-shadow:
+    0 0 0 0.5px color-mix(in srgb, var(--wx-black) 4%, transparent),
+    0 18px 48px color-mix(in srgb, var(--wx-black) 10%, transparent),
+    0 2px 6px color-mix(in srgb, var(--wx-black) 4%, transparent);
+}
+
+.wm-section-label {
+  margin: 0;
+  padding: 0.4375rem calc(var(--wm-panel-pad-x) + 0.625rem) 0.3125rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-regular, 400);
+  line-height: 1.2;
+  letter-spacing: 0;
+  color: var(--wm-ink-idle);
+}
+
+.wm-divider {
+  height: 1px;
+  width: 100%;
+  margin: 0.3125rem 0;
+  background: var(--wx-border-hairline);
+}
+
+.wm-item {
+  appearance: none;
+  border: 0;
+  box-sizing: border-box;
+  width: calc(100% - 2 * var(--wm-item-inset-x));
+  min-height: 2.5rem;
+  margin-inline: var(--wm-item-inset-x);
+  padding: 0.5rem 0.625rem;
+  border-radius: var(--wm-item-radius);
+  display: flex;
+  align-items: center;
+  gap: 0.6875rem;
+  background: transparent;
+  color: var(--wm-ink-idle);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-supporting, 400);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-align: left;
+  cursor: pointer;
+  --wm-item-inset-x: var(--wm-panel-pad-x);
+  transition:
+    background-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    color 180ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    margin-inline 180ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    width 180ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.wm-item:hover,
+.wm-item:focus-visible {
+  --wm-item-inset-x: calc(var(--wm-panel-pad-x) + 0.375rem);
+  background: var(--color-neutral-100);
+  color: var(--wm-ink);
+}
+
+.wm-item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--wx-primary) 35%, transparent);
+  outline-offset: -1px;
+}
+
+.wm-item-icon {
+  flex: 0 0 var(--wm-icon-slot);
+  width: var(--wm-icon-slot);
+  height: var(--wm-icon-slot);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  transition: color 180ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.wm-item-icon svg,
+.wm-item-icon img,
+.wm-phosphor-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.wm-phosphor-icon {
+  color: inherit;
+}
+
+.wm-item-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 0.0625rem;
+}
+
+.wm-avatar {
+  position: relative;
+  display: inline-flex;
+  width: var(--wm-icon-slot);
+  height: var(--wm-icon-slot);
+  align-items: center;
+  justify-content: center;
+}
+
+.wm-avatar img {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+}
+
+.wm-avatar-dot {
+  position: absolute;
+  right: -0.0625rem;
+  bottom: -0.0625rem;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 999px;
+  background: #e5484d;
+  box-shadow: 0 0 0 1.5px var(--wx-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-trigger,
+  .wm-item {
+    transition: none;
+  }
+
+  .wm-panel-shell,
+  .wm-trigger-icon-layer,
+  .wm-item {
+    will-change: auto;
+  }
+}

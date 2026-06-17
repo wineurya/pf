@@ -1,0 +1,14 @@
+---
+description: Shared project rules for the portfolio repository
+alwaysApply: true
+---
+
+Read `AGENTS.md` before making changes.
+
+This is a public portfolio repository. Do not commit private notes, research, inspiration, raw prompts, secrets, local screenshots, personal documents, proprietary fonts, or environment files.
+
+Preserve app behavior unless the task requires a change. Keep changes small, accessible, responsive, and consistent with the existing design system.
+
+Do not add AI or agent co-authorship to commits. No `Co-authored-by:` trailers and no "Generated with" agent attribution. See AGENTS.md, "Commit conventions".
+
+Use `docs/agent-handoff.md` for sanitized handoff notes.

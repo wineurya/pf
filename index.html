@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" data-theme="light" style="background-color: #fafafa; color-scheme: light">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover is REQUIRED for env(safe-area-inset-*) to report
+         real values on iOS. Without it the layout viewport is letterboxed
+         inside the safe area, every env() inset resolves to 0, and the fixed
+         bottom docks tuck under the iOS 26 floating Safari bar / home indicator. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#fafafa" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta
+      name="description"
+      content="Wineury — product designer who designs and builds."
+    />
+    <title>Wineury — Product Designer</title>
+    <script>
+      // Apply the stored theme before first paint to avoid a light flash.
+      try {
+        if (localStorage.getItem("wineury-theme") === "dark") {
+          var r = document.documentElement;
+          r.dataset.theme = "dark";
+          r.style.backgroundColor = "#0e0e0e";
+          r.style.colorScheme = "dark";
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

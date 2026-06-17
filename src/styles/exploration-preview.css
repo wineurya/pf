@@ -1,0 +1,148 @@
+/* Live /exploration demo embeds inside portfolio preview cards */
+
+.exp-card__frame {
+  /* No mat: the live demo fills the card edge-to-edge. The earlier inset read as
+     a clunky thick frame around the demo and stole room the wallet menu needed. */
+  --exp-embed-inset: 0px;
+}
+
+.exp-card__embed {
+  position: absolute;
+  inset: var(--exp-embed-inset);
+  overflow: hidden;
+  pointer-events: auto;
+  /* Match the frame's rounded shape so the demo clips cleanly to the card edge. */
+  border-radius: var(--radius-lg);
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .exp-card__embed {
+    corner-shape: var(--corner-smooth-max);
+  }
+}
+
+.exp-card__embed-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  min-width: 420px;
+  min-height: 320px;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 520px) {
+  .exp-card__frame {
+    --exp-embed-inset: 0px;
+  }
+
+  .exp-card__embed-inner {
+    min-width: 0;
+    min-height: 0;
+    width: 108%;
+    height: 108%;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  .exp-card__demo .wm-scene {
+    transform: scale(0.88);
+  }
+
+  .exp-card__demo .wm-stage {
+    padding: var(--space-5);
+    padding-top: var(--space-6);
+  }
+
+  .exp-card__demo .jvs-stage {
+    padding: var(--space-5);
+  }
+}
+
+.exp-card__demo.jvs-root,
+.exp-card__demo.wm-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: var(--color-white);
+}
+
+.exp-card__demo .jvs-stage,
+.exp-card__demo .wm-stage {
+  position: absolute;
+  inset: 0;
+  padding: clamp(0.75rem, 4vw, 1.5rem);
+}
+
+/* Trigger sits above the panel — extra top inset so it clears the frame edge */
+.exp-card__demo .wm-stage {
+  padding-top: clamp(1.75rem, 7vw, 2.75rem);
+}
+
+.exp-card__demo .jvs-showcase {
+  width: min(360px, 92%);
+}
+
+.exp-card__demo .jvs-control {
+  width: min(300px, 100%);
+}
+
+.exp-card__demo .wm-scene {
+  transform: scale(0.92);
+  transform-origin: center center;
+}
+
+/* Token fallbacks when exploration wx vars are absent */
+.exp-card__demo.wm-root {
+  --font-body: var(--font-sans);
+  --wx-white: var(--color-white);
+  --wx-border-hairline: rgba(17, 17, 17, 0.12);
+}
+
+.exp-card__demo.jvs-root {
+  --font-body: var(--font-sans);
+}
+
+[data-theme="dark"] .exp-card__demo.wm-root {
+  --wm-ink: #f2f2f2;
+  --wx-white: var(--surface);
+  --wx-border-hairline: var(--border-soft);
+  --wx-black: #000000;
+}
+
+[data-theme="dark"] .exp-card__demo.jvs-root {
+  --jvs-ink: #f2f2f2;
+  --jvs-soft-ink: #a0a0a0;
+  --jvs-muted: #8d8d8d;
+  --jvs-border: #333333;
+  --jvs-page: var(--color-white);
+  --jvs-paper: var(--surface);
+  --jvs-thumb: #666666;
+}
+
+[data-theme="dark"] .exp-card__demo .jvs-track-surface {
+  background: #262626;
+}
+
+[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="hover"] {
+  border-color: #444444;
+}
+
+[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="dragging"] {
+  border-color: #555555;
+}
+
+[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="edge"] {
+  border-color: #666666;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="hover"] .jvs-edge-thumb {
+  background: #555555;
+}
+
+[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="dragging"] .jvs-edge-thumb,
+[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="edge"] .jvs-edge-thumb {
+  background: #666666;
+}

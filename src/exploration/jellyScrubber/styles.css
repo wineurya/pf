@@ -1,0 +1,383 @@
+.jvs-root {
+  --jvs-ink: #151515;
+  --jvs-soft-ink: #565656;
+  --jvs-muted: #787878;
+  --jvs-border: #d8d8d8;
+  --jvs-border-soft: #e7e7e7;
+  --jvs-page: #ffffff;
+  --jvs-paper: #ffffff;
+  --jvs-selected: #f1f1f1;
+  --jvs-selected-edge: #eeeeee;
+  --jvs-thumb: #9c9c9c;
+  --jvs-focus: #7b8f86;
+  --jvs-frame-offset: 0px;
+  --jvs-frame-scale: 1;
+  --jvs-frame-origin: center;
+
+  position: relative;
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  overflow: hidden;
+  color: var(--jvs-ink);
+  font-family: var(--font-body, system-ui, sans-serif);
+  background: var(--jvs-page);
+}
+
+.jvs-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+.jvs-showcase {
+  width: min(560px, 100%);
+  display: grid;
+  place-items: center;
+}
+
+.jvs-control {
+  width: clamp(280px, 34vw, 420px);
+  display: grid;
+  gap: 6px;
+}
+
+.jvs-control-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-inline: 2px;
+}
+
+.jvs-frame {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 2px;
+  border: 1px solid var(--jvs-border);
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.04);
+  transform: translateX(var(--jvs-frame-offset)) scaleX(var(--jvs-frame-scale));
+  transform-origin: var(--jvs-frame-origin);
+  transition:
+    border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.jvs-frame-inner {
+  position: relative;
+  height: var(--jvs-field-height, 24px);
+  min-height: 18px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: transparent;
+}
+
+.jvs-track {
+  position: absolute;
+  inset: 0;
+  cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+  border-radius: inherit;
+}
+
+.jvs-track-surface {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: #f1f1f1;
+}
+
+.jvs-frame[data-state="hover"] {
+  border-color: #cecece;
+}
+
+.jvs-frame[data-state="dragging"] {
+  border-color: #c9c9c9;
+}
+
+.jvs-frame[data-state="edge"] {
+  border-color: #c2c2c2;
+  box-shadow: 0 1px 5px rgba(20, 20, 20, 0.06);
+}
+
+.jvs-label,
+.jvs-value {
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.jvs-label {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--jvs-muted);
+  font-weight: var(--font-weight-regular);
+  text-overflow: ellipsis;
+}
+
+.jvs-value {
+  flex: 0 0 auto;
+  min-width: 2ch;
+  color: var(--jvs-ink);
+  font-weight: 590;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.jvs-edge-thumb {
+  position: absolute;
+  top: 50%;
+  left: calc(100% - 20px);
+  z-index: 4;
+  width: var(--jvs-handle-size, 3px);
+  height: min(18px, calc(100% - 8px));
+  border-radius: 2px;
+  background: var(--jvs-thumb);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition:
+    background-color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 140ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, left;
+}
+
+.jvs-frame[data-state="hover"] .jvs-edge-thumb {
+  background: #939393;
+}
+
+.jvs-frame[data-state="dragging"] .jvs-edge-thumb,
+.jvs-frame[data-state="edge"] .jvs-edge-thumb {
+  height: min(20px, calc(100% - 6px));
+  background: #8f8f8f;
+}
+
+.jvs-dock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  width: 100%;
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+
+.jvs-icon-btn,
+.jvs-step-btn {
+  appearance: none;
+  border: 0;
+  color: var(--jvs-soft-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.jvs-icon-btn:active,
+.jvs-step-btn:active {
+  transform: scale(0.96);
+}
+
+.jvs-icon-btn:focus-visible,
+.jvs-step-btn:focus-visible,
+.jvs-setting-range:focus-visible,
+.jvs-reset:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--jvs-focus) 34%, transparent);
+  outline-offset: 2px;
+}
+
+.jvs-panel {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: min(500px, calc(var(--ex-demo-frame-h, 85vh) - 2rem));
+  overflow: hidden;
+  border: 1px solid var(--jvs-border-soft);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 24px rgba(20, 20, 20, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.jvs-panel-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--jvs-border-soft);
+}
+
+.jvs-panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 14px 14px;
+}
+
+.jvs-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.jvs-icon-btn,
+.jvs-step-btn {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--jvs-selected);
+  flex-shrink: 0;
+}
+
+.jvs-icon-btn:hover,
+.jvs-step-btn:hover {
+  color: var(--jvs-ink);
+  background: #e8e8e8;
+}
+
+.jvs-nav-count {
+  min-width: 2.25rem;
+  color: var(--jvs-muted);
+  font-size: 11px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+}
+
+.jvs-settings {
+  display: flex;
+  flex-direction: column;
+}
+
+.jvs-setting {
+  display: block;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--jvs-border-soft);
+}
+
+.jvs-setting:last-child {
+  border-bottom: 0;
+}
+
+.jvs-setting-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.jvs-setting-label {
+  color: var(--jvs-soft-ink);
+  font-size: 11px;
+  font-weight: 590;
+  line-height: 1;
+}
+
+.jvs-setting-value {
+  min-width: 2.4rem;
+  color: var(--jvs-muted);
+  font-size: 10px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+}
+
+.jvs-setting-steppers {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.jvs-setting-range {
+  width: 100%;
+  height: 5px;
+  margin: 5px 0 2px;
+  appearance: none;
+  border-radius: 999px;
+  background: #e6e6e6;
+  outline: none;
+  cursor: pointer;
+  accent-color: #888;
+}
+
+.jvs-setting-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #9a9a9a;
+  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.16);
+  cursor: pointer;
+}
+
+.jvs-setting-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #9a9a9a;
+  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.16);
+  cursor: pointer;
+}
+
+.jvs-reset {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--jvs-muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 590;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 140ms cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.jvs-reset:hover {
+  color: var(--jvs-ink);
+}
+
+@media (width <= 680px) {
+  .jvs-stage {
+    padding-inline: 1rem;
+  }
+
+  .jvs-control {
+    width: min(100%, 380px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jvs-frame,
+  .jvs-edge-thumb,
+  .jvs-icon-btn,
+  .jvs-step-btn,
+  .jvs-reset {
+    transition: none !important;
+  }
+}

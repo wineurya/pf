@@ -1,0 +1,22 @@
+#!/bin/sh
+# Keep agent attribution out of git history.
+#
+# Strips AI/agent co-authorship and "Generated with" lines from every commit
+# message, regardless of which tool created the commit. This runs for all
+# commits in this repo once `core.hooksPath` points at `.githooks/`:
+#
+#   git config core.hooksPath .githooks
+#
+# New clones should run that command once. See AGENTS.md, "Commit conventions".
+
+msg_file="$1"
+[ -f "$msg_file" ] || exit 0
+
+# Remove Co-authored-by trailers that name a coding agent (case-insensitive).
+sed -i -E '/^[[:space:]]*Co-authored-by:[[:space:]].*(claude|anthropic|codex|cursor|copilot|openai|chatgpt|gpt|gemini|noreply@anthropic)/Id' "$msg_file"
+
+# Remove "Generated with ... Claude" attribution lines and robot-emoji credit.
+sed -i -E '/[Gg]enerated with .*([Cc]laude|[Cc]odex|[Cc]ursor|[Cc]opilot)/d' "$msg_file"
+sed -i -E '/^[[:space:]]*🤖/d' "$msg_file"
+
+exit 0

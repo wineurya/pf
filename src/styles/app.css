@@ -1,0 +1,2709 @@
+/* =============================================================================
+   App styles
+   ========================================================================== */
+
+/* =============================================================================
+   Ambient backdrop — fixed to the bottom of the viewport; never scrolls.
+   ========================================================================== */
+.backdrop {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  /* Figma node 558:173 — bg 6-11 1, 1920×480 */
+  width: 100%;
+  height: 25vw;
+  max-height: 480px;
+  overflow: hidden;
+  pointer-events: none;
+  background: transparent;
+}
+
+.backdrop__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center bottom;
+  pointer-events: none;
+  /* ---- Legibility mask --------------------------------------------------- *
+     The blurred blob (Figma 557:168) is composited OUT of the glow
+     (exclude = inverted alpha), so the image is genuinely erased where copy
+     overlaps it — soft feathered edges come baked into the SVG's blur.
+     Geometry (--blob-*) is driven from Backdrop.jsx: X locked to the content
+     column, height GSAP-stretched downward past the viewport bottom as copy
+     intrudes into the band. Defaults park the blob far outside the band,
+     leaving the image whole until JS measures. */
+  -webkit-mask-image: var(--scrim-blob-url, none), linear-gradient(#000, #000);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
+  -webkit-mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
+  -webkit-mask-composite: xor;
+  mask-image: var(--scrim-blob-url, none), linear-gradient(#000, #000);
+  mask-repeat: no-repeat;
+  mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
+  mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
+  mask-composite: exclude;
+}
+
+/* ---- Shell / layout ----------------------------------------------------- */
+.shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 100svh;
+  padding: 100px var(--page-pad) var(--space-10);
+}
+
+/* Home and the case-study page stack in one cell; whichever is active owns
+   the column while the other dims (home) or unmounts (case study). */
+.stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  width: 100%;
+  max-width: var(--content-max);
+  overflow: visible;
+  /* Sole owner of the home ↔ case width morph; ease-in-out for on-screen travel. */
+  transition: max-width var(--dur-layout) var(--ease-in-out-strong);
+}
+
+/* Case study opens wider; home column stays pinned at --content-max behind it. */
+.stage--case {
+  max-width: var(--content-max-cs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    transition: none;
+  }
+}
+
+.stage--case .stage__home .content-wrapper {
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.stage__home,
+.cs {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 1;
+  width: 100%;
+  overflow: visible;
+}
+
+/* =============================================================================
+   Left rail — vertical tabs in the left margin (desktop); horizontal on top
+   (mobile). Selected tab = fully-rounded background fill, no dot.
+   ========================================================================== */
+.rail {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  z-index: 40;
+  margin-bottom: var(--space-2);
+  margin-left: calc(-1 * var(--space-3)); /* offset pill padding to align */
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  letter-spacing: var(--tracking);
+  color: var(--text-muted);
+  background: transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-out-strong);
+}
+
+.tab:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .tab:hover {
+    color: var(--text-secondary);
+  }
+}
+
+.tab[aria-selected="true"] {
+  color: var(--text-strong);
+}
+
+/* Shared fill — layoutId glide (both layouts). Radius is a FINITE half-height
+   stadium (14px for the 28px-tall desktop pill), not a 999px pill: the giant
+   value clamps unevenly while the projection scales the box mid-glide and reads
+   as an oval. A finite half-height value stays a clean stadium at every width
+   because the tab height is constant (the projection only scales X). */
+.tab__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--hover-lift);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.tab__label {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Icons are mobile-home only — desktop rail stays text labels. */
+.tab__icon {
+  display: none;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+@media (min-width: 860px) {
+  .rail {
+    position: sticky;
+    top: 100px;
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: start;
+    z-index: 40;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: var(--space-1);
+    margin-bottom: 0;
+    margin-left: calc(-1 * var(--rail-offset, 160px));
+    width: max-content;
+    height: fit-content;
+  }
+}
+
+/* =============================================================================
+   Header + portrait
+   ========================================================================== */
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1); /* 4px — Figma header gap */
+}
+
+.content-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  width: 100%;
+  overflow: visible;
+}
+
+.content-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  width: 100%;
+  overflow: visible;
+  /* Inset copy without growing the 576px column — margin cancels padding */
+  padding: var(--content-main-pad);
+  margin: calc(-1 * var(--content-main-pad));
+}
+
+@media (min-width: 860px) {
+  .content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .content-main {
+    grid-row: 1;
+    grid-column: 1;
+    gap: var(--gap-section);
+  }
+}
+
+/* =============================================================================
+   Mobile home — bottom chrome (theme + section dock) + full-width content
+   Scoped to .stage__home so case study + desktop layouts stay untouched.
+   ========================================================================== */
+@media (max-width: 859px) {
+  .shell {
+    /* viewport-fit=cover draws edge-to-edge, so reserve the top inset too —
+       when Safari's top bar collapses on scroll, content would otherwise slide
+       under the notch / status bar. The inset is 0 while the top bar is shown. */
+    padding-top: calc(
+      var(--shell-pad-top-mobile) + env(safe-area-inset-top, 0px)
+    );
+    padding-bottom: calc(
+      var(--space-10) + var(--mobile-rail-h) + var(--mobile-rail-gap) +
+        env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .stage__home .content-wrapper {
+    gap: var(--gap-section);
+    width: 100%;
+    min-height: calc(
+      100svh - var(--shell-pad-top-mobile) - var(--space-10) -
+        var(--mobile-rail-h) - var(--mobile-rail-gap) -
+        env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .stage__home .content-main {
+    flex: 1;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .home-bottom-bar {
+    position: fixed;
+    left: var(--page-pad);
+    right: var(--page-pad);
+    bottom: calc(var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px));
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .home-bottom-bar__dock {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    max-width: 100%;
+    padding: var(--space-1);
+    border-radius: var(--mobile-dock-radius);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    box-shadow: var(--surface-fill-shadow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .home-bottom-bar .theme-toggle {
+    position: static;
+    left: auto;
+    bottom: auto;
+    flex-shrink: 0;
+    width: var(--mobile-rail-h);
+    height: var(--mobile-rail-h);
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .home-bottom-bar .theme-toggle:active {
+    background: var(--hover-lift);
+  }
+
+  @media (hover: hover) {
+    .home-bottom-bar .theme-toggle:hover {
+      color: var(--text-strong);
+      background: var(--hover-lift);
+    }
+  }
+
+  .home-bottom-bar .rail {
+    position: static;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    transform: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .home-bottom-bar .tab {
+    gap: var(--space-2);
+    box-sizing: border-box;
+    height: var(--mobile-rail-h);
+    min-height: var(--mobile-rail-h);
+    max-height: var(--mobile-rail-h);
+    min-width: var(--mobile-rail-h);
+    padding-block: 0;
+    padding-inline: var(--space-3);
+    border-radius: var(--mobile-tab-radius);
+    /* The box snaps to its new size instantly; the shared fill (layoutId) owns
+       the visible motion, so width/padding must NOT also transition — that would
+       double-animate the swap and race the gliding fill. */
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+
+  .home-bottom-bar .tab:not([aria-selected="true"]) {
+    width: var(--mobile-rail-h);
+    min-width: var(--mobile-rail-h);
+    padding-inline: 0;
+  }
+
+  .home-bottom-bar .tab[aria-selected="true"] {
+    width: auto;
+  }
+
+  /* Fully-rounded stadium from the fixed 48px height (24px), matched by the fill. */
+  .home-bottom-bar .tab__fill {
+    border-radius: var(--mobile-tab-radius);
+  }
+
+  .home-bottom-bar .tab__icon {
+    display: block;
+  }
+
+  .home-bottom-bar .tab__label {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 860px) {
+  /* Dissolve BOTH the bar and its inner dock wrapper so the rail + theme toggle
+     become direct grid children again — the rail then takes its left-margin grid
+     cell and sticks aligned with the top of the header text (the dock pill is a
+     mobile-only shape). */
+  .home-bottom-bar,
+  .home-bottom-bar__dock {
+    display: contents;
+  }
+}
+
+/* Second excerpt block moved to About — keep header→work breathing room */
+#panel-work {
+  margin-top: var(--gap-paragraph);
+}
+
+.head__name-role {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.head .portrait-wrap {
+  margin-bottom: var(--space-2);
+}
+
+/* Portrait avatar — Figma 490:462 / IMG_9283 layer mapped to 96px circle.
+   Reference frame 1536×1431; inner image at left 0, top -381, size 1684×2245. */
+.portrait-wrap {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.portrait__layer {
+  position: absolute;
+  left: 0;
+  top: calc(-381 / 1536 * 100%);
+  width: calc(1684 / 1536 * 100%);
+  height: calc(2245 / 1536 * 100%);
+}
+
+.portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.head__name {
+  color: var(--text-strong);
+}
+
+.head__role {
+  color: var(--text-muted);
+}
+
+.head__excerpt-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-paragraph);
+  width: 100%;
+  /* 20px from role → excerpt; .head flex gap (--space-1) covers the first 4px */
+  margin-top: calc(var(--gap-paragraph) - var(--space-1));
+}
+
+.head__excerpt {
+  color: var(--text-default);
+  width: 100%;
+  margin: 0;
+}
+
+/* =============================================================================
+   Panels + link lists (single sliding highlight, no border)
+   ========================================================================== */
+main {
+  width: 100%;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-paragraph);
+  width: 100%;
+}
+
+.panel__lead {
+  color: var(--text-default);
+  width: 100%;
+  margin: 0;
+}
+
+.list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-list);
+  margin: 0 calc(var(--space-3) * -1);
+}
+
+/* The one shared pill that follows cursor/focus — contrast from fill, no border. */
+.list__highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  border-radius: var(--radius-md);
+  background: var(--hover-lift);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dur) var(--ease-out-strong),
+    height var(--dur) var(--ease-out-strong),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+.row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .list__highlight,
+  .row {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+@media (hover: hover) {
+  .row:hover {
+    color: var(--text-strong);
+  }
+}
+
+.row:focus-visible {
+  color: var(--text-strong);
+}
+
+.row__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.row__meta {
+  flex-shrink: 0;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .row:hover .row__meta {
+    color: var(--text-secondary);
+  }
+}
+
+.row:focus-visible .row__meta {
+  color: var(--text-secondary);
+}
+
+.row__arrow {
+  width: 15px;
+  height: 15px;
+  opacity: 0.5;
+  transition:
+    transform var(--dur-fast) var(--ease-out-strong),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .row:hover .row__arrow {
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--text-primary);
+}
+
+/* =============================================================================
+   Work projects — layout selector + morphing views. The switcher sits under the
+   bio and above the projects. Every project node persists across the three
+   views; Motion's `layout` (FLIP) carries each from where it was to where it
+   goes, so the change is a visible travel/reshape rather than a cross-fade.
+   ========================================================================== */
+.work {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-paragraph);
+  width: 100%;
+}
+
+/* Layout toggle hugs the column's right edge, lined up with the row meta. */
+.work__bar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+/* Icon segmented control — mirrors the .tab pills (shared gray fill via
+   layoutId), kept square and quiet. */
+.viewsel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.viewsel__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 28px;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-out-strong);
+}
+
+.viewsel__btn:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .viewsel__btn:hover {
+    color: var(--text-secondary);
+  }
+}
+
+.viewsel__btn[aria-checked="true"] {
+  color: var(--text-strong);
+}
+
+/* The one shared fill — motion layoutId slides + reshapes it between options. */
+.viewsel__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--hover-lift);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+.viewsel__icon {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- The morphing grid -------------------------------------------------- *
+   One container, three layouts. `position: relative` anchors the list view's
+   sliding highlight; the project items inside FLIP between cells. */
+.pgrid {
+  position: relative;
+  width: 100%;
+}
+
+/* List view mirrors the original .list geometry (negative margin cancels the
+   row padding so labels sit flush with the column). width:auto overrides the
+   base .pgrid width:100% — otherwise the fixed width pins the box and the
+   negative margins just shift it left, pulling the meta column 24px inside the
+   right edge. With auto, flex stretch grows the box by the margins on both
+   sides, so row interiors sit flush left AND right. */
+.pgrid--list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-list);
+  width: auto;
+  margin: 0 calc(var(--space-3) * -1);
+}
+
+.pgrid--single {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+}
+
+.pgrid--two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--gap-section-inner);
+  row-gap: var(--space-6);
+}
+
+@media (max-width: 520px) {
+  .pgrid--two {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+}
+
+/* ---- Project item — shared shell, two skins ----------------------------- */
+.pcard {
+  position: relative;
+  z-index: 1;
+  color: var(--text-muted);
+}
+
+/* List skin: a flush row (label left, meta right) with the hover color shift. */
+.pcard--list {
+  display: block;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+.pcard--list .pcard__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+@media (hover: hover) {
+  .pcard--list:hover {
+    color: var(--text-strong);
+  }
+}
+
+.pcard--list:focus-visible {
+  color: var(--text-strong);
+}
+
+/* Card skin: media placeholder over a label/meta row. */
+.pcard--card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.pcard--card .pcard__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-inline: var(--space-1);
+}
+
+.pcard--card .pcard__label {
+  color: var(--text-strong);
+}
+
+.pcard__media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bento-fill-shadow);
+  overflow: hidden;
+}
+
+.pgrid--two .pcard__media {
+  aspect-ratio: 4 / 3;
+}
+
+.pcard__media-label {
+  color: var(--text-muted);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  opacity: 0.6;
+  user-select: none;
+}
+
+.pcard__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  /* Color is set per skin; transition lets it ease as a row becomes a card. */
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+.pcard__meta {
+  flex-shrink: 0;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .pcard--list:hover .pcard__meta {
+    color: var(--text-secondary);
+  }
+}
+
+.pcard__arrow {
+  width: 15px;
+  height: 15px;
+  opacity: 0.5;
+  transition:
+    transform var(--dur-fast) var(--ease-out-strong),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .pcard--card:hover .pcard__arrow {
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+
+  .pcard--card:hover .pcard__media-label {
+    opacity: 0.8;
+  }
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .pcard,
+  .pcard__media {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+/* =============================================================================
+   Case study page — the clicked row's label/meta travel here (layoutId) and
+   become the header; everything else is the standard 40px / 20px rhythm.
+   ========================================================================== */
+.cs {
+  width: 100%;
+  outline: none; /* receives programmatic focus on open */
+}
+
+/* Mirrors .content-wrapper — main column + left-offset sticky rail. */
+.cs-layout {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  width: 100%;
+}
+
+/* Proximity bands — tight inside a cluster, major gap between clusters. */
+.cs-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  width: 100%;
+  max-width: var(--content-max-cs);
+  margin-inline: auto;
+  padding-inline: var(--space-2);
+  /* Let titles, hero lead, and block summaries use the full column — not the
+     40rem home-doc cap (--max-copy default). */
+  --max-copy: 100%;
+}
+
+.cs-band {
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-band--chrome {
+  gap: var(--space-3);
+}
+
+.cs-band--title {
+  gap: var(--gap-paragraph);
+}
+
+.cs-band--context {
+  gap: var(--gap-paragraph);
+}
+
+/* Left margin stack — Back + on-this-page sections. */
+.cs-rail {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  z-index: 40;
+  margin-bottom: var(--space-2);
+  margin-left: calc(-1 * var(--space-3));
+}
+
+.cs-rail__nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Phone + tablet — the left rail can't clear the wide case column until ~1024px:
+   its clamp(680px, 64vw, 880px) column leaves too little left margin for the
+   --rail-offset, so below that the rail would hang off the viewport's left edge.
+   Until then the floating bottom dock (.cs-dock) owns navigation and the fixed
+   case-study theme toggle moves into it. This mirrors the home page, which only
+   adopts its left rail at ≥860px because its narrower 576px column leaves room. */
+@media (max-width: 1023px) {
+  .cs-rail {
+    display: none;
+  }
+
+  /* Two-class selector so this beats the later base `.theme-toggle` display
+     rule regardless of source order — the toggle lives in the dock here. */
+  .theme-toggle.theme-toggle--case {
+    display: none;
+  }
+}
+
+/* Tighter vertical rhythm on phones only — the 40/64px desktop band gaps leave
+   too much dead height on a narrow column. Clusters stay legible; the page just
+   stops feeling sparse and the dock sits closer to real content. */
+@media (max-width: 859px) {
+  .cs-layout,
+  .cs-main,
+  .cs__section {
+    gap: var(--space-7);
+  }
+
+  .cs__body {
+    gap: var(--gap-section);
+  }
+}
+
+/* Desktop — only here does the column leave room for the sticky left rail; the
+   matching breakpoint lives in ContentsNav (matchMedia 1024) so its orientation
+   stays in sync. */
+@media (min-width: 1024px) {
+  .cs-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .cs-main {
+    grid-row: 1;
+    grid-column: 1;
+    padding-inline: var(--space-4);
+  }
+
+  .cs-rail {
+    position: sticky;
+    top: 100px;
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: start;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: var(--gap-paragraph);
+    margin-bottom: 0;
+    margin-left: calc(-1 * var(--rail-offset, 160px));
+    width: max-content;
+    height: fit-content;
+  }
+
+  .cs-rail__nav {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+}
+
+.cs__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .cs__back:hover {
+    color: var(--text-strong);
+  }
+}
+
+.cs__back:focus-visible {
+  color: var(--text-strong);
+}
+
+/* =============================================================================
+   Case-study dock — phone + tablet floating control (bottom-center). Reuses the
+   home dock's frosted pill shell: Back · the section in view · theme toggle.
+   The middle button rolls the section label as you scroll, carries a light
+   left→right volume fill in that section's accent, and opens a section sheet.
+   Portaled to <body>; hidden ≥1024px (the left rail owns desktop).
+   ========================================================================== */
+
+/* Map each section accent onto --dock-accent for the fill (dock root, active
+   section) and per-row dots (sheet rows carry their own data-accent). */
+.cs-dock[data-accent="overview"], .cs-dock__sheet-row[data-accent="overview"] { --dock-accent: var(--accent-overview); }
+.cs-dock[data-accent="ideation"], .cs-dock__sheet-row[data-accent="ideation"] { --dock-accent: var(--accent-ideation); }
+.cs-dock[data-accent="problem"], .cs-dock__sheet-row[data-accent="problem"] { --dock-accent: var(--accent-problem); }
+.cs-dock[data-accent="research"], .cs-dock__sheet-row[data-accent="research"] { --dock-accent: var(--accent-research); }
+.cs-dock[data-accent="personas"], .cs-dock__sheet-row[data-accent="personas"] { --dock-accent: var(--accent-personas); }
+.cs-dock[data-accent="wireframes"], .cs-dock__sheet-row[data-accent="wireframes"] { --dock-accent: var(--accent-wireframes); }
+.cs-dock[data-accent="design"], .cs-dock__sheet-row[data-accent="design"] { --dock-accent: var(--accent-design); }
+.cs-dock[data-accent="features"], .cs-dock__sheet-row[data-accent="features"] { --dock-accent: var(--accent-features); }
+.cs-dock[data-accent="results"], .cs-dock__sheet-row[data-accent="results"] { --dock-accent: var(--accent-results); }
+.cs-dock[data-accent="sprint"], .cs-dock__sheet-row[data-accent="sprint"] { --dock-accent: var(--accent-sprint); }
+.cs-dock[data-accent="retro"], .cs-dock__sheet-row[data-accent="retro"] { --dock-accent: var(--accent-retro); }
+
+.cs-dock {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .cs-dock {
+    position: fixed;
+    left: var(--page-pad);
+    right: var(--page-pad);
+    bottom: calc(var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px));
+    z-index: 60;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    /* Tighter than the home rail (44 vs 48) so the case dock reads compact. */
+    --cs-dock-h: 44px;
+  }
+
+  .cs-dock__bar {
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    max-width: 100%;
+    padding: 3px;
+    /* Full half-height radius → true round pill ends (no superellipse, which
+       squircles the caps and reads as "not fully rounded"). */
+    border-radius: calc(var(--cs-dock-h) / 2 + 3px);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    box-shadow: var(--surface-fill-shadow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  /* Back + theme — round icon buttons. */
+  .cs-dock__btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--cs-dock-h);
+    height: var(--cs-dock-h);
+    color: var(--text-muted);
+    border-radius: 50%;
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-out-strong);
+  }
+
+  .cs-dock__btn:active {
+    transform: scale(0.94);
+  }
+
+  @media (hover: hover) {
+    .cs-dock__btn:hover {
+      color: var(--text-strong);
+      background: var(--hover-lift);
+    }
+  }
+
+  /* Reused ThemeToggle — unpin it from its fixed corner into the dock row. */
+  .cs-dock .theme-toggle {
+    position: static;
+    left: auto;
+    bottom: auto;
+    flex-shrink: 0;
+    width: var(--cs-dock-h);
+    height: var(--cs-dock-h);
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .cs-dock .theme-toggle:active {
+    background: var(--hover-lift);
+  }
+
+  @media (hover: hover) {
+    .cs-dock .theme-toggle:hover {
+      color: var(--text-strong);
+      background: var(--hover-lift);
+    }
+  }
+
+  /* The section-in-view button — the dock's hero, between Back and theme. */
+  .cs-dock__section {
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 1;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: var(--cs-dock-h);
+    /* Extra right padding so the caret breathes off the pill's rounded edge. */
+    padding-inline: var(--space-3) var(--space-4);
+    border-radius: calc(var(--cs-dock-h) / 2);
+    color: var(--text-strong);
+    background: var(--hover-lift);
+    transition: transform var(--dur-fast) var(--ease-out-strong);
+  }
+
+  .cs-dock__section:active {
+    transform: scale(0.98);
+  }
+
+  .cs-dock__section:focus-visible {
+    outline: var(--focus-width) solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Volume fill — a light L→R wash in the active section's accent. scaleX is fed
+     by --cs-section-progress (set on <html> by the scroll measure), so it tracks
+     read-through without re-rendering; transform-origin keeps it filling right. */
+  .cs-dock__fill {
+    position: absolute;
+    inset: 0;
+    transform-origin: left center;
+    transform: scaleX(var(--cs-section-progress, 0));
+    background: color-mix(in srgb, var(--dock-accent, var(--accent-overview)) 20%, transparent);
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  /* Rolling section label — one clipped line; titles stack + flip in/out. */
+  .cs-dock__roll {
+    position: relative;
+    z-index: 1;
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: calc((var(--cs-dock-roll-ch, 12) + 1) * 1ch);
+    max-width: 42vw;
+    height: var(--text-leading);
+    perspective: 340px;
+  }
+
+  .cs-dock__roll-title {
+    position: absolute;
+    inset: 0;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform-origin: center center;
+    backface-visibility: hidden;
+  }
+
+  .cs-dock__caret {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transform: rotate(-90deg); /* point up — the sheet opens upward */
+  }
+
+  /* Scrim behind the section sheet — dims the page, tap to dismiss. */
+  .cs-dock__scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: color-mix(in srgb, var(--bg) 45%, transparent);
+    pointer-events: auto;
+  }
+
+  /* Section sheet — opens UPWARD out of the centered section button. Centered
+     over the dock (where the tapped button sits) and scaled from bottom-center,
+     so it grows straight up from the control instead of flying in from a corner.
+     Centering uses margins (not transform) so it never fights motion's inline
+     transform during the open/close tween. */
+  .cs-dock__sheet {
+    --cs-sheet-w: min(17rem, calc(100vw - 2 * var(--page-pad)));
+    position: absolute;
+    left: 50%;
+    right: auto;
+    margin-left: calc(var(--cs-sheet-w) / -2);
+    bottom: calc(var(--cs-dock-h) + 6px + var(--space-2));
+    z-index: 2;
+    width: var(--cs-sheet-w);
+    max-height: 56vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    box-shadow: var(--surface-fill-shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    transform-origin: bottom center;
+  }
+
+  .cs-dock__sheet-label {
+    margin: 0;
+    padding: var(--space-1) var(--space-2) var(--space-2);
+    color: var(--text-muted);
+  }
+
+  .cs-dock__sheet-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cs-dock__sheet-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--text-default);
+    text-align: left;
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      color var(--dur-fast) var(--ease-standard);
+  }
+
+  .cs-dock__sheet-row:active {
+    background: var(--hover-lift);
+  }
+
+  .cs-dock__sheet-row.is-active {
+    color: var(--text-strong);
+    background: var(--hover-lift);
+  }
+
+  .cs-dock__sheet-row:focus-visible {
+    outline: var(--focus-width) solid var(--focus-ring);
+    outline-offset: -2px;
+  }
+
+  .cs-dock__sheet-dot {
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dock-accent, var(--accent-overview));
+    opacity: 0.4;
+    transition: opacity var(--dur-fast) var(--ease-standard);
+  }
+
+  .cs-dock__sheet-row.is-active .cs-dock__sheet-dot {
+    opacity: 1;
+  }
+
+  .cs-dock__sheet-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @supports (corner-shape: superellipse(2)) {
+    .cs-dock__sheet {
+      corner-shape: var(--corner-smooth);
+    }
+  }
+}
+
+/* Mirrors a list row's interior geometry (label left, meta right) so the
+   shared elements travel straight up — no horizontal drift. */
+.cs__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+/* The one promoted element — display tier. The clicked list label (body 14/20
+   Geist) shares this layoutId and morphs UP into it, so the size grows as the
+   title travels. Family/weight swap to Inter Display at click (discrete — fonts
+   can't tween); only size + position animate. */
+.cs__title {
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-variation);
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-leading);
+  font-weight: var(--weight-display);
+  color: var(--text-strong);
+}
+
+.cs__meta {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.cs__block-title {
+  max-width: var(--max-copy, 40rem);
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-variation);
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-leading);
+  font-weight: var(--weight-display);
+  color: var(--text-strong);
+  text-wrap: balance;
+}
+
+.cs__summary {
+  max-width: var(--max-copy, 40rem);
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+/* 2×2 facts — left-aligned cells; wide column gutter + inset so the block
+   uses the full width without hugging the left rail. */
+.cs__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  column-gap: clamp(2.5rem, 14vw, 5rem);
+  row-gap: var(--space-5);
+  margin: 0;
+}
+
+.cs__fact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  margin: 0;
+  min-width: 0;
+}
+
+.cs__fact-label {
+  margin: 0;
+  font-size: var(--text-sm-size);
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.cs__fact-value {
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-size);
+  line-height: var(--text-leading);
+  font-weight: var(--weight);
+  color: var(--text-strong);
+  text-wrap: balance;
+}
+
+.cs__fact-value--tools {
+  width: 100%;
+}
+
+.cs__tool-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 20px;
+}
+
+.cs__tool-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.cs__tool-icon img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.cs__tool-icon--tall img {
+  width: 13px;
+  height: 20px;
+}
+
+.cs__tool-icon--square img {
+  width: 18px;
+  height: 18px;
+}
+
+.cs__tool-icon--wide img {
+  width: 20px;
+  height: 18px;
+}
+
+/* Dark-mode tool-icon variants. Most brand glyphs (Figma, Claude, Lottie,
+   React, Vite…) carry their own bright color and read fine on the dark
+   page. Three families need help:
+   1. Monochrome black marks (Cursor/Composer, Mobbin) vanish — flip to light.
+   2. App icons that ship their own near-black tile (the Adobe suite, Motion)
+      lose their edge against the #0e0e0e page, leaving the brand letters
+      floating — trace a hairline in the theme ink (light here) so the tile
+      shape reads again. No size change, so the row geometry matches light. */
+:root[data-theme="dark"] .cs__tool-icon--cursor img,
+:root[data-theme="dark"] .cs__tool-icon--composer img,
+:root[data-theme="dark"] .cs__tool-icon--mobbin img {
+  filter: invert(1);
+}
+
+/* 3. Miro (#050038 near-black navy) and Google Slides (#FBBC04 bright yellow)
+   ship extreme brand colors that each disappear on one background — navy on the
+   dark page, yellow on the light one. Render them as flat theme ink instead
+   (black silhouette on light, white on dark), so both read in either theme. */
+.cs__tool-icon--miro img,
+.cs__tool-icon--google-slides img {
+  filter: brightness(0);
+}
+
+:root[data-theme="dark"] .cs__tool-icon--miro img,
+:root[data-theme="dark"] .cs__tool-icon--google-slides img {
+  filter: brightness(0) invert(1);
+}
+
+:root[data-theme="dark"] .cs__tool-icon--photoshop img,
+:root[data-theme="dark"] .cs__tool-icon--illustrator img,
+:root[data-theme="dark"] .cs__tool-icon--after-effects img,
+:root[data-theme="dark"] .cs__tool-icon--indesign img,
+:root[data-theme="dark"] .cs__tool-icon--motion img {
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-black) 22%, transparent);
+}
+
+/* Body sections — wider breath between major case-study sections. */
+.cs__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section-lg);
+}
+
+.cs__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  scroll-margin-top: var(--space-10);
+}
+
+/* Section eyebrow — 12/16, one weight below body (400 vs 500), muted.
+   Negative margin-bottom collapses the flex gap so the label sits ~8px
+   above its first block; the 64px between sections does the breathing. */
+.cs__section-eyebrow {
+  margin: 0;
+  margin-bottom: calc(8px - var(--gap-section));
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.cs__story-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cs__story-block--stats {
+  gap: var(--space-4);
+}
+
+.cs__block-summary {
+  max-width: var(--max-copy, 40rem);
+  margin: 0;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+/* Accent underline (==phrase== in content). Phrase ink steps up to --mark-ink
+   (strong body) while the 2px stroke alone carries the section accent.
+   box-decoration-break: clone gives every wrapped line its own stroke. */
+.cs__mark {
+  color: var(--mark-ink);
+  background: none;
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--mark-color) 24%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.14em;
+  text-underline-position: from-font;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Per-section accent — each named section maps its accent token onto
+   --mark-color for load-bearing underlines. No two sections in a single case
+   study share a color. Hues live in tokens.css (--accent-*). */
+.cs__section[data-accent="overview"] { --mark-color: var(--accent-overview); }
+.cs__section[data-accent="ideation"] { --mark-color: var(--accent-ideation); }
+.cs__section[data-accent="problem"] { --mark-color: var(--accent-problem); }
+.cs__section[data-accent="research"] { --mark-color: var(--accent-research); }
+.cs__section[data-accent="personas"] { --mark-color: var(--accent-personas); }
+.cs__section[data-accent="wireframes"] { --mark-color: var(--accent-wireframes); }
+.cs__section[data-accent="design"] { --mark-color: var(--accent-design); }
+.cs__section[data-accent="features"] { --mark-color: var(--accent-features); }
+.cs__section[data-accent="results"] { --mark-color: var(--accent-results); }
+.cs__section[data-accent="sprint"] { --mark-color: var(--accent-sprint); }
+.cs__section[data-accent="retro"] { --mark-color: var(--accent-retro); }
+
+/* Blank media stand-ins — same surface language as the hero cover and About
+   bento: quiet gray fill, soft halo, lowercase label naming the slot. */
+.cs__tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  /* No large glow halos — just a subtle inset edge + thin border ring */
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
+  aspect-ratio: 16 / 9;
+}
+
+:root[data-theme="dark"] .cs__tile {
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
+}
+
+.cs__tile--cell {
+  aspect-ratio: 3 / 2;
+  margin-top: var(--space-2);
+}
+
+.cs__tile-label {
+  color: var(--text-muted);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  opacity: 0.6;
+  user-select: none;
+}
+
+/* Feature row — portrait 1:2 frame left + icon/title/sub right, bottom-aligned.
+   flex-wrap keeps both columns usable on narrow viewports. */
+.cs__feature {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-5);
+  margin: 0;
+  width: 100%;
+}
+
+.cs__feature-frame {
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  aspect-ratio: 1 / 2;
+  width: clamp(140px, 35%, 280px);
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
+}
+
+:root[data-theme="dark"] .cs__feature-frame {
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
+}
+
+.cs__feature-info {
+  flex: 1 1 160px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-3);
+}
+
+.cs__feature-title {
+  color: var(--text-strong);
+}
+
+.cs__feature-sub {
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .cs__feature-frame {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+/* =============================================================================
+   Features two-column layout — sticky left (eyebrow + title + guide) + scrolling
+   right (feat rows). Guide terms highlight as the matching features enter view.
+   ========================================================================== */
+.cs__section--features {
+  /* Only one child (.cs__features-layout), so section gap is irrelevant — zero
+     it so the grid owns all internal spacing. */
+  gap: 0;
+}
+
+.cs__features-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 40%) minmax(0, 1fr);
+  column-gap: var(--space-8);
+  align-items: start;
+  width: 100%;
+}
+
+.cs__features-sticky {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Eyebrow inside the sticky column doesn't need the section-gap negative-margin
+   compensation — flex gap handles the spacing. */
+.cs__features-sticky .cs__section-eyebrow {
+  margin-bottom: 0;
+}
+
+.cs__features-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cs__features-summary {
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+/* Guide terms are inline spans inside the subtitle paragraph — they animate
+   from muted to strong as matching features scroll into view. */
+.cs__guide-term {
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+.cs__guide-term.is-active {
+  color: var(--text-strong);
+}
+
+/* Feature icon + title sit side-by-side in a row. */
+.cs__feature-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cs__features-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+}
+
+/* Tablet — keep two columns but let grid compress naturally. */
+@media (max-width: 859px) {
+  .cs__features-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  .cs__features-sticky {
+    position: static;
+  }
+}
+
+/* Full-width media block: title and summary first, then the visual. */
+.cs__figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  margin: 0;
+}
+
+.cs__figcap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* 2- / 3-up cells — 50/50 (or thirds) on a 12px gap. */
+.cs__cols {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cs__cols--2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.cs__cols--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.cs__cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.cs__cell-icon {
+  color: var(--text-strong);
+}
+
+/* In the plain cell layout the icon still sits above the title — keep its gap. */
+.cs__cell .cs__cell-icon {
+  margin-bottom: var(--space-1);
+}
+
+.cs__cell-title {
+  color: var(--text-strong);
+}
+
+.cs__cell-sub {
+  color: var(--text-muted);
+}
+
+.cs__stats-cols {
+  width: 100%;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.cs__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  height: 100%;
+}
+
+.cs__stat-value {
+  color: var(--text-strong);
+  font-weight: var(--weight-display);
+}
+
+.cs__stat-text {
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+@media (max-width: 560px) {
+  .cs__stats-cols {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 560px) {
+  .cs__cols--3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .cs__tile {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+/* Cover — sits directly under the Back button, before the title morphs in. */
+.cs__hero {
+  margin: 0;
+}
+
+.cs__tile--hero {
+  aspect-ratio: 16 / 9;
+}
+
+/* Case-studies index (table of contents) — jump straight to another project.
+   Lives inside the .cs stagger so it reveals in and cascades out with the
+   page; entries reuse the row geometry (label left, meta + chevron right). */
+.cs__toc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--gap-section);
+  border-top: 1px solid var(--border-soft);
+}
+
+.cs__toc-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.cs__toc-icon {
+  color: currentColor;
+}
+
+.cs__toc-list {
+  list-style: none;
+  margin: 0 calc(var(--space-3) * -1);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-list);
+}
+
+.cs__toc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-default);
+  background: transparent;
+  text-align: left;
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .cs__toc-row:not(.is-active):hover {
+    background: var(--hover-lift);
+    color: var(--text-strong);
+  }
+
+  .cs__toc-row:not(.is-active):hover .cs__toc-arrow {
+    transform: translateX(2px);
+  }
+}
+
+.cs__toc-row:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.cs__toc-row.is-active {
+  color: var(--text-strong);
+  cursor: default;
+}
+
+.cs__toc-right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.cs__toc-arrow {
+  color: var(--text-muted);
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+
+.cs__toc-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-primary);
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .cs__toc-row {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+/* =============================================================================
+   Minimal Button
+   ========================================================================== */
+.btn-minimal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-size);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    border-color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .btn-minimal:hover {
+    color: var(--text-strong);
+    border-color: var(--text-muted);
+    background: var(--surface);
+  }
+}
+
+.btn-minimal:focus-visible {
+  color: var(--text-strong);
+  border-color: var(--text-muted);
+}
+
+/* =============================================================================
+   Exploration preview grid
+   ========================================================================== */
+.exp-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section-inner);
+  width: 100%;
+}
+
+@media (max-width: 520px) {
+  .exp-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.exp-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* border-beam wrapper around the live demo frame — carries the -3px nudge so
+   the beam stroke stays glued to the frame's edge. */
+.exp-card__beam {
+  width: 100%;
+  transform: translateY(-3px);
+}
+
+.exp-card__frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--surface) 60%, var(--color-white));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--exp-card-fill-shadow);
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .exp-card__frame {
+    corner-shape: var(--corner-smooth-max);
+  }
+
+  .bento__tile {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+.exp-card__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-inline: var(--space-1);
+  text-decoration: none;
+  color: inherit;
+}
+
+.exp-card__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-strong);
+}
+
+.exp-card__arrow {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+.exp-card__sub {
+  flex-shrink: 0;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  color: var(--text-muted);
+}
+
+/* ---- CSS miniatures ---------------------------------------------------- */
+.mock {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Jelly volume slider — squished thumb on a filled track */
+.mock--jelly .mock-track {
+  position: relative;
+  width: 66%;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 8%, transparent);
+}
+.mock--jelly .mock-fill {
+  position: absolute;
+  inset: 0 42% 0 0;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+}
+.mock--jelly .mock-thumb {
+  position: absolute;
+  left: 58%;
+  top: 50%;
+  width: 20px;
+  height: 13px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+}
+
+/* Wallet menu — stacked overlapping cards */
+.mock--wallet {
+  grid-auto-flow: row;
+}
+.mock--wallet .mock-card {
+  position: absolute;
+  left: 50%;
+  width: 56%;
+  height: 26%;
+  border-radius: 10px;
+  background: var(--color-white);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+.mock--wallet {
+  position: relative;
+}
+.mock--wallet .mock-card:nth-child(1) {
+  top: 22%;
+  width: 48%;
+  transform: translateX(-50%);
+}
+.mock--wallet .mock-card:nth-child(2) {
+  top: 38%;
+  width: 54%;
+  transform: translateX(-50%);
+}
+.mock--wallet .mock-card:nth-child(3) {
+  top: 54%;
+  width: 60%;
+  background: var(--text-primary);
+  transform: translateX(-50%);
+}
+
+/* Sticker peel — rounded sticker with a lifted corner */
+.mock--sticker .mock-sticker {
+  position: relative;
+  width: 46%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: var(--text-primary);
+}
+.mock--sticker .mock-peel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  height: 46%;
+  background: var(--color-white);
+  border-bottom-right-radius: 16px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  box-shadow: -3px -3px 7px rgba(0, 0, 0, 0.22);
+}
+
+/* Cylinder gallery — tiles bent into a curve */
+.mock--cylinder {
+  display: flex;
+  gap: 5px;
+  perspective: 340px;
+}
+.mock--cylinder .mock-tile {
+  width: 18px;
+  height: 48px;
+  border-radius: 6px;
+  background: var(--color-white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.mock--cylinder .mock-tile:nth-child(1) {
+  transform: rotateY(42deg);
+  background: color-mix(in oklab, var(--color-black) 22%, var(--color-white));
+}
+.mock--cylinder .mock-tile:nth-child(2) {
+  transform: rotateY(22deg);
+}
+.mock--cylinder .mock-tile:nth-child(3) {
+  transform: rotateY(0deg) scale(1.08);
+  background: var(--text-primary);
+}
+.mock--cylinder .mock-tile:nth-child(4) {
+  transform: rotateY(-22deg);
+}
+.mock--cylinder .mock-tile:nth-child(5) {
+  transform: rotateY(-42deg);
+  background: color-mix(in oklab, var(--color-black) 22%, var(--color-white));
+}
+
+/* Sprout onboarding — a screen with copy lines and step dots */
+.mock--sprout {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 60%;
+  height: 100%;
+}
+.mock--sprout .mock-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: var(--space-3);
+  border-radius: 12px;
+  background: var(--color-white);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+.mock--sprout .mock-line {
+  height: 6px;
+  width: 100%;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 12%, transparent);
+}
+.mock--sprout .mock-line--short {
+  width: 60%;
+}
+.mock--sprout .mock-dots {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+.mock--sprout .mock-dots b {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 18%, transparent);
+  transition: width var(--dur) var(--ease-out-strong);
+}
+.mock--sprout .mock-dots b.is-on {
+  width: 16px;
+  background: var(--text-primary);
+}
+
+/* Page navigation — vertical wayfinding pills, one active */
+.mock--nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  width: 46%;
+}
+.mock--nav .mock-pill {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 10%, transparent);
+}
+.mock--nav .mock-pill:nth-child(1) {
+  width: 70%;
+}
+.mock--nav .mock-pill.is-active {
+  width: 100%;
+  background: var(--text-primary);
+}
+.mock--nav .mock-pill:nth-child(3) {
+  width: 52%;
+}
+.mock--nav .mock-pill:nth-child(4) {
+  width: 82%;
+}
+
+/* =============================================================================
+   About bento — blank tiles (1 wide top, 2 below); slight fill, no outline.
+   ========================================================================== */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap-section-inner);
+}
+
+.bento__tile {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bento-fill-shadow);
+  aspect-ratio: 3 / 2;
+}
+
+.bento__tile--wide {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 6;
+}
+
+/* =============================================================================
+   Copy-to-clipboard (About panel) — Figma 220:51 dotted underline trigger
+   ========================================================================== */
+.copy {
+  position: relative;
+  display: inline-block;
+}
+
+.copy__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-default);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: from-font;
+  text-decoration-color: var(--color-black);
+  text-underline-position: from-font;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    text-decoration-color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .copy__btn:hover {
+    color: var(--text-strong);
+    text-decoration-color: var(--color-black);
+  }
+
+  .copy__btn:hover .copy__icon {
+    opacity: 1;
+  }
+}
+
+.copy__icon {
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+
+/* Figma 220:52 — black pill above the trigger, white 13.4/19.2 text. */
+.copy__toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--space-2));
+  white-space: nowrap;
+  font-size: var(--toast-size);
+  line-height: var(--toast-leading);
+  color: var(--color-white);
+  background: var(--color-black);
+  padding: 5.76px 9.6px;
+  border-radius: var(--radius-pill);
+  opacity: 0;
+  transform: translate(-50%, 4px) scale(0.96);
+  transform-origin: bottom center;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-fast) var(--ease-standard),
+    transform var(--dur) var(--ease-overshoot);
+}
+
+.copy.is-copied .copy__toast {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+/* About contact row — You can reach me at Email · LinkedIn · X */
+.contact-links__lead {
+  color: var(--text-default);
+}
+
+.contact-links__link {
+  color: var(--text-default);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: from-font;
+  text-decoration-color: var(--color-black);
+  text-underline-position: from-font;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    text-decoration-color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .contact-links__link:hover {
+    color: var(--text-strong);
+    text-decoration-color: var(--color-black);
+  }
+}
+
+.contact-links__sep {
+  color: var(--text-muted);
+}
+
+/* =============================================================================
+   Hover words (About panel) — Figma 220:24 dotted underline card triggers
+   ========================================================================== */
+.hw {
+  position: relative;
+  display: inline-block;
+}
+
+.hw__word {
+  color: var(--text-default);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: from-font;
+  text-decoration-color: var(--color-black);
+  text-underline-position: from-font;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    text-decoration-color var(--dur-fast) var(--ease-standard);
+}
+
+.hw.is-open .hw__word,
+.hw.is-expanded .hw__word {
+  color: var(--text-strong);
+  text-decoration-style: solid;
+  text-decoration-color: var(--color-black);
+}
+
+.hw__stack {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--space-2));
+  width: 0; /* photos position themselves around this anchor */
+  pointer-events: none;
+  z-index: 60;
+}
+
+.hw__photo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 150px;
+  width: auto;
+  max-width: none;
+  border-radius: var(--radius-sm);
+  /* white print border + neutral shadow */
+  box-shadow:
+    0 0 0 3px var(--color-white),
+    0 0 0 4px color-mix(in oklab, var(--color-black) 12%, transparent),
+    0 14px 28px -12px rgba(0, 0, 0, 0.28),
+    0 3px 6px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translate(-50%, 10px) rotate(0deg) scale(0.92);
+  transition:
+    opacity var(--dur-fast) var(--ease-standard),
+    transform var(--dur) var(--ease-overshoot);
+  transition-delay: 0ms;
+}
+
+/* Fanned resting offsets — work for 1, 2 or 3 photos. */
+.hw__photo:nth-child(1) {
+  --tx: -102%;
+  --rot: -8deg;
+}
+.hw__photo:nth-child(2) {
+  --tx: 2%;
+  --rot: 6deg;
+}
+.hw__photo:nth-child(3) {
+  --tx: -50%;
+  --rot: -2deg;
+  z-index: 1;
+}
+/* A single photo sits centred instead of fanned left. */
+.hw__photo:only-child {
+  --tx: -50%;
+  --rot: -3deg;
+}
+
+.hw.is-open .hw__photo {
+  opacity: 1;
+  transform: translate(var(--tx, -50%), 0) rotate(var(--rot, 0deg)) scale(1);
+}
+
+.hw.is-open .hw__photo:nth-child(2) {
+  transition-delay: 40ms;
+}
+.hw.is-open .hw__photo:nth-child(3) {
+  transition-delay: 80ms;
+}
+
+@media (max-width: 600px) {
+  .hw__photo {
+    height: 104px;
+  }
+
+  /* Tighter fan so edge-of-screen words keep their photos mostly on-screen. */
+  .hw__photo:nth-child(1) {
+    --tx: -82%;
+  }
+  .hw__photo:nth-child(2) {
+    --tx: -18%;
+  }
+}
+
+/* =============================================================================
+   Inline tool mentions — a small Central brand mark riding with the word.
+   ========================================================================== */
+.tool {
+  white-space: nowrap;
+}
+
+.tool__icon {
+  display: inline-block;
+  vertical-align: -2px; /* optically centers a 14px mark in the 20px line */
+  margin-right: 3px;
+}
+
+.tool--figma {
+  color: var(--tool-figma);
+}
+
+.tool--framer {
+  color: var(--tool-framer);
+}
+
+.tool--rive {
+  color: var(--tool-rive);
+}
+
+.tool--claude {
+  color: var(--tool-claude);
+}
+
+.tool--cursor {
+  color: var(--tool-cursor);
+}
+
+.tool--firebase {
+  color: var(--tool-firebase);
+}
+
+.tool[class*="tool--"] .tool__icon {
+  color: currentColor;
+}
+
+/* =============================================================================
+   Word bento — full photo set for a clicked hover-word, expanding under its
+   paragraph. Tile hover: slight blur + centered caption.
+   ========================================================================== */
+.wbento {
+  overflow: hidden;
+}
+
+.wbento__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap-section-inner);
+}
+
+.wbento__tile {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--bento-fill-shadow);
+}
+
+/* One photo: a single wide tile. Three: wide on top, pair below. */
+.wbento__grid--1 .wbento__tile,
+.wbento__grid--3 .wbento__tile:first-child {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 7;
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .wbento__tile {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+.wbento__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--dur-slow) var(--ease-out-strong);
+}
+
+.wbento__cap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: var(--space-3);
+  text-align: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.32);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .wbento__tile:hover .wbento__img {
+    transform: scale(1.05);
+  }
+
+  .wbento__tile:hover .wbento__cap {
+    opacity: 1;
+  }
+}
+
+/* =============================================================================
+   Theme toggle — bottom-left, left-aligned with the rail (TOC). Sun ⟷ moon
+   morph: core radius grows, mask circle slides in for the crescent, rays
+   rotate out. cx/cy/r transition as CSS properties.
+   ========================================================================== */
+.theme-toggle {
+  position: fixed;
+  left: var(--page-pad);
+  bottom: var(--space-8);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--text-muted);
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-out-strong);
+}
+
+.theme-toggle:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .theme-toggle:hover {
+    color: var(--text-strong);
+    background: var(--hover-lift);
+  }
+}
+
+.theme-toggle:focus-visible {
+  color: var(--text-strong);
+}
+
+@media (min-width: 860px) {
+  /* Same x as the rail pills: content column left edge minus the rail offset. */
+  .theme-toggle {
+    left: max(
+      var(--page-pad),
+      calc(50vw - var(--content-max) / 2 - var(--rail-offset))
+    );
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur) var(--ease-standard),
+      left var(--dur-layout) var(--ease-out-strong);
+  }
+
+  /* Case study column is wider — track the cs-rail as the stage morphs. */
+  .theme-toggle--case {
+    left: max(
+      var(--page-pad),
+      calc(50vw - var(--content-max-cs) / 2 - var(--rail-offset))
+    );
+  }
+}
+
+@media (min-width: 860px) and (prefers-reduced-motion: reduce) {
+  .theme-toggle {
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur) var(--ease-standard);
+  }
+}
+
+.tt {
+  overflow: visible;
+  transition: transform var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt {
+  transform: rotate(-15deg);
+}
+
+.tt__core {
+  transition: r var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt__core {
+  r: 8px;
+}
+
+.tt__mask {
+  transition:
+    cx var(--dur-slow) var(--ease-overshoot),
+    cy var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt__mask {
+  cx: 17.5px;
+  cy: 6.5px;
+}
+
+.tt__rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--dur) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt__rays {
+  opacity: 0;
+  transform: rotate(-50deg) scale(0.55);
+}
+
+/* =============================================================================
+   Theme crossfade (View Transitions)
+   The whole page swaps light↔dark inside one startViewTransition (lib/theme.js).
+   The browser default cross-fades the old AND new snapshots at once, which
+   double-exposes and flashes a washed-out gray at the midpoint of a light↔dark
+   inversion. Instead: hold the old frame fully opaque underneath and fade the
+   new frame in on top (new is painted above old by default), for one clean,
+   even dissolve on a tuned duration + easing. Per-element color transitions run
+   live inside the new layer and resolve under the same fade.
+   ========================================================================== */
+@supports (view-transition-name: none) {
+  /* The UA stylesheet blends both root snapshots with `mix-blend-mode:
+     plus-lighter` (its default cross-fade relies on that to sum to 1). But we
+     DON'T cross-fade — we hold the old frame opaque and fade the new one in on
+     top. Under plus-lighter that addition over an opaque base blows the
+     midpoint of a light↔dark swap out toward white (the "brightness flash" /
+     dim that read as the device dimming on mobile). Forcing `normal` makes the
+     stack a true linear interpolation: new*t over old*(1−t), no overshoot. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(root) {
+    animation: none;
+  }
+
+  ::view-transition-new(root) {
+    /* Gentle symmetric ease for a clean dissolve — the strong curve rushed the
+       midpoint and read as a snap rather than a fade. */
+    animation: theme-crossfade var(--dur-theme) ease-in-out both;
+  }
+
+  @keyframes theme-crossfade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* Fallback for browsers without the View Transitions API: theme.js adds
+   `.theme-switching` to <html> for one --dur-theme so the page background and
+   ink ease across the swap instead of snapping. (View-Transition browsers never
+   add this class — the crossfade above owns the fade there.) */
+@media (prefers-reduced-motion: no-preference) {
+  :root.theme-switching,
+  :root.theme-switching body {
+    transition:
+      background-color var(--dur-theme) var(--ease-standard),
+      color var(--dur-theme) var(--ease-standard);
+  }
+}
+
+/* =============================================================================
+   Reduced motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .hw__photo {
+    transition: opacity 0.01ms !important;
+    transform: translate(var(--tx, -50%), 0) rotate(var(--rot, 0deg)) scale(1);
+  }
+
+  .rail {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  @media (max-width: 859px) {
+    .stage__home .tab__label {
+      transition: none !important;
+    }
+  }
+
+  .list__highlight {
+    transition: opacity 0.01ms !important;
+  }
+
+  /* Defense in depth — theme.js already skips the View Transition under reduced
+     motion, but zero it here too so any crossfade collapses to an instant swap. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

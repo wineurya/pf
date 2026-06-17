@@ -1,0 +1,132 @@
+# Deploy the portfolio (wineury.vercel.app) from the repo root via GitHub Actions.
+# One-time setup — add these repo secrets (Settings → Secrets → Actions):
+#   VERCEL_TOKEN        https://vercel.com/account/tokens
+#   VERCEL_ORG_ID       Vercel team/user id (Settings → General on the project)
+#   VERCEL_PROJECT_ID   Project id for the winnie-test project (production domain: wineury.vercel.app)
+#
+# Optional — deploy email (agent summary after each production deploy):
+#
+#   Option A — Resend API:
+#     RESEND_API_KEY, DEPLOY_NOTIFY_EMAIL, DEPLOY_FROM_EMAIL (optional)
+#
+#   Option B — Gmail SMTP (if Resend won't load):
+#     SMTP_USER, SMTP_PASS (Google App Password), DEPLOY_NOTIFY_EMAIL
+#
+# After secrets exist: push to main, or ask the agent to run:
+#   gh workflow run deploy-vercel.yml
+
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "index.html"
+      - "vite.config.js"
+      - "package-lock.json"
+      - "scripts/deploy-notify-email.mjs"
+      - "vercel.json"
+      - ".github/workflows/deploy-vercel.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: portfolio → production
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://wineury.vercel.app
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Pull Vercel env
+        run: vercel pull --yes --environment=production
+
+      - name: Configure static deploy
+        run: |
+          curl -fsS -X PATCH "https://api.vercel.com/v9/projects/${{ secrets.VERCEL_PROJECT_ID }}" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"framework":null,"buildCommand":null,"outputDirectory":null,"installCommand":null,"rootDirectory":null}'
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        id: deploy
+        run: |
+          cp vercel.json dist/vercel.json
+          du -sh dist
+          set -o pipefail
+          output=$(vercel deploy dist --prod --yes --archive=tgz 2>&1)
+          echo "$output"
+          if echo "$output" | grep -q "Error:"; then
+            echo "::error::Vercel deployment failed — open the Inspect URL in the log above"
+            exit 1
+          fi
+          url=$(echo "$output" | grep -Eo 'https://[^ ]+\.vercel\.app' | head -1)
+          if [ -z "$url" ]; then
+            echo "No deployment URL in CLI output"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed to $url"
+
+      - name: Summary
+        run: echo "### Production deploy\n${{ steps.deploy.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Email — deploy succeeded
+        if: success()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          DEPLOY_NOTIFY_EMAIL: ${{ secrets.DEPLOY_NOTIFY_EMAIL }}
+          DEPLOY_FROM_EMAIL: ${{ secrets.DEPLOY_FROM_EMAIL }}
+          DEPLOY_PUBLIC_URL: https://wineury.vercel.app
+        run: |
+          npm install --no-save nodemailer@6
+          node scripts/deploy-notify-email.mjs --status success
+
+      - name: Email — deploy failed
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          DEPLOY_NOTIFY_EMAIL: ${{ secrets.DEPLOY_NOTIFY_EMAIL }}
+          DEPLOY_FROM_EMAIL: ${{ secrets.DEPLOY_FROM_EMAIL }}
+          DEPLOY_PUBLIC_URL: https://wineury.vercel.app
+        run: |
+          npm install --no-save nodemailer@6
+          node scripts/deploy-notify-email.mjs --status failure
