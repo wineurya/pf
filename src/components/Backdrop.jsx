@@ -3,7 +3,6 @@ import { gsap } from "gsap";
 
 import { usePrefersReducedMotion } from "../lib/hooks.js";
 import bgBand from "../assets/backdrop/bg-6-11.png";
-import scrimBlob from "../assets/backdrop/scrim-blob.svg";
 
 /* Mask SVG geometry — mirrors scrim-blob.svg (Figma node 557:168): the blob
    path's bbox is 1732×669, blurred σ 170 horizontal / 80 vertical, with 2.5σ
@@ -180,7 +179,6 @@ export function Backdrop({ surfaceKey }) {
       className="backdrop"
       ref={rootRef}
       aria-hidden="true"
-      style={{ "--scrim-blob-url": `url("${scrimBlob}")` }}
     >
       <img className="backdrop__img" src={bgBand} alt="" decoding="async" />
     </div>

@@ -37,12 +37,12 @@
      column, height GSAP-stretched downward past the viewport bottom as copy
      intrudes into the band. Defaults park the blob far outside the band,
      leaving the image whole until JS measures. */
-  -webkit-mask-image: var(--scrim-blob-url, none), linear-gradient(#000, #000);
+  -webkit-mask-image: url("/scrim-blob.svg"), linear-gradient(#000, #000);
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
   -webkit-mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
   -webkit-mask-composite: xor;
-  mask-image: var(--scrim-blob-url, none), linear-gradient(#000, #000);
+  mask-image: url("/scrim-blob.svg"), linear-gradient(#000, #000);
   mask-repeat: no-repeat;
   mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
   mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
