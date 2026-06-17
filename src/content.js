@@ -652,7 +652,7 @@ export const site = {
   about: [
     "I'm a 23-year-old product designer and researcher based in Atlanta.",
     [
-      "I'm drawn to tools that change what's possible — whether that's ",
+      "I'm drawn to tools that change what's possible, whether that's ",
       { tool: "Figma", icon: "figma" },
       ", ",
       { tool: "Framer", icon: "framer" },
@@ -666,8 +666,8 @@ export const site = {
       { tool: "Firebase", icon: "firebase" },
       ".",
     ],
-    "I started in mobile UX and behavioral tracking. I think in systems — what stays coherent as a product grows, where the smallest decision carries the most weight, and what makes an interface feel like it was always supposed to be that way.",
-    "I'm open to founding or early product design roles — work that's still close to the core decisions and has room to shape what the product becomes.",
+    "I started in mobile UX and behavioral tracking. I think in systems: what stays coherent as a product grows, where the smallest decision carries the most weight, and what makes an interface feel like it was always supposed to be that way.",
+    "I'm open to founding or early product design roles. Work that's still close to the core decisions and has room to shape what the product becomes.",
     [
       "Off the clock, I'm a devoted ",
       {
