@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "wineury-theme";
-const BG = { light: "#fafafa", dark: "#0e0e0e" };
+const BG = { light: "#fafafa", dark: "#0a0a0a" };
 /* Fallback fade length for browsers without the View Transitions API.
    Keep in sync with --dur-theme in tokens.css. */
 const SWITCH_MS = 300;

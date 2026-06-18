@@ -1519,7 +1519,7 @@ main {
    page. Three families need help:
    1. Monochrome black marks (Cursor/Composer, Mobbin) vanish — flip to light.
    2. App icons that ship their own near-black tile (the Adobe suite, Motion)
-      lose their edge against the #0e0e0e page, leaving the brand letters
+      lose their edge against the #0a0a0a page, leaving the brand letters
       floating — trace a hairline in the theme ink (light here) so the tile
       shape reads again. No size change, so the row geometry matches light. */
 :root[data-theme="dark"] .cs__tool-icon--cursor img,
