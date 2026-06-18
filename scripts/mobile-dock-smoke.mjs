@@ -27,7 +27,28 @@ function fail(label, detail) {
 }
 
 try {
-  await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+  await page.waitForTimeout(1500);
+
+  const gate = await page.evaluate(() => ({
+    title: document.title,
+    onVercelLogin:
+      document.title.includes("Vercel") ||
+      location.hostname === "vercel.com" ||
+      !!document.querySelector('input[placeholder="Email Address"]'),
+    hasArticle: !!document.querySelector("article"),
+    dockCount: document.querySelectorAll(".cs-dock").length,
+  }));
+
+  if (gate.onVercelLogin || (!gate.hasArticle && gate.dockCount === 0)) {
+    fail(
+      "page reachable (not Vercel SSO)",
+      gate.onVercelLogin
+        ? "preview is deployment-protected — use localhost or an authenticated browser"
+        : `unexpected page: ${gate.title}`,
+    );
+    throw new Error("abort");
+  }
 
   const railHidden = await page.locator(".cs-rail").isHidden();
   if (railHidden) pass("cs-rail hidden on mobile");
@@ -93,7 +114,7 @@ try {
   if (!(await sheet.isVisible())) pass("sheet stays closed after swipe");
   else fail("sheet stays closed after swipe");
 } catch (err) {
-  fail("smoke test runtime", err.message);
+  if (err.message !== "abort") fail("smoke test runtime", err.message);
 } finally {
   await browser.close();
 }
