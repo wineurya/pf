@@ -14,6 +14,9 @@
 #
 # After secrets exist: push to main, or ask the agent to run:
 #   gh workflow run deploy-vercel.yml
+#
+# Preview branch (improvement): push triggers preview-notify.yml — same email
+# secrets; emails after Vercel posts a preview deployment status.
 
 name: Deploy to Vercel
 

@@ -19,6 +19,9 @@ const args = process.argv.slice(2);
 const statusArg =
   args.find((a) => a.startsWith("--status="))?.split("=")[1] ??
   (args.includes("--status") ? args[args.indexOf("--status") + 1] : "success");
+const kindArg =
+  args.find((a) => a.startsWith("--kind="))?.split("=")[1] ??
+  (args.includes("--kind") ? args[args.indexOf("--kind") + 1] : "");
 const urlArg =
   args.find((a) => a.startsWith("--url="))?.split("=")[1] ??
   (args.includes("--url") ? args[args.indexOf("--url") + 1] : "");
@@ -40,11 +43,22 @@ if (!resendKey && !(smtpUser && smtpPass)) {
   process.exit(0);
 }
 
+const kind =
+  kindArg ||
+  process.env.DEPLOY_KIND ||
+  (process.env.DEPLOY_BRANCH ? "preview" : "production");
+const branch = process.env.DEPLOY_BRANCH || process.env.GITHUB_REF_NAME || "";
+const previewUrl = process.env.DEPLOY_PREVIEW_URL || "";
 const PUBLIC_URL =
   process.env.DEPLOY_PUBLIC_URL || "https://wineury.vercel.app";
 
 const ok = statusArg === "success";
-const deployUrl = ok ? PUBLIC_URL : urlArg || PUBLIC_URL;
+const deployUrl =
+  kind === "preview"
+    ? previewUrl || urlArg || PUBLIC_URL
+    : ok
+      ? PUBLIC_URL
+      : urlArg || PUBLIC_URL;
 const runUrl =
   process.env.GITHUB_SERVER_URL &&
   process.env.GITHUB_REPOSITORY &&
@@ -80,14 +94,31 @@ function shortSha() {
 }
 
 const changes = gitLines(4);
-const subject = ok
-  ? `Deployed · wineury.vercel.app (${shortSha()})`
-  : `Deploy failed · wineury.vercel.app (${shortSha()})`;
+const sha = shortSha();
+const subject =
+  kind === "preview"
+    ? ok
+      ? `Preview updated · ${branch || "branch"} (${sha})`
+      : `Preview notify failed · ${branch || "branch"} (${sha})`
+    : ok
+      ? `Deployed · wineury.vercel.app (${sha})`
+      : `Deploy failed · wineury.vercel.app (${sha})`;
 
 const lines = ok
-  ? [`Live: ${deployUrl}`, "", "Changes:", ...changes.map((c) => `• ${c}`)]
+  ? [
+      kind === "preview"
+        ? `Branch: ${branch || "(unknown)"}`
+        : "Production deploy",
+      deployUrl ? `Live: ${deployUrl}` : "(preview URL not ready yet)",
+      "",
+      "Changes:",
+      ...changes.map((c) => `• ${c}`),
+      runUrl ? `\nWorkflow: ${runUrl}` : "",
+    ]
   : [
-      `Deploy did not complete for ${deployUrl}.`,
+      kind === "preview"
+        ? `Preview notification for branch ${branch || "(unknown)"} did not complete.`
+        : `Deploy did not complete for ${deployUrl}.`,
       "",
       "Last commits in this push:",
       ...changes.map((c) => `• ${c}`),
