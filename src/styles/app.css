@@ -1958,7 +1958,7 @@ main {
    bar sizes to 402/440 of the screen width, which makes its height match this
    strip exactly and leaves the centre clear for the frame's island. */
 .cs__phone-statusbar {
-  flex: 0 0 6.485%;
+  flex: 0 0 10%;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -1979,7 +1979,6 @@ main {
   flex: 1 1 auto;
   overflow: hidden;
   background: #ffffff;
-  padding-bottom: 8px;
 }
 
 /* Pinned to the bottom edge → the recording's own status-bar band overflows the
