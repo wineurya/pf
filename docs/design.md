@@ -7,12 +7,12 @@ Internal design reference for this site. Sanitized for the public repo: intent, 
 
 | Surface               | Last reviewed | Status  |
 | --------------------- | ------------- | ------- |
-| Home — Work           | 2026-06-18 | Partial |
-| Home — Exploration    | 2026-06-18 | Partial |
-| Home — About          | 2026-06-18 | Partial |
-| Case study (template) | 2026-06-18 | Partial |
-| Backdrop / atmosphere | 2026-06-18 | Partial |
-| Mobile chrome (docks) | 2026-06-18 | Partial |
+| Home — Work           | 2026-06-18    | Partial |
+| Home — Exploration    | 2026-06-18    | Partial |
+| Home — About          | 2026-06-18    | Partial |
+| Case study (template) | 2026-06-18    | Partial |
+| Backdrop / atmosphere | 2026-06-18    | Partial |
+| Mobile chrome (docks) | 2026-06-18    | Partial |
 
 
 ---
@@ -221,19 +221,22 @@ Same as dark glow plate but lifted luminance, pale cream and sky blue wash, stil
 *Each iteration adds a row after reviewing a surface in dev/preview.*
 
 
-| Date | Iteration | Surface | Pass? | Notes |
-| ---- | --------- | ------- | ----- | ----- |
-| 2026-06-18 | 15 | Loop idle @ device gate | — | Cadence → 20 min; awaiting iPhone test per §10. No further code changes until pass/fail. |
-| 2026-06-18 | 14 | Device gate prep | N/A | Checklist in §10; `interactive-widget=resizes-content` on viewport (Android/Chromium; Safari ignores). App.jsx section banners trimmed. |
-| 2026-06-18 | 13 | Research — Safari 26.1 / 27 | N/A | 26.1 fixes bottom gap on viewport-sized fixed containers (158055568); 27 beta adds scroll anchoring. vv-frame stays until device matrix confirms. |
-| 2026-06-18 | 12 | Research — Apple 800798 | N/A | Fixed/sticky clipped below Liquid Glass chrome; validates vv-frame docks + safe-area; backdrop must stay layout-bottom. |
-| 2026-06-18 | 11 | Motion perf (cross-surface) | Partial | WordBento: `height` → `scaleY`+opacity (GPU); reduced-motion paths on bento + home dim. Case-study dock `y` on inner bar only (not fixed shell). |
-| 2026-06-18 | 10 | Research — `interactive-widget` | N/A | WebKit 259770 still NEW; Safari ignores `resizes-content`. Portfolio vv-frame + hook remain correct iOS mitigation; meta optional for Android only. |
-| 2026-06-18 | 9 | Home — About | Partial | Hover words + inline WordBento; Escape dismisses; copy-email + external links; RevealItem stagger. Portrait in header unchanged. |
-| 2026-06-18 | 8 | Home — Exploration | Partial | Stagger grid + live embeds; BorderBeam on hover/focus only; reduced-motion respected in dock path. Mobile dock vv-frame unchanged. |
-| 2026-06-18 | 7 | Case study (template) | Partial | Rail left-edge aligns with theme toggle ≥1024px; `.cs__cols--2` stacks ≤560px. Dock vv-frame matches home bar. Device test pending. |
-| 2026-06-18 | 6 | Home — Work | Partial | List layout + mobile dock vv-frame; device scroll test pending. |
-| 2026-06-18 | 4 | Backdrop / mobile chrome | Partial | vv-frame on docks; backdrop layout-bottom. iOS 26/27 beta device test pending. |
+| Date       | Iteration | Surface                         | Pass?   | Notes                                                                                                                                               |
+| ---------- | --------- | ------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-18 | 18        | Preview + automated mobile      | Partial | Vercel preview loads after auth; scroll-spy + backdrop bottom OK on wide panel. Playwright iPhone 13 on localhost: 8/8 dock checks. Headless preview still SSO-blocked. |
+| 2026-06-18 | 17        | CI — preview email              | Pass    | `preview-notify.yml` on `improvement` push; SMTP sent on df8116d.                                                                                    |
+| 2026-06-18 | 16        | Case study TOC dock             | Partial | Scrim absolute in vv-frame; clip-path sheet; scroll closes sheet; backdrop `bottom: 0`. Device matrix §10 still pending.                           |
+| 2026-06-18 | 15        | Loop idle @ device gate         | —       | Cadence → 20 min; awaiting iPhone test per §10. No further code changes until pass/fail.                                                            |
+| 2026-06-18 | 14        | Device gate prep                | N/A     | Checklist in §10; `interactive-widget=resizes-content` on viewport (Android/Chromium; Safari ignores). App.jsx section banners trimmed.             |
+| 2026-06-18 | 13        | Research — Safari 26.1 / 27     | N/A     | 26.1 fixes bottom gap on viewport-sized fixed containers (158055568); 27 beta adds scroll anchoring. vv-frame stays until device matrix confirms.   |
+| 2026-06-18 | 12        | Research — Apple 800798         | N/A     | Fixed/sticky clipped below Liquid Glass chrome; validates vv-frame docks + safe-area; backdrop must stay layout-bottom.                             |
+| 2026-06-18 | 11        | Motion perf (cross-surface)     | Partial | WordBento: `height` → `scaleY`+opacity (GPU); reduced-motion paths on bento + home dim. Case-study dock `y` on inner bar only (not fixed shell).    |
+| 2026-06-18 | 10        | Research — `interactive-widget` | N/A     | WebKit 259770 still NEW; Safari ignores `resizes-content`. Portfolio vv-frame + hook remain correct iOS mitigation; meta optional for Android only. |
+| 2026-06-18 | 9         | Home — About                    | Partial | Hover words + inline WordBento; Escape dismisses; copy-email + external links; RevealItem stagger. Portrait in header unchanged.                    |
+| 2026-06-18 | 8         | Home — Exploration              | Partial | Stagger grid + live embeds; BorderBeam on hover/focus only; reduced-motion respected in dock path. Mobile dock vv-frame unchanged.                  |
+| 2026-06-18 | 7         | Case study (template)           | Partial | Rail left-edge aligns with theme toggle ≥1024px; `.cs__cols--2` stacks ≤560px. Dock vv-frame matches home bar. Device test pending.                 |
+| 2026-06-18 | 6         | Home — Work                     | Partial | List layout + mobile dock vv-frame; device scroll test pending.                                                                                     |
+| 2026-06-18 | 4         | Backdrop / mobile chrome        | Partial | vv-frame on docks; backdrop layout-bottom. iOS 26/27 beta device test pending.                                                                      |
 
 
 ---
@@ -242,16 +245,18 @@ Same as dark glow plate but lifted luminance, pale cream and sky blue wash, stil
 
 Run on a **physical iPhone** with Safari developer beta. Record pass/fail per OS build in the validation log.
 
-| # | Scenario | Surfaces | Pass criteria |
-| - | -------- | -------- | ------------- |
-| 1 | Scroll down to hide address bar | Home dock, case-study dock | Pill flush to visible bottom; no gap under dock |
-| 2 | Scroll up to show address bar | Docks | Dock tracks chrome; no jump or float |
-| 3 | Open case study → Back | Home + case study | Motion clean; dock returns correctly |
-| 4 | Case study TOC dock (mobile) | `cs-dock` sheet + pill | Sheet and pill align; scrim covers content |
-| 5 | Keyboard open (email copy field if any) | About | No persistent gap after dismiss |
-| 6 | Backdrop glow | Home, case study | Glow does **not** lift into content on scroll |
-| 7 | Reduce Motion + Prefer Cross-Fade | Docks | Still usable; no stuck float (Apple 800125) |
-| 8 | Safari tab modes | Bottom / Compact / Top | Dock visible in each mode |
+
+| #   | Scenario                                | Surfaces                   | Pass criteria                                   |
+| --- | --------------------------------------- | -------------------------- | ----------------------------------------------- |
+| 1   | Scroll down to hide address bar         | Home dock, case-study dock | Pill flush to visible bottom; no gap under dock |
+| 2   | Scroll up to show address bar           | Docks                      | Dock tracks chrome; no jump or float            |
+| 3   | Open case study → Back                  | Home + case study          | Motion clean; dock returns correctly            |
+| 4   | Case study TOC dock (mobile)            | `cs-dock` sheet + pill     | Sheet and pill align; scrim covers content      |
+| 5   | Keyboard open (email copy field if any) | About                      | No persistent gap after dismiss                 |
+| 6   | Backdrop glow                           | Home, case study           | Glow does **not** lift into content on scroll   |
+| 7   | Reduce Motion + Prefer Cross-Fade       | Docks                      | Still usable; no stuck float (Apple 800125)     |
+| 8   | Safari tab modes                        | Bottom / Compact / Top     | Dock visible in each mode                       |
+
 
 **Build matrix:** iOS 26.0 · 26.1+ (158055568) · iOS 27 dev beta.
 

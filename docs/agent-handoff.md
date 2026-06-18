@@ -33,14 +33,17 @@ Do not include private notes, research, inspiration, raw prompts, secrets, perso
 - **2026-06-18 (tick 11):** Motion perf — WordBento drops layout `height` animation; App home dim respects reduced motion.
 - **2026-06-18 (tick 13):** Research thread largely closed — Safari 26.1 gap fix + 27 beta notes documented. **Next gate: physical device test** before PR.
 - **2026-06-18 (tick 14–15):** Device checklist in `docs/design.md` §10. Loop slowed at gate (20 min) until device results or user approval.
+- **2026-06-18 (tick 16–18):** TOC dock scroll stability + backdrop bottom anchor; preview email workflow; Playwright mobile smoke (localhost 8/8). Preview URL requires Vercel auth for headless; authenticated browser confirms scroll-spy + backdrop. **Gate: physical iPhone §10.**
 
-## PR-ready summary (uncommitted on `improvement`)
+## PR-ready summary (`improvement` → `main`, PR #2)
 
 | Area | Files |
 | ---- | ----- |
 | iOS dock fix | `useVisualViewportPin.js`, `app.css`, `App.jsx` |
+| TOC dock | `CaseStudy.jsx` — scrim/sheet/scroll-close, roll `mode="wait"` |
 | Layout | Rail alignment, `.cs__cols--2` stack ≤560px |
 | Motion | `WordBento.jsx`, `App.jsx` reduced-motion dim |
+| CI notify | `preview-notify.yml`, `deploy-notify-email.mjs` |
 | Meta | `index.html` viewport + `interactive-widget` |
 | Docs | `design.md`, `bibliography.md`, `agent-handoff.md` |
 
