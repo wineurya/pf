@@ -597,9 +597,7 @@ function CaseDock({
         transition: { duration: 0.36, ease: EASE_OUT },
       };
 
-  /* The whole pill rises in when a case study opens and drops back out when it
-     closes — it lives in App's <AnimatePresence>, so this exit is awaited and the
-     dock no longer pops in/out abruptly against the case-study transition. */
+  // Pill enter/exit uses y on the inner bar, not the fixed .cs-dock shell.
   const dockReveal = reducedMotion
     ? {
         initial: { opacity: 0 },

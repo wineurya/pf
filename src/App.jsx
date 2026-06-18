@@ -10,7 +10,7 @@ import { Tabs } from "./components/Tabs.jsx";
 import { ThemeToggle } from "./components/ThemeToggle.jsx";
 import { WordBento } from "./components/WordBento.jsx";
 import { WorkProjects } from "./components/WorkProjects.jsx";
-import { useReady } from "./lib/hooks.js";
+import { useReady, usePrefersReducedMotion } from "./lib/hooks.js";
 import { EASE_OUT } from "./lib/motion.js";
 import { useTheme } from "./lib/theme.js";
 import { usePageEnter } from "./lib/usePageEnter.js";
@@ -18,7 +18,6 @@ import { useVisualViewportPin } from "./lib/useVisualViewportPin.js";
 import { BRAND_ICONS, IconCheckmark1Small, IconClipboard } from "./lib/icons.jsx";
 import { caseStudies, site, tabs } from "./content.js";
 
-/* -- Case-study micro-route: /work/<slug> ----------------------------------- */
 function studyFromPath(pathname) {
   const match = /^\/work\/([\w-]+)\/?$/.exec(pathname);
   return match && caseStudies[match[1]] ? match[1] : null;
@@ -64,7 +63,6 @@ function useStudyRoute() {
   return [study, open, close];
 }
 
-/* -- Copy-to-clipboard email with a small toast ----------------------------- */
 function CopyEmail({ email, label }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef(null);
@@ -103,7 +101,6 @@ function CopyEmail({ email, label }) {
   );
 }
 
-/* -- About contact row — email copy + external social links ------------------- */
 function AboutContact() {
   return (
     <RevealItem as="p" className="panel__lead contact-links">
@@ -133,7 +130,6 @@ function AboutContact() {
   );
 }
 
-/* -- Inline tool mention with its Central brand mark ------------------------- */
 function ToolWord({ tool, icon }) {
   const Icon = BRAND_ICONS[icon];
   return (
@@ -144,8 +140,6 @@ function ToolWord({ tool, icon }) {
   );
 }
 
-/* -- About — paragraphs with hover words; a clicked word expands its full
-      photo set as a bento right under the paragraph it lives in. ------------- */
 function AboutPanel() {
   const [expandedWord, setExpandedWord] = useState(null);
 
@@ -239,9 +233,9 @@ function PanelContent({ tab, theme, onOpenStudy, view, onView }) {
   return <AboutPanel />;
 }
 
-/* -- Page ------------------------------------------------------------------- */
 export function App() {
   const ready = useReady();
+  const reducedMotion = usePrefersReducedMotion();
   const [tab, setTab] = useState("work");
   /* Work-tab layout: list (default — the page's first impression is unchanged),
      single-column cards, or a two-up gallery. Kept here so it persists across
@@ -302,8 +296,12 @@ export function App() {
             animate={{ opacity: study ? 0 : 1 }}
             transition={
               study
-                ? { duration: 0.2, ease: EASE_OUT }
-                : { duration: 0.28, ease: EASE_OUT, delay: 0.06 }
+                ? { duration: reducedMotion ? 0.1 : 0.2, ease: EASE_OUT }
+                : {
+                    duration: reducedMotion ? 0.1 : 0.28,
+                    ease: EASE_OUT,
+                    delay: reducedMotion ? 0 : 0.06,
+                  }
             }
             inert={Boolean(study)}
           >

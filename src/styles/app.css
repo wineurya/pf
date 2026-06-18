@@ -192,7 +192,11 @@
     align-items: flex-start;
     gap: var(--space-1);
     margin-bottom: 0;
-    margin-left: calc(-1 * var(--rail-offset, 160px));
+    /* Same left edge as .theme-toggle — max(page-pad, column edge − offset). */
+    margin-left: max(
+      calc(var(--page-pad) - 50vw + var(--content-max) / 2),
+      calc(-1 * var(--rail-offset))
+    );
     width: max-content;
     height: fit-content;
   }
@@ -278,17 +282,22 @@
   }
 
   .home-bottom-bar {
+    /* iOS 26/27: frame matches visual viewport (GoodTurn); no transform here. */
     position: fixed;
-    left: var(--page-pad);
-    right: var(--page-pad);
-    bottom: calc(
-      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
-        var(--vvb, 0px)
-    );
+    left: 0;
+    right: 0;
+    top: var(--vv-top, 0px);
+    height: var(--vv-height, 100%);
+    bottom: auto;
     z-index: 45;
     display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     align-items: center;
-    justify-content: center;
+    padding-inline: var(--page-pad);
+    padding-bottom: calc(
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px)
+    );
     pointer-events: none;
   }
 
@@ -1028,17 +1037,6 @@ main {
    matching breakpoint lives in ContentsNav (matchMedia 1024) so its orientation
    stays in sync. */
 @media (min-width: 1024px) {
-  /* Optical centering — the sticky rail lives only in the LEFT margin, so a
-     strictly viewport-centered column reads as left-heavy: the rail's weight has
-     nothing to balance it on the right. Nudge the whole case group right by half
-     the rail's reach so the rail's outer edge and the column's right edge sit
-     symmetric about the viewport center. The shift rides on `.cs` (the box the
-     backdrop blob measures), so the legibility mask tracks it for free, and
-     because `.cs` only exists in the case view the home column is untouched. */
-  .cs {
-    margin-left: calc(var(--rail-offset) / 2);
-  }
-
   .cs-layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -1062,7 +1060,11 @@ main {
     align-items: flex-start;
     gap: var(--gap-paragraph);
     margin-bottom: 0;
-    margin-left: calc(-1 * var(--rail-offset, 160px));
+    /* Same left edge as .theme-toggle--case — max(page-pad, column edge − offset). */
+    margin-left: max(
+      calc(var(--page-pad) - 50vw + var(--content-max-cs) / 2),
+      calc(-1 * var(--rail-offset))
+    );
     width: max-content;
     height: fit-content;
   }
@@ -1121,18 +1123,23 @@ main {
 
 @media (max-width: 1023px) {
   .cs-dock {
+    /* iOS 26/27: same vv frame as home dock; scrim/sheet stay inside, bar at bottom. */
     position: fixed;
-    left: var(--page-pad);
-    right: var(--page-pad);
-    bottom: calc(
-      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
-        var(--vvb, 0px)
-    );
+    left: 0;
+    right: 0;
+    top: var(--vv-top, 0px);
+    height: var(--vv-height, 100%);
+    bottom: auto;
     z-index: 60;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-inline: var(--page-pad);
+    padding-bottom: calc(
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px)
+    );
     pointer-events: none;
-    /* Tighter than the home rail (44 vs 48) so the case dock reads compact. */
     --cs-dock-h: 44px;
   }
 
@@ -1873,9 +1880,8 @@ main {
   .cs__stats-cols {
     gap: var(--space-4);
   }
-}
 
-@media (max-width: 560px) {
+  .cs__cols--2,
   .cs__cols--3 {
     grid-template-columns: 1fr;
   }
