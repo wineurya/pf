@@ -53,9 +53,28 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
               layout: layoutTransition,
             }}
           >
-            <motion.span layout className="pcard__media-label">
-              {item.hero ?? "image"}
-            </motion.span>
+            {item.cover ? (
+              <img
+                className="pcard__cover"
+                src={item.cover}
+                alt={`${item.label} project cover`}
+                loading="lazy"
+                decoding="async"
+                onLoad={(e) => {
+                  /* Pin the 2×2 card to the cover's true ratio so its height is
+                     fixed (no masonry reflow when the caption opens on hover). */
+                  const card = e.currentTarget.closest(".pcard");
+                  card?.style.setProperty(
+                    "--card-ar",
+                    `${e.currentTarget.naturalWidth} / ${e.currentTarget.naturalHeight}`,
+                  );
+                }}
+              />
+            ) : (
+              <motion.span layout className="pcard__media-label">
+                {item.hero ?? "image"}
+              </motion.span>
+            )}
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -65,24 +84,28 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
         className="pcard__row"
         transition={{ layout: layoutTransition }}
       >
-        <span className="pcard__label">
+        {/* Plain wrapper (not the motion row) so the 2×2 hover slide can't
+           collide with Framer Motion's layout transforms. */}
+        <div className="pcard__caption">
+          <span className="pcard__label">
+            <motion.span
+              layoutId={`cs-title-${item.slug}`}
+              transition={{ layout: layoutTransition }}
+            >
+              {item.label}
+            </motion.span>
+            {isCard ? (
+              <IconArrowUpRight className="pcard__arrow" size={15} ariaHidden />
+            ) : null}
+          </span>
           <motion.span
-            layoutId={`cs-title-${item.slug}`}
+            className="pcard__meta"
+            layoutId={`cs-meta-${item.slug}`}
             transition={{ layout: layoutTransition }}
           >
-            {item.label}
+            {item.meta}
           </motion.span>
-          {isCard ? (
-            <IconArrowUpRight className="pcard__arrow" size={15} ariaHidden />
-          ) : null}
-        </span>
-        <motion.span
-          className="pcard__meta"
-          layoutId={`cs-meta-${item.slug}`}
-          transition={{ layout: layoutTransition }}
-        >
-          {item.meta}
-        </motion.span>
+        </div>
       </motion.div>
     </motion.a>
   );

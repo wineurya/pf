@@ -15,6 +15,10 @@ import travelBeach from "./assets/about/about-travel-01.jpg";
 import travelDrStreet from "./assets/about/about-travel-02.jpg";
 import vinylOxymoron from "./assets/about/about-vinyl-01.jpg";
 
+/* Case-study cover art (Figma "Asset Priority Matrix"). The hero sizes itself to
+   the image's intrinsic aspect ratio, so each cover keeps its own proportions. */
+import incityCover from "./assets/case/incity-cover.png";
+
 /* Case studies, keyed by slug; the Work list derives from this so row labels
    and page titles stay in sync.
 
@@ -68,6 +72,7 @@ export const caseStudies = {
     title: "InCity",
     meta: "Civic Reporting",
     hero: "video",
+    cover: incityCover,
     facts: {
       role: "Lead UX Designer & Researcher",
       team: "Team of 6",
@@ -620,8 +625,10 @@ export const site = {
     meta: study.meta,
     href: `/work/${slug}`,
     slug,
-    /* Hero kind drives the card media placeholder label in the gallery views. */
+    /* Hero kind drives the card media placeholder label in the gallery views;
+       cover, when present, fills that media tile with the real project art. */
     hero: study.hero,
+    cover: study.cover,
   })),
 
   /* Live embeds from /exploration — preview key maps to ExplorationGrid components. */

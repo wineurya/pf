@@ -683,17 +683,23 @@ main {
   gap: var(--space-7);
 }
 
+/* Two-up gallery as a masonry. Covers take their own height, so fixed grid rows
+   would strand whitespace under a short card. Multi-column flow packs each column
+   tightly instead — the card below a short cover rises to fill the gap. */
 .pgrid--two {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  columns: 2;
   column-gap: var(--gap-section-inner);
-  row-gap: var(--space-6);
+}
+
+.pgrid--two .pcard {
+  break-inside: avoid;
+  /* Vertical rhythm between stacked cards (column-gap covers the horizontal). */
+  margin-bottom: var(--space-6);
 }
 
 @media (max-width: 520px) {
   .pgrid--two {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-7);
+    columns: 1;
   }
 }
 
@@ -748,6 +754,21 @@ main {
   color: var(--text-strong);
 }
 
+/* Holds label (left) + meta (right). A plain wrapper inside the motion row so
+   the 2×2 hover slide animates here, clear of Framer Motion's layout. */
+.pcard__caption {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.pcard--list .pcard__caption {
+  align-items: center;
+}
+
 .pcard__media {
   position: relative;
   display: grid;
@@ -762,6 +783,20 @@ main {
 
 .pgrid--two .pcard__media {
   aspect-ratio: 4 / 3;
+}
+
+/* A card with real cover art drops the fixed tile ratio and takes the image's
+   own aspect ratio — full bleed, no letterbox, no crop — so the frame abides by
+   the image. Placeholder tiles keep the uniform 16:9 / 4:3. */
+.pgrid .pcard__media:has(.pcard__cover) {
+  display: block;
+  aspect-ratio: auto;
+}
+
+.pcard__cover {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .pcard__media-label {
@@ -813,6 +848,61 @@ main {
 
   .pcard--card:hover .pcard__media-label {
     opacity: 0.8;
+  }
+
+  /* 2×2 (hover devices): each card is a fixed height — its cover's own ratio, or
+     4/3 for placeholders — so the masonry never reflows. The media fills the card
+     and the caption row is collapsed to nothing, leaving no idle gap under the
+     tiles. On hover/focus the row opens and the media gives up that height,
+     cropping a little off the bottom of the cover (object-position: top) to make
+     room; the caption fades in. Card height is unchanged throughout, so nothing
+     moves. Touch devices skip all of this and keep the caption shown below. */
+  .pgrid--two .pcard--card {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .pgrid--two .pcard--card:has(.pcard__cover) {
+    aspect-ratio: var(--card-ar, 1470 / 513);
+  }
+
+  .pgrid--two .pcard__media {
+    flex: 1;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .pgrid--two .pcard__cover {
+    height: 100%;
+    object-fit: cover;
+    /* As the media shrinks on hover the image re-centers within the same box —
+       cropping evenly top and bottom so the subject stays centered — instead of
+       staying pinned to the top. The outer media box keeps its size and place. */
+    object-position: center;
+  }
+
+  .pgrid--two .pcard__row {
+    height: 0;
+    overflow: hidden;
+    align-items: flex-end;
+    transition: height var(--dur) var(--ease-out-strong);
+  }
+
+  .pgrid--two .pcard__caption {
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-standard);
+  }
+
+  .pgrid--two .pcard:hover .pcard__row,
+  .pgrid--two .pcard:focus-visible .pcard__row {
+    height: 1.6rem;
+  }
+
+  .pgrid--two .pcard:hover .pcard__caption,
+  .pgrid--two .pcard:focus-visible .pcard__caption {
+    opacity: 1;
   }
 }
 
@@ -1768,7 +1858,8 @@ main {
 }
 
 @supports (corner-shape: superellipse(2)) {
-  .cs__tile {
+  .cs__tile,
+  .cs__cover {
     corner-shape: var(--corner-smooth);
   }
 }
@@ -1780,6 +1871,24 @@ main {
 
 .cs__tile--hero {
   aspect-ratio: 16 / 9;
+}
+
+/* A real cover image drives the hero's height, so the figure abides by the
+   image's own aspect ratio. Same quiet edge ring as the placeholder tiles. */
+.cs__cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
+}
+
+:root[data-theme="dark"] .cs__cover {
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
 }
 
 /* Case-studies index (table of contents) — jump straight to another project.

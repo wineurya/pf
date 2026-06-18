@@ -277,12 +277,23 @@ export function CaseStudy({
            (the cell this column fills), so a single eased layout animation
            drives the expand/contract instead of two competing ones. */}
         <div className="cs-main">
-          {/* Chrome — cover first under the header band. */}
+          {/* Chrome — cover first under the header band. A real cover image
+             sizes the figure to its own aspect ratio; otherwise a labeled
+             placeholder tile holds the slot. */}
           <div className="cs-band cs-band--chrome">
             <RevealItem as="figure" className="cs__hero">
-              <div className="cs__tile cs__tile--hero">
-                <span className="cs__tile-label">{study.hero ?? "image"}</span>
-              </div>
+              {study.cover ? (
+                <img
+                  className="cs__cover"
+                  src={study.cover}
+                  alt={study.coverAlt ?? `${study.title} project cover`}
+                  decoding="async"
+                />
+              ) : (
+                <div className="cs__tile cs__tile--hero">
+                  <span className="cs__tile-label">{study.hero ?? "image"}</span>
+                </div>
+              )}
             </RevealItem>
           </div>
 

@@ -72,18 +72,13 @@
     inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 72%, transparent),
     0 2px 6px color-mix(in oklab, var(--color-black) 4%, transparent),
     0 0 0 1px color-mix(in srgb, var(--color-white) 55%, transparent);
-  /* About bento — soft white halo over the backdrop (more spread + blur). */
+  /* Home tiles — flat: inset top highlight + hairline ring, no halo/drop. */
   --bento-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 78%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--color-white) 62%, transparent),
-    0 3px 52px 4px color-mix(in srgb, var(--color-white) 84%, transparent),
-    0 10px 88px 10px color-mix(in srgb, var(--color-white) 58%, transparent);
-  /* Exploration preview frames — 16px radius + soft white glow. */
+    0 0 0 1px color-mix(in srgb, var(--color-white) 62%, transparent);
   --exp-card-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 78%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--color-white) 62%, transparent),
-    0 2px 16px 3px color-mix(in srgb, var(--color-white) 82%, transparent),
-    0 8px 40px 6px color-mix(in srgb, var(--color-white) 52%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--color-white) 62%, transparent);
   --border-soft: #e8e8e8;
 
   --foreground: #000;
@@ -215,14 +210,10 @@
     0 0 0 1px color-mix(in srgb, #ffffff 7%, transparent);
   --bento-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
-    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent),
-    0 3px 52px 4px color-mix(in srgb, #ffffff 4%, transparent),
-    0 10px 88px 10px color-mix(in srgb, #ffffff 3%, transparent);
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
   --exp-card-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
-    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent),
-    0 2px 16px 3px color-mix(in srgb, #ffffff 5%, transparent),
-    0 8px 40px 6px color-mix(in srgb, #ffffff 3%, transparent);
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
 
   /* Tool mentions — Tailwind 400 for legibility on dark paper */
   --tool-figma: #c084fc; /* purple-400 */
