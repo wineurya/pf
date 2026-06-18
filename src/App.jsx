@@ -254,6 +254,29 @@ export function App() {
   const deepLoaded = useRef(Boolean(study));
   usePageEnter(ready);
 
+  /* iOS Safari pins position:fixed to the LAYOUT viewport, so when the browser
+     chrome shows/hides on a swipe the bottom-anchored backdrop and dock stop
+     sticking to the visible bottom. Mirror the visual viewport's bottom inset
+     into --vvb and offset those elements by it so they stay glued. ~0 on
+     desktop / non-iOS, so it's a no-op there. */
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const root = document.documentElement;
+    const update = () => {
+      const inset = root.clientHeight - vv.height - vv.offsetTop;
+      root.style.setProperty("--vvb", `${Math.max(0, Math.round(inset))}px`);
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+      root.style.removeProperty("--vvb");
+    };
+  }, []);
+
   useEffect(() => {
     if (!study) deepLoaded.current = false;
   }, [study]);

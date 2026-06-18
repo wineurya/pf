@@ -9,7 +9,9 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* --vvb (set in App.jsx from visualViewport) keeps the band on the visible
+     bottom while iOS Safari's chrome animates. 0 on desktop. */
+  bottom: var(--vvb, 0px);
   z-index: 0;
   /* Figma node 558:173 — bg 6-11 1, 1920×480 */
   width: 100%;
@@ -282,7 +284,10 @@
     position: fixed;
     left: var(--page-pad);
     right: var(--page-pad);
-    bottom: calc(var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px));
+    bottom: calc(
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
+        var(--vvb, 0px)
+    );
     z-index: 45;
     display: flex;
     align-items: center;
@@ -1122,7 +1127,10 @@ main {
     position: fixed;
     left: var(--page-pad);
     right: var(--page-pad);
-    bottom: calc(var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px));
+    bottom: calc(
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
+        var(--vvb, 0px)
+    );
     z-index: 60;
     display: flex;
     justify-content: center;
