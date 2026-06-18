@@ -1988,12 +1988,16 @@ main {
 }
 
 /* Fill the viewport; object-position pins the bottom edge so the recording's
-   own status-bar band overflows the top and is clipped. */
+   own status-bar band overflows the top and is clipped. --phone-video-uncrop-top
+   reveals a little more of the recording at the top without shifting the bottom. */
 .cs__phone-video {
+  --phone-video-uncrop-top: 2px;
+
   position: absolute;
-  inset: 0;
+  top: calc(-1 * var(--phone-video-uncrop-top));
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% + var(--phone-video-uncrop-top));
   display: block;
   object-fit: cover;
   object-position: bottom center;
