@@ -1944,7 +1944,7 @@ main {
   left: 5.102%;
   top: 2.2%;
   width: 89.796%;
-  height: 95.6%;
+  height: 97.8%;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -1958,13 +1958,14 @@ main {
    bar sizes to 402/440 of the screen width, which makes its height match this
    strip exactly and leaves the centre clear for the frame's island. */
 .cs__phone-statusbar {
-  flex: 0 0 10%;
+  flex: 0 0 7.2%;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #ffffff;
   overflow: hidden;
+  line-height: 0;
 }
 
 .cs__phone-statusbar-img {
