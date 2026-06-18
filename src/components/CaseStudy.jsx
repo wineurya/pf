@@ -164,6 +164,7 @@ export function CaseStudy({
   const named = sections.filter((s) => s.id);
   const sectionIds = named.map((s) => s.id).join(",");
   const ref = useRef(null);
+  const scrollLockRef = useRef(null);
   const reducedMotion = usePrefersReducedMotion();
   const [activeSection, setActiveSection] = useState(() => named[0]?.id ?? null);
 
@@ -177,8 +178,40 @@ export function CaseStudy({
   }, [study.title]);
 
   useEffect(() => {
+    scrollLockRef.current = null;
     setActiveSection(sectionIds.split(",")[0] || null);
   }, [slug, sectionIds]);
+
+  /* Release scroll lock after programmatic smooth scroll — scrollend where
+     supported, otherwise a short scroll-idle fallback so the IO spy cannot
+     re-target every section the page passes on the way down. */
+  useEffect(() => {
+    function releaseScrollLock() {
+      scrollLockRef.current = null;
+    }
+
+    function onScrollEnd() {
+      if (scrollLockRef.current) releaseScrollLock();
+    }
+
+    let idleId = 0;
+    function onScrollWhileLocked() {
+      if (!scrollLockRef.current) return;
+      window.clearTimeout(idleId);
+      idleId = window.setTimeout(() => {
+        if (scrollLockRef.current) releaseScrollLock();
+      }, 150);
+    }
+
+    window.addEventListener("scrollend", onScrollEnd);
+    window.addEventListener("scroll", onScrollWhileLocked, { passive: true });
+    return () => {
+      window.removeEventListener("scrollend", onScrollEnd);
+      window.removeEventListener("scroll", onScrollWhileLocked);
+      window.clearTimeout(idleId);
+      scrollLockRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (!sectionIds) return;
@@ -191,6 +224,7 @@ export function CaseStudy({
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (scrollLockRef.current) return;
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -246,10 +280,15 @@ export function CaseStudy({
     (activeTitle && SECTION_ACCENT[activeTitle]) || "overview";
 
   function jumpToSection(id) {
+    scrollLockRef.current = id;
     setActiveSection(id);
-    document
-      .getElementById(id)
-      ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+    const target = document.getElementById(id);
+    if (!target) {
+      scrollLockRef.current = null;
+      return;
+    }
+    target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+    if (reducedMotion) scrollLockRef.current = null;
   }
 
   return (

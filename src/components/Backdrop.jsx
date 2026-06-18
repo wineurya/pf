@@ -176,7 +176,7 @@ export function Backdrop({ surfaceKey }) {
 
   return (
     <div
-      className="backdrop"
+      className="backdrop vv-frame"
       ref={rootRef}
       aria-hidden="true"
     >
