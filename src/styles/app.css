@@ -9,9 +9,11 @@
   position: fixed;
   left: 0;
   right: 0;
-  /* --vvb (set in App.jsx from visualViewport) keeps the band on the visible
-     bottom while iOS Safari's chrome animates. 0 on desktop. */
-  bottom: var(--vvb, 0px);
+  /* The glow stays at the true layout bottom — its compositor layer (below)
+     already stops the swipe from dragging it. It deliberately skips the --vvb
+     visual-viewport offset the docks use: lifting a ~94px band by the toolbar
+     height made the glow intrude into view at the footer. */
+  bottom: 0;
   z-index: 0;
   /* Figma node 558:173 — bg 6-11 1, 1920×480 */
   width: 100%;
