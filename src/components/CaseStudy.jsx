@@ -706,7 +706,7 @@ function CaseDock({
         >
           <span className="cs-dock__fill" aria-hidden="true" />
           <span className="cs-dock__roll">
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={false} mode="wait">
               <motion.span
                 key={active?.id}
                 className="cs-dock__roll-title"
