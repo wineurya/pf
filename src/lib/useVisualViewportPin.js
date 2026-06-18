@@ -1,16 +1,9 @@
 import { useEffect } from "react";
 
-const VV_VARS = ["--vv-top", "--vv-left", "--vv-height", "--vv-width", "--vvb"];
-
 /**
- * Mirror the visual viewport into CSS custom properties so bottom-fixed chrome
- * can pin to the *visible* screen on mobile Safari / Chrome Android. Layout-
- * viewport `position: fixed; bottom: 0` lags behind when browser toolbars
- * retract on scroll — the dock and glow band appear to lift off the bottom.
- *
- * Consumers size a `.vv-frame` to these vars and absolutely position bottom UI
- * inside it (top + height, no transform), which tracks toolbar show/hide without
- * pushing a tall backdrop band upward. ~0/no-op on desktop.
+ * iOS Safari pins position:fixed to the layout viewport. When browser chrome
+ * shows/hides on scroll, bottom docks need a small bottom offset (--vvb) so
+ * they stay on the visible screen. The backdrop deliberately does not use this.
  */
 export function useVisualViewportPin() {
   useEffect(() => {
@@ -22,17 +15,7 @@ export function useVisualViewportPin() {
 
     function apply() {
       raf = 0;
-      const top = vv.offsetTop;
-      const left = vv.offsetLeft;
-      const height = vv.height;
-      const width = vv.width;
-      const layoutH = root.clientHeight;
-      const inset = layoutH - height - top;
-
-      root.style.setProperty("--vv-top", `${top}px`);
-      root.style.setProperty("--vv-left", `${left}px`);
-      root.style.setProperty("--vv-height", `${height}px`);
-      root.style.setProperty("--vv-width", `${width}px`);
+      const inset = root.clientHeight - vv.height - vv.offsetTop;
       root.style.setProperty("--vvb", `${Math.max(0, Math.round(inset))}px`);
     }
 
@@ -44,15 +27,13 @@ export function useVisualViewportPin() {
     vv.addEventListener("resize", schedule);
     vv.addEventListener("scroll", schedule);
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("orientationchange", schedule);
 
     return () => {
       cancelAnimationFrame(raf);
       vv.removeEventListener("resize", schedule);
       vv.removeEventListener("scroll", schedule);
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("orientationchange", schedule);
-      for (const name of VV_VARS) root.style.removeProperty(name);
+      root.style.removeProperty("--vvb");
     };
   }, []);
 }

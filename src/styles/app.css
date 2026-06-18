@@ -5,66 +5,26 @@
 /* =============================================================================
    Ambient backdrop — fixed to the bottom of the viewport; never scrolls.
    ========================================================================== */
-
-/* Visual-viewport frame — on mobile, size a fixed box to the *visible* screen
-   (not the layout viewport) so bottom chrome and the glow band stay glued when
-   Safari's toolbar swipes away. Bottom UI docks inside via position:absolute.
-   Desktop keeps normal fixed positioning; --vv-* defaults are harmless no-ops. */
-.vv-frame {
+.backdrop {
   position: fixed;
-  top: var(--vv-top, 0px);
-  left: var(--vv-left, 0px);
-  width: var(--vv-width, 100%);
-  height: var(--vv-height, 100%);
+  left: 0;
+  right: 0;
+  /* The glow stays at the layout bottom — lifting it with --vvb made the band
+     intrude into content. Docks compensate separately for browser chrome. */
+  bottom: 0;
+  z-index: 0;
+  /* Figma node 558:173 — bg 6-11 1, 1920×480 */
+  width: 100%;
+  height: 25vw;
+  max-height: 480px;
+  overflow: hidden;
   pointer-events: none;
-  overflow: visible;
+  background: transparent;
+  /* iOS Safari: own compositor layer so momentum overscroll does not drag the
+     band with the page. */
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-}
-
-.backdrop {
-  z-index: 0;
-  overflow: hidden;
-  background: transparent;
-  pointer-events: none;
-}
-
-/* Desktop — classic layout-viewport pin at the bottom edge. */
-@media (min-width: 1024px) {
-  .backdrop.vv-frame {
-    top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: auto;
-    height: auto;
-    transform: translateZ(0);
-  }
-
-  .backdrop {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 25vw;
-    max-height: 480px;
-  }
-}
-
-/* Phone + tablet — frame tracks the visual viewport; band sits at its bottom. */
-@media (max-width: 1023px) {
-  .backdrop {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 25vw;
-    max-height: 480px;
-    transform: none;
-  }
 }
 
 .backdrop__img {
@@ -319,29 +279,23 @@
 
   .home-bottom-bar {
     position: fixed;
-    top: var(--vv-top, 0px);
-    left: var(--vv-left, 0px);
-    width: var(--vv-width, 100%);
-    height: var(--vv-height, 100%);
-    bottom: auto;
-    right: auto;
-    z-index: 45;
-    display: block;
-    pointer-events: none;
-    overflow: visible;
-  }
-
-  .home-bottom-bar__dock {
-    position: absolute;
     left: var(--page-pad);
     right: var(--page-pad);
     bottom: calc(
-      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px)
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
+        var(--vvb, 0px)
     );
-    pointer-events: auto;
+    z-index: 45;
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
+  }
+
+  .home-bottom-bar__dock {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
     gap: var(--space-1);
     max-width: 100%;
     padding: var(--space-1);
@@ -1168,32 +1122,26 @@ main {
 @media (max-width: 1023px) {
   .cs-dock {
     position: fixed;
-    top: var(--vv-top, 0px);
-    left: var(--vv-left, 0px);
-    width: var(--vv-width, 100%);
-    height: var(--vv-height, 100%);
-    bottom: auto;
-    right: auto;
+    left: var(--page-pad);
+    right: var(--page-pad);
+    bottom: calc(
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
+        var(--vvb, 0px)
+    );
     z-index: 60;
-    display: block;
+    display: flex;
+    justify-content: center;
     pointer-events: none;
-    overflow: visible;
     /* Tighter than the home rail (44 vs 48) so the case dock reads compact. */
     --cs-dock-h: 44px;
   }
 
   .cs-dock__bar {
-    position: absolute;
-    left: var(--page-pad);
-    right: var(--page-pad);
-    bottom: calc(
-      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px)
-    );
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     pointer-events: auto;
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
     gap: 3px;
     max-width: 100%;
     padding: 3px;
@@ -1333,7 +1281,7 @@ main {
 
   /* Scrim behind the section sheet — dims the page, tap to dismiss. */
   .cs-dock__scrim {
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: 0;
     background: color-mix(in srgb, var(--bg) 45%, transparent);
@@ -1351,10 +1299,7 @@ main {
     left: 50%;
     right: auto;
     margin-left: calc(var(--cs-sheet-w) / -2);
-    bottom: calc(
-      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
-        var(--cs-dock-h) + 6px + var(--space-2)
-    );
+    bottom: calc(var(--cs-dock-h) + 6px + var(--space-2));
     z-index: 2;
     width: var(--cs-sheet-w);
     max-height: 56vh;
