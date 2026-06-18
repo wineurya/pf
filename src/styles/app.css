@@ -18,6 +18,14 @@
   overflow: hidden;
   pointer-events: none;
   background: transparent;
+  /* iOS Safari: lift the glow onto its own compositor layer so a momentum /
+     overscroll swipe holds it to the viewport instead of dragging the band up
+     with the page. Root-level overscroll-behavior (base.css) can't stop the
+     document bounce on iOS, so the fixed band needs its own layer. The child
+     mask is unaffected; on desktop this is a visual no-op. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .backdrop__img {
