@@ -574,8 +574,15 @@ function CaseDock({
         setOpen(false);
       }
     }
+    function onScroll() {
+      setOpen(false);
+    }
     window.addEventListener("keydown", onKeyDown, true);
-    return () => window.removeEventListener("keydown", onKeyDown, true);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", onKeyDown, true);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [open]);
 
   function pick(id) {
@@ -583,6 +590,7 @@ function CaseDock({
     setOpen(false);
   }
 
+  /* Wallet-menu pattern: opacity + short y — no 3D flip (stable during scroll). */
   const roll = reducedMotion
     ? {
         initial: { opacity: 0 },
@@ -591,26 +599,29 @@ function CaseDock({
         transition: { duration: 0.12 },
       }
     : {
-        initial: { y: "115%", rotateX: -55, opacity: 0 },
-        animate: { y: "0%", rotateX: 0, opacity: 1 },
-        exit: { y: "-115%", rotateX: 55, opacity: 0 },
-        transition: { duration: 0.36, ease: EASE_OUT },
+        initial: { opacity: 0, y: 8 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -6 },
+        transition: { duration: 0.22, ease: EASE_OUT },
       };
 
-  // Pill enter/exit uses y on the inner bar, not the fixed .cs-dock shell.
-  const dockReveal = reducedMotion
+  const sheetMotion = reducedMotion
     ? {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
         exit: { opacity: 0 },
-        transition: { duration: 0.14 },
+        transition: { duration: 0.12 },
       }
     : {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: 20 },
-        transition: { duration: 0.34, ease: EASE_OUT },
+        initial: { clipPath: "inset(0% 0% 100% 0% round 12px)", opacity: 0 },
+        animate: { clipPath: "inset(0% 0% 0% 0% round 12px)", opacity: 1 },
+        exit: { clipPath: "inset(0% 0% 100% 0% round 12px)", opacity: 0 },
+        transition: { duration: 0.32, ease: EASE_OUT },
       };
+
+  const dockReveal = reducedMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.14 } }
+    : { initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.28, ease: EASE_OUT } };
 
   return createPortal(
     <div
@@ -640,14 +651,10 @@ function CaseDock({
             className="cs-dock__sheet"
             role="menu"
             aria-label="On this page"
-            initial={
-              reducedMotion ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.98 }
-            }
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={
-              reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.98 }
-            }
-            transition={{ duration: reducedMotion ? 0.12 : 0.26, ease: EASE_OUT }}
+            initial={sheetMotion.initial}
+            animate={sheetMotion.animate}
+            exit={sheetMotion.exit}
+            transition={sheetMotion.transition}
           >
             <p className="cs-dock__sheet-label">On this page</p>
             <ul className="cs-dock__sheet-list">
@@ -678,7 +685,6 @@ function CaseDock({
         className="cs-dock__bar"
         initial={dockReveal.initial}
         animate={dockReveal.animate}
-        exit={dockReveal.exit}
         transition={dockReveal.transition}
       >
         <button
