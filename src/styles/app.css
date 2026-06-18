@@ -9,9 +9,8 @@
   position: fixed;
   left: 0;
   right: 0;
-  /* The glow stays at the layout bottom — lifting it with --vvb made the band
-     intrude into content. Docks compensate separately for browser chrome. */
   bottom: 0;
+  top: auto;
   z-index: 0;
   /* Figma node 558:173 — bg 6-11 1, 1920×480 */
   width: 100%;
@@ -29,7 +28,10 @@
 
 .backdrop__img {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto;
   width: 100%;
   height: 100%;
   max-width: none;
@@ -1140,6 +1142,7 @@ main {
       var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px)
     );
     pointer-events: none;
+    isolation: isolate;
     --cs-dock-h: 44px;
   }
 
@@ -1254,7 +1257,7 @@ main {
     will-change: transform;
   }
 
-  /* Rolling section label — one clipped line; titles stack + flip in/out. */
+  /* Rolling section label — clipped line; titles crossfade/slide like wallet rows. */
   .cs-dock__roll {
     position: relative;
     z-index: 1;
@@ -1264,7 +1267,7 @@ main {
     width: calc((var(--cs-dock-roll-ch, 12) + 1) * 1ch);
     max-width: 42vw;
     height: var(--text-leading);
-    perspective: 340px;
+    overflow: hidden;
   }
 
   .cs-dock__roll-title {
@@ -1274,8 +1277,7 @@ main {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transform-origin: center center;
-    backface-visibility: hidden;
+    transform-origin: left center;
   }
 
   .cs-dock__caret {
@@ -1286,9 +1288,10 @@ main {
     transform: rotate(-90deg); /* point up — the sheet opens upward */
   }
 
-  /* Scrim behind the section sheet — dims the page, tap to dismiss. */
+  /* Scrim fills the vv-frame (absolute, not viewport-fixed — fixed inside the
+     dock caused iOS scroll/rubber-band glitches vs home-bottom-bar). */
   .cs-dock__scrim {
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: 0;
     background: color-mix(in srgb, var(--bg) 45%, transparent);
@@ -1322,6 +1325,7 @@ main {
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     transform-origin: bottom center;
+    will-change: clip-path, opacity;
   }
 
   .cs-dock__sheet-label {
