@@ -1,0 +1,88 @@
+# Email when preview-branch code changes land (improvement loop, PR previews).
+# Uses the same secrets as deploy-vercel.yml (RESEND_* or SMTP_* + DEPLOY_NOTIFY_EMAIL).
+#
+# Vercel's GitHub integration posts a deployment status on each push; this workflow
+# waits briefly, reads that preview URL, then sends a summary email.
+
+name: Preview change notify
+
+on:
+  push:
+    branches:
+      - improvement
+    paths:
+      - "src/**"
+      - "public/**"
+      - "index.html"
+      - "vite.config.js"
+      - "package-lock.json"
+      - "scripts/deploy-notify-email.mjs"
+      - "vercel.json"
+      - ".github/workflows/preview-notify.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: preview-notify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    name: email · preview updated
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wait for Vercel preview status
+        id: preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          repo="${GITHUB_REPOSITORY}"
+          sha="${GITHUB_SHA}"
+          branch="${GITHUB_REF_NAME}"
+          url=""
+          for attempt in $(seq 1 18); do
+            url=$(gh api "repos/${repo}/commits/${sha}/statuses" \
+              --jq '[.[] | select(.context | test("Vercel|vercel"; "i")) | .target_url] | first // empty' 2>/dev/null || true)
+            if [ -n "$url" ] && [ "$url" != "null" ]; then
+              echo "url=$url" >> "$GITHUB_OUTPUT"
+              echo "branch=$branch" >> "$GITHUB_OUTPUT"
+              echo "Resolved preview: $url"
+              exit 0
+            fi
+            echo "Attempt $attempt/18 — no Vercel status yet, sleeping 10s…"
+            sleep 10
+          done
+          echo "url=" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "::warning::Could not resolve Vercel preview URL for ${sha}; email will omit live link."
+
+      - name: Email — preview updated
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          DEPLOY_NOTIFY_EMAIL: ${{ secrets.DEPLOY_NOTIFY_EMAIL }}
+          DEPLOY_FROM_EMAIL: ${{ secrets.DEPLOY_FROM_EMAIL }}
+          DEPLOY_KIND: preview
+          DEPLOY_BRANCH: ${{ github.ref_name }}
+          DEPLOY_PREVIEW_URL: ${{ steps.preview.outputs.url }}
+          DEPLOY_PUBLIC_URL: ${{ steps.preview.outputs.url }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          npm install --no-save nodemailer@6
+          node scripts/deploy-notify-email.mjs --status success --kind preview
