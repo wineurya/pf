@@ -19,6 +19,13 @@ import vinylOxymoron from "./assets/about/about-vinyl-01.jpg";
    the image's intrinsic aspect ratio, so each cover keeps its own proportions. */
 import incityCover from "./assets/case/incity-cover.png";
 
+/* InCity "old flow" screen recording (the original ATL311 on mobile). Recorded at
+   the iPhone Pro Max logical resolution; its own status bar is cropped in the
+   phone mock and replaced with a clean synthetic one. WebM first, mp4 fallback. */
+import incityOldFlowWebm from "./assets/case/incity-old-flow.webm";
+import incityOldFlowMp4 from "./assets/case/incity-old-flow.mp4";
+import incityOldFlowPoster from "./assets/case/incity-old-flow-poster.jpg";
+
 /* Case studies, keyed by slug; the Work list derives from this so row labels
    and page titles stay in sync.
 
@@ -97,7 +104,12 @@ export const caseStudies = {
         p: "The existing flow asked mobile users to fight tiny controls, hidden menus, and unclear status. For a pothole, a broken light, or a blocked sidewalk, that was enough friction for ==residents to abandon submissions in frustration==.",
       },
       {
-        media: "wireframe",
+        media: "phone-video",
+        video: {
+          webm: incityOldFlowWebm,
+          mp4: incityOldFlowMp4,
+          poster: incityOldFlowPoster,
+        },
         title: "The old ATL311, on a phone.",
         sub: "Desktop layout squeezed onto mobile: tiny controls, hidden menus, no sense of where a report goes. The starting point we set out to replace.",
       },

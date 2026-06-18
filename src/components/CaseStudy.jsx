@@ -18,6 +18,12 @@ import {
 } from "../lib/icons.jsx";
 import { caseStudies } from "../content.js";
 import { ToolBrandIcon } from "./ToolBrandIcon.jsx";
+/* Real iPhone 17 Pro Max device frame + iOS status bar from the iOS 26 Figma
+   community kit. The frame PNG (Silver, transparent screen + baked-in Dynamic
+   Island) overlays the recording; the status bar PNG lays into the cropped top
+   band. See PhoneVideo for the measured screen geometry. */
+import iphoneFrame from "../assets/case/iphone-frame-silver.png";
+import iphoneStatusBar from "../assets/case/iphone-statusbar.png";
 
 /* Each named section carries an accent that colors load-bearing underlines — a
    color identifier per section. Keyed by section title; the accent slug resolves
@@ -882,10 +888,83 @@ function Block({ block }) {
           <h2 className="cs__block-title">{block.title}</h2>
           <p className="cs__block-summary">{renderRich(block.sub)}</p>
         </figcaption>
-        <MediaTile kind={block.media} />
+        {block.media === "phone-video" && block.video ? (
+          <PhoneVideo video={block.video} title={block.title} />
+        ) : (
+          <MediaTile kind={block.media} />
+        )}
       </RevealItem>
     );
   }
 
   return null;
+}
+
+/* An iPhone 17 Pro Max mock holding a screen recording. The bezel and Dynamic
+   Island are a real device frame PNG from the iOS 26 Figma kit, overlaid on top;
+   the recording sits behind it, cropped to the screen rect. The recording carries
+   its own (unpolished) iOS status bar in its top 62/960 band — the viewport pins
+   the video to its BOTTOM edge and clips that band off, and the kit's status bar
+   (9:41 + battery) is laid in over the freed top strip. Screen geometry (left
+   5.102% / top 2.2% / width 89.796% / height 95.6%) is measured from the frame
+   PNG's transparent screen hole. Video plays only while on screen; reduced motion
+   falls back to poster + controls. */
+function PhoneVideo({ video, title }) {
+  const reducedMotion = usePrefersReducedMotion();
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reducedMotion) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.play?.().catch(() => {});
+        else el.pause?.();
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reducedMotion]);
+
+  return (
+    <div className="cs__phone-stage">
+      <div className="cs__phone">
+        <div className="cs__phone-screen">
+          <div className="cs__phone-statusbar">
+            <img
+              className="cs__phone-statusbar-img"
+              src={iphoneStatusBar}
+              alt=""
+              aria-hidden="true"
+            />
+          </div>
+          <div className="cs__phone-viewport">
+            <video
+              ref={ref}
+              className="cs__phone-video"
+              poster={video.poster}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              autoPlay={!reducedMotion}
+              controls={reducedMotion}
+              aria-label={`Screen recording: ${title}`}
+            >
+              <source src={video.webm} type="video/webm" />
+              <source src={video.mp4} type="video/mp4" />
+            </video>
+          </div>
+        </div>
+        <img
+          className="cs__phone-frame"
+          src={iphoneFrame}
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+        />
+      </div>
+    </div>
+  );
 }

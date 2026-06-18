@@ -1891,6 +1891,109 @@ main {
     0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
 }
 
+/* ============================================================================
+   Phone-framed video — flat stage, the original 16:9 block height, with a
+   scaled-down phone centered inside for breathing room.
+
+   The stage backdrop is a FLAT fill (brighter in light mode / darker in dark),
+   no gradient and no shadow. The source recording carries its own status bar in
+   its top 62/960 band; the viewport pins the video to its BOTTOM edge and clips
+   the overflow, cropping exactly that band, and PhoneStatusBar restates a clean
+   one in its place. All metrics scale from a single --phone-w.
+   ========================================================================== */
+.cs__phone-stage {
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+}
+
+:root[data-theme="dark"] .cs__phone-stage {
+  background: #070707;
+  border-color: #1f1f1f;
+}
+
+/* Device frame — a real iPhone 17 Pro Max PNG (iOS 26 Figma kit, Silver) with a
+   transparent screen + baked-in Dynamic Island. Sized by HEIGHT so it scales
+   down inside the flat 16:9 stage with breathing room; the 490:1000 aspect comes
+   from the PNG. */
+.cs__phone {
+  position: relative;
+  height: calc(100% - 32px);
+  aspect-ratio: 490 / 1000;
+}
+
+/* The frame PNG sits ON TOP of the screen content; its opaque bezel masks the
+   square video corners and its island overlays the status strip. */
+.cs__phone-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Screen content lives behind the frame, pinned to the measured screen hole
+   (left 5.102% / top 2.2% / width 89.796% / height 95.6% of the device PNG). */
+.cs__phone-screen {
+  position: absolute;
+  left: 5.102%;
+  top: 2.2%;
+  width: 89.796%;
+  height: 95.6%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 8%;
+  background: #ffffff;
+}
+
+/* Top strip = the cropped recording band (62/956 of the screen). The kit status
+   bar sizes to 402/440 of the screen width, which makes its height match this
+   strip exactly and leaves the centre clear for the frame's island. */
+.cs__phone-statusbar {
+  flex: 0 0 6.485%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+:root[data-theme="dark"] .cs__phone-statusbar {
+  background: #070707;
+}
+
+.cs__phone-statusbar-img {
+  width: 91.36%;
+  height: auto;
+  display: block;
+}
+
+.cs__phone-viewport {
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* Pinned to the bottom edge → the recording's own status-bar band overflows the
+   top and is clipped, leaving the kit status bar as the only one on screen. */
+.cs__phone-video {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* Case-studies index (table of contents) — jump straight to another project.
    Lives inside the .cs stagger so it reveals in and cascades out with the
    page; entries reuse the row geometry (label left, meta + chevron right). */
