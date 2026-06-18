@@ -1018,6 +1018,17 @@ main {
    matching breakpoint lives in ContentsNav (matchMedia 1024) so its orientation
    stays in sync. */
 @media (min-width: 1024px) {
+  /* Optical centering — the sticky rail lives only in the LEFT margin, so a
+     strictly viewport-centered column reads as left-heavy: the rail's weight has
+     nothing to balance it on the right. Nudge the whole case group right by half
+     the rail's reach so the rail's outer edge and the column's right edge sit
+     symmetric about the viewport center. The shift rides on `.cs` (the box the
+     backdrop blob measures), so the legibility mask tracks it for free, and
+     because `.cs` only exists in the case view the home column is untouched. */
+  .cs {
+    margin-left: calc(var(--rail-offset) / 2);
+  }
+
   .cs-layout {
     display: grid;
     grid-template-columns: 1fr;
