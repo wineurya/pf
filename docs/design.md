@@ -223,6 +223,7 @@ Same as dark glow plate but lifted luminance, pale cream and sky blue wash, stil
 
 | Date       | Iteration | Surface                         | Pass?   | Notes                                                                                                                                               |
 | ---------- | --------- | ------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-19 | —         | Loop                            | —       | Stopped on user request. `improvement` @ `06780a0`; PR #2 open; device gate §10 still pending.                                                       |
 | 2026-06-18 | 18        | Preview + automated mobile      | Partial | Vercel preview loads after auth; scroll-spy + backdrop bottom OK on wide panel. Playwright iPhone 13 on localhost: 8/8 dock checks. Headless preview still SSO-blocked. |
 | 2026-06-18 | 17        | CI — preview email              | Pass    | `preview-notify.yml` on `improvement` push; SMTP sent on df8116d.                                                                                    |
 | 2026-06-18 | 16        | Case study TOC dock             | Partial | Scrim absolute in vv-frame; clip-path sheet; scroll closes sheet; backdrop `bottom: 0`. Device matrix §10 still pending.                           |

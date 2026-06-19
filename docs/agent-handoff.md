@@ -9,15 +9,13 @@ Do not include private notes, research, inspiration, raw prompts, secrets, perso
 - Public portfolio app built with React and Vite.
 - Shared agent instructions live in `AGENTS.md`.
 - Private local context should remain ignored.
-- **Loop active (dynamic)** on branch `improvement`. Commits/PR only with user approval.
+- **Loop stopped** (user request, 2026-06-19). Branch `improvement` + PR #2 remain open; merge after physical iPhone §10 or explicit approval.
 - Research: `docs/research/bibliography.md` (public citations); full notes in `.agents/private/research/mobile-fixed-chrome/` (local only).
 
 ## Loop cadence
 
-- **5 minutes** — light iteration (research note, doc tweak, tiny perf, validation row).
-- **20 minutes** — heavy iteration planned (scroll wrapper prototype, motion pass, multi-file cleanup).
-- Agent picks `nextSleepSeconds` at end of each tick; state in `.agent-scratch/loop-state.json`.
-- Open browser + fetch articles each research tick; save locally + cite in bibliography.
+- **Stopped** — no automatic wakes. Re-enable only on user request.
+- Last state: idle at device gate (`06780a0`); 20 min cadence was armed before stop.
 
 ## Loop — iteration priorities
 
