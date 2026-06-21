@@ -54,6 +54,20 @@ If you discover any of the above already tracked, stop and flag it rather than c
 - Keep content in `src/content.js`. Do not leave internal or draft notes that render publicly.
 - No secrets in source. Client config goes through `VITE_` environment variables.
 
+## Design and UI workflow
+
+- Lock the reference before writing code. State back the exact reference (Figma frame, annotated screenshot, or site), the target file under `src/`, and the precise dimensions or aspect ratio. When any of these is ambiguous, confirm before implementing — a wrong aspect ratio or wrong folder means a full rebuild.
+- The main app is the repo root and `src/`. Embedded interaction demos live in `src/exploration/`. `old/` is the archived previous app — do not edit it.
+- Respect true aspect ratios. Do not use `object-fit: contain` (letterboxing) unless explicitly asked; favor `cover`/crop matching the reference.
+- Convert new hero or large images to WebP and update their references. It is a meaningful, recurring performance win.
+
+## Verifying visual changes
+
+- Measure, do not eyeball. Read computed values (bounding box, transform, opacity, `object-fit`, font size, spacing) and compare against the reference. A screenshot alone is not proof.
+- Do not declare an issue "fixed" until a measurement matches or the user confirms it on a real device.
+- The headless preview cannot faithfully play scroll- or rAF-driven animation (frozen frames, throttled scroll, ScrollTrigger artifacts). When motion can't be verified, confirm the logic deterministically, then flag the sandbox limitation and say what to test on device — do not keep rewriting working code to chase a fake bug.
+- Run `npm run build` before considering visual or animation work done. There is a `/verify-ui` skill that walks this loop.
+
 ## Accessibility expectations
 
 - Honor `prefers-reduced-motion`. Animations and the animated grain freeze under reduced motion.
