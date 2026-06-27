@@ -27,6 +27,10 @@ export default defineConfig({
       "central-icons/IconUser",
       "central-icons/IconSuitcaseWork",
       "central-icons/IconCompassRound",
+      "central-icons/IconColorPalette",
+      "central-icons/IconEyeOpen",
+      "central-icons/IconTouch",
+      "central-icons/IconRaisingHand5Finger",
     ],
   },
   server: {

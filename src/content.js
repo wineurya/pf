@@ -26,7 +26,7 @@ import incityOldFlowWebm from "./assets/case/incity-old-flow.webm";
 import incityOldFlowMp4 from "./assets/case/incity-old-flow.mp4";
 import incityOldFlowPoster from "./assets/case/incity-old-flow-poster.jpg";
 
-/* Case studies, keyed by slug; the Work list derives from this so row labels
+/* Case studies, keyed by slug; the Work list uses CASE_STUDY_ORDER so row labels
    and page titles stay in sync.
 
    `facts` is { role, team, duration, tools }; tools render as an icon-only array.
@@ -41,6 +41,8 @@ export const caseStudies = {
     title: "Avance",
     meta: "Goal Coaching",
     hero: "image",
+    /* Work in progress — listed but locked (no open, no deep-link). */
+    wip: true,
     facts: {
       role: "UX Engineer",
       team: "Solo",
@@ -187,11 +189,11 @@ export const caseStudies = {
       { section: "Features" },
       {
         title: "Six features carried the high-fidelity experience.",
-        p: "High fidelity turned the redesign into a working product. Each feature closes a specific gap the original ATL311 left open — spanning Visual identity, Accessibility, and Interaction from first tap to final confirmation.",
+        p: "High fidelity turned the redesign into a working product. Each feature closes a specific gap the original ATL311 left open, spanning Visual identity, Accessibility, and Interaction from first tap to final confirmation.",
         guide: [
-          { term: "Visual identity", count: 2 },
-          { term: "Accessibility", count: 2 },
-          { term: "Interaction", count: 2 },
+          { term: "Visual identity", count: 2, icon: "visual" },
+          { term: "Accessibility", count: 2, icon: "access" },
+          { term: "Interaction", count: 2, icon: "interaction" },
         ],
       },
       {
@@ -225,14 +227,14 @@ export const caseStudies = {
       {
         feat: true,
         icon: "map",
-        title: "An interactive map.",
+        title: "Interactive map",
         sub: "The city at your fingertips. Cases appear as dots you can tap to see details, follow their status, and feel the progress in real time.",
         media: "prototype",
       },
       {
         feat: true,
         icon: "clipboard",
-        title: "Every submission ended with proof.",
+        title: "Proof every time",
         sub: "Every submission lands somewhere visible: a confirmation screen, a case detail, and a receipt when payment is involved. ==There is no guessing whether an action went through==.",
         media: "image",
       },
@@ -559,6 +561,8 @@ export const caseStudies = {
     title: "Kinetix",
     meta: "Synthetic UX Testing",
     hero: "prototype",
+    /* Work in progress — listed but locked (no open, no deep-link). */
+    wip: true,
     facts: {
       role: "Interface design",
       team: "Solo",
@@ -612,6 +616,16 @@ export const caseStudies = {
   },
 };
 
+/* Work list order — newest project window first (current WIP at top). */
+const CASE_STUDY_ORDER = [
+  "kinetix",
+  "avance",
+  "incity",
+  "logitech",
+  "siren",
+  "resolutions",
+];
+
 export const site = {
   name: "Wineury Almonte",
   role: "Independent Product Designer",
@@ -632,16 +646,22 @@ export const site = {
 
   /* Right-side metas: a 2–3 word Title Case tag for what each project does.
      Rows open the in-app case study at /work/<slug> (see CaseStudy). */
-  work: Object.entries(caseStudies).map(([slug, study]) => ({
-    label: study.title,
-    meta: study.meta,
-    href: `/work/${slug}`,
-    slug,
-    /* Hero kind drives the card media placeholder label in the gallery views;
-       cover, when present, fills that media tile with the real project art. */
-    hero: study.hero,
-    cover: study.cover,
-  })),
+  work: CASE_STUDY_ORDER.map((slug) => {
+    const study = caseStudies[slug];
+    return {
+      label: study.title,
+      meta: study.meta,
+      href: `/work/${slug}`,
+      slug,
+      /* WIP rows stay listed but locked: no open, no deep-link (see WorkProjects
+         and studyFromPath). */
+      wip: study.wip ?? false,
+      /* Hero kind drives the card media placeholder label in the gallery views;
+         cover, when present, fills that media tile with the real project art. */
+      hero: study.hero,
+      cover: study.cover,
+    };
+  }),
 
   /* Live embeds from /exploration — preview key maps to ExplorationGrid components. */
   explorationPreviews: [

@@ -1,0 +1,28 @@
+/* ---------------------------------------------------------------------------
+   Self-hosted variable fonts, vendored directly from upstream sources.
+
+   - Geist  v1.7.2  — Vercel        (github.com/vercel/geist-font, OFL)
+   - Inter  v4.1    — Rasmus Andersson (github.com/rsms/inter, OFL)
+
+   Single variable woff2 per family. Inter's `opsz` axis is built in, so the
+   real "Inter Display" optical cut is reached via `font-variation-settings`
+   (see --font-display-variation in tokens.css) — no separate Display file.
+
+   Licenses live alongside the binaries in ./assets/fonts/.
+--------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("../assets/fonts/Geist-Variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("../assets/fonts/InterVariable.woff2") format("woff2");
+}

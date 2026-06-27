@@ -20,7 +20,9 @@ import { caseStudies, site, tabs } from "./content.js";
 
 function studyFromPath(pathname) {
   const match = /^\/work\/([\w-]+)\/?$/.exec(pathname);
-  return match && caseStudies[match[1]] ? match[1] : null;
+  const slug = match?.[1];
+  /* WIP studies are locked: a deep-link to one falls back to home, never opens. */
+  return slug && caseStudies[slug] && !caseStudies[slug].wip ? slug : null;
 }
 
 /** Study slug state kept in sync with the URL (push on open, back on close). */

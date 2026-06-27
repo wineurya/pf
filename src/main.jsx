@@ -2,10 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { MotionConfig } from "motion/react";
 
-import "@fontsource/geist/400.css";
-import "@fontsource/geist/500.css";
-import "@fontsource-variable/inter/wght.css";
-import "@fontsource-variable/inter/opsz.css";
+import "./styles/fonts.css";
 
 import "./styles/tokens.css";
 import "./styles/base.css";

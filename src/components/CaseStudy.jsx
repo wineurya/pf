@@ -7,10 +7,12 @@ import { usePrefersReducedMotion } from "../lib/hooks.js";
 import { EASE_OUT, fillMorph, layoutMorph } from "../lib/motion.js";
 import {
   IconArrowLeft,
-  IconBulletList,
   IconChevronRight,
   IconClipboard,
   IconColorPalette,
+  IconGuideAccess,
+  IconGuideInteraction,
+  IconGuideVisual,
   IconLayersThree,
   IconLayoutGrid2,
   IconMapPin,
@@ -62,6 +64,14 @@ const CELL_ICONS = {
   clipboard: IconClipboard,
 };
 
+/* Central-icon glyphs anchored to the feature-guide trigger words in the
+   sticky left column. Slugs come from each guide entry in content. */
+const GUIDE_ICONS = {
+  visual: IconGuideVisual,
+  access: IconGuideAccess,
+  interaction: IconGuideInteraction,
+};
+
 /* Labeled meta fields, in render order. */
 const FACT_FIELDS = [
   { key: "role", label: "Role" },
@@ -93,8 +103,8 @@ const bodyStagger = (reducedMotion) => ({
   },
 });
 
-/* Inline emphasis for body prose: `==phrase==` renders as a 2px section-accent
-   underline. Phrase ink steps up to --mark-ink; only the stroke is colored. One
+/* Inline emphasis for body prose: `==phrase==` renders as a section-accent
+   highlight (12% fill, 100% ink). One
    load-bearing phrase per paragraph carries the eye through the section. */
 function renderRich(text) {
   if (typeof text !== "string" || !text.includes("==")) return text;
@@ -119,8 +129,10 @@ function renderWithGuide(text, guide, activeGuide) {
   return parts.map((part, i) => {
     const idx = terms.indexOf(part);
     if (idx >= 0) {
+      const GuideIcon = guide[idx].icon ? GUIDE_ICONS[guide[idx].icon] : null;
       return (
         <span key={i} className={`cs__guide-term${idx === activeGuide ? " is-active" : ""}`}>
+          {GuideIcon ? <GuideIcon className="cs__guide-icon" size={15} ariaHidden /> : null}
           {part}
         </span>
       );
@@ -154,7 +166,6 @@ function groupSections(blocks) {
 export function CaseStudy({
   slug,
   onBack,
-  onOpen,
   instant = false,
   theme,
   onToggleTheme,
@@ -412,11 +423,9 @@ export function CaseStudy({
             </div>
           </div>
 
-          {onOpen ? (
-            <div className="cs-band cs-band--more">
-              <CaseStudyToc currentSlug={slug} onOpen={onOpen} />
-            </div>
-          ) : null}
+          <div className="cs-band cs-band--more">
+            <CaseStudyOutro />
+          </div>
         </div>
       </div>
     </StaggerGroup>
@@ -729,41 +738,27 @@ function CaseDock({
   );
 }
 
-function CaseStudyToc({ currentSlug, onOpen }) {
-  const entries = Object.entries(caseStudies);
-
+function CaseStudyOutro() {
   return (
-    <RevealItem as="nav" className="cs__toc" aria-label="All case studies">
-      <p className="cs__toc-label">
-        <IconBulletList className="cs__toc-icon" size={14} ariaHidden />
-        All case studies
+    <RevealItem as="footer" className="cs__outro">
+      <p className="cs__outro-greeting">Thanks for stopping by!</p>
+      <p className="cs__outro-by">
+        Crafted by{" "}
+        <a
+          className="cs__outro-name"
+          href="https://www.linkedin.com/in/wineury"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Wineury A.
+        </a>
       </p>
-      <ul className="cs__toc-list">
-        {entries.map(([s, study]) => {
-          const active = s === currentSlug;
-          return (
-            <li key={s}>
-              <button
-                type="button"
-                className={`cs__toc-row${active ? " is-active" : ""}`}
-                onClick={active ? undefined : () => onOpen(s)}
-                disabled={active}
-                aria-current={active ? "page" : undefined}
-              >
-                <span className="cs__toc-title">{study.title}</span>
-                <span className="cs__toc-right">
-                  <span className="cs__toc-meta">{study.meta}</span>
-                  {active ? (
-                    <span className="cs__toc-dot" aria-hidden="true" />
-                  ) : (
-                    <IconChevronRight className="cs__toc-arrow" size={14} ariaHidden />
-                  )}
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <p className="cs__outro-quip">
+        Care for a <span className="cs__outro-grad">quick chat</span>?
+      </p>
+      <a className="cs__outro-cta" href="mailto:contact@wineury.design">
+        Let&rsquo;s talk
+      </a>
     </RevealItem>
   );
 }
@@ -829,23 +824,20 @@ function FeaturesSection({ section }) {
           ) : null}
         </div>
         <div className="cs__features-scroll">
-          {featBlocks.map((block, j) => {
-            const Icon = block.icon ? CELL_ICONS[block.icon] : null;
-            return (
-              <RevealItem key={j} as="figure" className="cs__feature">
-                <div className="cs__feature-frame">
-                  <span className="cs__tile-label">{block.media ?? "image"}</span>
-                </div>
-                <figcaption className="cs__feature-info">
-                  <div className="cs__feature-heading">
-                    {Icon ? <Icon className="cs__cell-icon" size={20} ariaHidden /> : null}
-                    <span className="cs__feature-title">{block.title}</span>
-                  </div>
-                  <span className="cs__feature-sub">{renderRich(block.sub)}</span>
-                </figcaption>
-              </RevealItem>
-            );
-          })}
+          {featBlocks.map((block, j) => (
+            <RevealItem
+              key={j}
+              as="figure"
+              className={`cs__feature${block.media === "prototype" ? " cs__feature--prototype" : ""}`}
+            >
+              <div className="cs__feature-frame">
+                <span className="cs__tile-label">{block.media ?? "image"}</span>
+                {block.title ? (
+                  <figcaption className="cs__feature-caption">{block.title}</figcaption>
+                ) : null}
+              </div>
+            </RevealItem>
+          ))}
         </div>
       </div>
     </section>
@@ -907,19 +899,17 @@ function Block({ block }) {
   }
 
   if (block.feat) {
-    const Icon = block.icon ? CELL_ICONS[block.icon] : null;
     return (
-      <RevealItem as="figure" className="cs__feature">
+      <RevealItem
+        as="figure"
+        className={`cs__feature${block.media === "prototype" ? " cs__feature--prototype" : ""}`}
+      >
         <div className="cs__feature-frame">
           <span className="cs__tile-label">{block.media ?? "image"}</span>
+          {block.title ? (
+            <figcaption className="cs__feature-caption">{block.title}</figcaption>
+          ) : null}
         </div>
-        <figcaption className="cs__feature-info">
-          <div className="cs__feature-heading">
-            {Icon ? <Icon className="cs__cell-icon" size={20} ariaHidden /> : null}
-            <span className="cs__feature-title">{block.title}</span>
-          </div>
-          <span className="cs__feature-sub">{renderRich(block.sub)}</span>
-        </figcaption>
       </RevealItem>
     );
   }

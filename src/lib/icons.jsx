@@ -5,6 +5,10 @@
 import { IconCompassRound } from "central-icons/IconCompassRound";
 import { IconSuitcaseWork } from "central-icons/IconSuitcaseWork";
 import { IconUser as CentralIconUser } from "central-icons/IconUser";
+import { IconColorPalette as CentralColorPalette } from "central-icons/IconColorPalette";
+import { IconEyeOpen } from "central-icons/IconEyeOpen";
+import { IconTouch } from "central-icons/IconTouch";
+import { IconRaisingHand5Finger } from "central-icons/IconRaisingHand5Finger";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
 import { CalendarBlank } from "@phosphor-icons/react/dist/csr/CalendarBlank";
@@ -64,6 +68,12 @@ const IconMapPin = makeIcon(MapPin);
 const IconTabWork = makeCentralIcon(IconSuitcaseWork);
 const IconTabExploration = makeCentralIcon(IconCompassRound);
 const IconTabAbout = makeCentralIcon(CentralIconUser);
+/* Inline glyphs for the feature-guide trigger words (Central icons). */
+const IconGuideVisual = makeCentralIcon(CentralColorPalette);
+const IconGuideAccess = makeCentralIcon(IconEyeOpen);
+const IconGuideInteraction = makeCentralIcon(IconTouch);
+/* Waving hand for the case-study sign-off. */
+const IconWave = makeCentralIcon(IconRaisingHand5Finger);
 function IconFigmaMark({ className, size = 14, ariaHidden }) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden={ariaHidden || undefined} xmlns="http://www.w3.org/2000/svg">
@@ -113,6 +123,9 @@ export {
   IconCheckmark1Small,
   IconClipboard,
   IconColorPalette,
+  IconGuideAccess,
+  IconGuideInteraction,
+  IconGuideVisual,
   IconLayersThree,
   IconLayoutGrid2,
   IconMapPin,
@@ -122,6 +135,7 @@ export {
   IconTabExploration,
   IconTabWork,
   IconUser,
+  IconWave,
 };
 
 /** Cursor app mark — Simple Icons path; not the generic pointer glyph. */

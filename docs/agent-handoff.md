@@ -59,3 +59,17 @@ Open review items:
 - Confirm whether old/archive folders should be removed or migrated.
 - Confirm whether personal asset filenames should be sanitized.
 - Confirm whether draft case study placeholders should be removed or hidden from production.
+
+## Legacy portfolio assets (for agents)
+
+Reference media from the old Framer site (`wineury.design`) is **not in git**. Regenerate locally when wiring case-study placeholders.
+
+| What | Path | Notes |
+| ---- | ---- | ----- |
+| **Live-site scraper** | `scripts/scrape-wineury-design.mjs` | Run: `npm run scrape:wineury-design` or `node scripts/scrape-wineury-design.mjs` |
+| **Scrape output** | `exports/wineury-design/` | Gitignored. After run, see `manifest.json` and `cases/{slug}/mockups|videos|…` |
+| **Wired case assets** | `src/assets/case/` | Only assets imported in `src/content.js` ship in the build |
+| **Figma archive script** | `.agents/private/scripts/archive-portfolio-assets.mjs` | Gitignored; outputs to `public/portfolio/` (older rebuild shell, not current case study) |
+| **Work list order** | `CASE_STUDY_ORDER` in `src/content.js` | Newest project window first; do not rely on object key order |
+
+Do not commit `exports/` or scrape downloads. Convert picks to WebP (or keep video) under `src/assets/` and reference from `content.js`.

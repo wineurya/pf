@@ -8,8 +8,10 @@ import { EASE_OUT, layoutMorph, revealItem } from "../lib/motion.js";
 import { usePrefersReducedMotion } from "../lib/hooks.js";
 
 /* A clicked project opens in-app at /work/<slug>; modified/middle clicks fall
-   through to the browser so a project can still open in a new tab. */
+   through to the browser so a project can still open in a new tab. WIP rows are
+   locked: they swallow every click and never navigate. */
 function openHandler(item, onOpen) {
+  if (item.wip) return (e) => e.preventDefault();
   if (!(item.slug && onOpen)) return undefined;
   return (e) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
@@ -31,9 +33,10 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
   return (
     <motion.a
       layout
-      className={`pcard pcard--${isCard ? "card" : "list"}`}
-      href={item.href}
+      className={`pcard pcard--${isCard ? "card" : "list"}${item.wip ? " pcard--wip" : ""}`}
+      href={item.wip ? undefined : item.href}
       data-slug={item.slug}
+      aria-disabled={item.wip || undefined}
       onClick={openHandler(item, onOpen)}
       variants={revealItem(reducedMotion)}
       style={{ transformOrigin: "center center" }}
@@ -94,7 +97,10 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
             >
               {item.label}
             </motion.span>
-            {isCard ? (
+            {item.wip ? (
+              <span className="pcard__wip">WIP</span>
+            ) : null}
+            {isCard && !item.wip ? (
               <IconArrowUpRight className="pcard__arrow" size={15} ariaHidden />
             ) : null}
           </span>
@@ -152,10 +158,12 @@ export function WorkProjects({ items, onOpen, view, onView }) {
       if (isCard) return;
       const row = e.target.closest(".pcard");
       if (!row || !listRef.current?.contains(row)) return;
+      /* Locked WIP rows don't take the highlight — keeps them feeling inert. */
+      if (row.classList.contains("pcard--wip")) return hide();
       moveToRow(row);
       lastRow.current = row;
     },
-    [isCard, moveToRow],
+    [isCard, moveToRow, hide],
   );
 
   const onFocus = useCallback(

@@ -15,9 +15,8 @@
   --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-body: var(--font-sans);
   --font-display:
-    "Inter Display", "Inter Variable", Inter,
-    ui-sans-serif, system-ui, -apple-system, sans-serif;
-  /* Display optical size — Inter Display cut at larger sizes */
+    "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Display optical size — Inter's built-in opsz axis, driven at larger sizes */
   --font-display-variation: "opsz" 32, "wght" 500;
 
   /* ---- Body scale — Geist 14 / 20 -------------------------------------- */
@@ -89,15 +88,26 @@
 
   --accent-link: #2e90fa;
 
-  /* Load-bearing body phrases (==phrase==): ink stays neutral/strong; only the
-     underline carries section accent. Each case-study section overrides
-     --mark-color with one Tailwind-600 hue. */
-  --mark-ink: var(--text-strong);
-  --mark-color: #d97706; /* amber-600 — default; sections override per accent */
+  /* Load-bearing body phrases (==phrase==): ink and fill share --mark-color
+     (100% ink, 12% fill). Each case-study section overrides with one
+     Tailwind-600 hue; dark theme steps marks to 400 for legibility. */
+  --mark-color: var(--mark-accent-overview);
 
   /* Per-section accent hues (Tailwind-600). One source of truth, shared by the
-     load-bearing underlines (--mark-color) and the case-study dock's volume
-     fill / section dots. */
+     case-study dock's volume fill / section dots. Body marks use --mark-accent-*
+     (600 in light, 400 in dark). */
+  --mark-accent-overview: var(--accent-overview);
+  --mark-accent-ideation: var(--accent-ideation);
+  --mark-accent-problem: var(--accent-problem);
+  --mark-accent-research: var(--accent-research);
+  --mark-accent-personas: var(--accent-personas);
+  --mark-accent-wireframes: var(--accent-wireframes);
+  --mark-accent-design: var(--accent-design);
+  --mark-accent-features: var(--accent-features);
+  --mark-accent-results: var(--accent-results);
+  --mark-accent-sprint: var(--accent-sprint);
+  --mark-accent-retro: var(--accent-retro);
+
   --accent-overview: #d97706; /* amber-600 */
   --accent-ideation: #7c3aed; /* violet-600 */
   --accent-problem: #dc2626; /* red-600 */
@@ -222,6 +232,19 @@
   --tool-claude: #fb923c; /* orange-400 */
   --tool-cursor: #94a3b8; /* slate-400 */
   --tool-firebase: #fbbf24; /* amber-400 */
+
+  /* Body phrase highlights — Tailwind 400 for legibility on dark paper */
+  --mark-accent-overview: #fbbf24; /* amber-400 */
+  --mark-accent-ideation: #a78bfa; /* violet-400 */
+  --mark-accent-problem: #f87171; /* red-400 */
+  --mark-accent-research: #facc15; /* yellow-400 */
+  --mark-accent-personas: #f472b6; /* pink-400 */
+  --mark-accent-wireframes: #4ade80; /* green-400 */
+  --mark-accent-design: #22d3ee; /* cyan-400 */
+  --mark-accent-features: #60a5fa; /* blue-400 */
+  --mark-accent-results: #2dd4bf; /* teal-400 */
+  --mark-accent-sprint: #fb923c; /* orange-400 */
+  --mark-accent-retro: #94a3b8; /* slate-400 */
 
 }
 

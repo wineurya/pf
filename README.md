@@ -19,7 +19,7 @@ The portfolio is built as one fast, accessible single-page app. Case studies are
 
 ## Features
 
-- Case studies for Avance, InCity, Siren, Resolutions, Logitech, and Kinetix, served at `/work/<slug>` and derived from `src/content.js`
+- Case studies for Kinetix, Avance, InCity, Logitech, Siren, and Resolutions (newest first), served at `/work/<slug>` and derived from `src/content.js`
 - Embedded interaction explorations (jelly volume slider, wallet menu) with a full `/exploration` view
 - About section with an interactive hover-word photo bento
 - Light and dark theme, persisted to `localStorage` and applied before first paint to avoid a flash

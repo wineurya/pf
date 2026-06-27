@@ -861,6 +861,30 @@ main {
     opacity var(--dur-fast) var(--ease-standard);
 }
 
+/* WIP rows are listed but locked: muted, no pointer affordance (the hover
+   highlight is also suppressed in WorkProjects), tagged with a small badge. */
+.pcard--wip {
+  cursor: default;
+}
+
+.pcard--wip .pcard__label {
+  color: var(--text-muted);
+}
+
+.pcard__wip {
+  flex-shrink: 0;
+  padding: 1px var(--space-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 @media (hover: hover) {
   .pcard--card:hover .pcard__arrow {
     opacity: 1;
@@ -1606,35 +1630,36 @@ main {
   text-wrap: pretty;
 }
 
-/* Accent underline (==phrase== in content). Phrase ink steps up to --mark-ink
-   (strong body) while the 2px stroke alone carries the section accent.
-   box-decoration-break: clone gives every wrapped line its own stroke. */
+/* Accent highlight (==phrase== in content). Ink at full --mark-color; fill at
+   12% of the same hue. box-decoration-break: clone gives every wrapped line
+   its own highlight. */
 .cs__mark {
-  color: var(--mark-ink);
-  background: none;
-  text-decoration-line: underline;
-  text-decoration-color: color-mix(in srgb, var(--mark-color) 24%, transparent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.14em;
-  text-underline-position: from-font;
+  color: var(--mark-color);
+  background: color-mix(in srgb, var(--mark-color) 12%, transparent);
+  text-decoration: none;
+  padding: 0.04em 0.12em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
 
-/* Per-section accent — each named section maps its accent token onto
-   --mark-color for load-bearing underlines. No two sections in a single case
-   study share a color. Hues live in tokens.css (--accent-*). */
-.cs__section[data-accent="overview"] { --mark-color: var(--accent-overview); }
-.cs__section[data-accent="ideation"] { --mark-color: var(--accent-ideation); }
-.cs__section[data-accent="problem"] { --mark-color: var(--accent-problem); }
-.cs__section[data-accent="research"] { --mark-color: var(--accent-research); }
-.cs__section[data-accent="personas"] { --mark-color: var(--accent-personas); }
-.cs__section[data-accent="wireframes"] { --mark-color: var(--accent-wireframes); }
-.cs__section[data-accent="design"] { --mark-color: var(--accent-design); }
-.cs__section[data-accent="features"] { --mark-color: var(--accent-features); }
-.cs__section[data-accent="results"] { --mark-color: var(--accent-results); }
-.cs__section[data-accent="sprint"] { --mark-color: var(--accent-sprint); }
-.cs__section[data-accent="retro"] { --mark-color: var(--accent-retro); }
+/* Per-section accent — each named section maps its mark accent onto
+   --mark-color for load-bearing highlights. No two sections in a single case
+   study share a color. Hues live in tokens.css (--mark-accent-*). */
+.cs__section[data-accent="overview"] { --mark-color: var(--mark-accent-overview); }
+.cs__section[data-accent="ideation"] { --mark-color: var(--mark-accent-ideation); }
+.cs__section[data-accent="problem"] { --mark-color: var(--mark-accent-problem); }
+.cs__section[data-accent="research"] { --mark-color: var(--mark-accent-research); }
+.cs__section[data-accent="personas"] { --mark-color: var(--mark-accent-personas); }
+.cs__section[data-accent="wireframes"] { --mark-color: var(--mark-accent-wireframes); }
+.cs__section[data-accent="design"] { --mark-color: var(--mark-accent-design); }
+.cs__section[data-accent="features"] { --mark-color: var(--mark-accent-features); }
+.cs__section[data-accent="results"] { --mark-color: var(--mark-accent-results); }
+.cs__section[data-accent="sprint"] { --mark-color: var(--mark-accent-sprint); }
+.cs__section[data-accent="retro"] { --mark-color: var(--mark-accent-retro); }
+
+:root[data-theme="dark"] .cs__mark {
+  background: color-mix(in srgb, var(--mark-color) 16%, transparent);
+}
 
 /* Blank media stand-ins — same surface language as the hero cover and About
    bento: quiet gray fill, soft halo, lowercase label naming the slot. */
@@ -1672,29 +1697,31 @@ main {
   user-select: none;
 }
 
-/* Feature row — portrait 1:2 frame left + icon/title/sub right, bottom-aligned.
-   flex-wrap keeps both columns usable on narrow viewports. */
+/* Feature media — a full-column image/wireframe carrying the section, with the
+   title labeled into the bottom-left. Prototypes render square; images default
+   to a calm 4:3 until a real asset drives the ratio. */
 .cs__feature {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--space-5);
+  position: relative;
   margin: 0;
   width: 100%;
 }
 
 .cs__feature-frame {
   position: relative;
-  flex-shrink: 0;
   display: grid;
   place-items: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
   background: var(--surface);
   border-radius: var(--radius-lg);
-  aspect-ratio: 1 / 2;
-  width: clamp(140px, 35%, 280px);
   box-shadow:
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
     0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
+}
+
+.cs__feature--prototype .cs__feature-frame {
+  aspect-ratio: 1 / 1;
 }
 
 :root[data-theme="dark"] .cs__feature-frame {
@@ -1703,22 +1730,19 @@ main {
     0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
 }
 
-.cs__feature-info {
-  flex: 1 1 160px;
-  min-width: 160px;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding-bottom: var(--space-3);
-}
-
-.cs__feature-title {
-  color: var(--text-strong);
-}
-
-.cs__feature-sub {
-  color: var(--text-muted);
-  text-wrap: pretty;
+/* Title rides over the media as a solid pill "nugget" — filled, fully rounded,
+   no outline. Inverse of the page so it reads on light placeholders and imagery
+   alike, in both themes. */
+.cs__feature-caption {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  margin: 0;
+  padding: 0.4em 0.85em;
+  color: var(--bg);
+  font-weight: var(--weight-display);
+  background: var(--text-strong);
+  border-radius: var(--radius-pill);
 }
 
 @supports (corner-shape: superellipse(2)) {
@@ -1772,26 +1796,29 @@ main {
 
 /* Guide terms are inline spans inside the subtitle paragraph — they animate
    from muted to strong as matching features scroll into view. */
+/* Keep the term as inline text so its letters stay on the paragraph baseline;
+   only the glyph is nudged to sit optically centered against the words. */
 .cs__guide-term {
   color: var(--text-muted);
   transition: color var(--dur-fast) var(--ease-standard);
+  white-space: nowrap;
 }
 
 .cs__guide-term.is-active {
   color: var(--text-strong);
 }
 
-/* Feature icon + title sit side-by-side in a row. */
-.cs__feature-heading {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+/* Glyph inherits the term's color, so it brightens in step on activation. */
+.cs__guide-icon {
+  display: inline-block;
+  vertical-align: -0.15em;
+  margin-right: 0.3em;
 }
 
 .cs__features-scroll {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-section);
+  gap: var(--space-6);
 }
 
 /* Tablet — keep two columns but let grid compress naturally. */
@@ -2041,94 +2068,99 @@ main {
 /* Case-studies index (table of contents) — jump straight to another project.
    Lives inside the .cs stagger so it reveals in and cascades out with the
    page; entries reuse the row geometry (label left, meta + chevron right). */
-.cs__toc {
+/* Case-study sign-off — replaces the all-studies TOC with a centered footer:
+   a thanks, the byline link, then a chat CTA. */
+.cs__outro {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding-top: var(--gap-section);
-  border-top: 1px solid var(--border-soft);
-}
-
-.cs__toc-label {
-  display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  padding-top: var(--gap-section);
+  padding-bottom: var(--space-10);
+  text-align: center;
+}
+
+.cs__outro-greeting {
+  margin: 0;
+  color: var(--text-strong);
+  font-weight: var(--weight-display);
+}
+
+.cs__outro-by {
   margin: 0;
   color: var(--text-muted);
 }
 
-.cs__toc-icon {
-  color: currentColor;
-}
-
-.cs__toc-list {
-  list-style: none;
-  margin: 0 calc(var(--space-3) * -1);
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-list);
-}
-
-.cs__toc-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
+.cs__outro-name {
   color: var(--text-default);
-  background: transparent;
-  text-align: left;
-  transition:
-    background-color var(--dur-fast) var(--ease-standard),
-    color var(--dur-fast) var(--ease-standard);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--dur-fast) var(--ease-standard);
 }
 
 @media (hover: hover) {
-  .cs__toc-row:not(.is-active):hover {
-    background: var(--hover-lift);
+  .cs__outro-name:hover {
     color: var(--text-strong);
-  }
-
-  .cs__toc-row:not(.is-active):hover .cs__toc-arrow {
-    transform: translateX(2px);
   }
 }
 
-.cs__toc-row:focus-visible {
+.cs__outro-name:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.cs__outro-quip {
+  margin: var(--space-8) 0 0;
+  color: var(--text-muted);
+}
+
+/* Gradient on the "quick chat" phrase, sampled from the ambient backdrop glow
+   (bg-6-11.png): cool sky-blue on the left sweeping to warm gold/orange on the
+   right. The backdrop image is theme-independent, so these hues are fixed. */
+.cs__outro-grad {
+  font-weight: var(--weight-display);
+  background: linear-gradient(105deg, #5b97cb 0%, #efb24e 58%, #e5863a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Primary CTA — filled pill that sits close under the quip. */
+.cs__outro-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-1);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-size);
+  font-weight: var(--weight-display);
+  color: var(--bg);
+  background: var(--text-strong);
+  border-radius: var(--radius-pill);
+  transition:
+    transform var(--dur-fast) var(--ease-out-strong),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .cs__outro-cta:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+  }
+}
+
+.cs__outro-cta:active {
+  transform: scale(0.97);
+}
+
+.cs__outro-cta:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
-.cs__toc-row.is-active {
-  color: var(--text-strong);
-  cursor: default;
-}
-
-.cs__toc-right {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
-  color: var(--text-muted);
-}
-
-.cs__toc-arrow {
-  color: var(--text-muted);
-  transition: transform var(--dur-fast) var(--ease-standard);
-}
-
-.cs__toc-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--text-primary);
-}
-
 @supports (corner-shape: superellipse(2)) {
-  .cs__toc-row {
+  .cs__outro-cta {
     corner-shape: var(--corner-smooth);
   }
 }
@@ -2806,6 +2838,29 @@ main {
 
 .theme-toggle:focus-visible {
   color: var(--text-strong);
+}
+
+/* Radial reveal — the toggle wipes in as a circle expanding from its centre.
+   The clip-path radius is a directly-animated property the browser interpolates
+   and repaints every frame; an earlier mask-image + animated-var version was
+   evaluated but never re-rasterised by Chromium, so it jumped in instantly.
+   `backwards` fill shows the collapsed circle before start and releases after,
+   so the rest state has no clip — :active press-scale, the hover background and
+   the 860px left-rail transitions are untouched. circle(80%) clears the button
+   before the hand-off to no-clip, so there's no pop. Reduced-motion skips it. */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-toggle {
+    animation: tt-reveal var(--dur-slow) var(--ease-out-strong) 90ms backwards;
+  }
+}
+
+@keyframes tt-reveal {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(80% at 50% 50%);
+  }
 }
 
 @media (min-width: 860px) {

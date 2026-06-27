@@ -24,9 +24,14 @@ npm install
 npm run dev      # http://localhost:5180
 npm run build
 npm run preview
+npm run scrape:wineury-design   # optional: refresh exports/wineury-design/ from wineury.design
 ```
 
 There are no lint or test scripts. Verify changes by running the dev server and the build.
+
+### Legacy asset archive (agents)
+
+Case-study media from the old Framer site is scraped locally, not tracked in git. See `docs/agent-handoff.md` → **Legacy portfolio assets**. Summary: run `scripts/scrape-wineury-design.mjs` → `exports/wineury-design/` (gitignored); wire chosen files into `src/assets/` and `src/content.js`. Do not commit `exports/`.
 
 ## Public and private boundaries
 
