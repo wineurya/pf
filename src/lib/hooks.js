@@ -41,6 +41,21 @@ export function useReady() {
   return ready;
 }
 
+/** Reactive match for an arbitrary media query (SSR-safe default = false). */
+export function useMediaQuery(query) {
+  const [matches, setMatches] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia(query).matches : false,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [query]);
+  return matches;
+}
+
 /** Reactive `prefers-reduced-motion` flag. */
 export function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(() =>

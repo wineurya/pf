@@ -29,6 +29,13 @@ export const uiExit = (reducedMotion = false) =>
 export const layoutMorph = (reducedMotion = false) =>
   reducedMotion ? { duration: 0 } : { duration: DUR_LAYOUT, ease: EASE_IN_OUT };
 
+/** Floating-dock shell reshape (home nav ⟷ case dock). A fast ease-OUT so the
+    shared-element scaleX leaves its compressed start within a frame or two — the
+    pill reshapes crisply and the brief content squish stays imperceptible (an
+    ease-in-out would hold the squish through its slow start). */
+export const dockMorph = (reducedMotion = false) =>
+  reducedMotion ? { duration: 0 } : { duration: 0.34, ease: EASE_OUT };
+
 export const fillMorph = (reducedMotion = false) =>
   reducedMotion ? { duration: 0 } : SPRING_FILL;
 

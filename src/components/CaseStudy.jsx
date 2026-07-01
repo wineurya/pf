@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { RevealEyebrow, RevealItem, StaggerGroup } from "./Reveal.jsx";
 import { ThemeToggle } from "./ThemeToggle.jsx";
 import { usePrefersReducedMotion } from "../lib/hooks.js";
-import { EASE_OUT, fillMorph, layoutMorph } from "../lib/motion.js";
+import { EASE_OUT, dockMorph, fillMorph, layoutMorph } from "../lib/motion.js";
 import {
   IconArrowLeft,
   IconBell,
@@ -184,12 +184,22 @@ function groupSections(blocks) {
   return sections;
 }
 
+/** Named (id-bearing) sections for a study — shared so the App-level mobile dock
+    can render synchronously on open (same commit as the home dock unmounts) for a
+    clean shared-element morph, without waiting on CaseStudy's first layout effect. */
+export function sectionsForStudy(slug) {
+  const study = caseStudies[slug];
+  if (!study) return [];
+  return groupSections(study.blocks).filter((s) => s.id);
+}
+
 export function CaseStudy({
   slug,
   onBack,
   instant = false,
   theme,
   onToggleTheme,
+  onDockState,
 }) {
   const study = caseStudies[slug];
   const sections = groupSections(study.blocks);
@@ -323,6 +333,27 @@ export function CaseStudy({
     if (reducedMotion) scrollLockRef.current = null;
   }
 
+  /* The floating dock is rendered ONE level up (App), so it can persist and morph
+     between the home section-nav and this case dock. We only publish the live
+     bits (active section + its accent + the jump handler); App already knows the
+     static section list from the slug, so the dock renders on the same commit the
+     home dock unmounts — no missing-frame, clean shared-element handoff. */
+  const jumpRef = useRef(jumpToSection);
+  jumpRef.current = jumpToSection;
+  const onSelectRef = useRef((id) => jumpRef.current(id));
+  const onDockStateRef = useRef(onDockState);
+  onDockStateRef.current = onDockState;
+
+  useLayoutEffect(() => {
+    onDockStateRef.current?.(
+      named.length >= 2
+        ? { activeId: activeSection, accent: activeAccent, onSelect: onSelectRef.current }
+        : null,
+    );
+  }, [activeSection, activeAccent, sectionIds, named.length]);
+
+  useEffect(() => () => onDockStateRef.current?.(null), []);
+
   return (
     <>
     <StaggerGroup
@@ -451,18 +482,8 @@ export function CaseStudy({
         </div>
       </div>
     </StaggerGroup>
-
-    {named.length >= 2 ? (
-      <CaseDock
-        sections={named}
-        activeId={activeSection}
-        accent={activeAccent}
-        onSelect={jumpToSection}
-        onBack={onBack}
-        theme={theme}
-        onToggleTheme={onToggleTheme}
-      />
-    ) : null}
+    {/* The floating dock lives in App now (see the onDockState publish above) so
+        it can morph between the home nav and this case dock. */}
     </>
   );
 }
@@ -579,7 +600,7 @@ function ContentsNav({ sections, activeId, onSelect }) {
    left→right "volume" fill in that section's accent tracking read-through, and
    on tap opens a sheet of every section. Portaled to <body> so `position:fixed`
    is unaffected by the case article's reveal transform. */
-function CaseDock({
+export function CaseDock({
   sections,
   activeId,
   accent,
@@ -587,6 +608,7 @@ function CaseDock({
   onBack,
   theme,
   onToggleTheme,
+  morph = false,
 }) {
   const reducedMotion = usePrefersReducedMotion();
   const [open, setOpen] = useState(false);
@@ -712,11 +734,16 @@ function CaseDock({
         ) : null}
       </AnimatePresence>
 
+      {/* When `morph`, this bar shares `m-dock-shell` with the home dock: the pill
+          reshapes and Framer cross-dissolves the two states' contents as one shared
+          element — a morph, not a hard swap. Off the morph breakpoint (tablet / no
+          home pill to hand off from) it keeps the plain reveal. */}
       <motion.div
         className="cs-dock__bar"
-        initial={dockReveal.initial}
-        animate={dockReveal.animate}
-        transition={dockReveal.transition}
+        layoutId={morph ? "m-dock-shell" : undefined}
+        initial={morph ? false : dockReveal.initial}
+        animate={morph ? { opacity: 1 } : dockReveal.animate}
+        transition={morph ? { layout: dockMorph(reducedMotion) } : dockReveal.transition}
       >
         <button
           type="button"

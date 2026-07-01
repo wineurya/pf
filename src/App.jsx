@@ -1,8 +1,8 @@
 import { Fragment, startTransition, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 
 import { Backdrop } from "./components/Backdrop.jsx";
-import { CaseStudy } from "./components/CaseStudy.jsx";
+import { CaseStudy, CaseDock, sectionsForStudy } from "./components/CaseStudy.jsx";
 import { ExplorationGrid } from "./components/ExplorationGrid.jsx";
 import { HoverWord } from "./components/HoverWord.jsx";
 import { Portrait } from "./components/Portrait.jsx";
@@ -11,13 +11,14 @@ import { Tabs } from "./components/Tabs.jsx";
 import { ThemeToggle } from "./components/ThemeToggle.jsx";
 import { WordBento } from "./components/WordBento.jsx";
 import { WorkProjects } from "./components/WorkProjects.jsx";
-import { useReady, usePrefersReducedMotion } from "./lib/hooks.js";
+import { useReady, usePrefersReducedMotion, useMediaQuery } from "./lib/hooks.js";
 import {
   EASE_IN_OUT,
   EASE_OUT,
   DUR_LAYOUT,
   DUR_UI,
   DUR_UI_EXIT,
+  dockMorph,
 } from "./lib/motion.js";
 import { useTheme } from "./lib/theme.js";
 import { usePageEnter } from "./lib/usePageEnter.js";
@@ -237,6 +238,13 @@ function PanelContent({ tab, theme, onOpenStudy, view, onView }) {
 export function App() {
   const ready = useReady();
   const reducedMotion = usePrefersReducedMotion();
+  /* The floating dock only reshapes into the case-study controls (and shares its
+     shell via layoutId) on true phones — the ≥860px home page has a left rail, so
+     there is no home pill to morph from. */
+  const isMobileDock = useMediaQuery("(max-width: 859px)");
+  /* Live case-dock bits published by the open CaseStudy (active section + accent +
+     jump handler); the static section list comes straight from the slug. */
+  const [dockState, setDockState] = useState(null);
   const [tab, setTab] = useState("work");
   /* Work-tab layout: list (default — the page's first impression is unchanged),
      single-column cards, or a two-up gallery. Kept here so it persists across
@@ -244,6 +252,9 @@ export function App() {
   const [view, setView] = useState("list");
   const [theme, toggleTheme] = useTheme();
   const [study, openStudy, closeStudy] = useStudyRoute();
+  /* Static section list for the open study (id + title), known synchronously from
+     the slug so the hoisted dock renders on the same commit the home dock leaves. */
+  const caseSections = study ? sectionsForStudy(study) : null;
   const lastStudy = useRef(null);
   /* True only while the boot-time deep link is still open — that first case
      page enters settled instead of morphing from the (invisible) list. */
@@ -289,7 +300,7 @@ export function App() {
   }, [study]);
 
   return (
-    <>
+    <LayoutGroup>
       {/* Legibility mask inside re-measures whenever the active surface swaps. */}
       <Backdrop surfaceKey={`${tab}:${study ?? ""}`} />
 
@@ -323,14 +334,18 @@ export function App() {
             <StaggerGroup className="content-wrapper" ready={ready}>
               <div className="home-bottom-bar">
                 {study ? null : (
-                  <div className="home-bottom-bar__dock">
+                  <motion.div
+                    className="home-bottom-bar__dock"
+                    layoutId={isMobileDock ? "m-dock-shell" : undefined}
+                    transition={{ layout: dockMorph(reducedMotion) }}
+                  >
                     <ThemeToggle theme={theme} onToggle={toggleTheme} />
                     <Tabs
                       items={tabs}
                       value={tab}
                       onChange={(id) => startTransition(() => setTab(id))}
                     />
-                  </div>
+                  </motion.div>
                 )}
               </div>
               <StaggerGroup className="content-main">
@@ -425,11 +440,31 @@ export function App() {
                 instant={deepLoaded.current}
                 theme={theme}
                 onToggleTheme={toggleTheme}
+                onDockState={setDockState}
               />
             ) : null}
           </AnimatePresence>
+
+          {/* One floating dock, hoisted out of CaseStudy so it persists across the
+              home ↔ case boundary and morphs (shares `m-dock-shell` with the home
+              dock). Driven by `study` directly — it swaps in the same commit the
+              home dock unmounts, so the shared-element handoff is clean both ways.
+              Static section list comes from the slug; the live active section /
+              accent / jump handler arrive via `dockState`. */}
+          {study && caseSections && caseSections.length >= 2 ? (
+            <CaseDock
+              sections={caseSections}
+              activeId={dockState?.activeId ?? caseSections[0]?.id}
+              accent={dockState?.accent ?? "overview"}
+              onSelect={dockState?.onSelect ?? (() => {})}
+              onBack={closeStudy}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+              morph={isMobileDock}
+            />
+          ) : null}
         </div>
       </div>
-    </>
+    </LayoutGroup>
   );
 }

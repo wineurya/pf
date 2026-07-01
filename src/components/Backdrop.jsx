@@ -27,10 +27,10 @@ const bandHeight = () => Math.min(window.innerWidth * 0.25, 480);
 
 /**
  * Fixed ambient glow — Figma node 558:173 (bg 6-11 1) — with a
- * stretch-to-cover legibility mask. The source image is taller than the band
- * and bleeds past the bottom edge on purpose (see .backdrop__img in
- * app.css) so iOS Safari's dynamic toolbar never uncovers blank space below
- * it. The blurred blob (Figma 557:168) sits big and centered over the
+ * stretch-to-cover legibility mask. The fixed shell hangs below the viewport
+ * by `--backdrop-bleed` (see app.css) so the bottom-anchored image paints into
+ * the strip iOS Safari reveals when its dynamic toolbar hides. The blurred blob
+ * (Figma 557:168) sits big and centered over the
  * content column and is composited *out* of the image (mask-composite:
  * exclude), erasing the glow behind copy while it survives at the page
  * edges.

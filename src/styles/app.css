@@ -9,15 +9,15 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* Hang the container below the viewport so the image can paint into the strip
+     iOS Safari reveals when the dynamic toolbar hides — see --backdrop-bleed. */
+  bottom: calc(-1 * var(--backdrop-bleed));
   top: auto;
   z-index: 0;
-  /* Figma node 558:173 — bg 6-11 1, 1920×480 */
+  /* Figma node 558:173 — bg 6-11 1; visible band is still 25vw / 480px, plus bleed. */
   width: 100%;
-  height: 25vw;
-  max-height: 480px;
-  /* visible (not hidden): the image is taller than this band and bleeds past
-     the bottom edge on purpose — see .backdrop__img. */
+  height: calc(25vw + var(--backdrop-bleed));
+  max-height: calc(480px + var(--backdrop-bleed));
   overflow: visible;
   pointer-events: none;
   background: transparent;
@@ -32,16 +32,13 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
-  bottom: auto;
+  bottom: 0;
+  top: auto;
   width: 100%;
-  /* Natural aspect ratio, not cropped to the band — the source image is
-     taller than the band on purpose so the extra height bleeds past the
-     bottom edge (off-screen) instead of the band ending in a hard cut.
-     iOS Safari's dynamic toolbar briefly reveals a strip below this
-     fixed, bottom-anchored band as it shows/hides; with a hard-cropped
-     image that strip was blank. With the bleed, it's more image. */
+  /* Natural aspect ratio, bottom-anchored — the glow sits in the visible band and
+     extra height extends below the viewport (inside the bleed zone). */
   height: auto;
+  min-height: calc(100% - var(--backdrop-bleed));
   max-width: none;
   pointer-events: none;
   /* ---- Legibility mask --------------------------------------------------- *
@@ -313,12 +310,12 @@
     pointer-events: auto;
     display: inline-flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--dock-gap);
     max-width: 100%;
-    padding: var(--space-1);
-    border-radius: var(--mobile-dock-radius);
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    box-shadow: var(--surface-fill-shadow);
+    padding: var(--dock-pad);
+    border-radius: var(--dock-radius);
+    background: var(--dock-bg);
+    box-shadow: var(--dock-shadow);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
@@ -328,8 +325,8 @@
     left: auto;
     bottom: auto;
     flex-shrink: 0;
-    width: var(--mobile-rail-h);
-    height: var(--mobile-rail-h);
+    width: var(--dock-cell);
+    height: var(--dock-cell);
     border-radius: 50%;
     background: transparent;
     box-shadow: none;
@@ -370,12 +367,12 @@
   }
 
   .home-bottom-bar .tab {
-    gap: var(--space-2);
+    gap: 6px;
     box-sizing: border-box;
-    height: var(--mobile-rail-h);
-    min-height: var(--mobile-rail-h);
-    max-height: var(--mobile-rail-h);
-    min-width: var(--mobile-rail-h);
+    height: var(--dock-cell);
+    min-height: var(--dock-cell);
+    max-height: var(--dock-cell);
+    min-width: var(--dock-cell);
     padding-block: 0;
     padding-inline: var(--space-3);
     border-radius: var(--mobile-tab-radius);
@@ -386,8 +383,8 @@
   }
 
   .home-bottom-bar .tab:not([aria-selected="true"]) {
-    width: var(--mobile-rail-h);
-    min-width: var(--mobile-rail-h);
+    width: var(--dock-cell);
+    min-width: var(--dock-cell);
     padding-inline: 0;
   }
 
@@ -1220,7 +1217,7 @@ main {
     );
     pointer-events: none;
     isolation: isolate;
-    --cs-dock-h: 44px;
+    --cs-dock-h: var(--dock-cell);
   }
 
   .cs-dock__bar {
@@ -1229,14 +1226,14 @@ main {
     z-index: 1;
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: var(--dock-gap);
     max-width: 100%;
-    padding: 3px;
+    padding: var(--dock-pad);
     /* Full half-height radius → true round pill ends (no superellipse, which
        squircles the caps and reads as "not fully rounded"). */
-    border-radius: calc(var(--cs-dock-h) / 2 + 3px);
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    box-shadow: var(--surface-fill-shadow);
+    border-radius: var(--dock-radius);
+    background: var(--dock-bg);
+    box-shadow: var(--dock-shadow);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
