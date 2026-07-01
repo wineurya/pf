@@ -5,13 +5,20 @@ import { Backdrop } from "./components/Backdrop.jsx";
 import { CaseStudy } from "./components/CaseStudy.jsx";
 import { ExplorationGrid } from "./components/ExplorationGrid.jsx";
 import { HoverWord } from "./components/HoverWord.jsx";
+import { Portrait } from "./components/Portrait.jsx";
 import { RevealItem, StaggerGroup } from "./components/Reveal.jsx";
 import { Tabs } from "./components/Tabs.jsx";
 import { ThemeToggle } from "./components/ThemeToggle.jsx";
 import { WordBento } from "./components/WordBento.jsx";
 import { WorkProjects } from "./components/WorkProjects.jsx";
 import { useReady, usePrefersReducedMotion } from "./lib/hooks.js";
-import { EASE_OUT } from "./lib/motion.js";
+import {
+  EASE_IN_OUT,
+  EASE_OUT,
+  DUR_LAYOUT,
+  DUR_UI,
+  DUR_UI_EXIT,
+} from "./lib/motion.js";
 import { useTheme } from "./lib/theme.js";
 import { usePageEnter } from "./lib/usePageEnter.js";
 import { useVisualViewportPin } from "./lib/useVisualViewportPin.js";
@@ -253,6 +260,20 @@ export function App() {
 
   useVisualViewportPin();
 
+  const aboutPortrait = tab === "about";
+  const portraitEnter = reducedMotion
+    ? { duration: 0.1 }
+    : { duration: DUR_UI, ease: EASE_OUT };
+  const portraitExit = reducedMotion
+    ? { duration: 0.1 }
+    : { duration: DUR_UI_EXIT, ease: EASE_OUT };
+  /* Collapse slot after the avatar finishes fading out; expand immediately on enter. */
+  const portraitSlotLayout = reducedMotion
+    ? { duration: 0.1 }
+    : aboutPortrait
+      ? { duration: DUR_LAYOUT, ease: EASE_IN_OUT }
+      : { duration: DUR_LAYOUT, ease: EASE_IN_OUT, delay: DUR_UI_EXIT };
+
   useEffect(() => {
     if (!study) deepLoaded.current = false;
   }, [study]);
@@ -323,9 +344,57 @@ export function App() {
               <StaggerGroup className="content-main">
                 <StaggerGroup as="header" className="head">
                   <RevealItem>
-                    <div className="head__name-role">
-                      <span className="head__name">{site.name}</span>
-                      <span className="head__role">{site.role}</span>
+                    <div className="head__identity">
+                      <motion.div
+                        className="head__identity-portrait-slot"
+                        initial={false}
+                        animate={{
+                          width: aboutPortrait ? "var(--portrait-size)" : 0,
+                          marginRight: aboutPortrait ? "var(--space-3)" : 0,
+                        }}
+                        transition={{
+                          width: portraitSlotLayout,
+                          marginRight: portraitSlotLayout,
+                        }}
+                      >
+                        <AnimatePresence initial={false}>
+                          {aboutPortrait ? (
+                            <motion.div
+                              key="pfp"
+                              className="head__identity-portrait"
+                              initial={
+                                reducedMotion
+                                  ? { opacity: 0 }
+                                  : { opacity: 0, scale: 0.88 }
+                              }
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={
+                                reducedMotion
+                                  ? { opacity: 0, transition: portraitExit }
+                                  : {
+                                      opacity: 0,
+                                      scale: 0.92,
+                                      transition: {
+                                        opacity: portraitExit,
+                                        scale: portraitExit,
+                                      },
+                                    }
+                              }
+                              transition={{
+                                opacity: portraitEnter,
+                                scale: portraitEnter,
+                              }}
+                              style={{ transformOrigin: "center center" }}
+                            >
+                              <Portrait />
+                            </motion.div>
+                          ) : null}
+                        </AnimatePresence>
+                      </motion.div>
+                      <div className="head__name-role">
+                        <span className="head__name">{site.name}</span>
+                        <span className="head__role">{site.role}</span>
+                      </div>
                     </div>
                   </RevealItem>
                   <StaggerGroup className="head__excerpt-group">

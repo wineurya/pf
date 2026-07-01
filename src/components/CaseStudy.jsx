@@ -830,10 +830,39 @@ function FeaturesSection({ section }) {
             <RevealItem
               key={j}
               as="figure"
-              className={`cs__feature${block.media === "prototype" ? " cs__feature--prototype" : ""}`}
+              className={`cs__feature${block.media === "prototype" ? " cs__feature--prototype" : ""}${block.src ? " cs__feature--media" : ""}${block.frameBg ? " cs__feature--framed" : ""}${block.portrait ? " cs__feature--portrait" : ""}`}
             >
-              <div className="cs__feature-frame">
-                <span className="cs__tile-label">{block.media ?? "image"}</span>
+              <div
+                className="cs__feature-frame"
+                style={
+                  block.frameBg
+                    ? { "--feature-frame-bg": block.frameBg }
+                    : undefined
+                }
+              >
+                {block.src ? (
+                  block.portrait ? (
+                    <div className="cs__feature-img-wrap">
+                      <img
+                        className="cs__feature-img"
+                        src={block.src}
+                        alt={block.alt ?? block.title ?? ""}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      className="cs__feature-img"
+                      src={block.src}
+                      alt={block.alt ?? block.title ?? ""}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )
+                ) : (
+                  <span className="cs__tile-label">{block.media ?? "image"}</span>
+                )}
                 {block.title ? (
                   <figcaption className="cs__feature-caption">{block.title}</figcaption>
                 ) : null}
@@ -916,6 +945,28 @@ function Block({ block }) {
     );
   }
 
+  if (block.mosaic) {
+    return (
+      <RevealItem as="figure" className="cs__figure">
+        {block.title || block.sub ? (
+          <figcaption className="cs__figcap">
+            {block.title ? <h2 className="cs__block-title">{block.title}</h2> : null}
+            {block.sub ? (
+              <p className="cs__block-summary">{renderRich(block.sub)}</p>
+            ) : null}
+          </figcaption>
+        ) : null}
+        <div className="cs__mosaic">
+          {block.mosaic.map((m, i) => (
+            <div key={i} className="cs__mosaic-item">
+              <img src={m.src} alt={m.alt ?? ""} loading="lazy" decoding="async" />
+            </div>
+          ))}
+        </div>
+      </RevealItem>
+    );
+  }
+
   if (block.media) {
     return (
       <RevealItem as="figure" className="cs__figure">
@@ -925,6 +976,14 @@ function Block({ block }) {
         </figcaption>
         {block.media === "phone-video" && block.video ? (
           <PhoneVideo video={block.video} title={block.title} />
+        ) : block.src ? (
+          <img
+            className={`cs__shot${block.portrait ? " cs__shot--portrait" : ""}`}
+            src={block.src}
+            alt={block.alt ?? block.title ?? ""}
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <MediaTile kind={block.media} />
         )}

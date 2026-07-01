@@ -20,6 +20,7 @@ import vinylOxymoron from "./assets/about/about-vinyl-01.jpg";
 import incityCover from "./assets/case/incity-cover.webp";
 import kinetixCover from "./assets/case/kinetix-cover.webp";
 import avanceCover from "./assets/case/avance-cover.webp";
+import logitechCover from "./assets/case/logitech-cover.webp";
 
 /* InCity "old flow" screen recording (the original ATL311 on mobile). Recorded at
    the iPhone Pro Max logical resolution; its own status bar is cropped in the
@@ -28,13 +29,28 @@ import incityOldFlowWebm from "./assets/case/incity-old-flow.webm";
 import incityOldFlowMp4 from "./assets/case/incity-old-flow.mp4";
 import incityOldFlowPoster from "./assets/case/incity-old-flow-poster.jpg";
 
+/* InCity research/wireframe/feature stills, hand-picked from the legacy Framer
+   site and converted to WebP (see docs/agent-handoff.md "Legacy portfolio assets"). */
+import incityResearchInterviews from "./assets/case/incity-research-interviews.webp";
+import incityResearchAudit from "./assets/case/incity-research-audit.webp";
+import incityResearchLitReview from "./assets/case/incity-research-litreview.webp";
+import incityWireframesLowFi from "./assets/case/incity-wireframes-lowfi.webp";
+import incityFeatureDesignSystem from "./assets/case/incity-feature-designsystem.webp";
+import incityFeatureVerification from "./assets/case/incity-feature-verification.webp";
+
 /* Case studies, keyed by slug; the Work list uses CASE_STUDY_ORDER so row labels
    and page titles stay in sync.
 
    `facts` is { role, team, duration, tools }; tools render as an icon-only array.
    `blocks` carry the body in a few low-fi layouts: { p } paragraph,
-   { media, title, sub } full-width placeholder with section title + subinfo,
-   { cols: [{ title, sub, media? }] } 2- or 3-up cells, and
+   { media, title, sub } full-width tile — a placeholder unless it carries a real
+   asset: `src` (+ `alt`, `portrait` for a phone screen) renders the image at its
+   own ratio, or `media: "phone-video"` + `video` renders a framed recording;
+   { mosaic: [{ src, alt }], title?, sub? } a staggered image collage,
+   { cols: [{ title, sub, media? }] } 2- or 3-up cells,
+   { feat, title, sub, media, src?, alt?, portrait?, frameBg? } a Features-section
+   card — frameBg pins a 4:3 frame, contain-fits the image, and fills letterbox with
+   that color, and
    { title, stats: [{ value, text }] } titled intro + 3-up stat columns.
    A { section: "Title" } marker opens a new body section with an anchor id and a
    contents-nav entry. Titled paragraph blocks use { title, p }. */
@@ -139,9 +155,22 @@ export const caseStudies = {
       },
       { section: "Research" },
       {
-        media: "video",
         title: "Research started with real voices.",
-        sub: "Four Atlanta residents and two city officials, including Marty Hughes, Assistant City Manager of Kennesaw, described how people experience 311 and how they would improve it on mobile.",
+        sub: "Four Atlanta residents and two city officials, including Marty Hughes, Assistant City Manager of Kennesaw, described how people experience 311 and how they would improve it on mobile — backed by a competitive audit and a literature review.",
+        mosaic: [
+          {
+            src: incityResearchInterviews,
+            alt: "Remote interview session with an Atlanta resident",
+          },
+          {
+            src: incityResearchAudit,
+            alt: "Competitive audit comparing NYC311, Austin311, and CHI311",
+          },
+          {
+            src: incityResearchLitReview,
+            alt: "Literature review notes on civic accessibility",
+          },
+        ],
       },
       {
         title: "Atlanta was falling behind cities that made status visible.",
@@ -185,6 +214,8 @@ export const caseStudies = {
       { section: "Wireframes" },
       {
         media: "image",
+        src: incityWireframesLowFi,
+        alt: "Low-fidelity wireframe board — the full screen set laid out",
         title: "Every good design starts a bit messy.",
         sub: "A single rough screen grew into a full wireframe set and one clear journey from report to resolution.",
       },
@@ -215,6 +246,9 @@ export const caseStudies = {
         title: "Design system",
         sub: "Soft corners, crisp feedback, and playful touches like bouncing pins. Every tap feels predictable and alive.",
         media: "image",
+        src: incityFeatureDesignSystem,
+        alt: "InCity design system — color, type, and component tokens",
+        frameBg: "#07080B",
       },
       {
         feat: true,
@@ -229,6 +263,9 @@ export const caseStudies = {
         title: "Onboarding verification",
         sub: "Enter your number, confirm with a text code, you're in. Familiar, fast, grounded in trust.",
         media: "image",
+        src: incityFeatureVerification,
+        alt: "Phone-number verification screen during onboarding",
+        portrait: true,
       },
       {
         feat: true,
@@ -475,6 +512,9 @@ export const caseStudies = {
     title: "Logitech",
     meta: "Promo Landing",
     hero: "image",
+    cover: logitechCover,
+    coverAlt:
+      "Logitech G PRO X Superlight promo landing with hero mouse, feature cards, and nebula backdrop",
     facts: {
       role: "UI Design",
       team: "Solo",

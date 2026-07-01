@@ -420,6 +420,26 @@
   margin-top: var(--gap-paragraph);
 }
 
+.head__identity {
+  display: flex;
+  align-items: center;
+}
+
+.head__identity-portrait-slot {
+  --portrait-size: calc(
+    var(--text-display-leading) + var(--space-1) + var(--text-leading)
+  );
+  flex-shrink: 0;
+  width: 0;
+  height: var(--portrait-size);
+  overflow: hidden;
+}
+
+.head__identity-portrait {
+  width: 100%;
+  height: 100%;
+}
+
 .head__name-role {
   display: flex;
   flex-direction: column;
@@ -427,34 +447,23 @@
   gap: var(--space-1);
 }
 
-.head .portrait-wrap {
-  margin-bottom: var(--space-2);
-}
-
-/* Portrait avatar — Figma 490:462 / IMG_9283 layer mapped to 96px circle.
-   Reference frame 1536×1431; inner image at left 0, top -381, size 1684×2245. */
-.portrait-wrap {
-  position: relative;
-  width: 96px;
-  height: 96px;
+/* Portrait avatar — circle matches name + role stack height (display + gap + body). */
+.head__identity .portrait-wrap {
+  --portrait-size: calc(
+    var(--text-display-leading) + var(--space-1) + var(--text-leading)
+  );
+  width: var(--portrait-size);
+  height: var(--portrait-size);
+  aspect-ratio: 1;
   flex-shrink: 0;
   border-radius: 50%;
   overflow: hidden;
 }
 
-.portrait__layer {
-  position: absolute;
-  left: 0;
-  top: calc(-381 / 1536 * 100%);
-  width: calc(1684 / 1536 * 100%);
-  height: calc(2245 / 1536 * 100%);
-}
-
-.portrait {
+.head__identity .portrait {
   display: block;
   width: 100%;
   height: 100%;
-  max-width: none;
   object-fit: cover;
   pointer-events: none;
 }
@@ -1730,6 +1739,55 @@ main {
     0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
 }
 
+/* A real feature image drives the frame's height instead of the placeholder's
+   fixed ratio, so nothing is cropped. */
+.cs__feature--media .cs__feature-frame {
+  aspect-ratio: auto;
+}
+
+/* Wide assets that shouldn't shrink the scroll column — keep the 4:3 tile height
+   and letterbox with the image's own canvas color (frameBg in content.js). */
+.cs__feature--media.cs__feature--framed .cs__feature-frame {
+  aspect-ratio: 4 / 3;
+  background: var(--feature-frame-bg, var(--surface));
+}
+
+.cs__feature--media.cs__feature--framed .cs__feature-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cs__feature-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Portrait feature — frame height follows the phone asset (780×1688); no forced
+   4:3 crop. ponytail: #0b121e sampled from verification asset corners. */
+.cs__feature--media.cs__feature--portrait .cs__feature-frame {
+  aspect-ratio: auto;
+  overflow: visible;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  background: #0b121e;
+}
+
+.cs__feature--portrait .cs__feature-img-wrap {
+  width: min(100%, 280px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #0b121e;
+}
+
+.cs__feature--portrait .cs__feature-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* Title rides over the media as a solid pill "nugget" — filled, fully rounded,
    no outline. Inverse of the page so it reads on light placeholders and imagery
    alike, in both themes. */
@@ -1845,6 +1903,97 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+/* A real screenshot in a full-width figure keeps its own aspect (no fixed tile).
+   Same quiet edge ring as the cover/placeholders. */
+.cs__shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
+}
+
+:root[data-theme="dark"] .cs__shot {
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
+}
+
+/* Portrait shots (a phone screen) would blow up to full column height — cap and
+   center them instead. */
+.cs__shot--portrait {
+  width: auto;
+  max-width: min(100%, 360px);
+  max-height: 80vh;
+  margin-inline: auto;
+}
+
+/* Research mosaic — staggered three-tile collage: two on top (right one
+   dropped lower), one wider tile centered below. Images keep intrinsic width. */
+.cs__mosaic {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.cs__mosaic-item {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
+}
+
+:root[data-theme="dark"] .cs__mosaic-item {
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
+}
+
+.cs__mosaic-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cs__mosaic-item:nth-child(1) {
+  grid-column: 1 / 4;
+}
+
+.cs__mosaic-item:nth-child(2) {
+  grid-column: 4 / 7;
+  margin-top: 14%;
+}
+
+.cs__mosaic-item:nth-child(3) {
+  grid-column: 2 / 6;
+  margin-top: var(--space-3);
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .cs__shot,
+  .cs__mosaic-item {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+/* Stack the mosaic on narrow screens — offsets and spans reset to a clean column. */
+@media (max-width: 700px) {
+  .cs__mosaic {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .cs__mosaic-item {
+    grid-column: 1 / -1 !important;
+    margin-top: 0 !important;
+  }
 }
 
 /* 2- / 3-up cells — 50/50 (or thirds) on a 12px gap. */
