@@ -68,6 +68,7 @@ import incityPersonaBlake from "./assets/case/incity-persona-blake.webp";
 /* Siren case-study stills from wineury.design/cases/siren (converted to WebP). */
 import sirenLeanUxCanvas from "./assets/case/siren-lean-ux-canvas.webp";
 import sirenPersonaAubrey from "./assets/case/siren-persona-aubrey.webp";
+import sirenPersonaAubreyJpg from "./assets/case/siren-persona-aubrey.jpg";
 import sirenHypothesisMatrix from "./assets/case/siren-hypothesis-matrix.webp";
 import sirenSprint1Flags from "./assets/case/siren-sprint1-flags.webp";
 import sirenSprint2VideoCall from "./assets/case/siren-sprint2-video-call.webp";
@@ -463,6 +464,7 @@ export const caseStudies = {
             name: "Aubrey",
             tagline: "Proto-persona, 25",
             image: sirenPersonaAubrey,
+            imageFallback: sirenPersonaAubreyJpg,
             alt: "Aubrey with a camera outdoors, wearing an orange hoodie",
             bio: "Busy, cautious, new to dating apps. She wants control over her dating pool without reading every profile like a background check.",
             quirks: [

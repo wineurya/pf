@@ -2223,31 +2223,43 @@ main {
   min-width: 0;
 }
 
-/* Single persona (Siren Aubrey) — photo scales with the row; copy fills the rest. */
+/* Single persona (Siren Aubrey) — stack on phone/tablet; side-by-side on desktop. */
 .persona--solo .persona__panel {
-  grid-template-columns: minmax(0, clamp(160px, 34vw, 280px)) minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 860px) {
+  .persona--solo .persona__panel {
+    display: grid;
+    grid-template-columns: minmax(0, clamp(160px, 34vw, 280px)) minmax(0, 1fr);
+    gap: clamp(1.25rem, 4vw, 2.5rem);
+  }
 }
 
 .persona__media {
   margin: 0;
-  width: 100%;
-  max-width: 280px;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  min-width: 0;
+}
+
+.persona__picture {
+  display: block;
+  width: min(320px, 100%);
 }
 
 .persona__photo {
   display: block;
   width: 100%;
-  height: 100%;
-  max-width: none;
+  height: auto;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center;
+  border-radius: var(--radius-lg);
   border: none;
   outline: none;
   box-shadow: none;
+  background: var(--surface);
 }
 
 .persona__panel[data-persona="blake"] .persona__photo {
@@ -2258,7 +2270,7 @@ main {
   display: grid;
   place-items: center;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1 / 1;
   color: var(--persona-accent);
   background: color-mix(in srgb, var(--persona-accent) 12%, transparent);
   font-size: 3.5rem;
@@ -2345,17 +2357,15 @@ main {
   text-wrap: pretty;
 }
 
-@media (max-width: 640px) {
-  .persona__panel,
-  .persona--solo .persona__panel {
-    grid-template-columns: 1fr;
+@media (max-width: 859px) {
+  .persona__panel {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-4);
   }
 
-  .persona__media,
-  .persona--solo .persona__media {
-    width: 100%;
-    max-width: none;
+  .persona__picture {
+    width: min(320px, 100%);
   }
 }
 

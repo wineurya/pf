@@ -26,6 +26,15 @@ const QUIRK_ICONS = {
   videoCall: VideoCamera,
 };
 
+/** Vite asset imports resolve to a URL string; guard odd module shapes anyway. */
+function assetUrl(value) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value?.default === "string") return value.default;
+  if (typeof value?.src === "string") return value.src;
+  return "";
+}
+
 /* InCity Personas — a two-tab toggle (Alex ⟷ Blake) over a photo, bio, and the
    three pain points that shaped each persona. The toggle reuses the app's shared
    fill-morph language (one layoutId pill glides between tabs); the panel
@@ -73,24 +82,39 @@ export function PersonaSwitch({ personas }) {
 
   const solo = personas.length === 1;
 
+  function PersonaPhoto({ persona: p }) {
+    const webp = assetUrl(p.image);
+    const fallback = assetUrl(p.imageFallback) || webp;
+    if (!fallback) {
+      return (
+        <div className="persona__photo persona__photo--empty" aria-hidden="true">
+          <span>{p.name[0]}</span>
+        </div>
+      );
+    }
+    return (
+      <picture className="persona__picture">
+        {webp && webp !== fallback ? (
+          <source srcSet={webp} type="image/webp" />
+        ) : null}
+        <img
+          className="persona__photo"
+          src={fallback}
+          alt={p.alt ?? p.name}
+          width={800}
+          height={800}
+          loading="eager"
+          decoding="async"
+        />
+      </picture>
+    );
+  }
+
   function PersonaPanel({ persona: p }) {
     return (
       <>
         <figure className="persona__media">
-          {p.image ? (
-            <img
-              className="persona__photo"
-              src={p.image}
-              alt={p.alt ?? p.name}
-              loading="eager"
-              decoding="sync"
-              fetchPriority="high"
-            />
-          ) : (
-            <div className="persona__photo persona__photo--empty" aria-hidden="true">
-              <span>{p.name[0]}</span>
-            </div>
-          )}
+          <PersonaPhoto persona={p} />
         </figure>
 
         <div className="persona__body">
