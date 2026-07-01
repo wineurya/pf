@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 import { usePrefersReducedMotion } from "../lib/hooks.js";
-import bgBand from "../assets/backdrop/bg-6-11.png";
+import bgBand from "../assets/backdrop/bg-pf.png";
 
 /* Mask SVG geometry — mirrors scrim-blob.svg (Figma node 557:168): the blob
    path's bbox is 1732×669, blurred σ 170 horizontal / 80 vertical, with 2.5σ
@@ -26,11 +26,14 @@ const STRETCH_SPAN = 0.3;
 const bandHeight = () => Math.min(window.innerWidth * 0.25, 480);
 
 /**
- * Fixed ambient glow — Figma node 558:173 (bg 6-11 1, 1920×480) — with a
- * stretch-to-cover legibility mask. The blurred blob (Figma 557:168) sits big
- * and centered over the content column and is composited *out* of the image
- * (mask-composite: exclude), erasing the glow behind copy while it survives
- * at the page edges.
+ * Fixed ambient glow — Figma node 558:173 (bg 6-11 1) — with a
+ * stretch-to-cover legibility mask. The source image is taller than the band
+ * and bleeds past the bottom edge on purpose (see .backdrop__img in
+ * app.css) so iOS Safari's dynamic toolbar never uncovers blank space below
+ * it. The blurred blob (Figma 557:168) sits big and centered over the
+ * content column and is composited *out* of the image (mask-composite:
+ * exclude), erasing the glow behind copy while it survives at the page
+ * edges.
  *
  * The blob's vertical stretch follows how far the active content column
  * intrudes into the band: case studies (text flows past the screen) hold it
