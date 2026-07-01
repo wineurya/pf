@@ -71,7 +71,6 @@
   --feature-stage-bg: #070707;
   --surface-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 72%, transparent),
-    0 2px 6px color-mix(in oklab, var(--color-black) 4%, transparent),
     0 0 0 1px color-mix(in srgb, var(--color-white) 55%, transparent);
   /* Home tiles — flat: inset top highlight + hairline ring, no halo/drop. */
   --bento-fill-shadow:
@@ -175,14 +174,8 @@
   --dock-gap: var(--space-1); /* between cells — Figma gap-[4px] */
   --dock-radius: calc(var(--dock-cell) / 2 + var(--dock-pad));
   --mobile-dock-radius: var(--dock-radius);
-  /* Shell surface + float. Light: near-white frost, hairline ring, layered drop
-     (Figma 0 2 1 / 0 12 10) softened for a cleaner float. Dark override below. */
+  /* Shell surface — frost + hairline ring only (no drop). Shares bento language. */
   --dock-bg: color-mix(in srgb, var(--bg) 92%, transparent);
-  --dock-shadow:
-    inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 70%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--color-black) 4%, transparent),
-    0 2px 4px color-mix(in srgb, var(--color-black) 5%, transparent),
-    0 12px 22px color-mix(in srgb, var(--color-black) 10%, transparent);
 
   /* ---- Radius ---------------------------------------------------------- */
   --radius-xs: 6px;
@@ -241,16 +234,10 @@
   /* White halos read as soot on dark paper — restate them as faint light. */
   --surface-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 9%, transparent),
-    0 2px 6px color-mix(in oklab, #000000 32%, transparent),
     0 0 0 1px color-mix(in srgb, #ffffff 7%, transparent);
 
-  /* Dock shell — Figma dark floating-dock (#111 body, faint light ring). Drop
-     stays soft/dark; no white halo. Blur is applied on the element (backdrop). */
+  /* Dock shell — frost + hairline ring only (no drop). */
   --dock-bg: color-mix(in srgb, #171717 84%, transparent);
-  --dock-shadow:
-    inset 0 1px 0.5px color-mix(in srgb, #ffffff 6%, transparent),
-    0 0 0 1px color-mix(in srgb, #ffffff 7%, transparent),
-    0 8px 26px color-mix(in srgb, #000000 48%, transparent);
   --bento-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
     0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
