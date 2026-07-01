@@ -36,6 +36,7 @@ import {
 import { caseStudies } from "../content.js";
 import { ToolBrandIcon } from "./ToolBrandIcon.jsx";
 import { PersonaSwitch } from "./PersonaSwitch.jsx";
+import { CaseSlider } from "./CaseSlider.jsx";
 /* Real iPhone 17 Pro Max device frame + iOS status bar from the iOS 26 Figma
    community kit. The frame PNG (Silver, transparent screen + baked-in Dynamic
    Island) overlays the recording; the status bar PNG lays into the cropped top
@@ -1026,6 +1027,22 @@ function Block({ block }) {
             <figcaption className="cs__feature-caption">{block.title}</figcaption>
           ) : null}
         </div>
+      </RevealItem>
+    );
+  }
+
+  if (block.slider) {
+    return (
+      <RevealItem as="figure" className="cs__figure">
+        {block.title || block.sub ? (
+          <figcaption className="cs__figcap">
+            {block.title ? <h2 className="cs__block-title">{block.title}</h2> : null}
+            {block.sub ? (
+              <p className="cs__block-summary">{renderRich(block.sub)}</p>
+            ) : null}
+          </figcaption>
+        ) : null}
+        <CaseSlider slides={block.slider} label={block.title ?? "Slides"} />
       </RevealItem>
     );
   }

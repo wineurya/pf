@@ -14,6 +14,10 @@ import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
 import { Flag } from "@phosphor-icons/react/dist/csr/Flag";
 import { VideoCamera } from "@phosphor-icons/react/dist/csr/VideoCamera";
 
+import { CalendarCheck } from "@phosphor-icons/react/dist/csr/CalendarCheck";
+import { GraduationCap } from "@phosphor-icons/react/dist/csr/GraduationCap";
+import { SquaresFour } from "@phosphor-icons/react/dist/csr/SquaresFour";
+
 /* One glyph per persona pain point. Slugs come from each quirk in content. */
 const QUIRK_ICONS = {
   misrouted: Signpost,
@@ -24,6 +28,10 @@ const QUIRK_ICONS = {
   noFeedback: Question,
   reportCallouts: Flag,
   videoCall: VideoCamera,
+  /* Resolutions — Tia's needs: everything in one app, the daily pass, the long arc. */
+  oneApp: SquaresFour,
+  dailyCheck: CalendarCheck,
+  bigGoal: GraduationCap,
 };
 
 /** Vite asset imports resolve to a URL string; guard odd module shapes anyway. */

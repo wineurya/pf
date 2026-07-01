@@ -75,6 +75,33 @@ import sirenSprint2VideoCall from "./assets/case/siren-sprint2-video-call.webp";
 import sirenCatfishTesting from "./assets/case/siren-catfish-testing.webp";
 import sirenHifiPass from "./assets/case/siren-hifi-pass.webp";
 
+/* Logitech stills from wineury.design/cases/logitech — the annotated UX-law
+   slides (one per principle, fed to the laws slider), the project proposal,
+   and the finished pages. */
+import logitechProposal from "./assets/case/logitech-proposal.webp";
+import logitechLawContiguity from "./assets/case/logitech-law-contiguity.webp";
+import logitechLawFitts from "./assets/case/logitech-law-fitts.webp";
+import logitechLawMiller from "./assets/case/logitech-law-miller.webp";
+import logitechLawRestorff from "./assets/case/logitech-law-restorff.webp";
+import logitechLawZeigarnik from "./assets/case/logitech-law-zeigarnik.webp";
+import logitechLawSerial from "./assets/case/logitech-law-serial.webp";
+import logitechHomeLaptop from "./assets/case/logitech-home-laptop.webp";
+import logitechLanding from "./assets/case/logitech-landing.webp";
+
+/* Resolutions stills from wineury.design/cases/resolutions — vision slide,
+   research wall, Tia (persona photo cropped from her card, jpg fallback like
+   Siren's Aubrey), hand-drawn sketches, and the hi-fi day-in-the-app lineup. */
+import resolutionsVision from "./assets/case/resolutions-vision.webp";
+import resolutionsResearchLitReview from "./assets/case/resolutions-research-litreview.webp";
+import resolutionsResearchAudit from "./assets/case/resolutions-research-audit.webp";
+import resolutionsResearchInterview from "./assets/case/resolutions-research-interview.webp";
+import resolutionsPersonaTia from "./assets/case/resolutions-persona-tia.webp";
+import resolutionsPersonaTiaJpg from "./assets/case/resolutions-persona-tia.jpg";
+import resolutionsSketchPlanner from "./assets/case/resolutions-sketch-planner.webp";
+import resolutionsSketchTracker from "./assets/case/resolutions-sketch-tracker.webp";
+import resolutionsSketchCommunity from "./assets/case/resolutions-sketch-community.webp";
+import resolutionsHifiDay from "./assets/case/resolutions-hifi-day.webp";
+
 /* Case studies, keyed by slug; the Work list uses CASE_STUDY_ORDER so row labels
    and page titles stay in sync.
 
@@ -84,6 +111,8 @@ import sirenHifiPass from "./assets/case/siren-hifi-pass.webp";
    asset: `src` (+ `alt`, `portrait` for a phone screen, `bare` to drop the edge
    ring) renders the image at its own ratio, or `media: "phone-video"` + `video` renders a framed recording;
    { mosaic: [{ src, alt }], title?, sub? } a staggered image collage,
+   { slider: [{ src, alt, law, text }], title?, sub? } an arrows-and-dots slider
+   stepping one annotated slide at a time (Logitech's UX laws),
    { personas: [{ id, name, tagline, image, alt, bio, quirks }] } photo + bio +
    icon list (InCity Alex/Blake, Siren Aubrey); toggle when 2+ personas,
    { cols: [{ title, sub, media?, src? }] } 2- or 3-up cells,
@@ -599,7 +628,9 @@ export const caseStudies = {
         p: "The vision statement came almost verbatim from a user: 'How can I pack my life into one app?' People were not failing because they lacked tools. They were failing because ==each part of life lived in a different one==.",
       },
       {
-        media: "wireframe",
+        media: "image",
+        src: resolutionsVision,
+        alt: "Vision statement slide asking 'How can I pack my life into one app?' above six circles: planner, sleep, fitness, diet, money, goals",
         title: "One routine, five apps.",
         sub: "Planning, budgeting, and habits lived in separate places. Resolutions set out to fold them into one routine.",
       },
@@ -609,27 +640,74 @@ export const caseStudies = {
         p: "The research loop combined habit-formation literature, a competitive audit, and interviews. Habit tracked behavior but lacked community; Notion organized everything but felt business-first. Jack wanted structure and friendly competition. Kayli wanted smaller tasks and notifications she could shape. ==Both wanted control, not another nagging system==.",
       },
       {
-        media: "wireframe",
+        mosaic: [
+          {
+            src: resolutionsResearchLitReview,
+            alt: "Literature review slide on habit tracking and how successful people reach their goals",
+          },
+          {
+            src: resolutionsResearchAudit,
+            alt: "Competitive audit of the Habit app listing pros, cons, and the improvements carried forward",
+          },
+          {
+            src: resolutionsResearchInterview,
+            alt: "Interview takeaways from Jack with recommendations on consistency, community, and quieter notifications",
+          },
+        ],
         title: "The research wall.",
         sub: "Literature notes, the competitive audit, and interview takeaways pinned into one picture of what people actually wanted.",
       },
       { section: "Personas" },
       {
-        cols: [
+        title: "Meet Tia.",
+        p: "Research kept pointing at the same person: a student whose day is already full. Tia became the primary persona, and the product was designed for ==one person checking in once a day== — mobile first, low complexity, calendar-aware.",
+      },
+      {
+        personas: [
           {
-            media: "image",
-            title: "Tia, 22: primary persona",
-            sub: "Full-time student, part-time barista in Alpharetta. Her day moves between class, shifts, groceries, water, assignments, and a long-term architecture goal.",
-          },
-          {
-            title: "Designed for the daily check",
-            sub: "Mobile first, low complexity, calendar-aware, and built for one person checking in once a day.",
+            id: "tia",
+            name: "Tia",
+            tagline: "Primary persona, 22",
+            image: resolutionsPersonaTia,
+            imageFallback: resolutionsPersonaTiaJpg,
+            alt: "Tia in round glasses with long dark hair, lit by warm light against a teal wall",
+            bio: "Fourth-year architecture major in Alpharetta, GA — full-time classes, barista shifts, and an internship on top. Her New Year's resolution was a healthier routine; the hard part is fitting it into a day that is already full.",
+            quirks: [
+              {
+                icon: "oneApp",
+                title: "One home for everything",
+                text: "School, shifts, groceries, water, and a long-term goal — in one place instead of five.",
+              },
+              {
+                icon: "dailyCheck",
+                title: "The daily check",
+                text: "Small dailies she can clear in one pass: gym, groceries, water, assignments.",
+              },
+              {
+                icon: "bigGoal",
+                title: "A goal with a date",
+                text: "Graduate, finish the degree, land the architecture job — long arcs behind the daily list.",
+              },
+            ],
           },
         ],
       },
       { section: "Design" },
       {
-        media: "image",
+        mosaic: [
+          {
+            src: resolutionsSketchPlanner,
+            alt: "Hand-drawn planner and meals screens sketched on paper",
+          },
+          {
+            src: resolutionsSketchTracker,
+            alt: "Hand-drawn habit tracker, school, and health screens sketched on paper",
+          },
+          {
+            src: resolutionsSketchCommunity,
+            alt: "Hand-drawn profile, groups, and community board sketches",
+          },
+        ],
         title: "From napkin sketch to something real.",
         sub: "Hand-drawn planner, meals, and community boards became wireframes, then prototypes, then usability tests.",
       },
@@ -647,7 +725,9 @@ export const caseStudies = {
         ],
       },
       {
-        media: "wireframe",
+        media: "image",
+        src: resolutionsHifiDay,
+        alt: "Five high-fidelity screens in a row: wake-time check-in, profile, meals, daily routines, and the community feed",
         title: "A day in the app.",
         sub: "Morning check-in, routines, and community boards connect the private and shared parts of the experience.",
       },
@@ -688,7 +768,9 @@ export const caseStudies = {
         p: "The brief was simple: present a new product so it is easy to understand and remember. My angle was to ==put the psychology on the page== by pairing each law with one concrete interface decision before any pixels moved.",
       },
       {
-        media: "wireframe",
+        media: "image",
+        src: logitechProposal,
+        alt: "Final project proposal document pairing each UX law with the interface decision it would drive",
         title: "The proposal, on paper.",
         sub: "Every UX law was paired with the concrete interface decision it would drive before a single pixel moved.",
       },
@@ -736,13 +818,52 @@ export const caseStudies = {
         p: "Tesler's law ==kept the honest complexity==. The page could simplify the path, but it could not hide the specifications a serious buyer needs.",
       },
       {
-        media: "wireframe",
+        slider: [
+          {
+            src: logitechLawContiguity,
+            alt: "Annotated software page: descriptive text placed directly beside the G HUB visual",
+            law: "Spatial contiguity",
+            text: "Descriptive text sits right beside the G HUB visual, so software and explanation read as one unit.",
+          },
+          {
+            src: logitechLawFitts,
+            alt: "Annotated purchase page: six large Buy Now buttons grouped close together",
+            law: "Fitts's law",
+            text: "Six large Buy Now targets sit close together, so the purchase click costs no travel.",
+          },
+          {
+            src: logitechLawMiller,
+            alt: "Annotated features page: six feature cards listed so users can retain the information",
+            law: "Miller's law",
+            text: "The features page holds six cards — inside the 5–7 chunks people can actually retain.",
+          },
+          {
+            src: logitechLawRestorff,
+            alt: "Annotated feature slide: the 63-gram weight highlighted as the one contrasting number",
+            law: "Von Restorff",
+            text: "One highlighted number — 63 grams — makes the weight the easiest thing on the page to remember.",
+          },
+          {
+            src: logitechLawZeigarnik,
+            alt: "Annotated carousel: header navigation, arrow buttons, and progress dots marked on the features slide",
+            law: "Zeigarnik",
+            text: "Progress dots under the carousel keep the read visibly unfinished, pulling people to the next slide.",
+          },
+          {
+            src: logitechLawSerial,
+            alt: "Closing panel of the landing: headline specs at the top, the Explore purchase card at the end",
+            law: "Serial position",
+            text: "What sits first and last is chosen: the page leads with the headline specs and closes on where to buy.",
+          },
+        ],
         title: "Laws, made visible.",
         sub: "Each principle lands on a specific part of the page: product specs, target sizing, progress, contrast, and content order.",
       },
       { section: "The site" },
       {
         media: "image",
+        src: logitechHomeLaptop,
+        alt: "Laptop mockup of the Superlight G PRO X home page with Home, Features, Software, and Purchase in the nav pill",
         title: "Four sections, one path.",
         sub: "Home, Features, Software, and Where to Buy lead from product value to G HUB profiles and purchase options.",
       },
@@ -752,7 +873,9 @@ export const caseStudies = {
         p: "The useful lesson was not that every UX law needs a section. It was that each law can force a decision. ==The laws did not decorate the site; they decided it==.",
       },
       {
-        media: "wireframe",
+        media: "image",
+        src: logitechLanding,
+        alt: "Finished landing pages: the hero with the Superlight mouse beside the specs panel with weight, sensor, and price",
         title: "The finished landing.",
         sub: "The hero brings together the 63-gram weight, HERO 25K sensor, and a purchase action within easy reach.",
       },

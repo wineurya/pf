@@ -16,6 +16,7 @@ import { Asterisk } from "@phosphor-icons/react/dist/csr/Asterisk";
 import { Bookmarks } from "@phosphor-icons/react/dist/csr/Bookmarks";
 import { CalendarBlank } from "@phosphor-icons/react/dist/csr/CalendarBlank";
 import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
+import { CaretLeft } from "@phosphor-icons/react/dist/csr/CaretLeft";
 import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
 import { Check } from "@phosphor-icons/react/dist/csr/Check";
 import { CircleDashed } from "@phosphor-icons/react/dist/csr/CircleDashed";
@@ -81,6 +82,7 @@ const IconArrowUpRight = makeIcon(ArrowUpRight);
 const IconBulletList = makeIcon(ListBullets);
 const IconCalendar1 = makeIcon(CalendarBlank);
 const IconChevronDown = makeIcon(CaretDown);
+const IconChevronLeft = makeIcon(CaretLeft);
 const IconChevronRight = makeIcon(CaretRight);
 const IconCheckmark1Small = makeIcon(Check);
 const IconClipboard = makeIcon(Clipboard);
@@ -167,6 +169,7 @@ export {
   IconBulletList,
   IconCalendar1,
   IconChevronDown,
+  IconChevronLeft,
   IconChevronRight,
   IconCheckmark1Small,
   IconClipboard,

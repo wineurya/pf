@@ -2065,7 +2065,8 @@ main {
 
 @supports (corner-shape: superellipse(2)) {
   .cs__shot,
-  .cs__mosaic-item {
+  .cs__mosaic-item,
+  .cs__slider-frame {
     corner-shape: var(--corner-smooth);
   }
 }
@@ -2081,6 +2082,120 @@ main {
     grid-column: 1 / -1 !important;
     margin-top: 0 !important;
   }
+}
+
+/* Principle slider — one annotated slide at a time inside a fixed 12:5 frame
+   (the annotated exports are 2.4:1, so they fill it edge to edge; odd-shaped
+   slides letterbox on the quiet frame fill). Arrows + dots below; the active
+   dot takes the section's --mark-color. */
+.cs__slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cs__slider-frame {
+  position: relative;
+  aspect-ratio: 12 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--text-strong) 4%, transparent);
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
+}
+
+:root[data-theme="dark"] .cs__slider-frame {
+  box-shadow:
+    inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
+}
+
+.cs__slider-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs__slider-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* The rotating one-liner under the frame — law name in ink, tie-in muted. */
+.cs__slider-caption {
+  margin: 0;
+  min-height: 2lh;
+  text-align: center;
+  font-size: var(--text-sm-size);
+  color: var(--text-muted);
+}
+
+.cs__slider-law {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.cs__slider-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+}
+
+.cs__slider-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--text-muted);
+  box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 30%, transparent);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .cs__slider-btn:hover {
+    color: var(--text-strong);
+  }
+}
+
+.cs__slider-btn:focus-visible {
+  color: var(--text-strong);
+}
+
+.cs__slider-dots {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.cs__slider-dot {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hit target stays 14px; the visible dot is drawn by the pseudo-element. */
+.cs__slider-dot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text-muted) 40%, transparent);
+  transition:
+    background var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+}
+
+.cs__slider-dot[aria-current]::before {
+  background: var(--mark-color, var(--text-strong));
+  transform: scale(1.25);
 }
 
 /* 2- / 3-up cells — 50/50 (or thirds) on a 12px gap. */
@@ -2238,36 +2353,25 @@ main {
 
 .persona__panel {
   display: grid;
-  grid-template-columns: minmax(0, clamp(140px, 28vw, 240px)) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
   gap: clamp(1.25rem, 4vw, 2.5rem);
   align-items: start;
   width: 100%;
   min-width: 0;
 }
 
-/* Single persona (Siren Aubrey) — stack on phone/tablet; side-by-side on desktop. */
-.persona--solo .persona__panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-@media (min-width: 860px) {
-  .persona--solo .persona__panel {
-    display: grid;
-    grid-template-columns: minmax(0, clamp(160px, 34vw, 280px)) minmax(0, 1fr);
-    gap: clamp(1.25rem, 4vw, 2.5rem);
-  }
-}
-
 .persona__media {
   margin: 0;
   min-width: 0;
+  width: 100%;
 }
 
 .persona__picture {
   display: block;
-  width: min(320px, 100%);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
 }
 
 .persona__photo {
@@ -2277,11 +2381,15 @@ main {
   aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center;
-  border-radius: var(--radius-lg);
   border: none;
   outline: none;
   box-shadow: none;
   background: var(--surface);
+}
+
+.persona__panel[data-persona="aubrey"] .persona__photo {
+  transform: scale(1.2);
+  transform-origin: center center;
 }
 
 .persona__panel[data-persona="blake"] .persona__photo {
@@ -2379,15 +2487,10 @@ main {
   text-wrap: pretty;
 }
 
-@media (max-width: 859px) {
+@media (max-width: 640px) {
   .persona__panel {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: var(--space-4);
-  }
-
-  .persona__picture {
-    width: min(320px, 100%);
   }
 }
 
