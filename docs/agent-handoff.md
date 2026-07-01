@@ -6,11 +6,12 @@ Do not include private notes, research, inspiration, raw prompts, secrets, perso
 
 ## Current State
 
-- Public portfolio app built with React and Vite.
-- Shared agent instructions live in `AGENTS.md`.
+- Public portfolio app built with React and Vite. Branch **`main`** tracks `origin/main`.
+- Shared agent instructions: **`AGENTS.md`** (source of truth for all agents — Claude, Codex, Cursor, Copilot, Windsurf, Cline, Gemini CLI). Adapters: `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/project.mdc`, `.windsurf/rules/project.md`, `.clinerules/project.md`.
+- Ponytail installed: `.cursor/rules/ponytail.mdc`, `.agents/skills/ponytail*`.
+- Sibling project **Avance** (`wineurya/avance-coach`): `C:\Users\xezrh\Documents\Avance` — see `../Avance/AGENTS.md`. Local dual-run: pf **3000**, Avance **3001**.
+- **InCity cover:** `src/assets/case/incity-cover.webp` (intrinsic aspect ratio; do not force 16:9).
 - Private local context should remain ignored.
-- **Loop stopped** (user request, 2026-06-19). Branch `improvement` + PR #2 remain open; merge after physical iPhone §10 or explicit approval.
-- Research: `docs/research/bibliography.md` (public citations); full notes in `.agents/private/research/mobile-fixed-chrome/` (local only).
 
 ## Loop cadence
 

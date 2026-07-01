@@ -1,6 +1,43 @@
 # Agent Guide
 
-Shared instructions for Claude, Codex, Cursor, and any future coding agent working in this repository. This file is the source of truth. Other agent files (`CLAUDE.md`, `.cursor/rules/project.mdc`) point here.
+**Source of truth for every coding agent** — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, Gemini CLI, and any tool that reads `AGENTS.md`, `CLAUDE.md`, or repo instruction files.
+
+Other files are adapters only; they point here and must stay in sync:
+
+| Agent / host | Adapter file |
+| --- | --- |
+| All (default) | `AGENTS.md` (this file) |
+| Claude Code / Claude | `CLAUDE.md` |
+| GitHub Copilot (editor + CLI) | `.github/copilot-instructions.md` |
+| Cursor | `.cursor/rules/project.mdc`, `.cursor/rules/ponytail.mdc` |
+| Windsurf | `.windsurf/rules/project.md` |
+| Cline | `.clinerules/project.md` |
+
+**Ponytail** (lazy senior dev / minimal correct code) is installed: `.cursor/rules/ponytail.mdc` and `.agents/skills/ponytail*`. Skills: `ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help`.
+
+## Local checkout (this machine)
+
+| Field | Value |
+| --- | --- |
+| **Path** | `C:\Users\xezrh\Documents\Portfolio - April\pf` |
+| **Short name** | **pf** (the portfolio — not the old `Documents\Portfolio` folder) |
+| **Remote** | `https://github.com/wineurya/pf.git` |
+| **Branch** | `main` (tracks `origin/main`) |
+| **Default dev port** | `5180` (`PORT` env in `vite.config.js`) |
+| **Local dual-run port** | `3000` when Avance is also running (see sibling project below) |
+
+## Sibling project — Avance
+
+Wineury's coaching PWA lives separately. When working across both repos, use these conventions:
+
+| | **pf** (this repo) | **Avance** |
+| --- | --- | --- |
+| Path | `C:\Users\xezrh\Documents\Portfolio - April\pf` | `C:\Users\xezrh\Documents\Avance` |
+| Remote | `wineurya/pf` | `wineurya/avance-coach` |
+| Dual-run dev | `PORT=3000 npm run dev` | `npm run dev -- --port 3001 --strictPort` |
+| Agent guide | `AGENTS.md` (this file) | `../Avance/AGENTS.md` |
+
+Do not confuse **pf** with `Documents\Portfolio` or `Documents\Portfolio - April\Portfolio` — those are legacy folders.
 
 ## Project overview
 
@@ -21,7 +58,8 @@ Stack: React 19, Vite 6, plain CSS with design tokens, Motion and GSAP for anima
 
 ```bash
 npm install
-npm run dev      # http://localhost:5180
+npm run dev      # http://localhost:5180 (default)
+PORT=3000 npm run dev   # when Avance is on 3001
 npm run build
 npm run preview
 npm run scrape:wineury-design   # optional: refresh exports/wineury-design/ from wineury.design
@@ -64,7 +102,9 @@ If you discover any of the above already tracked, stop and flag it rather than c
 - Lock the reference before writing code. State back the exact reference (Figma frame, annotated screenshot, or site), the target file under `src/`, and the precise dimensions or aspect ratio. When any of these is ambiguous, confirm before implementing — a wrong aspect ratio or wrong folder means a full rebuild.
 - The main app is the repo root and `src/`. Embedded interaction demos live in `src/exploration/`. `old/` is the archived previous app — do not edit it.
 - Respect true aspect ratios. Do not use `object-fit: contain` (letterboxing) unless explicitly asked; favor `cover`/crop matching the reference.
+- **Case-study covers use the image's intrinsic aspect ratio** — width 100%, height auto; gallery cards set `--card-ar` from `naturalWidth / naturalHeight`. Do not force a display ratio (e.g. 16:9) over a panoramic cover.
 - Convert new hero or large images to WebP and update their references. It is a meaningful, recurring performance win.
+- **InCity cover:** `src/assets/case/incity-cover.webp` (2400×715, ~3.36:1). Wired in `src/content.js` with `coverAlt`.
 
 ## Verifying visual changes
 

@@ -1,9 +1,11 @@
-# Claude Instructions
+﻿# Claude Instructions
 
-Read `AGENTS.md` first. It is the shared source of truth for all agents working in this repository.
+Read `AGENTS.md` first. It is the shared source of truth for **all** agents (Claude Code, Codex, Cursor, Copilot, Windsurf, Cline, Gemini CLI).
 
-This is a public portfolio repository. Keep research, inspiration, raw prompts, private notes, secrets, and local context out of commits.
+This is **pf** (`wineurya/pf`). Local path: `C:\Users\xezrh\Documents\Portfolio - April\pf`. Sibling **Avance**: `../Avance/AGENTS.md`.
 
-Do not add AI or agent co-authorship to commits. No `Co-authored-by:` trailers and no "Generated with" agent attribution. See AGENTS.md, "Commit conventions".
+Do not commit private research, inspiration, raw prompts, secrets, or local context.
+
+Do not add AI or agent co-authorship to commits. See AGENTS.md, "Commit conventions".
 
 Use `docs/agent-handoff.md` only for sanitized handoff notes.
