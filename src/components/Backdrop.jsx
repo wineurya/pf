@@ -44,7 +44,7 @@ const bandHeight = () => Math.min(window.innerWidth * 0.25, 480);
  * vars on the root — no React re-renders. `surfaceKey` re-measures when the
  * active surface (tab / case study) swaps.
  */
-export function Backdrop({ surfaceKey }) {
+export function Backdrop({ surfaceKey, caseOpen }) {
   const rootRef = useRef(null);
   /* Shared between the two effects below. */
   const driverRef = useRef(null);
@@ -179,11 +179,14 @@ export function Backdrop({ surfaceKey }) {
 
   return (
     <div
-      className="backdrop"
+      className={`backdrop${caseOpen ? " backdrop--case" : ""}`}
       ref={rootRef}
       aria-hidden="true"
     >
-      <img className="backdrop__img" src={bgBand} alt="" decoding="async" />
+      <div
+        className="backdrop__img"
+        style={{ "--backdrop-img": `url(${bgBand})` }}
+      />
     </div>
   );
 }

@@ -302,7 +302,7 @@ export function App() {
   return (
     <LayoutGroup>
       {/* Legibility mask inside re-measures whenever the active surface swaps. */}
-      <Backdrop surfaceKey={`${tab}:${study ?? ""}`} />
+      <Backdrop surfaceKey={`${tab}:${study ?? ""}`} caseOpen={Boolean(study)} />
 
       <a className="skip-link" href="#main">
         Skip to content

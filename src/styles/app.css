@@ -43,11 +43,19 @@
   bottom: 20px;
   top: auto;
   width: 150%;
-  /* Natural aspect ratio, bottom-anchored — the glow sits in the visible band and
-     extra height extends below the viewport (inside the bleed zone). */
-  height: auto;
-  min-height: calc(100% - var(--backdrop-bleed));
-  max-width: none;
+  /* Rendered as a CSS background (not an <img>) so width and height scale
+     independently: width still tracks the viewport (150vw) for the edge-to-edge
+     horizontal crop above, but height is a fixed value tied only to the bleed,
+     not to vw. With height:auto (aspect-locked to width) the rendered image
+     grew from ~240px tall on mobile to ~900px+ on desktop — a wildly different
+     peek per breakpoint. background-size: 100% 100% stretches the same source
+     art to this fixed box at every width, so the visible peek stays the same
+     slight sliver on phone, tablet, and desktop alike. */
+  height: calc(140px + var(--backdrop-bleed));
+  background-image: var(--backdrop-img);
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: 100% 100%;
   pointer-events: none;
   /* ---- Legibility mask --------------------------------------------------- *
      The blurred blob (Figma 557:168) is composited OUT of the glow
@@ -67,6 +75,12 @@
   mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
   mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
   mask-composite: exclude;
+}
+
+/* Case studies scroll past long copy that reaches the band — sit the glow
+   lower (back at the true edge, no lift) so less of it competes with content. */
+.backdrop--case .backdrop__img {
+  bottom: 0;
 }
 
 /* ---- Shell / layout ----------------------------------------------------- */
