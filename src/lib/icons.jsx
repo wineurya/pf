@@ -11,12 +11,18 @@ import { IconTouch } from "central-icons/IconTouch";
 import { IconRaisingHand5Finger } from "central-icons/IconRaisingHand5Finger";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
+import { Asterisk } from "@phosphor-icons/react/dist/csr/Asterisk";
+import { Bookmarks } from "@phosphor-icons/react/dist/csr/Bookmarks";
 import { CalendarBlank } from "@phosphor-icons/react/dist/csr/CalendarBlank";
 import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
 import { Check } from "@phosphor-icons/react/dist/csr/Check";
+import { CircleDashed } from "@phosphor-icons/react/dist/csr/CircleDashed";
 import { Clipboard } from "@phosphor-icons/react/dist/csr/Clipboard";
+import { Crosshair } from "@phosphor-icons/react/dist/csr/Crosshair";
 import { GridFour } from "@phosphor-icons/react/dist/csr/GridFour";
 import { ListBullets } from "@phosphor-icons/react/dist/csr/ListBullets";
+import { MagnetStraight } from "@phosphor-icons/react/dist/csr/MagnetStraight";
+import { NumberSeven } from "@phosphor-icons/react/dist/csr/NumberSeven";
 import { Palette } from "@phosphor-icons/react/dist/csr/Palette";
 import { Square } from "@phosphor-icons/react/dist/csr/Square";
 import { Stack } from "@phosphor-icons/react/dist/csr/Stack";
@@ -65,6 +71,12 @@ const IconPeople = makeIcon(Users);
 const IconSquarePlaceholder = makeIcon(Square);
 const IconUser = makeIcon(User);
 const IconMapPin = makeIcon(MapPin);
+const IconLawAsterisk = makeIcon(Asterisk);
+const IconLawBookmarks = makeIcon(Bookmarks);
+const IconLawCrosshair = makeIcon(Crosshair);
+const IconLawDashed = makeIcon(CircleDashed);
+const IconLawMagnet = makeIcon(MagnetStraight);
+const IconLawSeven = makeIcon(NumberSeven);
 const IconTabWork = makeCentralIcon(IconSuitcaseWork);
 const IconTabExploration = makeCentralIcon(IconCompassRound);
 const IconTabAbout = makeCentralIcon(CentralIconUser);
@@ -126,6 +138,12 @@ export {
   IconGuideAccess,
   IconGuideInteraction,
   IconGuideVisual,
+  IconLawAsterisk,
+  IconLawBookmarks,
+  IconLawCrosshair,
+  IconLawDashed,
+  IconLawMagnet,
+  IconLawSeven,
   IconLayersThree,
   IconLayoutGrid2,
   IconMapPin,

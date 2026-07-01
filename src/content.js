@@ -21,6 +21,8 @@ import incityCover from "./assets/case/incity-cover.webp";
 import kinetixCover from "./assets/case/kinetix-cover.webp";
 import avanceCover from "./assets/case/avance-cover.webp";
 import logitechCover from "./assets/case/logitech-cover.webp";
+import resolutionsCover from "./assets/case/resolutions-cover.webp";
+import sirenCover from "./assets/case/siren-cover.webp";
 
 /* InCity "old flow" screen recording (the original ATL311 on mobile). Recorded at
    the iPhone Pro Max logical resolution; its own status bar is cropped in the
@@ -317,6 +319,8 @@ export const caseStudies = {
     title: "Siren",
     meta: "Safer Dating",
     hero: "image",
+    cover: sirenCover,
+    coverAlt: "Siren safer dating app cover",
     facts: {
       role: "UX/UI Designer",
       team: "Team of 5",
@@ -409,6 +413,8 @@ export const caseStudies = {
     title: "Resolutions",
     meta: "Habit Building",
     hero: "image",
+    cover: resolutionsCover,
+    coverAlt: "Resolutions habit-building app cover",
     facts: {
       role: "UI/UX & Research",
       team: "Team of 5",
@@ -547,14 +553,17 @@ export const caseStudies = {
       {
         cols: [
           {
+            icon: "lawMagnet",
             title: "Spatial contiguity",
             sub: "Specs attach to the product image so the eye does not bounce between two separate explanations.",
           },
           {
+            icon: "lawCrosshair",
             title: "Fitts's law",
             sub: "Primary purchase targets stay large and close to the product decision.",
           },
           {
+            icon: "lawSeven",
             title: "Miller's law",
             sub: "The software story capped at 5–7 pages.",
           },
@@ -563,16 +572,19 @@ export const caseStudies = {
       {
         cols: [
           {
+            icon: "lawAsterisk",
             title: "Von Restorff",
             sub: "Contrast makes the 63-gram weight the page's easiest number to remember.",
           },
           {
+            icon: "lawDashed",
             title: "Zeigarnik",
             sub: "Progress dots give the page a visible sense of unfinished reading.",
           },
           {
+            icon: "lawBookmarks",
             title: "Serial position",
-            sub: "Price opens the buying path; battery life closes it, so both land in memorable positions.",
+            sub: "Price first, battery life last. Shoppers remember what sits at the start and end of the page.",
           },
         ],
       },

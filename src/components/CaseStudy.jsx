@@ -13,6 +13,12 @@ import {
   IconGuideAccess,
   IconGuideInteraction,
   IconGuideVisual,
+  IconLawAsterisk,
+  IconLawBookmarks,
+  IconLawCrosshair,
+  IconLawDashed,
+  IconLawMagnet,
+  IconLawSeven,
   IconLayersThree,
   IconLayoutGrid2,
   IconMapPin,
@@ -62,6 +68,13 @@ const CELL_ICONS = {
   user: IconUser,
   map: IconMapPin,
   clipboard: IconClipboard,
+  /* Logitech laws — decorative slugs, not reused on InCity feature cells. */
+  lawMagnet: IconLawMagnet,
+  lawCrosshair: IconLawCrosshair,
+  lawSeven: IconLawSeven,
+  lawAsterisk: IconLawAsterisk,
+  lawDashed: IconLawDashed,
+  lawBookmarks: IconLawBookmarks,
 };
 
 /* Central-icon glyphs anchored to the feature-guide trigger words in the
