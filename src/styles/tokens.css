@@ -67,6 +67,8 @@
   --color-white: #fff;
   --bg: #feffff;
   --surface: #f0f0f0;
+  /* Phone-framed feature media — recording / asset matte (#070707), not theme surface. */
+  --feature-stage-bg: #070707;
   --surface-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, var(--color-white) 72%, transparent),
     0 2px 6px color-mix(in oklab, var(--color-black) 4%, transparent),
@@ -116,6 +118,10 @@
   --accent-wireframes: #16a34a; /* green-600 */
   --accent-design: #0891b2; /* cyan-600 */
   --accent-features: #2563eb; /* blue-600 */
+  /* InCity Personas — per-persona accents (Alex = primary blue, Blake = pink) */
+  --persona-accent-alex: var(--accent-features);
+  --persona-accent-blake: var(--accent-personas);
+  --persona-accent-aubrey: #c65028; /* Siren Aubrey — sampled from hoodie */
   --accent-results: #0d9488; /* teal-600 */
   --accent-sprint: #ea580c; /* orange-600 */
   --accent-retro: #475569; /* slate-600 */
@@ -242,6 +248,9 @@
   --mark-accent-wireframes: #4ade80; /* green-400 */
   --mark-accent-design: #22d3ee; /* cyan-400 */
   --mark-accent-features: #60a5fa; /* blue-400 */
+  --persona-accent-alex: var(--mark-accent-features);
+  --persona-accent-blake: var(--mark-accent-personas);
+  --persona-accent-aubrey: #ea7e4c; /* Siren Aubrey hoodie highlight */
   --mark-accent-results: #2dd4bf; /* teal-400 */
   --mark-accent-sprint: #fb923c; /* orange-400 */
   --mark-accent-retro: #94a3b8; /* slate-400 */

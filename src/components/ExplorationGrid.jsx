@@ -15,6 +15,14 @@ const PREVIEW_COMPONENTS = {
   wallet: WalletMenuStage,
 };
 
+function ExplorationImage({ src, alt }) {
+  return (
+    <div className="exp-card__frame exp-card__frame--image">
+      <img className="exp-card__image" src={src} alt={alt} decoding="async" />
+    </div>
+  );
+}
+
 function ExplorationPreview({ kind, previewProps }) {
   const Component = PREVIEW_COMPONENTS[kind];
   if (!Component) return null;
@@ -61,6 +69,7 @@ export function ExplorationGrid({ items, theme = "light" }) {
       {items.map((it) => {
         const isDead = it.href === "#";
         const hasPreview = Boolean(PREVIEW_COMPONENTS[it.preview]);
+        const hasImage = Boolean(it.image);
 
         return (
           <RevealItem key={it.label} as="article" className="exp-card">
@@ -70,6 +79,8 @@ export function ExplorationGrid({ items, theme = "light" }) {
                 previewProps={it.previewProps}
                 theme={theme}
               />
+            ) : hasImage ? (
+              <ExplorationImage src={it.image} alt={it.imageAlt ?? it.label} />
             ) : null}
 
             <a

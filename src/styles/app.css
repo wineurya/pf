@@ -491,6 +491,20 @@
   margin: 0;
 }
 
+/* Icon immediately before a ==highlight== (see renderRich ::iconKey==…==). */
+.rich__icon-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.15em;
+  white-space: nowrap;
+}
+
+.rich__icon-mark-icon {
+  flex-shrink: 0;
+  align-self: center;
+  color: inherit;
+}
+
 /* =============================================================================
    Panels + link lists (single sliding highlight, no border)
    ========================================================================== */
@@ -627,11 +641,27 @@ main {
   width: 100%;
 }
 
-/* Layout toggle hugs the column's right edge, lined up with the row meta. */
+/* Label left, layout toggle right — lined up with the row meta. */
 .work__bar {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+}
+
+.work__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-size);
+  line-height: var(--text-leading);
+  font-weight: var(--weight-medium);
+  color: var(--text-strong);
+}
+
+.work__label-caret {
+  flex-shrink: 0;
+  color: inherit;
 }
 
 /* Icon segmented control — mirrors the .tab pills (shared gray fill via
@@ -881,10 +911,14 @@ main {
 }
 
 .pcard__wip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   flex-shrink: 0;
   padding: 1px var(--space-2);
-  border: 1px solid var(--border-soft);
+  border: none;
   border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--text-muted) 12%, transparent);
   font-family: var(--font-sans);
   font-size: 10px;
   line-height: 1.5;
@@ -892,6 +926,10 @@ main {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
+}
+
+.pcard__wip-icon {
+  flex-shrink: 0;
 }
 
 @media (hover: hover) {
@@ -1706,9 +1744,9 @@ main {
   user-select: none;
 }
 
-/* Feature media — a full-column image/wireframe carrying the section, with the
-   title labeled into the bottom-left. Prototypes render square; images default
-   to a calm 4:3 until a real asset drives the ratio. */
+/* Feature media — uniform 1:1 frames in the Features scroll column; title pill
+   rides bottom-left. Padded cards inset media by --space-6; fullBleed keeps
+   edge-to-edge treatment (theme toggle). */
 .cs__feature {
   position: relative;
   margin: 0;
@@ -1720,17 +1758,13 @@ main {
   display: grid;
   place-items: center;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: var(--surface);
+  background: var(--feature-frame-bg, var(--feature-stage-bg));
   border-radius: var(--radius-lg);
   box-shadow:
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 70%, transparent),
     0 0 0 1px color-mix(in srgb, #ffffff 50%, transparent);
-}
-
-.cs__feature--prototype .cs__feature-frame {
-  aspect-ratio: 1 / 1;
 }
 
 :root[data-theme="dark"] .cs__feature-frame {
@@ -1739,50 +1773,71 @@ main {
     0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
 }
 
-/* A real feature image drives the frame's height instead of the placeholder's
-   fixed ratio, so nothing is cropped. */
-.cs__feature--media .cs__feature-frame {
-  aspect-ratio: auto;
+/* Padded media — 24px inset; grid slot fills the content box so flex centering
+   cannot collapse back to full-bleed intrinsic size (portrait phones). */
+.cs__feature--padded .cs__feature-frame {
+  display: grid;
+  grid-template: 1fr / 1fr;
+  padding: var(--space-6);
 }
 
-/* Wide assets that shouldn't shrink the scroll column — keep the 4:3 tile height
-   and letterbox with the image's own canvas color (frameBg in content.js). */
-.cs__feature--media.cs__feature--framed .cs__feature-frame {
-  aspect-ratio: 4 / 3;
-  background: var(--feature-frame-bg, var(--surface));
+.cs__feature--padded.cs__feature--framed .cs__feature-frame {
+  background: var(--feature-frame-bg, var(--feature-stage-bg));
 }
 
-.cs__feature--media.cs__feature--framed .cs__feature-img {
+/* Padded prototype videos (e.g. Interactive map) — square frame matches recording matte. */
+.cs__feature--prototype.cs__feature--padded .cs__feature-frame {
+  background: var(--feature-frame-bg, var(--feature-stage-bg));
+}
+
+.cs__feature--padded.cs__feature--portrait .cs__feature-frame {
+  background: #ffffff;
+}
+
+:root[data-theme="dark"] .cs__feature--padded.cs__feature--portrait .cs__feature-frame {
+  background: var(--feature-stage-bg);
+}
+
+.cs__feature--padded .cs__feature-img-wrap,
+.cs__feature--padded .cs__feature-frame > .cs__feature-img,
+.cs__feature--padded .cs__feature-frame > .cs__feature-video {
+  grid-area: 1 / 1;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs__feature--padded .cs__feature-img,
+.cs__feature--padded .cs__feature-video {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
 }
 
-.cs__feature-img {
+/* Full-bleed — theme toggle video (and future full-bleed assets). */
+.cs__feature--fullbleed .cs__feature-frame {
+  padding: 0;
+  display: grid;
+  place-items: stretch;
+}
+
+.cs__feature--fullbleed .cs__feature-video,
+.cs__feature--fullbleed .cs__feature-img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Portrait feature — frame height follows the phone asset (780×1688); no forced
-   4:3 crop. ponytail: #0b121e sampled from verification asset corners. */
-.cs__feature--media.cs__feature--portrait .cs__feature-frame {
-  aspect-ratio: auto;
-  overflow: visible;
-  display: grid;
-  place-items: center;
-  padding: var(--space-5);
-  background: #0b121e;
-}
-
-.cs__feature--portrait .cs__feature-img-wrap {
-  width: min(100%, 280px);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: #0b121e;
-}
-
-.cs__feature--portrait .cs__feature-img {
+.cs__feature-img,
+.cs__feature-video {
   display: block;
   width: 100%;
   height: auto;
@@ -1923,6 +1978,13 @@ main {
     0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
 }
 
+.cs__shot.cs__shot--bare,
+:root[data-theme="dark"] .cs__shot.cs__shot--bare {
+  box-shadow: none;
+  border: none;
+  outline: none;
+}
+
 /* Portrait shots (a phone screen) would blow up to full column height — cap and
    center them instead. */
 .cs__shot--portrait {
@@ -2016,8 +2078,10 @@ main {
   gap: var(--space-1);
 }
 
+/* Cols-cell glyphs adopt the section's accent (e.g. Outcomes stats in teal),
+   falling back to strong ink where a section sets no accent. */
 .cs__cell-icon {
-  color: var(--text-strong);
+  color: var(--mark-color, var(--text-strong));
 }
 
 /* In the plain cell layout the icon still sits above the title — keep its gap. */
@@ -2031,6 +2095,11 @@ main {
 
 .cs__cell-sub {
   color: var(--text-muted);
+}
+
+.cs__cell-shot {
+  margin-top: var(--space-2);
+  max-width: min(100%, 280px);
 }
 
 .cs__stats-cols {
@@ -2067,9 +2136,210 @@ main {
   }
 }
 
+/* =============================================================================
+   InCity Personas — two-tab toggle (Alex/Blake) over a photo, bio, and the three
+   pain points per persona. Toggle mirrors the section tabs (hover-lift fill pill,
+   layoutId glide); accent follows the active persona (--persona-accent-alex =
+   primary blue, --persona-accent-blake = pink).
+   ========================================================================== */
+.persona {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.persona__panel[data-persona="alex"],
+.persona__tab[data-persona="alex"] {
+  --persona-accent: var(--persona-accent-alex);
+}
+
+.persona__panel[data-persona="blake"],
+.persona__tab[data-persona="blake"] {
+  --persona-accent: var(--persona-accent-blake);
+}
+
+.persona__panel[data-persona="aubrey"],
+.persona__tab[data-persona="aubrey"] {
+  --persona-accent: var(--persona-accent-aubrey);
+}
+
+.persona__panel[data-persona] {
+  --mark-color: var(--persona-accent);
+}
+
+.persona__toggle {
+  align-self: start;
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.persona__tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  font-weight: var(--weight-display);
+  color: var(--text-muted);
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.persona__tab:hover {
+  color: var(--text-strong);
+}
+
+.persona__tab[data-accent] {
+  color: var(--persona-accent);
+}
+
+.persona__tab-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--hover-lift);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.persona__tab-label {
+  position: relative;
+  z-index: 1;
+}
+
+.persona__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 240px) 1fr;
+  gap: clamp(1.25rem, 4vw, 2.5rem);
+  align-items: start;
+}
+
+.persona__media {
+  margin: 0;
+}
+
+.persona__photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+  border-radius: var(--radius-lg);
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.persona__panel[data-persona="blake"] .persona__photo {
+  object-position: center 35%;
+}
+
+.persona__photo--empty {
+  display: grid;
+  place-items: center;
+  color: var(--persona-accent);
+  background: color-mix(in srgb, var(--persona-accent) 12%, transparent);
+  font-size: 3.5rem;
+  font-weight: var(--weight-display);
+}
+
+.persona__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.persona__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.persona__name {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-leading);
+  font-weight: var(--weight-display);
+}
+
+.persona__tagline {
+  margin: 0;
+  color: var(--persona-accent);
+  font-weight: var(--weight-display);
+}
+
+.persona__bio {
+  margin: 0;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+.persona__quirks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.persona__quirk {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.persona__quirk-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  color: var(--persona-accent);
+  background: color-mix(in srgb, var(--persona-accent) 12%, transparent);
+  border-radius: var(--radius-md);
+}
+
+.persona__quirk-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.persona__quirk-title {
+  color: var(--text-strong);
+  font-weight: var(--weight-display);
+}
+
+.persona__quirk-sub {
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+@media (max-width: 640px) {
+  .persona__panel {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .persona__media {
+    max-width: 200px;
+  }
+}
+
 @supports (corner-shape: superellipse(2)) {
   .cs__tile,
   .cs__cover {
+    corner-shape: var(--corner-smooth);
+  }
+
+  .persona__photo,
+  .persona__quirk-icon {
     corner-shape: var(--corner-smooth);
   }
 }
@@ -2319,39 +2589,6 @@ main {
 }
 
 /* =============================================================================
-   Minimal Button
-   ========================================================================== */
-.btn-minimal {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-  margin-top: var(--space-4);
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--text-size);
-  color: var(--text-muted);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  transition:
-    color var(--dur-fast) var(--ease-standard),
-    border-color var(--dur-fast) var(--ease-standard),
-    background-color var(--dur) var(--ease-standard);
-}
-
-@media (hover: hover) {
-  .btn-minimal:hover {
-    color: var(--text-strong);
-    border-color: var(--text-muted);
-    background: var(--surface);
-  }
-}
-
-.btn-minimal:focus-visible {
-  color: var(--text-strong);
-  border-color: var(--text-muted);
-}
-
-/* =============================================================================
    Exploration preview grid
    ========================================================================== */
 .exp-grid {
@@ -2374,10 +2611,18 @@ main {
 }
 
 /* border-beam wrapper around the live demo frame — carries the -3px nudge so
-   the beam stroke stays glued to the frame's edge. */
+   the beam stroke stays glued to the frame's edge. Radius matches image cards. */
 .exp-card__beam {
   width: 100%;
   transform: translateY(-3px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .exp-card__beam {
+    corner-shape: var(--corner-smooth-max);
+  }
 }
 
 .exp-card__frame {
@@ -2397,9 +2642,25 @@ main {
     corner-shape: var(--corner-smooth-max);
   }
 
+  .exp-card__image {
+    corner-shape: inherit;
+  }
+
   .bento__tile {
     corner-shape: var(--corner-smooth);
   }
+}
+
+.exp-card__frame--image {
+  background: var(--color-white);
+}
+
+.exp-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .exp-card__meta {
@@ -2648,13 +2909,13 @@ main {
    ========================================================================== */
 .copy {
   position: relative;
-  display: inline-block;
+  display: inline;
+  vertical-align: baseline;
 }
 
 .copy__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
+  display: inline;
+  vertical-align: baseline;
   color: var(--text-default);
   text-decoration: underline;
   text-decoration-style: dotted;
@@ -2678,7 +2939,9 @@ main {
 }
 
 .copy__icon {
-  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: -2px; /* ponytail: same optical nudge as .tool__icon in 20px body line */
+  margin-right: 3px;
   opacity: 0.8;
   transition: opacity var(--dur-fast) var(--ease-standard);
 }

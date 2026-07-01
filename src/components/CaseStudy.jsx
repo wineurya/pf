@@ -7,12 +7,17 @@ import { usePrefersReducedMotion } from "../lib/hooks.js";
 import { EASE_OUT, fillMorph, layoutMorph } from "../lib/motion.js";
 import {
   IconArrowLeft,
+  IconBulletList,
   IconChevronRight,
   IconClipboard,
   IconColorPalette,
+  IconGauge,
+  IconTrendDown,
+  IconSealCheck,
   IconGuideAccess,
   IconGuideInteraction,
   IconGuideVisual,
+  IconHandTap,
   IconLawAsterisk,
   IconLawBookmarks,
   IconLawCrosshair,
@@ -22,10 +27,12 @@ import {
   IconLayersThree,
   IconLayoutGrid2,
   IconMapPin,
+  IconQuestion,
   IconUser,
 } from "../lib/icons.jsx";
 import { caseStudies } from "../content.js";
 import { ToolBrandIcon } from "./ToolBrandIcon.jsx";
+import { PersonaSwitch } from "./PersonaSwitch.jsx";
 /* Real iPhone 17 Pro Max device frame + iOS status bar from the iOS 26 Figma
    community kit. The frame PNG (Silver, transparent screen + baked-in Dynamic
    Island) overlays the recording; the status bar PNG lays into the cropped top
@@ -68,6 +75,10 @@ const CELL_ICONS = {
   user: IconUser,
   map: IconMapPin,
   clipboard: IconClipboard,
+  /* InCity outcome stats — premium glyph per result metric. */
+  faster: IconGauge,
+  errorRate: IconTrendDown,
+  retention: IconSealCheck,
   /* Logitech laws — decorative slugs, not reused on InCity feature cells. */
   lawMagnet: IconLawMagnet,
   lawCrosshair: IconLawCrosshair,
@@ -75,6 +86,10 @@ const CELL_ICONS = {
   lawAsterisk: IconLawAsterisk,
   lawDashed: IconLawDashed,
   lawBookmarks: IconLawBookmarks,
+  /* InCity problem cols — mobile pain, long flows, invisible status. */
+  handTap: IconHandTap,
+  steps: IconBulletList,
+  question: IconQuestion,
 };
 
 /* Central-icon glyphs anchored to the feature-guide trigger words in the
@@ -116,21 +131,7 @@ const bodyStagger = (reducedMotion) => ({
   },
 });
 
-/* Inline emphasis for body prose: `==phrase==` renders as a section-accent
-   highlight (12% fill, 100% ink). One
-   load-bearing phrase per paragraph carries the eye through the section. */
-function renderRich(text) {
-  if (typeof text !== "string" || !text.includes("==")) return text;
-  return text.split(/==([^=]+)==/g).map((part, i) =>
-    i % 2 === 1 ? (
-      <mark key={i} className="cs__mark">
-        {part}
-      </mark>
-    ) : (
-      part
-    ),
-  );
-}
+import { renderRich } from "../lib/richText.jsx";
 
 /* Splits paragraph text by guide term names and wraps each occurrence in an
    animated span that highlights as the matching features scroll into view. */
@@ -778,6 +779,21 @@ function CaseStudyOutro() {
   );
 }
 
+function featureCardClass(block) {
+  const hasMedia = Boolean(block.src || block.video);
+  return [
+    "cs__feature",
+    block.media === "prototype" && "cs__feature--prototype",
+    hasMedia && "cs__feature--media",
+    block.frameBg && "cs__feature--framed",
+    block.portrait && "cs__feature--portrait",
+    block.fullBleed && "cs__feature--fullbleed",
+    hasMedia && !block.fullBleed && "cs__feature--padded",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 function FeaturesSection({ section }) {
   const introBlock = section.blocks.find((b) => b.p);
   const featBlocks = section.blocks.filter((b) => b.feat);
@@ -843,7 +859,7 @@ function FeaturesSection({ section }) {
             <RevealItem
               key={j}
               as="figure"
-              className={`cs__feature${block.media === "prototype" ? " cs__feature--prototype" : ""}${block.src ? " cs__feature--media" : ""}${block.frameBg ? " cs__feature--framed" : ""}${block.portrait ? " cs__feature--portrait" : ""}`}
+              className={featureCardClass(block)}
             >
               <div
                 className="cs__feature-frame"
@@ -853,7 +869,13 @@ function FeaturesSection({ section }) {
                     : undefined
                 }
               >
-                {block.src ? (
+                {block.video ? (
+                  <InViewVideo
+                    video={block.video}
+                    title={block.title}
+                    className="cs__feature-video"
+                  />
+                ) : block.src ? (
                   block.portrait ? (
                     <div className="cs__feature-img-wrap">
                       <img
@@ -897,10 +919,18 @@ function MediaTile({ kind, cell = false }) {
 }
 
 function Block({ block }) {
+  if (block.personas) {
+    return (
+      <RevealItem>
+        <PersonaSwitch personas={block.personas} />
+      </RevealItem>
+    );
+  }
+
   if (block.p) {
     return (
       <RevealItem className="cs__story-block">
-        <h2 className="cs__block-title">{block.title}</h2>
+        {block.title ? <h2 className="cs__block-title">{block.title}</h2> : null}
         <p className="panel__lead cs__block-summary">{renderRich(block.p)}</p>
       </RevealItem>
     );
@@ -933,7 +963,17 @@ function Block({ block }) {
                 {Icon ? <Icon className="cs__cell-icon" size={20} ariaHidden /> : null}
                 <span className="cs__cell-title">{cell.title}</span>
                 <span className="cs__cell-sub">{renderRich(cell.sub)}</span>
-                {cell.media ? <MediaTile kind={cell.media} cell /> : null}
+                {cell.src ? (
+                  <img
+                    className="cs__shot cs__cell-shot"
+                    src={cell.src}
+                    alt={cell.alt ?? cell.title ?? ""}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : cell.media ? (
+                  <MediaTile kind={cell.media} cell />
+                ) : null}
               </div>
             );
           })}
@@ -989,9 +1029,15 @@ function Block({ block }) {
         </figcaption>
         {block.media === "phone-video" && block.video ? (
           <PhoneVideo video={block.video} title={block.title} />
+        ) : block.video ? (
+          <InViewVideo
+            video={block.video}
+            title={block.title}
+            className="cs__shot"
+          />
         ) : block.src ? (
           <img
-            className={`cs__shot${block.portrait ? " cs__shot--portrait" : ""}`}
+            className={`cs__shot${block.portrait ? " cs__shot--portrait" : ""}${block.bare ? " cs__shot--bare" : ""}`}
             src={block.src}
             alt={block.alt ?? block.title ?? ""}
             loading="lazy"
@@ -1016,7 +1062,10 @@ function Block({ block }) {
    5.102% / top 2.2% / width 89.796% / height 95.6%) is measured from the frame
    PNG's transparent screen hole. Video plays only while on screen; reduced motion
    falls back to poster + controls. */
-function PhoneVideo({ video, title }) {
+/* A muted, looping screen recording that plays only while on screen; reduced
+   motion falls back to poster + native controls. Shared by the phone mock and
+   the inline feature cards — the caller supplies the class and any chrome. */
+function InViewVideo({ video, title, className }) {
   const reducedMotion = usePrefersReducedMotion();
   const ref = useRef(null);
 
@@ -1035,6 +1084,26 @@ function PhoneVideo({ video, title }) {
   }, [reducedMotion]);
 
   return (
+    <video
+      ref={ref}
+      className={className}
+      poster={video.poster}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      autoPlay={!reducedMotion}
+      controls={reducedMotion}
+      aria-label={`Screen recording: ${title}`}
+    >
+      <source src={video.webm} type="video/webm" />
+      <source src={video.mp4} type="video/mp4" />
+    </video>
+  );
+}
+
+function PhoneVideo({ video, title }) {
+  return (
     <div className="cs__phone-stage">
       <div className="cs__phone">
         <div className="cs__phone-screen">
@@ -1047,21 +1116,11 @@ function PhoneVideo({ video, title }) {
             />
           </div>
           <div className="cs__phone-viewport">
-            <video
-              ref={ref}
+            <InViewVideo
+              video={video}
+              title={title}
               className="cs__phone-video"
-              poster={video.poster}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              autoPlay={!reducedMotion}
-              controls={reducedMotion}
-              aria-label={`Screen recording: ${title}`}
-            >
-              <source src={video.webm} type="video/webm" />
-              <source src={video.mp4} type="video/mp4" />
-            </video>
+            />
           </div>
         </div>
         <img

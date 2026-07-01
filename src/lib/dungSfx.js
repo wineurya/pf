@@ -1,60 +1,83 @@
-/** Brief squelch/plop for InCity hover — ponytail: Web Audio synth; drop in a real sample if needed. */
-let audioCtx;
-let lastAt = 0;
-
-export function playDungSfx() {
-  if (typeof window === "undefined") return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  if (!window.matchMedia("(hover: hover)").matches) return;
-
-  const now = performance.now();
-  if (now - lastAt < 400) return;
-  lastAt = now;
-
-  try {
-    audioCtx ??= new AudioContext();
-    if (audioCtx.state === "suspended") void audioCtx.resume();
-
-    const t = audioCtx.currentTime;
-    const dur = 0.14;
-
-    const len = Math.floor(audioCtx.sampleRate * dur);
-    const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-    const ch = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) {
-      const env = (1 - i / len) ** 1.5;
-      ch[i] = (Math.random() * 2 - 1) * env;
-    }
-
-    const noise = audioCtx.createBufferSource();
-    noise.buffer = buf;
-
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = 180;
-    filter.Q.value = 0.8;
-
-    const noiseGain = audioCtx.createGain();
-    noiseGain.gain.setValueAtTime(0.16, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-
-    noise.connect(filter).connect(noiseGain).connect(audioCtx.destination);
-    noise.start(t);
-    noise.stop(t + dur);
-
-    const osc = audioCtx.createOscillator();
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(95, t);
-    osc.frequency.exponentialRampToValueAtTime(35, t + dur * 0.85);
-
-    const oscGain = audioCtx.createGain();
-    oscGain.gain.setValueAtTime(0.2, t);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.9);
-
-    osc.connect(oscGain).connect(audioCtx.destination);
-    osc.start(t);
-    osc.stop(t + dur);
-  } catch {
-    /* autoplay policy or missing Web Audio */
-  }
-}
+/** InCity row hover — kosta.fyi-style sine tick, pitched down and softened. */
+let audioCtx;
+let lastAt = 0;
+let unlockBound = false;
+
+function bindUnlock() {
+  if (unlockBound || typeof window === "undefined") return;
+  unlockBound = true;
+
+  const unlock = () => {
+    try {
+      audioCtx ??= new AudioContext();
+      if (audioCtx.state === "suspended") void audioCtx.resume();
+    } catch {
+      /* autoplay policy */
+    }
+    window.removeEventListener("pointerdown", unlock);
+    window.removeEventListener("keydown", unlock);
+    window.removeEventListener("touchstart", unlock);
+  };
+
+  window.addEventListener("pointerdown", unlock, { passive: true });
+  window.addEventListener("keydown", unlock, { passive: true });
+  window.addEventListener("touchstart", unlock, { passive: true });
+}
+
+bindUnlock();
+
+async function ensureCtx() {
+  audioCtx ??= new AudioContext();
+  if (audioCtx.state === "suspended") await audioCtx.resume();
+  return audioCtx.state === "running" ? audioCtx : null;
+}
+
+/** kosta.fyi hover: sine, instant attack, ~10 ms decay; deeper pitch + softer gain here. */
+function blip(ctx) {
+  const t = ctx.currentTime;
+  const decay = 0.02;
+  const release = 0.008;
+  const dur = decay + release;
+  const peak = 0.11;
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(peak, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+  gain.gain.setValueAtTime(0.0001, t + dur);
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(720, t);
+  filter.frequency.exponentialRampToValueAtTime(420, t + dur);
+  filter.Q.value = 0.6;
+
+  const osc = ctx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(480, t);
+  osc.frequency.exponentialRampToValueAtTime(340, t + decay);
+
+  osc.connect(filter).connect(gain).connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.01);
+}
+
+export function playDungSfx() {
+  if (typeof window === "undefined") return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!window.matchMedia("(hover: hover)").matches) return;
+
+  const now = performance.now();
+  if (now - lastAt < 120) return;
+  lastAt = now;
+
+  void (async () => {
+    try {
+      const ctx = await ensureCtx();
+      if (!ctx) return;
+      blip(ctx);
+    } catch {
+      /* Web Audio unavailable */
+    }
+  })();
+}
+

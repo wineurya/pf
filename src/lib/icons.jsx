@@ -9,18 +9,22 @@ import { IconColorPalette as CentralColorPalette } from "central-icons/IconColor
 import { IconEyeOpen } from "central-icons/IconEyeOpen";
 import { IconTouch } from "central-icons/IconTouch";
 import { IconRaisingHand5Finger } from "central-icons/IconRaisingHand5Finger";
+import { ArrowElbowRightDown } from "@phosphor-icons/react/dist/csr/ArrowElbowRightDown";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
 import { Asterisk } from "@phosphor-icons/react/dist/csr/Asterisk";
 import { Bookmarks } from "@phosphor-icons/react/dist/csr/Bookmarks";
 import { CalendarBlank } from "@phosphor-icons/react/dist/csr/CalendarBlank";
+import { CaretDown } from "@phosphor-icons/react/dist/csr/CaretDown";
 import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
 import { Check } from "@phosphor-icons/react/dist/csr/Check";
 import { CircleDashed } from "@phosphor-icons/react/dist/csr/CircleDashed";
 import { Clipboard } from "@phosphor-icons/react/dist/csr/Clipboard";
 import { Crosshair } from "@phosphor-icons/react/dist/csr/Crosshair";
 import { GridFour } from "@phosphor-icons/react/dist/csr/GridFour";
+import { TrafficCone } from "@phosphor-icons/react/dist/csr/TrafficCone";
 import { ListBullets } from "@phosphor-icons/react/dist/csr/ListBullets";
+import { Lock } from "@phosphor-icons/react/dist/csr/Lock";
 import { MagnetStraight } from "@phosphor-icons/react/dist/csr/MagnetStraight";
 import { NumberSeven } from "@phosphor-icons/react/dist/csr/NumberSeven";
 import { Palette } from "@phosphor-icons/react/dist/csr/Palette";
@@ -29,6 +33,16 @@ import { Stack } from "@phosphor-icons/react/dist/csr/Stack";
 import { User } from "@phosphor-icons/react/dist/csr/User";
 import { MapPin } from "@phosphor-icons/react/dist/csr/MapPin";
 import { Users } from "@phosphor-icons/react/dist/csr/Users";
+/* InCity persona quirks — one glyph per pain point (Alex + Blake). */
+import { Signpost } from "@phosphor-icons/react/dist/csr/Signpost";
+import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
+import { HandTap } from "@phosphor-icons/react/dist/csr/HandTap";
+import { PersonSimpleWalk } from "@phosphor-icons/react/dist/csr/PersonSimpleWalk";
+import { Question } from "@phosphor-icons/react/dist/csr/Question";
+/* InCity outcome stats — one premium glyph per result metric. */
+import { Gauge } from "@phosphor-icons/react/dist/csr/Gauge";
+import { TrendDown } from "@phosphor-icons/react/dist/csr/TrendDown";
+import { SealCheck } from "@phosphor-icons/react/dist/csr/SealCheck";
 
 function makeIcon(BaseIcon) {
   return function Icon({ ariaHidden, ariaLabel, weight = "regular", ...props }) {
@@ -57,20 +71,31 @@ function makeCentralIcon(CentralIcon) {
   };
 }
 
+const IconArrowElbowRightDown = makeIcon(ArrowElbowRightDown);
 const IconArrowLeft = makeIcon(ArrowLeft);
 const IconArrowUpRight = makeIcon(ArrowUpRight);
 const IconBulletList = makeIcon(ListBullets);
 const IconCalendar1 = makeIcon(CalendarBlank);
+const IconChevronDown = makeIcon(CaretDown);
 const IconChevronRight = makeIcon(CaretRight);
 const IconCheckmark1Small = makeIcon(Check);
 const IconClipboard = makeIcon(Clipboard);
 const IconColorPalette = makeIcon(Palette);
 const IconLayersThree = makeIcon(Stack);
+const IconLock = makeIcon(Lock);
 const IconLayoutGrid2 = makeIcon(GridFour);
 const IconPeople = makeIcon(Users);
 const IconSquarePlaceholder = makeIcon(Square);
 const IconUser = makeIcon(User);
 const IconMapPin = makeIcon(MapPin);
+const IconSignpost = makeIcon(Signpost);
+const IconWarning = makeIcon(Warning);
+const IconHandTap = makeIcon(HandTap);
+const IconWalk = makeIcon(PersonSimpleWalk);
+const IconQuestion = makeIcon(Question);
+const IconGauge = makeIcon(Gauge);
+const IconTrendDown = makeIcon(TrendDown);
+const IconSealCheck = makeIcon(SealCheck);
 const IconLawAsterisk = makeIcon(Asterisk);
 const IconLawBookmarks = makeIcon(Bookmarks);
 const IconLawCrosshair = makeIcon(Crosshair);
@@ -84,6 +109,7 @@ const IconTabAbout = makeCentralIcon(CentralIconUser);
 const IconGuideVisual = makeCentralIcon(CentralColorPalette);
 const IconGuideAccess = makeCentralIcon(IconEyeOpen);
 const IconGuideInteraction = makeCentralIcon(IconTouch);
+const IconTrafficCone = makeIcon(TrafficCone);
 /* Waving hand for the case-study sign-off. */
 const IconWave = makeCentralIcon(IconRaisingHand5Finger);
 function IconFigmaMark({ className, size = 14, ariaHidden }) {
@@ -127,10 +153,12 @@ function IconFirebaseMark({ className, size = 14, ariaHidden }) {
 }
 
 export {
+  IconArrowElbowRightDown,
   IconArrowLeft,
   IconArrowUpRight,
   IconBulletList,
   IconCalendar1,
+  IconChevronDown,
   IconChevronRight,
   IconCheckmark1Small,
   IconClipboard,
@@ -138,6 +166,7 @@ export {
   IconGuideAccess,
   IconGuideInteraction,
   IconGuideVisual,
+  IconTrafficCone,
   IconLawAsterisk,
   IconLawBookmarks,
   IconLawCrosshair,
@@ -145,9 +174,18 @@ export {
   IconLawMagnet,
   IconLawSeven,
   IconLayersThree,
+  IconLock,
   IconLayoutGrid2,
   IconMapPin,
   IconPeople,
+  IconSignpost,
+  IconWarning,
+  IconHandTap,
+  IconWalk,
+  IconQuestion,
+  IconGauge,
+  IconTrendDown,
+  IconSealCheck,
   IconSquarePlaceholder,
   IconTabAbout,
   IconTabExploration,

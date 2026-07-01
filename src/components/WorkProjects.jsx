@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
 import { ViewSwitcher } from "./ViewSwitcher.jsx";
-import { IconArrowUpRight } from "../lib/icons.jsx";
+import { IconArrowElbowRightDown, IconArrowUpRight, IconLock } from "../lib/icons.jsx";
 import { EASE_OUT, layoutMorph, revealItem } from "../lib/motion.js";
 import { usePrefersReducedMotion } from "../lib/hooks.js";
 import { playDungSfx } from "../lib/dungSfx.js";
@@ -100,7 +100,10 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
               {item.label}
             </motion.span>
             {item.wip ? (
-              <span className="pcard__wip">WIP</span>
+              <span className="pcard__wip">
+                <IconLock className="pcard__wip-icon" size={10} ariaHidden />
+                WIP
+              </span>
             ) : null}
             {isCard && !item.wip ? (
               <IconArrowUpRight className="pcard__arrow" size={15} ariaHidden />
@@ -187,6 +190,10 @@ export function WorkProjects({ items, onOpen, view, onView }) {
   return (
     <StaggerGroup className="work">
       <RevealItem className="work__bar">
+        <span className="work__label">
+          My work
+          <IconArrowElbowRightDown className="work__label-caret" size={13} ariaHidden />
+        </span>
         <ViewSwitcher value={view} onChange={onView} />
       </RevealItem>
 

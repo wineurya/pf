@@ -11,13 +11,13 @@
   inset: var(--exp-embed-inset);
   overflow: hidden;
   pointer-events: auto;
-  /* Match the frame's rounded shape so the demo clips cleanly to the card edge. */
-  border-radius: var(--radius-lg);
+  /* Inherit the frame's rounded shape so live demos clip like image cards. */
+  border-radius: inherit;
 }
 
 @supports (corner-shape: superellipse(2)) {
   .exp-card__embed {
-    corner-shape: var(--corner-smooth-max);
+    corner-shape: inherit;
   }
 }
 
@@ -66,6 +66,14 @@
   height: 100%;
   min-height: 100%;
   background: var(--color-white);
+  border-radius: inherit;
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .exp-card__demo.jvs-root,
+  .exp-card__demo.wm-root {
+    corner-shape: inherit;
+  }
 }
 
 .exp-card__demo .jvs-stage,

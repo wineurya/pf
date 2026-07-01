@@ -23,6 +23,7 @@ import avanceCover from "./assets/case/avance-cover.webp";
 import logitechCover from "./assets/case/logitech-cover.webp";
 import resolutionsCover from "./assets/case/resolutions-cover.webp";
 import sirenCover from "./assets/case/siren-cover.webp";
+import paniTest from "./assets/exploration/pani-test.webp";
 
 /* InCity "old flow" screen recording (the original ATL311 on mobile). Recorded at
    the iPhone Pro Max logical resolution; its own status bar is cropped in the
@@ -38,7 +39,40 @@ import incityResearchAudit from "./assets/case/incity-research-audit.webp";
 import incityResearchLitReview from "./assets/case/incity-research-litreview.webp";
 import incityWireframesLowFi from "./assets/case/incity-wireframes-lowfi.webp";
 import incityFeatureDesignSystem from "./assets/case/incity-feature-designsystem.webp";
-import incityFeatureVerification from "./assets/case/incity-feature-verification.webp";
+import incityFeatureTypeIconography from "./assets/case/incity-feature-type-iconography.webp";
+import incityFeatureProof from "./assets/case/incity-feature-proof.webp";
+
+/* InCity "Changeable theme" feature recording — light/dark toggle demo on the
+   hi-fi home screen (square render, full-bleed on the feature card). */
+import incityThemeWebm from "./assets/case/incity-theme.webm";
+import incityThemeMp4 from "./assets/case/incity-theme.mp4";
+import incityThemePoster from "./assets/case/incity-theme-poster.jpg";
+
+/* InCity "Interactive map" feature recording — the hi-fi prototype's map screen
+   (phone-framed, square render). Compressed to WebM (VP9) + mp4 (H.264) with a
+   poster; plays inline on the feature card, reduced motion → poster. */
+import incityMapWebm from "./assets/case/incity-map.webm";
+import incityMapMp4 from "./assets/case/incity-map.mp4";
+import incityMapPoster from "./assets/case/incity-map-poster.jpg";
+
+/* InCity research synthesis — a pan across the affinity-mapping board (interview
+   findings grouped into patterns). Same WebM/mp4/poster treatment as the map. */
+import incityResearchWebm from "./assets/case/incity-research.webm";
+import incityResearchMp4 from "./assets/case/incity-research.mp4";
+import incityResearchPoster from "./assets/case/incity-research-poster.jpg";
+
+/* InCity personas — Alex ykax52, Blake fSpKPcvg (wineury.design). */
+import incityPersonaAlex from "./assets/case/incity-persona-alex.webp";
+import incityPersonaBlake from "./assets/case/incity-persona-blake.webp";
+
+/* Siren case-study stills from wineury.design/cases/siren (converted to WebP). */
+import sirenLeanUxCanvas from "./assets/case/siren-lean-ux-canvas.webp";
+import sirenPersonaAubrey from "./assets/case/siren-persona-aubrey.webp";
+import sirenHypothesisMatrix from "./assets/case/siren-hypothesis-matrix.webp";
+import sirenSprint1Flags from "./assets/case/siren-sprint1-flags.webp";
+import sirenSprint2VideoCall from "./assets/case/siren-sprint2-video-call.webp";
+import sirenCatfishTesting from "./assets/case/siren-catfish-testing.webp";
+import sirenHifiPass from "./assets/case/siren-hifi-pass.webp";
 
 /* Case studies, keyed by slug; the Work list uses CASE_STUDY_ORDER so row labels
    and page titles stay in sync.
@@ -46,13 +80,15 @@ import incityFeatureVerification from "./assets/case/incity-feature-verification
    `facts` is { role, team, duration, tools }; tools render as an icon-only array.
    `blocks` carry the body in a few low-fi layouts: { p } paragraph,
    { media, title, sub } full-width tile — a placeholder unless it carries a real
-   asset: `src` (+ `alt`, `portrait` for a phone screen) renders the image at its
-   own ratio, or `media: "phone-video"` + `video` renders a framed recording;
+   asset: `src` (+ `alt`, `portrait` for a phone screen, `bare` to drop the edge
+   ring) renders the image at its own ratio, or `media: "phone-video"` + `video` renders a framed recording;
    { mosaic: [{ src, alt }], title?, sub? } a staggered image collage,
-   { cols: [{ title, sub, media? }] } 2- or 3-up cells,
-   { feat, title, sub, media, src?, alt?, portrait?, frameBg? } a Features-section
-   card — frameBg pins a 4:3 frame, contain-fits the image, and fills letterbox with
-   that color, and
+   { personas: [{ id, name, tagline, image, alt, bio, quirks }] } photo + bio +
+   icon list (InCity Alex/Blake, Siren Aubrey); toggle when 2+ personas,
+   { cols: [{ title, sub, media?, src? }] } 2- or 3-up cells,
+   { feat, title, sub, media, src?, alt?, portrait?, frameBg?, fullBleed? } a
+   Features-section card — frames are 1:1; padded media inset by --space-6 unless
+   fullBleed (e.g. theme toggle video); frameBg letterboxes contain-fit assets, and
    { title, stats: [{ value, text }] } titled intro + 3-up stat columns.
    A { section: "Title" } marker opens a new body section with an anchor id and a
    contents-nav entry. Titled paragraph blocks use { title, p }. */
@@ -144,14 +180,17 @@ export const caseStudies = {
           {
             title: "Desktop-first design",
             sub: "Mobile users get tiny controls and hidden menus.",
+            icon: "handTap",
           },
           {
             title: "Buried workflows",
             sub: "Eight steps to submit a single report.",
+            icon: "steps",
           },
           {
             title: "Opaque status",
             sub: "After you submit, there is no indication that the city saw it.",
+            icon: "question",
           },
         ],
       },
@@ -173,6 +212,16 @@ export const caseStudies = {
             alt: "Literature review notes on civic accessibility",
           },
         ],
+      },
+      {
+        media: "video",
+        video: {
+          webm: incityResearchWebm,
+          mp4: incityResearchMp4,
+          poster: incityResearchPoster,
+        },
+        title: "From voices to patterns.",
+        sub: "Interview notes, the competitive audit, and the literature review were grouped into an affinity map — the recurring patterns that shaped every later decision.",
       },
       {
         title: "Atlanta was falling behind cities that made status visible.",
@@ -200,16 +249,60 @@ export const caseStudies = {
       },
       { section: "Personas" },
       {
-        cols: [
+        title: "Meet Alex and Blake.",
+        p: "You've probably met them before. Neighbors with busy lives, staff with endless requests. Alex shaped simpler reporting and instant confirmation. Blake shaped routing, prioritization, and tracking.",
+      },
+      {
+        personas: [
           {
-            media: "image",
-            title: "Alex, the everyday resident",
-            sub: "Reports from his phone during commutes. Wants instant confirmation, high contrast, and proof the city heard him.",
+            id: "alex",
+            name: "Alex",
+            tagline: "The Everyday Resident",
+            image: incityPersonaAlex,
+            alt: "Alex, an everyday Kennesaw resident",
+            bio: "Alex lives in Kennesaw, GA, and relies heavily on his smartphone for traffic alerts, event planning, and day-to-day tasks. He values ==instant confirmation== when reporting an issue, prefers a high-contrast interface that's easy on the eyes, and appreciates engaging micro-interactions that make the process feel smooth and trustworthy.",
+            quirks: [
+              {
+                icon: "tinyControls",
+                title: "Tiny controls, giant headache.",
+                text: "Alex struggles with buttons and menus that are too small or hidden, making it frustrating to file a report.",
+              },
+              {
+                icon: "onTheGo",
+                title: "Hard to use while on the go.",
+                text: "Reporting on the go is difficult without a clean, mobile-friendly interface, especially during commutes.",
+              },
+              {
+                icon: "noFeedback",
+                title: "Not a clue if anything's happening.",
+                text: "After submitting, Alex often gets no clear feedback, leaving him unsure if the city even saw his request.",
+              },
+            ],
           },
           {
-            media: "image",
-            title: "Blake, the overloaded staffer",
-            sub: "Manages endless requests. Needs routing, prioritization through upvotes, and tracking that doesn't bury him.",
+            id: "blake",
+            name: "Blake",
+            tagline: "The Overloaded Staffer",
+            image: incityPersonaBlake,
+            alt: "Blake, a city 311 staff member",
+            bio: "Blake manages hundreds of 311 requests every week as part of her city staff role. She needs a ==centralized mobile dashboard== to route issues in one swipe, track departmental responses in real time, and quickly identify critical cases through upvotes and alerts. For Blake, efficiency and visibility are the difference between smooth operations and a clogged workflow.",
+            quirks: [
+              {
+                icon: "misrouted",
+                title: "Requests always land in the wrong place.",
+                text: "Blake wastes time rerouting misdirected cases instead of resolving them.",
+              },
+              {
+                icon: "noPriority",
+                title: "No way to tell what's urgent.",
+                text: "Without prioritization, Blake has to guess which requests need immediate attention, slowing critical responses.",
+              },
+              {
+                icon: "inboxJam",
+                title: "Inbox looks like a traffic jam.",
+                text: "Hundreds of unorganized requests pile up, leaving Blake with an overwhelming workload that's hard to track.",
+              },
+            ],
           },
         ],
       },
@@ -227,11 +320,11 @@ export const caseStudies = {
       },
       { section: "Features" },
       {
-        title: "Six features carried the high-fidelity experience.",
+        title: "Five features carried the high-fidelity experience.",
         p: "High fidelity turned the redesign into a working product. Each feature closes a specific gap the original ATL311 left open, spanning Visual identity, Accessibility, and Interaction from first tap to final confirmation.",
         guide: [
           { term: "Visual identity", count: 2, icon: "visual" },
-          { term: "Accessibility", count: 2, icon: "access" },
+          { term: "Accessibility", count: 1, icon: "access" },
           { term: "Interaction", count: 2, icon: "interaction" },
         ],
       },
@@ -240,7 +333,13 @@ export const caseStudies = {
         icon: "palette",
         title: "Changeable theme",
         sub: "The interface changes with you: bright for clarity outdoors and dark for comfort at night.",
-        media: "image",
+        media: "prototype",
+        fullBleed: true,
+        video: {
+          webm: incityThemeWebm,
+          mp4: incityThemeMp4,
+          poster: incityThemePoster,
+        },
       },
       {
         feat: true,
@@ -250,7 +349,6 @@ export const caseStudies = {
         media: "image",
         src: incityFeatureDesignSystem,
         alt: "InCity design system — color, type, and component tokens",
-        frameBg: "#07080B",
       },
       {
         feat: true,
@@ -258,16 +356,9 @@ export const caseStudies = {
         title: "Type & iconography",
         sub: "Clean type paired with purposeful icons that scale together, so nothing falls out of rhythm.",
         media: "image",
-      },
-      {
-        feat: true,
-        icon: "user",
-        title: "Onboarding verification",
-        sub: "Enter your number, confirm with a text code, you're in. Familiar, fast, grounded in trust.",
-        media: "image",
-        src: incityFeatureVerification,
-        alt: "Phone-number verification screen during onboarding",
-        portrait: true,
+        src: incityFeatureTypeIconography,
+        alt: "InCity type scale and icon set — typography paired with purposeful icons",
+        fullBleed: true,
       },
       {
         feat: true,
@@ -275,13 +366,22 @@ export const caseStudies = {
         title: "Interactive map",
         sub: "The city at your fingertips. Cases appear as dots you can tap to see details, follow their status, and feel the progress in real time.",
         media: "prototype",
+        frameBg: "#000000",
+        video: {
+          webm: incityMapWebm,
+          mp4: incityMapMp4,
+          poster: incityMapPoster,
+        },
       },
       {
         feat: true,
         icon: "clipboard",
         title: "Proof every time",
-        sub: "Every submission lands somewhere visible: a confirmation screen, a case detail, and a receipt when payment is involved. ==There is no guessing whether an action went through==.",
+        sub: "Every submission lands somewhere you can see it — a confirmation, a tracked case, and a receipt when you pay. ==You are never left guessing whether it went through==.",
         media: "image",
+        src: incityFeatureProof,
+        alt: "Submission confirmation screen with case details — You're all set",
+        portrait: true,
       },
       { section: "Outcomes" },
       {
@@ -291,23 +391,21 @@ export const caseStudies = {
       {
         cols: [
           {
+            icon: "faster",
             title: "75% faster",
             sub: "Task completion time after iterative testing; the flow went from six steps to three.",
           },
           {
+            icon: "errorRate",
             title: "30% → 5%",
             sub: "Error rate, from clearer inputs.",
           },
           {
+            icon: "retention",
             title: "Zero drop-offs",
             sub: "Abandoned submissions disappeared entirely.",
           },
         ],
-      },
-      {
-        media: "wireframe",
-        title: "Six steps down to three.",
-        sub: "The before-and-after flow comparison from usability testing shows where time and errors fell away.",
       },
       {
         title: "The city finally answered back.",
@@ -345,25 +443,52 @@ export const caseStudies = {
         p: "The riskiest assumption was that people wanted ==safety and meaningful connections, not endless matches==. We used an eight-box canvas to rank what mattered, then tested the smallest version of the two highest-risk ideas.",
       },
       {
-        media: "wireframe",
+        media: "image",
+        src: sirenLeanUxCanvas,
+        alt: "Lean UX canvas with eight boxes ranking assumptions and hypotheses by risk and value",
         title: "The Lean UX canvas.",
         sub: "Eight boxes of assumptions and hypotheses ranked by risk and value mapped the experiment before a single screen.",
       },
       {
-        cols: [
+        title: "Meet Aubrey.",
+        p: "She stood in for the cautious new user the team designed around. Her needs shaped the two features in the sprint plan.",
+      },
+      {
+        personas: [
           {
-            title: "Aubrey, 25, proto-persona",
-            sub: "Busy, cautious, new to dating apps. She wants control over her dating pool without reading every profile like a background check.",
-          },
-          {
-            title: "Two features to test",
-            sub: "Profile report callouts, then a required video call after a set number of texts.",
+            id: "aubrey",
+            name: "Aubrey",
+            tagline: "Proto-persona, 25",
+            image: sirenPersonaAubrey,
+            alt: "Aubrey with a camera outdoors, wearing an orange hoodie",
+            bio: "Busy, cautious, new to dating apps. She wants control over her dating pool without reading every profile like a background check.",
+            quirks: [
+              {
+                icon: "reportCallouts",
+                title: "Profile report callouts",
+                text: "Green, yellow, and red signals on profiles before a match deepens.",
+              },
+              {
+                icon: "videoCall",
+                title: "Required video call",
+                text: "After a set number of texts, the app nudges people onto video.",
+              },
+            ],
           },
         ],
+      },
+      {
+        media: "image",
+        src: sirenHypothesisMatrix,
+        alt: "Hypothesis prioritization matrix plotting risk versus value",
+        title: "Prioritizing hypotheses.",
+        sub: "High-risk, high-value ideas went into two sprints: profile callouts and required video calls.",
       },
       { section: "Sprint 1" },
       {
         media: "image",
+        src: sirenSprint1Flags,
+        alt: "Low-fidelity profile screens with green, yellow, and red report callouts during usability testing",
         title: "Sprint 1: flags on profiles.",
         sub: "Green, yellow, red: no offenses, minor offenses, harassment. Tested as low-fi profiles with campus participants.",
       },
@@ -374,12 +499,22 @@ export const caseStudies = {
       { section: "Sprint 2" },
       {
         media: "image",
+        src: sirenSprint2VideoCall,
+        alt: "Low-fidelity chat flow showing a required video call scheduled after the text limit",
         title: "Sprint 2: the required video call.",
         sub: "After the text limit, the app gives people ten messages to plan when they will connect by video.",
       },
       {
         title: "Verification raised trust even when the requirement felt strict.",
         p: "In testing, participants ==spotted the staged catfish during the call==. Trust went up, even though the requirement felt strict. Most accepted the call when the app framed it as a safety net instead of a punishment.",
+      },
+      {
+        media: "image",
+        src: sirenCatfishTesting,
+        alt: "Catfish testing session with participant photos and chat screenshots from the video call sprint",
+        title: "Catfish testing.",
+        sub: "Participants spotted the staged catfish during the required video call.",
+        bare: true,
       },
       {
         cols: [
@@ -397,15 +532,18 @@ export const caseStudies = {
           },
         ],
       },
+      {
+        media: "image",
+        src: sirenHifiPass,
+        alt: "High-fidelity Siren screens showing the final reporting flow with clearer flag definitions",
+        title: "The high-fidelity pass.",
+        sub: "The final reporting flow made flag definitions, disclosure, and the primary action clearer.",
+        bare: true,
+      },
       { section: "Retrospective" },
       {
         title: "Trust held up; the definition of a red flag did not.",
         p: "The flag system and verification call supported trust and transparency, but the reporting model needed more precision. One question stayed unresolved: ==what exactly qualifies as a red flag==, and who gets to decide?",
-      },
-      {
-        media: "wireframe",
-        title: "The high-fidelity pass.",
-        sub: "The final reporting flow made flag definitions, disclosure, and the primary action clearer.",
       },
     ],
   },
@@ -692,6 +830,7 @@ export const site = {
   /* Header bio — single ~2-line block at 576px (Figma excerpt rhythm). */
   excerpt: [
     "I'm an independent product designer based in Atlanta. I'm currently exploring passion projects, sharpening my eye for interfaces, and experimenting with new design tools.",
+    "Case studies are ::trafficCone==under construction.==",
   ],
   email: "contact@wineury.design",
   contact: [
@@ -738,11 +877,13 @@ export const site = {
       preview: "wallet",
       previewProps: { defaultOpen: true },
     },
-  ],
-
-  /* Explorations that need motion or full bleed to land — kept as plain links. */
-  explorationMore: [
-    { label: "More exploration", meta: "View all", href: "/exploration" },
+    {
+      label: "Pani",
+      meta: "Visual study",
+      href: "#",
+      image: paniTest,
+      imageAlt: "Pani UI exploration",
+    },
   ],
 
   /* Tool mentions ({ tool, icon }) render with an inline Central brand mark.

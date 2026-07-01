@@ -22,6 +22,7 @@ import {
 import { useTheme } from "./lib/theme.js";
 import { usePageEnter } from "./lib/usePageEnter.js";
 import { useVisualViewportPin } from "./lib/useVisualViewportPin.js";
+import { renderRich } from "./lib/richText.jsx";
 import { BRAND_ICONS, IconCheckmark1Small, IconClipboard } from "./lib/icons.jsx";
 import { caseStudies, site, tabs } from "./content.js";
 
@@ -226,16 +227,7 @@ function PanelContent({ tab, theme, onOpenStudy, view, onView }) {
 
   if (tab === "exploration") {
     return (
-      <>
-        <ExplorationGrid items={site.explorationPreviews} theme={theme} />
-        {site.explorationMore?.length > 0 ? (
-          <RevealItem>
-            <a href="/exploration" className="btn-minimal">
-              More explorations →
-            </a>
-          </RevealItem>
-        ) : null}
-      </>
+      <ExplorationGrid items={site.explorationPreviews} theme={theme} />
     );
   }
 
@@ -400,7 +392,7 @@ export function App() {
                   <StaggerGroup className="head__excerpt-group">
                     {site.excerpt.map((paragraph, index) => (
                       <RevealItem key={index} as="p" className="head__excerpt">
-                        {paragraph}
+                        {renderRich(paragraph)}
                       </RevealItem>
                     ))}
                   </StaggerGroup>
