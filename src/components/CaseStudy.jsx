@@ -30,6 +30,7 @@ import {
   IconLayoutGrid2,
   IconMapPin,
   IconQuestion,
+  IconShield,
   IconUser,
 } from "../lib/icons.jsx";
 import { caseStudies } from "../content.js";
