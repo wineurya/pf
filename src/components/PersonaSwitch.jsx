@@ -73,8 +73,56 @@ export function PersonaSwitch({ personas }) {
 
   const solo = personas.length === 1;
 
+  function PersonaPanel({ persona: p }) {
+    return (
+      <>
+        <figure className="persona__media">
+          {p.image ? (
+            <img
+              className="persona__photo"
+              src={p.image}
+              alt={p.alt ?? p.name}
+              width={800}
+              height={800}
+              loading="eager"
+              decoding="async"
+            />
+          ) : (
+            <div className="persona__photo persona__photo--empty" aria-hidden="true">
+              <span>{p.name[0]}</span>
+            </div>
+          )}
+        </figure>
+
+        <div className="persona__body">
+          <header className="persona__head">
+            <h3 className="persona__name">{p.name}</h3>
+            <p className="persona__tagline">{p.tagline}</p>
+          </header>
+          <p className="persona__bio">{renderRich(p.bio)}</p>
+          <ul className="persona__quirks">
+            {p.quirks.map((q, i) => {
+              const Icon = QUIRK_ICONS[q.icon];
+              return (
+                <li key={i} className="persona__quirk">
+                  <span className="persona__quirk-icon" aria-hidden="true">
+                    {Icon ? <Icon size={20} /> : null}
+                  </span>
+                  <span className="persona__quirk-text">
+                    <span className="persona__quirk-title">{q.title}</span>
+                    <span className="persona__quirk-sub">{renderRich(q.text)}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </>
+    );
+  }
+
   return (
-    <div className="persona">
+    <div className={`persona${solo ? " persona--solo" : ""}`}>
       {!solo ? (
         <LayoutGroup id="persona-toggle">
           <div
@@ -119,64 +167,32 @@ export function PersonaSwitch({ personas }) {
         </LayoutGroup>
       ) : null}
 
-      <AnimatePresence
-        mode="wait"
-        initial={false}
-        onExitComplete={() => setAccentIndex(index)}
-      >
-        <motion.div
-          key={persona.id}
-          className="persona__panel"
-          data-persona={persona.id}
-          role={solo ? undefined : "tabpanel"}
-          id={solo ? undefined : "persona-panel"}
-          aria-labelledby={solo ? undefined : `persona-tab-${persona.id}`}
-          initial={swap.initial}
-          animate={swap.animate}
-          exit={swap.exit}
-          transition={swap.transition}
+      {solo ? (
+        <div className="persona__panel" data-persona={persona.id}>
+          <PersonaPanel persona={persona} />
+        </div>
+      ) : (
+        <AnimatePresence
+          mode="wait"
+          initial={false}
+          onExitComplete={() => setAccentIndex(index)}
         >
-          <figure className="persona__media">
-            {persona.image ? (
-              <img
-                className="persona__photo"
-                src={persona.image}
-                alt={persona.alt ?? persona.name}
-                loading="lazy"
-                decoding="async"
-              />
-            ) : (
-              <div className="persona__photo persona__photo--empty" aria-hidden="true">
-                <span>{persona.name[0]}</span>
-              </div>
-            )}
-          </figure>
-
-          <div className="persona__body">
-            <header className="persona__head">
-              <h3 className="persona__name">{persona.name}</h3>
-              <p className="persona__tagline">{persona.tagline}</p>
-            </header>
-            <p className="persona__bio">{renderRich(persona.bio)}</p>
-            <ul className="persona__quirks">
-              {persona.quirks.map((q, i) => {
-                const Icon = QUIRK_ICONS[q.icon];
-                return (
-                  <li key={i} className="persona__quirk">
-                    <span className="persona__quirk-icon" aria-hidden="true">
-                      {Icon ? <Icon size={20} /> : null}
-                    </span>
-                    <span className="persona__quirk-text">
-                      <span className="persona__quirk-title">{q.title}</span>
-                      <span className="persona__quirk-sub">{renderRich(q.text)}</span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+          <motion.div
+            key={persona.id}
+            className="persona__panel"
+            data-persona={persona.id}
+            role="tabpanel"
+            id="persona-panel"
+            aria-labelledby={`persona-tab-${persona.id}`}
+            initial={swap.initial}
+            animate={swap.animate}
+            exit={swap.exit}
+            transition={swap.transition}
+          >
+            <PersonaPanel persona={persona} />
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }

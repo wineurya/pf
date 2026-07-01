@@ -2150,6 +2150,8 @@ main {
   flex-direction: column;
   gap: var(--space-5);
   margin-top: var(--space-6);
+  width: 100%;
+  min-width: 0;
 }
 
 .persona__panel[data-persona="alex"],
@@ -2214,19 +2216,30 @@ main {
 
 .persona__panel {
   display: grid;
-  grid-template-columns: minmax(0, 240px) 1fr;
+  grid-template-columns: minmax(0, clamp(140px, 28vw, 240px)) minmax(0, 1fr);
   gap: clamp(1.25rem, 4vw, 2.5rem);
   align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Single persona (Siren Aubrey) — photo scales with the row; copy fills the rest. */
+.persona--solo .persona__panel {
+  grid-template-columns: minmax(0, clamp(160px, 34vw, 280px)) minmax(0, 1fr);
 }
 
 .persona__media {
   margin: 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .persona__photo {
   display: block;
   width: 100%;
+  max-width: none;
   aspect-ratio: 1 / 1;
+  height: auto;
   object-fit: cover;
   object-position: center;
   border-radius: var(--radius-lg);
@@ -2252,6 +2265,8 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  min-width: 0;
+  width: 100%;
 }
 
 .persona__head {
@@ -2287,13 +2302,15 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  width: 100%;
 }
 
 .persona__quirk {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: var(--space-3);
   align-items: start;
+  width: 100%;
 }
 
 .persona__quirk-icon {
@@ -2325,13 +2342,14 @@ main {
 }
 
 @media (max-width: 640px) {
-  .persona__panel {
+  .persona__panel,
+  .persona--solo .persona__panel {
     grid-template-columns: 1fr;
     gap: var(--space-4);
   }
 
   .persona__media {
-    max-width: 200px;
+    width: min(280px, 72vw);
   }
 }
 
