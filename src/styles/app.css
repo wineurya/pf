@@ -2115,11 +2115,15 @@ main {
   color: var(--text-muted);
 }
 
+.cs__outro-quip-lead {
+  color: var(--text-strong);
+}
+
 /* Gradient on the "quick chat" phrase, sampled from the ambient backdrop glow
    (bg-6-11.png): cool sky-blue on the left sweeping to warm gold/orange on the
    right. The backdrop image is theme-independent, so these hues are fixed. */
 .cs__outro-grad {
-  font-weight: var(--weight-display);
+  font-weight: calc(var(--weight-display) + 100);
   background: linear-gradient(105deg, #5b97cb 0%, #efb24e 58%, #e5863a 100%);
   -webkit-background-clip: text;
   background-clip: text;

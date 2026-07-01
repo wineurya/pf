@@ -344,6 +344,7 @@ export function CaseStudy({
                   src={study.cover}
                   alt={study.coverAlt ?? `${study.title} project cover`}
                   decoding="async"
+                  fetchPriority="high"
                 />
               ) : (
                 <div className="cs__tile cs__tile--hero">
@@ -754,7 +755,8 @@ function CaseStudyOutro() {
         </a>
       </p>
       <p className="cs__outro-quip">
-        Care for a <span className="cs__outro-grad">quick chat</span>?
+        <span className="cs__outro-quip-lead">Care for a</span>{" "}
+        <span className="cs__outro-grad">quick chat</span>?
       </p>
       <a className="cs__outro-cta" href="mailto:contact@wineury.design">
         Let&rsquo;s talk

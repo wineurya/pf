@@ -6,6 +6,7 @@ import { ViewSwitcher } from "./ViewSwitcher.jsx";
 import { IconArrowUpRight } from "../lib/icons.jsx";
 import { EASE_OUT, layoutMorph, revealItem } from "../lib/motion.js";
 import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { playDungSfx } from "../lib/dungSfx.js";
 
 /* A clicked project opens in-app at /work/<slug>; modified/middle clicks fall
    through to the browser so a project can still open in a new tab. WIP rows are
@@ -38,6 +39,7 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
       data-slug={item.slug}
       aria-disabled={item.wip || undefined}
       onClick={openHandler(item, onOpen)}
+      onPointerEnter={item.slug === "incity" ? playDungSfx : undefined}
       variants={revealItem(reducedMotion)}
       style={{ transformOrigin: "center center" }}
       transition={{ layout: layoutTransition }}

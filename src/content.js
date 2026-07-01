@@ -17,7 +17,9 @@ import vinylOxymoron from "./assets/about/about-vinyl-01.jpg";
 
 /* Case-study cover art (Figma "Asset Priority Matrix"). The hero sizes itself to
    the image's intrinsic aspect ratio, so each cover keeps its own proportions. */
-import incityCover from "./assets/case/incity-cover.png";
+import incityCover from "./assets/case/incity-cover.webp";
+import kinetixCover from "./assets/case/kinetix-cover.webp";
+import avanceCover from "./assets/case/avance-cover.webp";
 
 /* InCity "old flow" screen recording (the original ATL311 on mobile). Recorded at
    the iPhone Pro Max logical resolution; its own status bar is cropped in the
@@ -41,6 +43,8 @@ export const caseStudies = {
     title: "Avance",
     meta: "Goal Coaching",
     hero: "image",
+    cover: avanceCover,
+    coverAlt: "Avance goal-coaching app cover",
     /* Work in progress — listed but locked (no open, no deep-link). */
     wip: true,
     facts: {
@@ -82,6 +86,8 @@ export const caseStudies = {
     meta: "Civic Reporting",
     hero: "video",
     cover: incityCover,
+    coverAlt:
+      "InCity status chip reading Awaiting Inspection over a soft gradient background",
     facts: {
       role: "Lead UX Designer & Researcher",
       team: "Team of 6",
@@ -561,6 +567,8 @@ export const caseStudies = {
     title: "Kinetix",
     meta: "Synthetic UX Testing",
     hero: "prototype",
+    cover: kinetixCover,
+    coverAlt: "Kinetix synthetic UX testing dashboard cover",
     /* Work in progress — listed but locked (no open, no deep-link). */
     wip: true,
     facts: {
