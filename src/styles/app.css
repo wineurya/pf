@@ -30,11 +30,19 @@
 
 .backdrop__img {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  /* bg-pf.png carries a soft transparent margin baked into its own left/right
+     edges (the glow art doesn't reach the canvas edge). Displayed at width:100%
+     that margin renders as a visible gap of bare page background on both sides.
+     Overscaling the image and centering it crops that dead margin away so the
+     glow bleeds edge-to-edge, matching how the old (tightly-cropped) band asset
+     used to fill the frame. */
+  left: -25%;
+  right: auto;
+  /* Nudged up off the true bottom edge so the glow's brightest band sits
+     slightly higher in the viewport. */
+  bottom: 20px;
   top: auto;
-  width: 100%;
+  width: 150%;
   /* Natural aspect ratio, bottom-anchored — the glow sits in the visible band and
      extra height extends below the viewport (inside the bleed zone). */
   height: auto;
