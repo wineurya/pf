@@ -236,14 +236,17 @@ export const caseStudies = {
           {
             title: "Reliable alerts",
             sub: "Residents still lean on local news and TV, so push alerts for weather, traffic, and events had to be dependable.",
+            icon: "alerts",
           },
           {
             title: "Payments that work",
             sub: "Digital payments worked half the time; permits and applications still forced in-person trips.",
+            icon: "payment",
           },
           {
             title: "Privacy first",
             sub: "Security concerns, especially among older users, called for transparent, trustworthy flows.",
+            icon: "privacy",
           },
         ],
       },

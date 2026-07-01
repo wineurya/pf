@@ -43,6 +43,10 @@ import { Question } from "@phosphor-icons/react/dist/csr/Question";
 import { Gauge } from "@phosphor-icons/react/dist/csr/Gauge";
 import { TrendDown } from "@phosphor-icons/react/dist/csr/TrendDown";
 import { SealCheck } from "@phosphor-icons/react/dist/csr/SealCheck";
+/* InCity research cols — alerts, payments, privacy. */
+import { Bell } from "@phosphor-icons/react/dist/csr/Bell";
+import { CreditCard } from "@phosphor-icons/react/dist/csr/CreditCard";
+import { Shield } from "@phosphor-icons/react/dist/csr/Shield";
 
 function makeIcon(BaseIcon) {
   return function Icon({ ariaHidden, ariaLabel, weight = "regular", ...props }) {
@@ -96,6 +100,9 @@ const IconQuestion = makeIcon(Question);
 const IconGauge = makeIcon(Gauge);
 const IconTrendDown = makeIcon(TrendDown);
 const IconSealCheck = makeIcon(SealCheck);
+const IconBell = makeIcon(Bell);
+const IconCreditCard = makeIcon(CreditCard);
+const IconShield = makeIcon(Shield);
 const IconLawAsterisk = makeIcon(Asterisk);
 const IconLawBookmarks = makeIcon(Bookmarks);
 const IconLawCrosshair = makeIcon(Crosshair);
@@ -156,6 +163,7 @@ export {
   IconArrowElbowRightDown,
   IconArrowLeft,
   IconArrowUpRight,
+  IconBell,
   IconBulletList,
   IconCalendar1,
   IconChevronDown,
@@ -163,6 +171,7 @@ export {
   IconCheckmark1Small,
   IconClipboard,
   IconColorPalette,
+  IconCreditCard,
   IconGuideAccess,
   IconGuideInteraction,
   IconGuideVisual,
@@ -186,6 +195,7 @@ export {
   IconGauge,
   IconTrendDown,
   IconSealCheck,
+  IconShield,
   IconSquarePlaceholder,
   IconTabAbout,
   IconTabExploration,

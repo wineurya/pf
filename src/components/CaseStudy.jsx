@@ -7,10 +7,12 @@ import { usePrefersReducedMotion } from "../lib/hooks.js";
 import { EASE_OUT, fillMorph, layoutMorph } from "../lib/motion.js";
 import {
   IconArrowLeft,
+  IconBell,
   IconBulletList,
   IconChevronRight,
   IconClipboard,
   IconColorPalette,
+  IconCreditCard,
   IconGauge,
   IconTrendDown,
   IconSealCheck,
@@ -90,6 +92,10 @@ const CELL_ICONS = {
   handTap: IconHandTap,
   steps: IconBulletList,
   question: IconQuestion,
+  /* InCity research cols — dependable alerts, payments, privacy. */
+  alerts: IconBell,
+  payment: IconCreditCard,
+  privacy: IconShield,
 };
 
 /* Central-icon glyphs anchored to the feature-guide trigger words in the
