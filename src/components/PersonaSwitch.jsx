@@ -82,10 +82,9 @@ export function PersonaSwitch({ personas }) {
               className="persona__photo"
               src={p.image}
               alt={p.alt ?? p.name}
-              width={800}
-              height={800}
               loading="eager"
-              decoding="async"
+              decoding="sync"
+              fetchPriority="high"
             />
           ) : (
             <div className="persona__photo persona__photo--empty" aria-hidden="true">

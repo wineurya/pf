@@ -954,11 +954,9 @@ function MediaTile({ kind, cell = false }) {
 
 function Block({ block }) {
   if (block.personas) {
-    return (
-      <RevealItem>
-        <PersonaSwitch personas={block.personas} />
-      </RevealItem>
-    );
+    /* No RevealItem — transform/opacity enter on iOS Safari can prevent the
+       persona photo from painting (especially below the fold on mobile). */
+    return <PersonaSwitch personas={block.personas} />;
   }
 
   if (block.p) {
