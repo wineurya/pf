@@ -209,15 +209,6 @@ export function HoldToSendStage({ className }) {
     if (event.key === " " || event.key === "Enter") releaseHold();
   };
 
-  const hint =
-    phase === "idle" || phase === "holding"
-      ? "release early to cancel"
-      : phase === "sending" && pressed
-        ? "keep holding"
-        : phase === "sending"
-          ? "please wait"
-          : "";
-
   return (
     <div className={className ? `hts-root ${className}` : "hts-root"}>
       <main className="hts-stage" aria-label="Hold to send">
@@ -268,10 +259,6 @@ export function HoldToSendStage({ className }) {
               </span>
             </div>
           </motion.button>
-
-          <p className="hts-hint" aria-hidden>
-            {hint}
-          </p>
 
           <span className="hts-status" role="status">
             {phase === "sending" ? "Sending" : phase === "sent" ? "Sent" : ""}

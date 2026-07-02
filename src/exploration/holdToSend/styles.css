@@ -107,13 +107,6 @@
   flex-shrink: 0;
 }
 
-.hts-hint {
-  margin: 0;
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--hts-muted);
-}
-
 /* Visually hidden live region for the "Sent" announcement. */
 .hts-status {
   position: absolute;

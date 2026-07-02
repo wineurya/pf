@@ -15,11 +15,13 @@
 }
 
 .tbd-stage {
+  container-type: inline-size;
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
   padding: var(--space-5);
+  overflow: hidden;
 }
 
 /* Assistant chip — a quiet --surface card so the orb + status read as a piece
@@ -27,6 +29,8 @@
    hero. Card fill uses the site's soft-surface shadow (no framing stroke). */
 .tbd-phone {
   --tbd-orb-size: clamp(46px, 13vw, 54px);
+  --tbd-edge-run: 0px;
+  --tbd-edge-fade: clamp(0px, var(--tbd-edge-run), 72px);
 
   appearance: none;
   border: 0;
@@ -38,7 +42,7 @@
   width: min(100%, 280px);
   min-height: calc(var(--tbd-orb-size) + var(--space-4));
   padding: var(--space-3);
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
   box-shadow: none;
   color: inherit;
@@ -48,15 +52,39 @@
   isolation: isolate;
 }
 
+@container (min-width: 0) {
+  .tbd-phone {
+    --tbd-edge-run: max(
+      0px,
+      calc((100cqw - 2 * var(--space-5) - 100%) / 2)
+    );
+  }
+}
+
 .tbd-phone::before {
   content: "";
   position: absolute;
   z-index: 0;
-  inset: 0;
-  border-radius: var(--radius-pill);
+  top: 0;
+  right: calc(-1 * var(--tbd-edge-run));
+  bottom: 0;
+  left: 0;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
   background: color-mix(in srgb, var(--surface) 50%, transparent);
   box-shadow: var(--surface-fill-shadow);
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - var(--tbd-edge-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - var(--tbd-edge-fade)),
+    transparent 100%
+  );
 }
 
 .tbd-phone:focus-visible {

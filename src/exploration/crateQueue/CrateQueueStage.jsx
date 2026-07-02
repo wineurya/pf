@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Reorder,
   animate,
@@ -63,7 +63,15 @@ function moveItem(list, from, to) {
   return next;
 }
 
-function RecordRow({ record, index, total, reduceMotion, rowTransition, onKeyDown }) {
+function RecordRow({
+  record,
+  index,
+  total,
+  reduceMotion,
+  rowTransition,
+  dragConstraints,
+  onKeyDown,
+}) {
   const controls = useDragControls();
   const y = useMotionValue(0);
   const [dragging, setDragging] = useState(false);
@@ -81,6 +89,9 @@ function RecordRow({ record, index, total, reduceMotion, rowTransition, onKeyDow
       transition={rowTransition}
       dragListener={false}
       dragControls={controls}
+      dragConstraints={dragConstraints}
+      dragElastic={0.08}
+      dragMomentum={false}
       onDragStart={() => setDragging(true)}
       onDragEnd={() => setDragging(false)}
       onKeyDown={onKeyDown}
@@ -124,6 +135,7 @@ function RecordRow({ record, index, total, reduceMotion, rowTransition, onKeyDow
 /** Interactive crate-queue canvas — no demo frame or dock. */
 export function CrateQueueStage({ className }) {
   const reduceMotion = useReducedMotion() ?? false;
+  const listRef = useRef(null);
   const [records, setRecords] = useState(CRATE_RECORDS);
   const rowTransition = reduceMotion ? { duration: 0 } : ROW_SPRING;
 
@@ -156,6 +168,7 @@ export function CrateQueueStage({ className }) {
           </div>
 
           <Reorder.Group
+            ref={listRef}
             axis="y"
             values={records}
             onReorder={setRecords}
@@ -170,6 +183,7 @@ export function CrateQueueStage({ className }) {
                 total={records.length}
                 reduceMotion={reduceMotion}
                 rowTransition={rowTransition}
+                dragConstraints={listRef}
                 onKeyDown={(event) => onRowKeyDown(event, index)}
               />
             ))}
