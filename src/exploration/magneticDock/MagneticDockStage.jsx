@@ -4,7 +4,9 @@ import { motion, useReducedMotion, useSpring, useTransform } from "motion/react"
 import {
   MAGNET_SPRING,
   MAGNETIC_DEFAULTS,
+  SCRUB_DEFAULTS,
   magneticPull,
+  scrubLift,
 } from "@/exploration/magneticDock/magneticDockPhysics.js";
 import {
   IconColorPalette,
@@ -41,6 +43,9 @@ export function useMagnetic(
     };
 
     const onMove = (event) => {
+      /* Touch moves belong to the dock scrub — on hybrid devices both paths
+         are live, and the magnet must not also chase a scrubbing finger. */
+      if (event.pointerType === "touch") return;
       const el = ref.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -70,19 +75,113 @@ export function useMagnetic(
   return { x, y, pull };
 }
 
-function DockIcon({ label, children }) {
+/** Touch companion to `useMagnetic`: press-and-drag along the dock lifts the
+    icon nearest the finger (macOS-dock scrub, keyboard-key-preview style).
+    Icons registered by DockIcon expose their own springs; this hook only
+    drives them. No-op unless a coarse pointer exists; ignores mouse input so
+    hybrid devices keep the fine-pointer magnet. */
+function useDockScrub(dockRef, registry) {
+  const reduceMotion = useReducedMotion() ?? false;
+
+  useEffect(() => {
+    const dock = dockRef.current;
+    if (
+      !dock ||
+      reduceMotion ||
+      !window.matchMedia("(any-pointer: coarse)").matches
+    ) {
+      return undefined;
+    }
+
+    let activePointer = null;
+
+    const rest = () => {
+      activePointer = null;
+      for (const entry of registry.current) {
+        entry.y.set(0);
+        entry.pull.set(0);
+      }
+    };
+
+    /* Horizontal-only distance: translateY and scale (origin center) leave
+       each rect's center x stable, so reading rects mid-scrub can't feed back
+       into the falloff the way the 2D cursor magnet would. */
+    const update = (clientX) => {
+      for (const entry of registry.current) {
+        const el = entry.el.current;
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        const next = scrubLift(
+          clientX - (rect.left + rect.width / 2),
+          SCRUB_DEFAULTS.radius,
+          SCRUB_DEFAULTS.lift,
+        );
+        entry.y.set(next.y);
+        entry.pull.set(next.t);
+      }
+    };
+
+    const onMove = (event) => {
+      if (event.pointerId === activePointer) update(event.clientX);
+    };
+    const onEnd = (event) => {
+      if (event.pointerId === activePointer) rest();
+    };
+    /* No pointer capture — it would retarget the tap's click away from the
+       buttons. Window listeners cover fingers that wander off the dock. */
+    const onDown = (event) => {
+      if (event.pointerType === "mouse") return;
+      activePointer = event.pointerId;
+      update(event.clientX);
+    };
+
+    dock.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerup", onEnd);
+    window.addEventListener("pointercancel", onEnd);
+
+    return () => {
+      dock.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onEnd);
+      window.removeEventListener("pointercancel", onEnd);
+      rest();
+    };
+  }, [dockRef, reduceMotion, registry]);
+}
+
+function DockIcon({ label, registry, children }) {
   const ref = useRef(null);
-  const { x, y, pull } = useMagnetic(ref, MAGNETIC_DEFAULTS);
+  const magnet = useMagnetic(ref, MAGNETIC_DEFAULTS);
+  const scrubY = useSpring(0, MAGNET_SPRING);
+  const scrubPull = useSpring(0, MAGNET_SPRING);
+
+  useEffect(() => {
+    const entry = { el: ref, y: scrubY, pull: scrubPull };
+    const list = registry.current;
+    list.push(entry);
+    return () => {
+      const index = list.indexOf(entry);
+      if (index !== -1) list.splice(index, 1);
+    };
+  }, [registry, scrubY, scrubPull]);
+
+  /* Only one path moves per pointer type, so summing is safe on hybrids. */
+  const y = useTransform([magnet.y, scrubY], ([m, s]) => m + s);
   /* Smoothstep falloff means only the nearest icon sits high on the curve, so
-     squaring it keeps the scale bump visually exclusive to that one. */
-  const scale = useTransform(pull, (t) => 1 + t * t * 0.05);
+     squaring it keeps the scale bump visually exclusive to that one. The
+     scrub term is stronger — on touch, lift + scale carry the whole effect. */
+  const scale = useTransform(
+    [magnet.pull, scrubPull],
+    ([m, s]) => 1 + m * m * 0.05 + s * SCRUB_DEFAULTS.scale,
+  );
 
   return (
     <motion.button
       ref={ref}
       type="button"
       className="mgd-icon"
-      style={{ x, y, scale }}
+      style={{ x: magnet.x, y, scale }}
       aria-label={label}
     >
       {children}
@@ -92,23 +191,27 @@ function DockIcon({ label, children }) {
 
 /** Interactive magnetic-dock canvas — no demo frame or dock. */
 export function MagneticDockStage({ className }) {
+  const dockRef = useRef(null);
+  const registry = useRef([]);
+  useDockScrub(dockRef, registry);
+
   return (
     <div className={className ? `mgd-root ${className}` : "mgd-root"}>
       <main className="mgd-stage" aria-label="Magnetic dock">
-        <div className="mgd-dock">
-          <DockIcon label="Work">
+        <div className="mgd-dock" ref={dockRef}>
+          <DockIcon label="Work" registry={registry}>
             <IconTabWork size={20} ariaHidden />
           </DockIcon>
-          <DockIcon label="Exploration">
+          <DockIcon label="Exploration" registry={registry}>
             <IconTabExploration size={20} ariaHidden />
           </DockIcon>
-          <DockIcon label="About">
+          <DockIcon label="About" registry={registry}>
             <IconTabAbout size={20} ariaHidden />
           </DockIcon>
-          <DockIcon label="Palette">
+          <DockIcon label="Palette" registry={registry}>
             <IconColorPalette size={20} ariaHidden />
           </DockIcon>
-          <DockIcon label="Map">
+          <DockIcon label="Map" registry={registry}>
             <IconMapPin size={20} ariaHidden />
           </DockIcon>
         </div>

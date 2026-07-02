@@ -27,6 +27,9 @@
   padding: var(--space-2);
   border-radius: var(--radius-pill);
   background: var(--surface);
+  /* Horizontal scrubs belong to the dock; vertical swipes keep scrolling the
+     page (the browser cancels our pointer, which rests the icons). */
+  touch-action: pan-y;
 }
 
 .mgd-icon {
@@ -54,4 +57,12 @@
 .mgd-icon:focus-visible {
   outline: var(--focus-width) solid var(--focus-ring);
   outline-offset: var(--focus-offset);
+}
+
+/* 44px minimum touch target when the primary pointer is a finger. */
+@media (pointer: coarse) {
+  .mgd-icon {
+    width: 44px;
+    height: 44px;
+  }
 }

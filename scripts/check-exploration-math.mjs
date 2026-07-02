@@ -2,7 +2,7 @@
    Run: node scripts/check-exploration-math.mjs */
 import assert from "node:assert/strict";
 import { rollPositions } from "../src/exploration/shared/odometerMath.js";
-import { magneticPull, MAGNETIC_DEFAULTS } from "../src/exploration/magneticDock/magneticDockPhysics.js";
+import { magneticPull, scrubLift, MAGNETIC_DEFAULTS, SCRUB_DEFAULTS } from "../src/exploration/magneticDock/magneticDockPhysics.js";
 import { jellyControlGeometry, pointerEdgeFromX, progressFromPointerX } from "../src/exploration/jellyScrubber/jellyScrubberPhysics.js";
 import {
   nearestSiteIndex,
@@ -27,6 +27,15 @@ const near = magneticPull(10, 0, radius, strength);
 assert.ok(near.x > 0 && near.x <= strength && near.t > 0.9);
 const diag = magneticPull(-50, 50, radius, strength);
 assert.ok(diag.x < 0 && diag.y > 0);
+
+/* touch scrub: zero outside the radius, full lift (upward) directly under
+   the finger, partial lift in between, symmetric either side. */
+const { radius: scrubRadius, lift } = SCRUB_DEFAULTS;
+assert.deepEqual(scrubLift(scrubRadius + 1, scrubRadius, lift), { y: 0, t: 0 });
+assert.deepEqual(scrubLift(0, scrubRadius, lift), { y: -lift, t: 1 });
+const partial = scrubLift(scrubRadius / 2, scrubRadius, lift);
+assert.ok(partial.y < 0 && partial.y > -lift && partial.t > 0 && partial.t < 1);
+assert.deepEqual(scrubLift(-scrubRadius / 2, scrubRadius, lift), partial);
 
 /* jelly scrubber: thumb reaches both track edges at progress 0 and 1. */
 const track = 200;

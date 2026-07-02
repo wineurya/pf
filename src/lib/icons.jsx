@@ -23,7 +23,10 @@ import { Check } from "@phosphor-icons/react/dist/csr/Check";
 import { CircleDashed } from "@phosphor-icons/react/dist/csr/CircleDashed";
 import { Clipboard } from "@phosphor-icons/react/dist/csr/Clipboard";
 import { Crosshair } from "@phosphor-icons/react/dist/csr/Crosshair";
+import { EnvelopeSimple } from "@phosphor-icons/react/dist/csr/EnvelopeSimple";
 import { GridFour } from "@phosphor-icons/react/dist/csr/GridFour";
+import { LinkedinLogo } from "@phosphor-icons/react/dist/csr/LinkedinLogo";
+import { XLogo } from "@phosphor-icons/react/dist/csr/XLogo";
 import { TrafficCone } from "@phosphor-icons/react/dist/csr/TrafficCone";
 import { List } from "@phosphor-icons/react/dist/csr/List";
 import { ListBullets } from "@phosphor-icons/react/dist/csr/ListBullets";
@@ -93,6 +96,9 @@ const IconChevronLeft = makeIcon(CaretLeft);
 const IconChevronRight = makeIcon(CaretRight);
 const IconCheckmark1Small = makeIcon(Check);
 const IconClipboard = makeIcon(Clipboard);
+const IconEnvelope = makeIcon(EnvelopeSimple);
+const IconLinkedIn = makeIcon(LinkedinLogo);
+const IconXLogo = makeIcon(XLogo);
 const IconColorPalette = makeIcon(Palette);
 const IconLayersThree = makeIcon(Stack);
 const IconLock = makeIcon(Lock);
@@ -186,6 +192,9 @@ export {
   IconColorPalette,
   IconCursorArrow,
   IconCreditCard,
+  IconEnvelope,
+  IconLinkedIn,
+  IconXLogo,
   IconGuideAccess,
   IconGuideInteraction,
   IconGuideVisual,

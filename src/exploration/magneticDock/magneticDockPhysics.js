@@ -10,6 +10,27 @@ export const MAGNETIC_DEFAULTS = {
 
 export const MAGNET_SPRING = { stiffness: 320, damping: 24, mass: 0.6 };
 
+export const SCRUB_DEFAULTS = {
+  /* horizontal falloff — icon width + gap, so only immediate neighbors stir */
+  radius: 72,
+  lift: 14,
+  /* extra scale at the scrub center (lift replaces the cursor-pull effect) */
+  scale: 0.25,
+};
+
+/** Touch-scrub lift for an icon whose center is `dx` px (horizontal only)
+    from the finger. Same smoothstep falloff, but icons rise instead of
+    pulling toward the pointer, so the finger never occludes them.
+    Returns { y, t } with y ≤ 0 and t the eased proximity. */
+export function scrubLift(dx, radius, lift) {
+  const dist = Math.abs(dx);
+  if (dist >= radius) return { y: 0, t: 0 };
+
+  const linear = 1 - dist / radius;
+  const t = linear * linear * (3 - 2 * linear);
+  return { y: -lift * t, t };
+}
+
 /** Displacement toward the cursor for an element whose center is (dx, dy)
     away from the pointer. Smoothstep falloff inside `radius`, displacement
     clamped to `strength` px. Returns { x, y, t } with t the eased proximity

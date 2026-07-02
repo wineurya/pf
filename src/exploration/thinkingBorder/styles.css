@@ -29,6 +29,8 @@
    hero. Card fill uses the site's soft-surface shadow (no framing stroke). */
 .tbd-phone {
   --tbd-orb-size: clamp(46px, 13vw, 54px);
+  --tbd-left-run: 14px;
+  --tbd-left-fade: 22px;
   --tbd-edge-run: 0px;
   --tbd-edge-fade: clamp(0px, var(--tbd-edge-run), 72px);
 
@@ -68,20 +70,22 @@
   top: 0;
   right: calc(-1 * var(--tbd-edge-run));
   bottom: 0;
-  left: 0;
+  left: calc(-1 * var(--tbd-left-run));
   border-radius: var(--radius-pill) 0 0 var(--radius-pill);
-  background: color-mix(in srgb, var(--surface) 50%, transparent);
+  background: color-mix(in srgb, var(--surface) 56%, transparent);
   box-shadow: var(--surface-fill-shadow);
   pointer-events: none;
   -webkit-mask-image: linear-gradient(
     to right,
-    #000 0,
+    transparent 0,
+    #000 var(--tbd-left-fade),
     #000 calc(100% - var(--tbd-edge-fade)),
     transparent 100%
   );
   mask-image: linear-gradient(
     to right,
-    #000 0,
+    transparent 0,
+    #000 var(--tbd-left-fade),
     #000 calc(100% - var(--tbd-edge-fade)),
     transparent 100%
   );

@@ -42,7 +42,7 @@ export function WalletMenuStage({
       style={canvasBg ? { background: canvasBg } : undefined}
     >
       <div className="wm-stage">
-        <div className="wm-scene" ref={wrapRef}>
+        <div className="wm-scene" data-open={open} ref={wrapRef}>
           <div className="wm-locus">
             <WalletMenuPanel
               open={open}

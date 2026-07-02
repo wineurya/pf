@@ -25,7 +25,13 @@ import { useTheme } from "./lib/theme.js";
 import { usePageEnter } from "./lib/usePageEnter.js";
 import { useVisualViewportPin } from "./lib/useVisualViewportPin.js";
 import { renderRich } from "./lib/richText.jsx";
-import { BRAND_ICONS, IconCheckmark1Small, IconClipboard } from "./lib/icons.jsx";
+import {
+  BRAND_ICONS,
+  IconCheckmark1Small,
+  IconEnvelope,
+  IconLinkedIn,
+  IconXLogo,
+} from "./lib/icons.jsx";
 import { caseStudies, site, tabs } from "./content.js";
 
 function studyFromPath(pathname) {
@@ -99,7 +105,7 @@ function CopyEmail({ email, label }) {
         {copied ? (
           <IconCheckmark1Small className="copy__icon" size={14} ariaHidden />
         ) : (
-          <IconClipboard className="copy__icon" size={14} ariaHidden />
+          <IconEnvelope className="copy__icon" size={14} ariaHidden />
         )}
         <span>{text}</span>
       </button>
@@ -113,31 +119,44 @@ function CopyEmail({ email, label }) {
   );
 }
 
+/* Channel glyphs for the contact row — same 14px inline treatment as the
+   ToolWord brand marks, so every channel gets an identity, not just Email. */
+const CONTACT_ICONS = {
+  LinkedIn: IconLinkedIn,
+  X: IconXLogo,
+};
+
 function AboutContact() {
   return (
     <RevealItem as="p" className="panel__lead contact-links">
       <span className="contact-links__lead">You can reach me at </span>
-      {site.contact.map((item, i) => (
-        <Fragment key={item.label}>
-          {i > 0 ? (
-            <span className="contact-links__sep" aria-hidden="true">
-              {" · "}
-            </span>
-          ) : null}
-          {item.type === "email" ? (
-            <CopyEmail email={item.value} label={item.label} />
-          ) : (
-            <a
-              className="contact-links__link"
-              href={item.href}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {item.label}
-            </a>
-          )}
-        </Fragment>
-      ))}
+      {site.contact.map((item, i) => {
+        const Icon = CONTACT_ICONS[item.label];
+        return (
+          <Fragment key={item.label}>
+            {i > 0 ? (
+              <span className="contact-links__sep" aria-hidden="true">
+                {" · "}
+              </span>
+            ) : null}
+            {item.type === "email" ? (
+              <CopyEmail email={item.value} label={item.label} />
+            ) : (
+              <a
+                className="contact-links__link"
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {Icon ? (
+                  <Icon className="contact-links__icon" size={14} ariaHidden />
+                ) : null}
+                {item.label}
+              </a>
+            )}
+          </Fragment>
+        );
+      })}
     </RevealItem>
   );
 }

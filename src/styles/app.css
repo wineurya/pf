@@ -3208,7 +3208,8 @@ main {
   }
 }
 
-.copy__icon {
+.copy__icon,
+.contact-links__icon {
   display: inline-block;
   vertical-align: -2px; /* ponytail: same optical nudge as .tool__icon in 20px body line */
   margin-right: 3px;
@@ -3263,6 +3264,10 @@ main {
   .contact-links__link:hover {
     color: var(--text-strong);
     text-decoration-color: var(--color-black);
+  }
+
+  .contact-links__link:hover .contact-links__icon {
+    opacity: 1;
   }
 }
 
