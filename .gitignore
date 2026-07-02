@@ -27,7 +27,6 @@ dist-ssr
 # Environment
 .env
 .env.*
-!.env.example
 
 # Claude Code may mirror skills here; tracked copy is .agents/skills + skills-lock.json
 .claude/

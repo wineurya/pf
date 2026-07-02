@@ -57,8 +57,6 @@ npm run build
 npm run preview
 ```
 
-The contact form reads `VITE_WEB3FORMS_ACCESS_KEY` at build time. Copy `.env.example` to `.env.local` and add your own key for local testing.
-
 ## Contributing and agents
 
 This repository is the polished, public artifact. Research, inspiration sources, design references, raw prompts, private notes, and local working context are intentionally kept out of version control.
