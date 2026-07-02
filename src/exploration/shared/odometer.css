@@ -1,0 +1,46 @@
+/* Shared odometer primitive — per-column rolling digit strips (Odometer.jsx). */
+
+.odo {
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+}
+
+.odo-cols {
+  display: inline-flex;
+  line-height: 1;
+}
+
+.odo-col {
+  position: relative;
+  width: 1ch;
+  height: 1em;
+  overflow: hidden;
+}
+
+.odo-strip {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--dur-slow) var(--ease-out-strong);
+  will-change: transform;
+}
+
+.odo-cell {
+  position: absolute;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1ch;
+  height: 1em;
+}
+
+/* Screen readers get the plain number; the strips are decoration. */
+.odo-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}

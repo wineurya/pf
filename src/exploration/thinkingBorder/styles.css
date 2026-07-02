@@ -1,0 +1,128 @@
+/* Thinking Border — per-state screen-edge glow (ThinkingBorderStage.jsx).
+   State config arrives as inline vars: --tbd-hue / --tbd-speed / --tbd-blur /
+   --tbd-glow (see thinkingBorderSettings.js). */
+
+.tbd-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--color-white);
+  color: var(--text-primary);
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+
+.tbd-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+
+.tbd-phone {
+  appearance: none;
+  border: 0;
+  position: relative;
+  width: 128px;
+  height: 232px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tbd-phone:focus-visible {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* Oversized rotating conic sweep, clipped by the phone and mostly hidden
+   behind the screen — only the frame edge shows. */
+.tbd-ring {
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    hsl(var(--tbd-hue) 90% 62%) 70deg,
+    hsl(calc(var(--tbd-hue) + 40) 90% 70%) 120deg,
+    transparent 200deg,
+    hsl(var(--tbd-hue) 90% 62%) 290deg,
+    transparent 360deg
+  );
+  filter: blur(var(--tbd-blur));
+  opacity: var(--tbd-glow);
+  animation: tbd-spin var(--tbd-speed) linear infinite;
+  transition: opacity var(--dur) var(--ease-standard);
+  will-change: transform;
+}
+
+@keyframes tbd-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.tbd-screen {
+  position: absolute;
+  inset: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: calc(var(--radius-lg) - 3px);
+  background: var(--color-white);
+}
+
+.tbd-state-label {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  transition: color var(--dur) var(--ease-standard);
+}
+
+.tbd-phone[data-state="thinking"] .tbd-state-label,
+.tbd-phone[data-state="responding"] .tbd-state-label {
+  color: var(--text-primary);
+}
+
+/* Streaming placeholder line — clip-path typewriter reveal. --dur-* tokens
+   stay for UI chrome; this content reveal is paced to the responding hold. */
+.tbd-stream {
+  max-width: 100%;
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 15px;
+  text-align: center;
+  clip-path: inset(0 100% 0 0);
+  animation: tbd-stream 1.8s var(--ease-out-strong) 0.2s forwards;
+}
+
+@keyframes tbd-stream {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Reduced motion — the state is information: keep a static colored ring per
+   state (color alone still says which state is active), stop the sweep. */
+@media (prefers-reduced-motion: reduce) {
+  .tbd-ring {
+    animation: none;
+    background: hsl(var(--tbd-hue) 85% 62%);
+  }
+
+  .tbd-stream {
+    animation: none;
+    clip-path: none;
+  }
+}

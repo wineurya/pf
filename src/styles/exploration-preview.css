@@ -60,7 +60,9 @@
 }
 
 .exp-card__demo.jvs-root,
-.exp-card__demo.wm-root {
+.exp-card__demo.wm-root,
+.exp-card__demo.cq-root,
+.exp-card__demo.hts-root {
   position: relative;
   width: 100%;
   height: 100%;
@@ -71,7 +73,9 @@
 
 @supports (corner-shape: superellipse(2)) {
   .exp-card__demo.jvs-root,
-  .exp-card__demo.wm-root {
+  .exp-card__demo.wm-root,
+  .exp-card__demo.cq-root,
+  .exp-card__demo.hts-root {
     corner-shape: inherit;
   }
 }

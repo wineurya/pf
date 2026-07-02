@@ -1,0 +1,120 @@
+/* Hold to send — press-and-hold confirm pill. Scoped: hts-
+   Two stacked labels: an ink-on-paper base and a paper-on-ink clone inside the
+   clipped fill, so the sweep re-inks the text as it passes. */
+.hts-root {
+  --hts-ink: var(--text-strong, #111111);
+  --hts-muted: var(--text-muted, #8d8d8d);
+  --hts-hairline: var(--border-soft, #e8e8e8);
+  --hts-paper: var(--color-white, #ffffff);
+  --hts-lift: var(--hover-lift, rgba(0, 0, 0, 0.04));
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--hts-ink);
+}
+
+.hts-stage {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: clamp(0.75rem, 4vw, 1.5rem);
+}
+
+.hts-showcase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3, 12px);
+}
+
+.hts-button {
+  position: relative;
+  overflow: hidden;
+  padding: 11px 26px;
+  border: 0;
+  border-radius: var(--radius-pill, 999px);
+  background: var(--hts-paper);
+  box-shadow: 0 0 0 1px var(--hts-hairline);
+  color: var(--hts-ink);
+  font: inherit;
+  font-weight: var(--weight-medium, 500);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .hts-button[data-phase="idle"]:hover {
+    background: color-mix(in oklab, var(--hts-lift), var(--hts-paper));
+  }
+}
+
+.hts-button:focus-visible {
+  outline: var(--focus-width, 2px) solid var(--focus-ring, currentColor);
+  outline-offset: var(--focus-offset, 3px);
+}
+
+/* In-flow but invisible — pins the pill width across label swaps. */
+.hts-sizer {
+  visibility: hidden;
+  white-space: nowrap;
+}
+
+.hts-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hts-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.hts-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--hts-ink);
+  clip-path: inset(0 100% 0 0);
+  transition: opacity 240ms var(--ease-standard, ease-out);
+}
+
+.hts-fill--hidden {
+  opacity: 0;
+}
+
+.hts-layer--fill {
+  color: var(--hts-paper);
+}
+
+.hts-check {
+  flex-shrink: 0;
+}
+
+.hts-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--hts-muted);
+}
+
+/* Visually hidden live region for the "Sent" announcement. */
+.hts-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

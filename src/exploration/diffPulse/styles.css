@@ -1,0 +1,97 @@
+/* Diff Pulse — looping bar stack of real git line-change stats
+   (DiffPulseStage.jsx). */
+
+.dfp-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--color-white);
+  color: var(--text-primary);
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+
+.dfp-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+
+.dfp-panel {
+  display: grid;
+  gap: var(--space-3);
+  width: min(220px, 100%);
+}
+
+.dfp-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.dfp-label {
+  color: var(--text-muted);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+}
+
+.dfp-totals {
+  display: inline-flex;
+  gap: var(--space-2);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  font-weight: var(--weight-medium);
+}
+
+.dfp-total--add {
+  color: var(--mark-accent-wireframes);
+}
+
+.dfp-total--del {
+  color: var(--mark-accent-problem);
+}
+
+.dfp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 76px;
+  align-items: flex-start;
+}
+
+.dfp-bar {
+  display: flex;
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+}
+
+.dfp-bar-add {
+  background: var(--mark-accent-wireframes);
+}
+
+.dfp-bar-del {
+  background: var(--mark-accent-problem);
+}
+
+/* Reduced motion resolves the whole history as one static chart. */
+.dfp-panel[data-static] .dfp-bars {
+  gap: 1px;
+}
+
+.dfp-panel[data-static] .dfp-bar {
+  height: 2px;
+}
+
+.dfp-sub {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.8;
+}

@@ -1,18 +1,45 @@
 import { useState } from "react";
 import { BorderBeam } from "border-beam";
 
+import { CrateQueueStage } from "@/exploration/crateQueue/CrateQueueStage.jsx";
+import { DiffPulseStage } from "@/exploration/diffPulse/DiffPulseStage.jsx";
+import { FlutedGlassStage } from "@/exploration/flutedGlass/FlutedGlassStage.jsx";
+import { GrainGradientStage } from "@/exploration/grainGradient/GrainGradientStage.jsx";
+import { HoldToSendStage } from "@/exploration/holdToSend/HoldToSendStage.jsx";
 import { JellyScrubberStage } from "@/exploration/jellyScrubber/JellyScrubberStage.jsx";
+import { MagneticDockStage } from "@/exploration/magneticDock/MagneticDockStage.jsx";
+import { OdometerCounterStage } from "@/exploration/odometerCounter/OdometerCounterStage.jsx";
+import { ThinkingBorderStage } from "@/exploration/thinkingBorder/ThinkingBorderStage.jsx";
+import { VoronoiGridStage } from "@/exploration/voronoiGrid/VoronoiGridStage.jsx";
 import { WalletMenuStage } from "@/exploration/walletMenu/WalletMenuStage.jsx";
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
 import { IconArrowUpRight } from "../lib/icons.jsx";
 
+import "@/exploration/crateQueue/styles.css";
+import "@/exploration/diffPulse/styles.css";
+import "@/exploration/flutedGlass/styles.css";
+import "@/exploration/grainGradient/styles.css";
+import "@/exploration/holdToSend/styles.css";
 import "@/exploration/jellyScrubber/styles.css";
+import "@/exploration/magneticDock/styles.css";
+import "@/exploration/odometerCounter/styles.css";
+import "@/exploration/thinkingBorder/styles.css";
+import "@/exploration/voronoiGrid/styles.css";
 import "@/exploration/walletMenu/styles.css";
 import "../styles/exploration-preview.css";
 
 const PREVIEW_COMPONENTS = {
   jelly: JellyScrubberStage,
   wallet: WalletMenuStage,
+  crate: CrateQueueStage,
+  hold: HoldToSendStage,
+  odometer: OdometerCounterStage,
+  magnetic: MagneticDockStage,
+  thinking: ThinkingBorderStage,
+  grain: GrainGradientStage,
+  diff: DiffPulseStage,
+  glass: FlutedGlassStage,
+  voronoi: VoronoiGridStage,
 };
 
 function ExplorationImage({ src, alt }) {

@@ -1,0 +1,88 @@
+/* Fluted Glass Reveal — ribbed feTurbulence/feDisplacementMap panel
+   (FlutedGlassStage.jsx). */
+
+.fgl-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--color-white);
+  color: var(--text-primary);
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+
+.fgl-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+
+.fgl-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.fgl-panel {
+  position: relative;
+  width: min(240px, 100%);
+  height: 168px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.fgl-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-2);
+  /* Generous inset keeps displaced pixels from smearing off the clipped edge. */
+  padding: var(--space-6);
+}
+
+/* Reduced-motion clear layer — a static opacity/blur cross-fade instead of a
+   tweened displacement (the filter still renders, it just never animates). */
+.fgl-layer--clear {
+  opacity: 0;
+  filter: blur(4px);
+  background: var(--surface);
+  transition:
+    opacity var(--dur-slow) var(--ease-out-strong),
+    filter var(--dur-slow) var(--ease-out-strong);
+}
+
+.fgl-panel[data-clear] .fgl-layer--clear {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.fgl-kicker {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fgl-title {
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-variation);
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-leading);
+  font-weight: var(--weight-display);
+}
+
+.fgl-body {
+  color: var(--text-secondary);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+}

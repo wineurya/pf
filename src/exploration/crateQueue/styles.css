@@ -1,0 +1,137 @@
+/* Crate queue — drag-to-reorder record list. Scoped: cq-
+   Local vars alias site tokens (with fallbacks) so light/dark theming is free. */
+.cq-root {
+  --cq-ink: var(--text-strong, #111111);
+  --cq-muted: var(--text-muted, #8d8d8d);
+  --cq-hairline: var(--border-soft, #e8e8e8);
+  --cq-paper: var(--color-white, #ffffff);
+  --cq-lift: var(--hover-lift, rgba(0, 0, 0, 0.04));
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--cq-ink);
+}
+
+.cq-stage {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: clamp(0.75rem, 4vw, 1.5rem);
+}
+
+.cq-crate {
+  width: min(392px, 100%);
+}
+
+.cq-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3, 12px);
+  padding-inline: 10px;
+  margin-bottom: var(--space-2, 8px);
+}
+
+.cq-head-label {
+  font-weight: var(--weight-medium, 500);
+}
+
+.cq-head-count {
+  color: var(--cq-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.cq-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cq-row {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3, 12px);
+  padding: 9px 10px;
+  border-radius: var(--radius-sm, 8px);
+  background: transparent;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* Hairline between rows — rides on each row's top edge so it travels with the
+   reorder; the lifted row hides its own line to read as a free card. */
+.cq-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: var(--cq-hairline);
+  transition: opacity var(--dur-fast, 160ms) var(--ease-standard, ease-out);
+}
+
+.cq-row:first-child::before {
+  opacity: 0;
+}
+
+@media (hover: hover) {
+  .cq-row:hover {
+    background: var(--cq-lift);
+  }
+}
+
+.cq-row--dragging {
+  z-index: 2;
+  background: var(--cq-paper);
+  box-shadow: 0 0 0 1px var(--cq-hairline);
+  cursor: grabbing;
+}
+
+.cq-row--dragging::before,
+.cq-row--dragging + .cq-row::before {
+  opacity: 0;
+}
+
+.cq-row:focus-visible {
+  outline: var(--focus-width, 2px) solid var(--focus-ring, currentColor);
+  outline-offset: 2px;
+}
+
+.cq-row-index {
+  flex-shrink: 0;
+  color: var(--cq-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.cq-row-title {
+  font-weight: var(--weight-medium, 500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cq-row-artist {
+  flex: 1;
+  min-width: 0;
+  color: var(--cq-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cq-row-year {
+  flex-shrink: 0;
+  color: var(--cq-muted);
+  font-variant-numeric: tabular-nums;
+}
