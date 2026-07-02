@@ -226,22 +226,27 @@ export const caseStudies = {
       },
       { section: "Research" },
       {
+        media: "image",
+        src: incityResearchInterviews,
+        alt: "Remote interview session with an Atlanta resident",
         title: "Research started with real voices.",
         sub: "Four Atlanta residents and two city officials, including Marty Hughes, Assistant City Manager of Kennesaw, described how people experience 311 and how they would improve it on mobile — backed by a competitive audit and a literature review.",
-        mosaic: [
-          {
-            src: incityResearchInterviews,
-            alt: "Remote interview session with an Atlanta resident",
-          },
-          {
-            src: incityResearchAudit,
-            alt: "Competitive audit comparing NYC311, Austin311, and CHI311",
-          },
-          {
-            src: incityResearchLitReview,
-            alt: "Literature review notes on civic accessibility",
-          },
-        ],
+      },
+      {
+        media: "image",
+        src: incityResearchAudit,
+        alt: "Competitive audit comparing NYC311, Austin311, and CHI311",
+        bare: true,
+        title: "Atlanta was falling behind cities that made status visible.",
+        sub: "A competitive audit of NYC311, Austin311, and CHI311 made the gap concrete. Other cities gave residents ==clean layouts, real-time maps, and bookmarking==; Atlanta left them hunting for the next step.",
+      },
+      {
+        media: "image",
+        src: incityResearchLitReview,
+        alt: "Literature review notes on civic accessibility",
+        bare: true,
+        title: "Accessibility meant removing everyday barriers.",
+        sub: "The literature review widened the brief. Accessibility was not a compliance checkbox; it was the work of ==removing everyday barriers== so more residents could take part in city upkeep.",
       },
       {
         media: "video",
@@ -252,14 +257,6 @@ export const caseStudies = {
         },
         title: "From voices to patterns.",
         sub: "Interview notes, the competitive audit, and the literature review were grouped into an affinity map — the recurring patterns that shaped every later decision.",
-      },
-      {
-        title: "Atlanta was falling behind cities that made status visible.",
-        p: "A competitive audit of NYC311, Austin311, and CHI311 made the gap concrete. Other cities gave residents ==clean layouts, real-time maps, and bookmarking==; Atlanta left them hunting for the next step.",
-      },
-      {
-        title: "Accessibility meant removing everyday barriers.",
-        p: "The literature review widened the brief. Accessibility was not a compliance checkbox; it was the work of ==removing everyday barriers== so more residents could take part in city upkeep.",
       },
       {
         cols: [
