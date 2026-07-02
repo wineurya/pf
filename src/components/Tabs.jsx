@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { LayoutGroup, motion } from "motion/react";
 import {
+  ICON_WEIGHT_IDLE,
+  ICON_WEIGHT_SELECTED,
   IconTabAbout,
   IconTabExploration,
   IconTabWork,
@@ -92,16 +94,13 @@ export function Tabs({ items, value, onChange }) {
               }}
               {...tabProps}
             >
-              {selected ? (
-                <motion.span
-                  className="tab__fill"
-                  layoutId="tab-fill"
-                  aria-hidden="true"
-                  transition={fillMorph(reducedMotion)}
-                />
-              ) : null}
               {Icon ? (
-                <Icon className="tab__icon" size={18} ariaHidden />
+                <Icon
+                  className="tab__icon"
+                  size={18}
+                  weight={selected ? ICON_WEIGHT_SELECTED : ICON_WEIGHT_IDLE}
+                  ariaHidden
+                />
               ) : null}
               {selected ? (
                 <span className="tab__label">{t.label}</span>
@@ -128,7 +127,12 @@ export function Tabs({ items, value, onChange }) {
               />
             ) : null}
             {Icon ? (
-              <Icon className="tab__icon" size={18} ariaHidden />
+              <Icon
+                className="tab__icon"
+                size={18}
+                weight={selected ? ICON_WEIGHT_SELECTED : ICON_WEIGHT_IDLE}
+                ariaHidden
+              />
             ) : null}
             <span className="tab__label">{t.label}</span>
           </RevealItem>

@@ -7,7 +7,7 @@ export const THINKING_SEQUENCE = ["idle", "listening", "thinking", "responding"]
 
 export const THINKING_BORDER_SETTINGS = {
   idle: {
-    label: "Idle",
+    label: "Ask anything",
     hue: 220,
     speed: 14,
     blur: 10,

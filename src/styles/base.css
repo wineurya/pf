@@ -183,3 +183,9 @@ ol {
 .skip-link:focus-visible {
   transform: translateY(0);
 }
+
+@supports (corner-shape: superellipse(2)) {
+  .skip-link {
+    corner-shape: var(--corner-smooth);
+  }
+}

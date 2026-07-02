@@ -1086,7 +1086,7 @@ function Block({ block }) {
           />
         ) : block.src ? (
           <img
-            className={`cs__shot${block.portrait ? " cs__shot--portrait" : ""}${block.bare ? " cs__shot--bare" : ""}`}
+            className={`cs__shot${block.portrait ? " cs__shot--portrait" : ""}${block.compact ? " cs__shot--compact" : ""}${block.bare ? " cs__shot--bare" : ""}`}
             src={block.src}
             alt={block.alt ?? block.title ?? ""}
             loading="lazy"

@@ -1,5 +1,7 @@
-/* Diff Pulse — looping bar stack of real git line-change stats
-   (DiffPulseStage.jsx). */
+/* Lines Changed — looping fake-diff code lines over real git line-change
+   totals (DiffPulseStage.jsx). Additions borrow the case-study highlight
+   language (.cs__mark: ink at full accent, fill at 12%/16%); deletions
+   strike through in the problem accent. */
 
 .dfp-root {
   position: relative;
@@ -8,7 +10,7 @@
   min-height: 100%;
   overflow: hidden;
   border-radius: inherit;
-  background: var(--color-white);
+  background: var(--exp-canvas);
   color: var(--text-primary);
   font-family: var(--font-body, system-ui, sans-serif);
 }
@@ -24,12 +26,12 @@
 .dfp-panel {
   display: grid;
   gap: var(--space-3);
-  width: min(220px, 100%);
+  width: min(230px, 100%);
 }
 
 .dfp-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
 }
@@ -42,11 +44,24 @@
 
 .dfp-totals {
   display: inline-flex;
+  align-items: center;
   gap: var(--space-2);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-sm-size);
-  line-height: var(--text-sm-leading);
+  /* Odometer columns are 1em — loose leading pushed +/− off the digits. */
+  line-height: 1;
   font-weight: var(--weight-medium);
+}
+
+.dfp-total {
+  display: inline-flex;
+  align-items: center;
+}
+
+.dfp-sign {
+  flex-shrink: 0;
+  width: 1ch;
+  text-align: center;
 }
 
 .dfp-total--add {
@@ -57,41 +72,63 @@
   color: var(--mark-accent-problem);
 }
 
-.dfp-bars {
+.dfp-lines-wrap {
+  /* Fade oldest lines toward the bottom — reads as a scrolling tape. */
+  mask-image: linear-gradient(to top, transparent, #000 52%);
+  -webkit-mask-image: linear-gradient(to top, transparent, #000 52%);
+}
+
+.dfp-lines {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-height: 76px;
+  min-height: 72px;
   align-items: flex-start;
+  font-size: 10px;
+  line-height: 1.45;
 }
 
-.dfp-bar {
+/* One change per row — the highlighted new value, then whatever it
+   replaced struck through to its right. */
+.dfp-row {
   display: flex;
-  height: 6px;
+  align-items: baseline;
+  gap: 5px;
+  max-width: 100%;
   overflow: hidden;
-  border-radius: var(--radius-pill);
 }
 
-.dfp-bar-add {
-  background: var(--mark-accent-wireframes);
+.dfp-line {
+  flex: none;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: pre;
+  padding: 0.04em 0.28em;
+  border-radius: 2px;
 }
 
-.dfp-bar-del {
-  background: var(--mark-accent-problem);
+.dfp-line--add {
+  color: var(--mark-accent-wireframes);
+  background: color-mix(in srgb, var(--mark-accent-wireframes) 12%, transparent);
 }
 
-/* Reduced motion resolves the whole history as one static chart. */
-.dfp-panel[data-static] .dfp-bars {
-  gap: 1px;
+.dfp-line--del {
+  color: var(--mark-accent-problem);
+  background: color-mix(in srgb, var(--mark-accent-problem) 12%, transparent);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
 }
 
-.dfp-panel[data-static] .dfp-bar {
-  height: 2px;
+:root[data-theme="dark"] .dfp-line--add {
+  background: color-mix(in srgb, var(--mark-accent-wireframes) 16%, transparent);
 }
 
-.dfp-sub {
-  color: var(--text-muted);
-  font-size: 11px;
-  line-height: 1;
-  opacity: 0.8;
+:root[data-theme="dark"] .dfp-line--del {
+  background: color-mix(in srgb, var(--mark-accent-problem) 16%, transparent);
+}
+
+/* Reduced motion resolves to the last few lines, standing still. */
+.dfp-panel[data-static] .dfp-lines-wrap {
+  mask-image: none;
+  -webkit-mask-image: none;
 }

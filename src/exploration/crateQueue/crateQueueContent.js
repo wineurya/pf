@@ -1,9 +1,25 @@
-/* The crate — pulled from the About-section vinyl bins. Order is the demo's
-   only state; ids stay stable so reorder animations key correctly. */
+import coverBloodbath from "./covers/k1-250.jpg";
+import coverMachinist from "./covers/machinist-300.jpg";
+import coverMrsOfficer from "./covers/carter-iii-250.jpg";
+
+/* Three-track queue — hip-hop crate picks for the reorder demo. */
 export const CRATE_RECORDS = [
-  { id: "illmatic", title: "Illmatic", artist: "Nas", year: "1994" },
-  { id: "madvillainy", title: "Madvillainy", artist: "Madvillain", year: "2004" },
-  { id: "donuts", title: "Donuts", artist: "J Dilla", year: "2006" },
-  { id: "gkmc", title: "good kid, m.A.A.d city", artist: "Kendrick Lamar", year: "2012" },
-  { id: "oxymoron", title: "Oxymoron", artist: "ScHoolboy Q", year: "2014" },
+  {
+    id: "mrs-officer",
+    title: "Mrs. Officer",
+    artist: "Lil Wayne",
+    cover: coverMrsOfficer,
+  },
+  {
+    id: "bloodbath",
+    title: "Bloodbath",
+    artist: "Kmoe",
+    cover: coverBloodbath,
+  },
+  {
+    id: "the-machinist",
+    title: "The Machinist",
+    artist: "Larry June",
+    cover: coverMachinist,
+  },
 ];

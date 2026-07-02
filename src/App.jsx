@@ -3,6 +3,7 @@ import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 
 import { Backdrop } from "./components/Backdrop.jsx";
 import { CaseStudy, CaseDock, sectionsForStudy } from "./components/CaseStudy.jsx";
+import { Cursor } from "./components/Cursor.jsx";
 import { ExplorationGrid } from "./components/ExplorationGrid.jsx";
 import { HoverWord } from "./components/HoverWord.jsx";
 import { Portrait } from "./components/Portrait.jsx";
@@ -303,6 +304,7 @@ export function App() {
     <LayoutGroup>
       {/* Legibility mask inside re-measures whenever the active surface swaps. */}
       <Backdrop surfaceKey={`${tab}:${study ?? ""}`} caseOpen={Boolean(study)} />
+      <Cursor />
 
       <a className="skip-link" href="#main">
         Skip to content
@@ -339,7 +341,11 @@ export function App() {
                     layoutId={isMobileDock ? "m-dock-shell" : undefined}
                     transition={{ layout: dockMorph(reducedMotion) }}
                   >
-                    <ThemeToggle theme={theme} onToggle={toggleTheme} />
+                    {/* On phones the toggle rides in the header (top-right, inline
+                        with name/role); the dock keeps it on the ≥860px rail. */}
+                    {isMobileDock ? null : (
+                      <ThemeToggle theme={theme} onToggle={toggleTheme} />
+                    )}
                     <Tabs
                       items={tabs}
                       value={tab}
@@ -402,6 +408,9 @@ export function App() {
                         <span className="head__name">{site.name}</span>
                         <span className="head__role">{site.role}</span>
                       </div>
+                      {isMobileDock ? (
+                        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+                      ) : null}
                     </div>
                   </RevealItem>
                   <StaggerGroup className="head__excerpt-group">

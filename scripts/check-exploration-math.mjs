@@ -2,7 +2,8 @@
    Run: node scripts/check-exploration-math.mjs */
 import assert from "node:assert/strict";
 import { rollPositions } from "../src/exploration/shared/odometerMath.js";
-import { magneticPull } from "../src/exploration/magneticDock/magneticDockPhysics.js";
+import { magneticPull, MAGNETIC_DEFAULTS } from "../src/exploration/magneticDock/magneticDockPhysics.js";
+import { jellyControlGeometry, pointerEdgeFromX, progressFromPointerX } from "../src/exploration/jellyScrubber/jellyScrubberPhysics.js";
 import {
   nearestSiteIndex,
   buildCellMask,
@@ -20,11 +21,25 @@ assert.deepEqual(rollPositions([1, 2], 12, 13, "13"), [1, 3]);
 
 /* magnetic pull: zero outside the radius, capped near the center, pulls
    toward the cursor (same sign as the offset). */
-assert.deepEqual(magneticPull(200, 0, 110, 16), { x: 0, y: 0, t: 0 });
-const near = magneticPull(10, 0, 110, 16);
-assert.ok(near.x > 0 && near.x <= 16 && near.t > 0.9);
-const diag = magneticPull(-50, 50, 110, 16);
+const { radius, strength } = MAGNETIC_DEFAULTS;
+assert.deepEqual(magneticPull(200, 0, radius, strength), { x: 0, y: 0, t: 0 });
+const near = magneticPull(10, 0, radius, strength);
+assert.ok(near.x > 0 && near.x <= strength && near.t > 0.9);
+const diag = magneticPull(-50, 50, radius, strength);
 assert.ok(diag.x < 0 && diag.y > 0);
+
+/* jelly scrubber: thumb reaches both track edges at progress 0 and 1. */
+const track = 200;
+const handle = 4;
+const half = handle / 2;
+const left = jellyControlGeometry(0, 0, -1, handle, track);
+const right = jellyControlGeometry(1, 0, 1, handle, track);
+assert.equal(left.thumbX, half);
+assert.equal(right.thumbX, track - half);
+assert.equal(progressFromPointerX(half, track, handle), 0);
+assert.equal(progressFromPointerX(track - half, track, handle), 1);
+const mid = pointerEdgeFromX(track / 2, track, handle);
+assert.ok(mid.progress > 0.45 && mid.progress < 0.55);
 
 /* voronoi: nearest site wins; mask blocks map to the right site. */
 const sites = [

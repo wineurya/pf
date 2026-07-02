@@ -108,8 +108,9 @@ import resolutionsHifiDay from "./assets/case/resolutions-hifi-day.webp";
    `facts` is { role, team, duration, tools }; tools render as an icon-only array.
    `blocks` carry the body in a few low-fi layouts: { p } paragraph,
    { media, title, sub } full-width tile — a placeholder unless it carries a real
-   asset: `src` (+ `alt`, `portrait` for a phone screen, `bare` to drop the edge
-   ring) renders the image at its own ratio, or `media: "phone-video"` + `video` renders a framed recording;
+   asset: `src` (+ `alt`, `portrait` for a phone screen, `compact` for a doc still,
+   `bare` to drop the edge ring) renders the image at its own ratio, or
+   `media: "phone-video"` + `video` renders a framed recording;
    { mosaic: [{ src, alt }], title?, sub? } a staggered image collage,
    { slider: [{ src, alt, law, text }], title?, sub? } an arrows-and-dots slider
    stepping one annotated slide at a time (Logitech's UX laws),
@@ -409,6 +410,7 @@ export const caseStudies = {
         title: "Proof every time",
         sub: "Every submission lands somewhere you can see it — a confirmation, a tracked case, and a receipt when you pay. ==You are never left guessing whether it went through==.",
         media: "image",
+        frameBg: "#000000",
         src: incityFeatureProof,
         alt: "Submission confirmation screen with case details — You're all set",
         portrait: true,
@@ -628,7 +630,7 @@ export const caseStudies = {
         media: "image",
         src: resolutionsVision,
         alt: "Vision statement slide asking 'How can I pack my life into one app?' above six circles: planner, sleep, fitness, diet, money, goals",
-        title: "One routine, five apps.",
+        title: "One routine, six apps.",
         sub: "Planning, budgeting, and habits lived in separate places. Resolutions set out to fold them into one routine.",
       },
       { section: "Research" },
@@ -768,6 +770,7 @@ export const caseStudies = {
         media: "image",
         src: logitechProposal,
         alt: "Final project proposal document pairing each UX law with the interface decision it would drive",
+        compact: true,
         title: "The proposal, on paper.",
         sub: "Every UX law was paired with the concrete interface decision it would drive before a single pixel moved.",
       },
@@ -987,81 +990,77 @@ export const site = {
     };
   }),
 
-  /* Live embeds from /exploration — preview key maps to ExplorationGrid components. */
+  /* Live embeds — preview key maps to ExplorationGrid components.
+     Caption sits inside the frame: label/subtitle top-left, optional note
+     top-right. Notes are for what the title can't say (an interaction hint,
+     an "inspired by" credit) — never a restatement of the title. */
   explorationPreviews: [
     {
-      label: "Jelly Volume Slider",
-      meta: "Elastic controls",
-      href: "/exploration/jelly-scrubber",
-      preview: "jelly",
+      label: "Assistant status orb",
+      subtitle: "State indicator component",
+      preview: "thinking",
     },
     {
-      label: "Wallet Menu",
-      meta: "Progressive disclosure",
-      href: "/exploration/wallet-menu",
+      label: "Wallet action menu",
+      subtitle: "Menu component",
       preview: "wallet",
       previewProps: { defaultOpen: true },
     },
     {
-      label: "Crate Queue",
-      meta: "Drag to reorder",
-      href: "/exploration/crate-queue",
+      label: "Crate reorder queue",
+      subtitle: "Draggable list component",
+      note: "Inspired by @alyx_so",
+      noteHref: "https://twitter.com/alyx_so",
       preview: "crate",
     },
     {
-      label: "Hold to Send",
-      meta: "Deliberate action",
-      href: "/exploration/hold-to-send",
+      label: "Hold-to-send button",
+      subtitle: "Confirmation button component",
       preview: "hold",
     },
     {
-      label: "Odometer Counter",
-      meta: "Legible change",
-      href: "#",
-      preview: "odometer",
+      label: "Jelly volume slider",
+      subtitle: "Input slider component",
+      preview: "jelly",
     },
     {
-      label: "Magnetic Dock",
-      meta: "Generous targets",
-      href: "#",
+      label: "Magnetic app dock",
+      subtitle: "Navigation dock component",
       preview: "magnetic",
     },
     {
-      label: "Thinking Border",
-      meta: "Status glow",
-      href: "#",
-      preview: "thinking",
+      label: "Rolling number counter",
+      subtitle: "Data display component",
+      preview: "odometer",
     },
+    /* shelved — Attention Field (src/exploration/grainGradient/)
     {
-      label: "Grain Gradient",
-      meta: "Ambient surface",
-      href: "#",
+      label: "Attention field",
       preview: "grain",
     },
+    */
     {
-      label: "Diff Pulse",
-      meta: "Real data",
-      href: "#",
+      label: "Lines-changed pulse",
+      subtitle: "Version feedback component",
       preview: "diff",
     },
+    /* shelved — Fluted Glass (src/exploration/flutedGlass/)
     {
-      label: "Fluted Glass",
-      meta: "Material reveal",
-      href: "#",
+      label: "Fluted glass",
       preview: "glass",
     },
+    */
+    /* shelved — Voronoi Grid (src/exploration/voronoiGrid/)
     {
-      label: "Voronoi Grid",
-      meta: "Proximity targets",
-      href: "#",
+      label: "Voronoi grid",
       preview: "voronoi",
     },
+    */
     {
-      label: "Pani",
-      meta: "Visual study",
-      href: "#",
+      label: "Pani interface card",
+      subtitle: "Visual study component",
       image: paniTest,
-      imageAlt: "Pani UI exploration",
+      imageAlt: "Pani interface study",
     },
   ],
 

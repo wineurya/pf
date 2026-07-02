@@ -2,13 +2,14 @@
    are missing from this install, so dev mode must not import it directly — except
    where deep CJS entry points resolve under Vite (tab marks, case glyphs). */
 
-import { IconCompassRound } from "central-icons/IconCompassRound";
-import { IconSuitcaseWork } from "central-icons/IconSuitcaseWork";
-import { IconUser as CentralIconUser } from "central-icons/IconUser";
 import { IconColorPalette as CentralColorPalette } from "central-icons/IconColorPalette";
+import { IconArrowUpRight as CentralArrowUpRight } from "central-icons/IconArrowUpRight";
+import { IconCompassRound } from "central-icons/IconCompassRound";
 import { IconEyeOpen } from "central-icons/IconEyeOpen";
-import { IconTouch } from "central-icons/IconTouch";
+import { IconFolder1 } from "central-icons/IconFolder1";
 import { IconRaisingHand5Finger } from "central-icons/IconRaisingHand5Finger";
+import { IconTouch } from "central-icons/IconTouch";
+import { IconUser as CentralIconUser } from "central-icons/IconUser";
 import { ArrowElbowRightDown } from "@phosphor-icons/react/dist/csr/ArrowElbowRightDown";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
@@ -24,6 +25,7 @@ import { Clipboard } from "@phosphor-icons/react/dist/csr/Clipboard";
 import { Crosshair } from "@phosphor-icons/react/dist/csr/Crosshair";
 import { GridFour } from "@phosphor-icons/react/dist/csr/GridFour";
 import { TrafficCone } from "@phosphor-icons/react/dist/csr/TrafficCone";
+import { List } from "@phosphor-icons/react/dist/csr/List";
 import { ListBullets } from "@phosphor-icons/react/dist/csr/ListBullets";
 import { Lock } from "@phosphor-icons/react/dist/csr/Lock";
 import { MagnetStraight } from "@phosphor-icons/react/dist/csr/MagnetStraight";
@@ -49,8 +51,12 @@ import { Bell } from "@phosphor-icons/react/dist/csr/Bell";
 import { CreditCard } from "@phosphor-icons/react/dist/csr/CreditCard";
 import { Shield } from "@phosphor-icons/react/dist/csr/Shield";
 
+/** Phosphor weights for segmented nav — outline when idle, fill when selected. */
+export const ICON_WEIGHT_IDLE = "regular";
+export const ICON_WEIGHT_SELECTED = "fill";
+
 function makeIcon(BaseIcon) {
-  return function Icon({ ariaHidden, ariaLabel, weight = "regular", ...props }) {
+  return function Icon({ ariaHidden, ariaLabel, weight = ICON_WEIGHT_IDLE, ...props }) {
     return (
       <BaseIcon
         {...props}
@@ -80,6 +86,7 @@ const IconArrowElbowRightDown = makeIcon(ArrowElbowRightDown);
 const IconArrowLeft = makeIcon(ArrowLeft);
 const IconArrowUpRight = makeIcon(ArrowUpRight);
 const IconBulletList = makeIcon(ListBullets);
+const IconList = makeIcon(List);
 const IconCalendar1 = makeIcon(CalendarBlank);
 const IconChevronDown = makeIcon(CaretDown);
 const IconChevronLeft = makeIcon(CaretLeft);
@@ -111,13 +118,16 @@ const IconLawCrosshair = makeIcon(Crosshair);
 const IconLawDashed = makeIcon(CircleDashed);
 const IconLawMagnet = makeIcon(MagnetStraight);
 const IconLawSeven = makeIcon(NumberSeven);
-const IconTabWork = makeCentralIcon(IconSuitcaseWork);
+/* Mobile dock tabs — Central Icons (round-outlined, r3, stroke-2): same family
+   as the feature-guide glyphs. Selected state is the widened pill + label. */
+const IconTabWork = makeCentralIcon(IconFolder1);
 const IconTabExploration = makeCentralIcon(IconCompassRound);
 const IconTabAbout = makeCentralIcon(CentralIconUser);
 /* Inline glyphs for the feature-guide trigger words (Central icons). */
 const IconGuideVisual = makeCentralIcon(CentralColorPalette);
 const IconGuideAccess = makeCentralIcon(IconEyeOpen);
 const IconGuideInteraction = makeCentralIcon(IconTouch);
+const IconCursorArrow = makeCentralIcon(CentralArrowUpRight);
 const IconTrafficCone = makeIcon(TrafficCone);
 /* Waving hand for the case-study sign-off. */
 const IconWave = makeCentralIcon(IconRaisingHand5Finger);
@@ -174,6 +184,7 @@ export {
   IconCheckmark1Small,
   IconClipboard,
   IconColorPalette,
+  IconCursorArrow,
   IconCreditCard,
   IconGuideAccess,
   IconGuideInteraction,
@@ -186,6 +197,7 @@ export {
   IconLawMagnet,
   IconLawSeven,
   IconLayersThree,
+  IconList,
   IconLock,
   IconLayoutGrid2,
   IconMapPin,

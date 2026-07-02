@@ -4,8 +4,8 @@ export const JELLY_SCRUBBER_DEFAULTS = {
   edgeStiffness: 420,
   edgeDamping: 18,
   mass: 0.68,
-  handleSize: 3,
-  trackThickness: 24,
+  handleSize: 4,
+  trackThickness: 28,
 };
 
 export const JELLY_PROGRESS_SPRING = (settings, reduceMotion) =>
@@ -29,13 +29,3 @@ export const JELLY_EDGE_SPRING = (settings, reduceMotion) =>
         restDelta: 0.0008,
         restSpeed: 0.008,
       };
-
-export const JELLY_SCRUBBER_RANGES = {
-  progressStiffness: { min: 320, max: 1200, step: 20 },
-  progressDamping: { min: 28, max: 92, step: 1 },
-  edgeStiffness: { min: 180, max: 780, step: 20 },
-  edgeDamping: { min: 8, max: 38, step: 0.5 },
-  mass: { min: 0.35, max: 1.4, step: 0.05 },
-  handleSize: { min: 2, max: 6, step: 0.5 },
-  trackThickness: { min: 18, max: 32, step: 1 },
-};

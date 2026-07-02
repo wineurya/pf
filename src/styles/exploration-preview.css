@@ -6,6 +6,15 @@
   --exp-embed-inset: 0px;
 }
 
+/* The wallet menu's open panel is portrait (~22rem tall) while every other
+   exploration demo is comfortably landscape — the shared 5:4 frame aspect
+   ratio shrinks below the panel's real height once the card narrows past
+   ~530px, clipping the last menu row against the frame edge. Floor the
+   height so the panel always has room, independent of card width. */
+.exp-card__frame:has(.wm-root) {
+  min-height: 430px;
+}
+
 .exp-card__embed {
   position: absolute;
   inset: var(--exp-embed-inset);
@@ -13,6 +22,7 @@
   pointer-events: auto;
   /* Inherit the frame's rounded shape so live demos clip like image cards. */
   border-radius: inherit;
+  clip-path: inset(0 round var(--exp-frame-radius));
 }
 
 @supports (corner-shape: superellipse(2)) {
@@ -59,23 +69,24 @@
   }
 }
 
-.exp-card__demo.jvs-root,
-.exp-card__demo.wm-root,
-.exp-card__demo.cq-root,
-.exp-card__demo.hts-root {
+/* The standalone crate demo carries its own inspired-by credit top-left; in
+   card embeds the caption's top-right note takes that job, so hide it here. */
+.exp-card__demo .cq-credit {
+  display: none;
+}
+
+.exp-card__demo {
   position: relative;
   width: 100%;
   height: 100%;
   min-height: 100%;
-  background: var(--color-white);
+  overflow: hidden;
+  background: var(--exp-canvas);
   border-radius: inherit;
 }
 
 @supports (corner-shape: superellipse(2)) {
-  .exp-card__demo.jvs-root,
-  .exp-card__demo.wm-root,
-  .exp-card__demo.cq-root,
-  .exp-card__demo.hts-root {
+  .exp-card__demo {
     corner-shape: inherit;
   }
 }

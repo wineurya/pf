@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { motion } from "motion/react";
 import { fillMorph } from "../lib/motion.js";
-import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { useMediaQuery, usePrefersReducedMotion } from "../lib/hooks.js";
 import {
-  IconBulletList,
   IconLayoutGrid2,
+  IconList,
   IconSquarePlaceholder,
 } from "../lib/icons.jsx";
 
@@ -17,21 +17,29 @@ import {
 export const WORK_VIEWS = [
   { id: "single", label: "Single column", Icon: IconSquarePlaceholder },
   { id: "two", label: "Two at a time", Icon: IconLayoutGrid2 },
-  { id: "list", label: "List", Icon: IconBulletList },
+  { id: "list", label: "List", Icon: IconList },
 ];
+
+/** Matches .pgrid--two single-column fallback in app.css. */
+export const VIEW_TWO_DISABLED_MQ = "(max-width: 520px)";
 
 export function ViewSwitcher({ value, onChange }) {
   const refs = useRef({});
   const ids = WORK_VIEWS.map((v) => v.id);
   const reducedMotion = usePrefersReducedMotion();
+  const twoUpDisabled = useMediaQuery(VIEW_TWO_DISABLED_MQ);
+  const enabledIds = twoUpDisabled ? ids.filter((id) => id !== "two") : ids;
 
   function onKeyDown(e) {
-    const i = ids.indexOf(value);
+    const i = enabledIds.indexOf(value);
+    const base = i === -1 ? 0 : i;
     let next;
-    if (e.key === "ArrowDown" || e.key === "ArrowRight") next = ids[(i + 1) % ids.length];
-    else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = ids[(i - 1 + ids.length) % ids.length];
-    else if (e.key === "Home") next = ids[0];
-    else if (e.key === "End") next = ids[ids.length - 1];
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+      next = enabledIds[(base + 1) % enabledIds.length];
+    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+      next = enabledIds[(base - 1 + enabledIds.length) % enabledIds.length];
+    } else if (e.key === "Home") next = enabledIds[0];
+    else if (e.key === "End") next = enabledIds[enabledIds.length - 1];
     else return;
     e.preventDefault();
     onChange(next);
@@ -47,6 +55,7 @@ export function ViewSwitcher({ value, onChange }) {
     >
       {WORK_VIEWS.map(({ id, label, Icon }) => {
         const selected = id === value;
+        const disabled = id === "two" && twoUpDisabled;
         return (
           <button
             key={id}
@@ -59,7 +68,8 @@ export function ViewSwitcher({ value, onChange }) {
             aria-checked={selected}
             aria-label={label}
             title={label}
-            tabIndex={selected ? 0 : -1}
+            tabIndex={selected && !disabled ? 0 : -1}
+            disabled={disabled}
             onClick={() => onChange(id)}
           >
             {selected && (

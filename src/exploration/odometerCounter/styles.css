@@ -7,7 +7,7 @@
   min-height: 100%;
   overflow: hidden;
   border-radius: inherit;
-  background: var(--color-white);
+  background: var(--exp-canvas);
   color: var(--text-primary);
   font-family: var(--font-body, system-ui, sans-serif);
 }

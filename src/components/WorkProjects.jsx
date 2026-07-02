@@ -1,11 +1,11 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
-import { ViewSwitcher } from "./ViewSwitcher.jsx";
+import { ViewSwitcher, VIEW_TWO_DISABLED_MQ } from "./ViewSwitcher.jsx";
 import { IconArrowElbowRightDown, IconArrowUpRight, IconLock } from "../lib/icons.jsx";
 import { EASE_OUT, layoutMorph, revealItem } from "../lib/motion.js";
-import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { useMediaQuery, usePrefersReducedMotion } from "../lib/hooks.js";
 import { playDungSfx } from "../lib/dungSfx.js";
 
 /* A clicked project opens in-app at /work/<slug>; modified/middle clicks fall
@@ -37,6 +37,8 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
       className={`pcard pcard--${isCard ? "card" : "list"}${item.wip ? " pcard--wip" : ""}`}
       href={item.wip ? undefined : item.href}
       data-slug={item.slug}
+      data-cursor={item.wip ? undefined : "View case study"}
+      data-cursor-icon={item.wip ? undefined : "arrow"}
       aria-disabled={item.wip || undefined}
       onClick={openHandler(item, onOpen)}
       onPointerEnter={item.slug === "incity" ? playDungSfx : undefined}
@@ -131,7 +133,12 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
  */
 export function WorkProjects({ items, onOpen, view, onView }) {
   const reducedMotion = usePrefersReducedMotion();
+  const twoUpDisabled = useMediaQuery(VIEW_TWO_DISABLED_MQ);
   const isCard = view !== "list";
+
+  useEffect(() => {
+    if (twoUpDisabled && view === "two") onView("single");
+  }, [twoUpDisabled, view, onView]);
 
   const listRef = useRef(null);
   const lastRow = useRef(null);

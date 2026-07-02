@@ -7,6 +7,7 @@ import "./styles/fonts.css";
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/app.css";
+import "./styles/cursor.css";
 
 import { App } from "./App.jsx";
 

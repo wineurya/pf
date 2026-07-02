@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 
-const HOLD_MS = 900;
+const HOLD_MS = 780;
+/* Progress past this while still pressed — committed; release no longer cancels. */
+const COMMIT_AT = 0.82;
+const SENDING_FILL_MS = 140;
+const SENDING_MS = 720;
 const SENT_HOLD_MS = 1500;
 
 function CheckMark() {
@@ -25,15 +29,21 @@ function CheckMark() {
   );
 }
 
+function labelKey(phase) {
+  if (phase === "sent") return "sent";
+  if (phase === "sending") return "sending";
+  return "hold";
+}
+
 /* One label, morphed with a soft blur swap — rendered twice (base ink layer +
    clipped paper layer) so the sweeping fill re-inks the text as it passes. */
 function MorphLabel({ phase, reduceMotion }) {
-  const sent = phase === "sent";
+  const key = labelKey(phase);
 
   return (
     <AnimatePresence mode="popLayout" initial={false}>
       <motion.span
-        key={sent ? "sent" : "hold"}
+        key={key}
         className="hts-label"
         initial={
           reduceMotion
@@ -48,11 +58,13 @@ function MorphLabel({ phase, reduceMotion }) {
         }
         transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
       >
-        {sent ? (
+        {key === "sent" ? (
           <>
             <CheckMark />
             Sent
           </>
+        ) : key === "sending" ? (
+          "Sending…"
         ) : (
           "Hold to send"
         )}
@@ -64,19 +76,19 @@ function MorphLabel({ phase, reduceMotion }) {
 /** Interactive hold-to-send canvas — no demo frame or dock. */
 export function HoldToSendStage({ className }) {
   const reduceMotion = useReducedMotion() ?? false;
-  const [phase, setPhase] = useState("idle"); // idle | holding | sent
+  const [phase, setPhase] = useState("idle"); // idle | holding | sending | sent
+  const [pressed, setPressed] = useState(false);
   const [fillHidden, setFillHidden] = useState(false);
   const progress = useMotionValue(0);
 
   const fillRef = useRef(null);
   const animRef = useRef(null);
   const resetTimerRef = useRef(0);
-  const holdingRef = useRef(false);
+  const pressingRef = useRef(false);
+  const committedRef = useRef(false);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
 
-  /* The fill is a paper-on-ink clone clipped from the right; progress drives
-     the reveal so the sweep and any spring-back share one source of truth. */
   useEffect(() => {
     const fill = fillRef.current;
     if (!fill) return undefined;
@@ -97,45 +109,82 @@ export function HoldToSendStage({ className }) {
     [],
   );
 
-  const confirmSend = () => {
-    holdingRef.current = false;
+  const finishSent = () => {
     setPhase("sent");
 
-    /* Sweeping the fill back down would read as an undo — fade it out via a
-       CSS transition instead, then reset the clip while it is invisible.
-       Phase stays "sent" through the fade so a new hold can't start mid-reset. */
     resetTimerRef.current = window.setTimeout(() => {
       setFillHidden(true);
       resetTimerRef.current = window.setTimeout(() => {
         resetTimerRef.current = 0;
         progress.jump(0);
         setFillHidden(false);
+        committedRef.current = false;
         setPhase("idle");
       }, 280);
     }, SENT_HOLD_MS);
   };
 
-  const beginHold = () => {
-    if (holdingRef.current || phaseRef.current === "sent") return;
+  const runSendingWait = () => {
+    resetTimerRef.current = window.setTimeout(() => {
+      resetTimerRef.current = 0;
+      finishSent();
+    }, SENDING_MS);
+  };
 
-    holdingRef.current = true;
-    setPhase("holding");
+  /* Commit zone — still pressed. Label → Sending…, fill finishes, release ignored. */
+  const beginSending = () => {
+    if (phaseRef.current !== "holding" || !pressingRef.current) return;
+
+    committedRef.current = true;
+    setPhase("sending");
     animRef.current?.stop();
+
+    const from = progress.get();
     animRef.current = animate(progress, 1, {
-      /* Resume-aware: re-pressing mid-spring-back finishes the remainder. */
-      duration: (HOLD_MS / 1000) * (1 - progress.get()),
+      duration: (SENDING_FILL_MS / 1000) * ((1 - from) / (1 - COMMIT_AT)),
       ease: "linear",
       onComplete: () => {
-        if (holdingRef.current) confirmSend();
+        if (phaseRef.current === "sending") runSendingWait();
       },
     });
   };
 
-  const releaseHold = () => {
-    if (!holdingRef.current) return;
+  const runHoldToCommit = () => {
+    const from = progress.get();
+    const span = Math.max(COMMIT_AT - from, 0);
 
-    holdingRef.current = false;
-    if (phaseRef.current === "sent") return;
+    animRef.current = animate(progress, COMMIT_AT, {
+      duration: (HOLD_MS / 1000) * (span / COMMIT_AT),
+      ease: "linear",
+      onComplete: () => {
+        if (phaseRef.current === "holding" && pressingRef.current) beginSending();
+      },
+    });
+  };
+
+  const beginHold = () => {
+    if (
+      pressingRef.current ||
+      phaseRef.current === "sending" ||
+      phaseRef.current === "sent"
+    ) {
+      return;
+    }
+
+    pressingRef.current = true;
+    setPressed(true);
+    setPhase("holding");
+    animRef.current?.stop();
+    runHoldToCommit();
+  };
+
+  const releaseHold = () => {
+    pressingRef.current = false;
+    setPressed(false);
+
+    if (committedRef.current || phaseRef.current === "sending" || phaseRef.current === "sent") {
+      return;
+    }
 
     setPhase("idle");
     animRef.current?.stop();
@@ -160,6 +209,15 @@ export function HoldToSendStage({ className }) {
     if (event.key === " " || event.key === "Enter") releaseHold();
   };
 
+  const hint =
+    phase === "idle" || phase === "holding"
+      ? "release early to cancel"
+      : phase === "sending" && pressed
+        ? "keep holding"
+        : phase === "sending"
+          ? "please wait"
+          : "";
+
   return (
     <div className={className ? `hts-root ${className}` : "hts-root"}>
       <main className="hts-stage" aria-label="Hold to send">
@@ -168,7 +226,10 @@ export function HoldToSendStage({ className }) {
             type="button"
             className="hts-button"
             data-phase={phase}
-            whileTap={reduceMotion || phase === "sent" ? undefined : { scale: 0.98 }}
+            data-pressed={pressed || undefined}
+            whileTap={
+              reduceMotion || phase === "sent" ? undefined : { scale: 0.98 }
+            }
             onPointerDown={(event) => {
               if (event.pointerType === "mouse" && event.button !== 0) return;
               beginHold();
@@ -180,9 +241,17 @@ export function HoldToSendStage({ className }) {
             onKeyUp={onKeyUp}
             onBlur={releaseHold}
             onContextMenu={(event) => event.preventDefault()}
-            aria-label="Hold to send — keep the button pressed to confirm"
+            aria-label={
+              phase === "sending"
+                ? pressed
+                  ? "Sending — keep holding"
+                  : "Sending — please wait"
+                : phase === "sent"
+                  ? "Sent"
+                  : "Hold to send — keep the button pressed to confirm"
+            }
+            aria-busy={phase === "sending"}
           >
-            {/* Invisible sizer pins the pill's width across label swaps. */}
             <span className="hts-sizer" aria-hidden>
               Hold to send
             </span>
@@ -201,11 +270,11 @@ export function HoldToSendStage({ className }) {
           </motion.button>
 
           <p className="hts-hint" aria-hidden>
-            release early to cancel
+            {hint}
           </p>
 
           <span className="hts-status" role="status">
-            {phase === "sent" ? "Sent" : ""}
+            {phase === "sending" ? "Sending" : phase === "sent" ? "Sent" : ""}
           </span>
         </div>
       </main>

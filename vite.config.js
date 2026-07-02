@@ -9,6 +9,32 @@ const centralIcons = fileURLToPath(new URL("./node_modules/central-icons", impor
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          const normalizedId = id.replace(/\\/g, "/");
+          if (!normalizedId.includes("/node_modules/")) return undefined;
+          if (normalizedId.includes("/node_modules/motion/")) {
+            return "vendor-motion";
+          }
+          if (
+            normalizedId.includes("/node_modules/@phosphor-icons/") ||
+            normalizedId.includes("/node_modules/central-icons/")
+          ) {
+            return "vendor-icons";
+          }
+          if (normalizedId.includes("/node_modules/gsap/")) {
+            return "vendor-gsap";
+          }
+          if (normalizedId.includes("/node_modules/@paper-design/")) {
+            return "vendor-shaders";
+          }
+          return undefined;
+        },
+      },
+    },
+  },
   resolve: {
     dedupe: ["react", "react-dom", "motion", "gsap"],
     alias: {
@@ -24,13 +50,13 @@ export default defineConfig({
       "motion/react",
       "gsap",
       "@phosphor-icons/react",
-      "central-icons/IconUser",
-      "central-icons/IconSuitcaseWork",
-      "central-icons/IconCompassRound",
       "central-icons/IconColorPalette",
+      "central-icons/IconCompassRound",
       "central-icons/IconEyeOpen",
-      "central-icons/IconTouch",
+      "central-icons/IconFolder1",
       "central-icons/IconRaisingHand5Finger",
+      "central-icons/IconTouch",
+      "central-icons/IconUser",
     ],
   },
   server: {

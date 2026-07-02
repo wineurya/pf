@@ -1,10 +1,15 @@
-/* Crate queue — drag-to-reorder record list. Scoped: cq-
+/* Crate queue — drag-to-reorder track list. Scoped: cq-
    Local vars alias site tokens (with fallbacks) so light/dark theming is free. */
 .cq-root {
   --cq-ink: var(--text-strong, #111111);
   --cq-muted: var(--text-muted, #8d8d8d);
-  --cq-hairline: var(--border-soft, #e8e8e8);
-  --cq-paper: var(--color-white, #ffffff);
+  /* Literal white glass — not --surface gray. */
+  --cq-glass: hsl(0 0% 100% / 0.78);
+  --cq-glass-hover: hsl(0 0% 100% / 0.86);
+  --cq-glass-strong: hsl(0 0% 100% / 0.9);
+  /* Dragged rows go MORE transparent, not less — the backdrop blur has to
+     read through them or it may as well not exist. */
+  --cq-glass-lifted: hsl(0 0% 100% / 0.55);
   --cq-lift: var(--hover-lift, rgba(0, 0, 0, 0.04));
 
   position: relative;
@@ -16,12 +21,40 @@
   color: var(--cq-ink);
 }
 
+:root[data-theme="dark"] .cq-root {
+  /* Light glass on dark canvas reads as bright slabs — use faint light tints instead. */
+  --cq-glass: color-mix(in oklab, #ffffff 7%, transparent);
+  --cq-glass-hover: color-mix(in oklab, #ffffff 10%, transparent);
+  --cq-glass-strong: color-mix(in oklab, #ffffff 13%, transparent);
+  --cq-glass-lifted: color-mix(in oklab, #ffffff 5%, transparent);
+}
+
 .cq-stage {
+  position: relative;
   display: grid;
   place-items: center;
   width: 100%;
   height: 100%;
   padding: clamp(0.75rem, 4vw, 1.5rem);
+}
+
+.cq-credit {
+  position: absolute;
+  top: clamp(0.5rem, 2vw, 0.75rem);
+  left: clamp(0.5rem, 2vw, 0.75rem);
+  z-index: 1;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--cq-muted);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+@media (hover: hover) {
+  .cq-credit:hover {
+    color: var(--text-secondary, var(--cq-ink));
+    text-decoration: underline;
+  }
 }
 
 .cq-crate {
@@ -52,66 +85,98 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .cq-row {
   position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3, 12px);
-  padding: 9px 10px;
   border-radius: var(--radius-sm, 8px);
   background: transparent;
-  cursor: grab;
+  cursor: default;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
+  outline: none;
 }
 
-/* Hairline between rows — rides on each row's top edge so it travels with the
-   reorder; the lifted row hides its own line to read as a free card. */
-.cq-row::before {
-  content: "";
+/* Reorder.Item inlines its own z-index (derived from the drag offset, so it
+   blips to "unset" whenever the offset re-bases through zero mid-drag).
+   !important is the only thing that beats an inline value — it keeps the
+   lifted card above sibling covers for the whole gesture, flight included. */
+.cq-row[data-lifted] {
+  z-index: 2 !important;
+}
+
+/* Frosted plate — backdrop-filter on a child, not the transformed/dragged node
+   (transform + backdrop-filter on the same box breaks blur in Chromium).
+   Blur only runs on the lifted row: idle rows sit on a flat background where
+   it's invisible, and skipping it avoids one backdrop layer per row. */
+.cq-row-glass {
   position: absolute;
-  top: 0;
-  left: 10px;
-  right: 10px;
-  height: 1px;
-  background: var(--cq-hairline);
-  transition: opacity var(--dur-fast, 160ms) var(--ease-standard, ease-out);
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: var(--cq-glass);
+  pointer-events: none;
+  transition: background 160ms ease;
 }
 
-.cq-row:first-child::before {
-  opacity: 0;
+.cq-row[data-lifted] .cq-row-glass {
+  background: var(--cq-glass-lifted);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.cq-row:focus-visible .cq-row-glass {
+  background: var(--cq-glass-strong);
 }
 
 @media (hover: hover) {
-  .cq-row:hover {
-    background: var(--cq-lift);
+  .cq-row:hover:not([data-lifted]) .cq-row-glass {
+    background: var(--cq-glass-hover);
   }
 }
 
-.cq-row--dragging {
-  z-index: 2;
-  background: var(--cq-paper);
-  box-shadow: 0 0 0 1px var(--cq-hairline);
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cq-row[data-lifted] .cq-row-glass {
+    background: var(--cq-glass-strong);
+  }
+}
+
+.cq-row-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: 6px 8px 6px 6px;
+}
+
+.cq-row[data-lifted] .cq-row-body {
   cursor: grabbing;
 }
 
-.cq-row--dragging::before,
-.cq-row--dragging + .cq-row::before {
-  opacity: 0;
-}
-
-.cq-row:focus-visible {
-  outline: var(--focus-width, 2px) solid var(--focus-ring, currentColor);
-  outline-offset: 2px;
+.cq-row-cover {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .cq-row-index {
   flex-shrink: 0;
+  width: 1.35rem;
   color: var(--cq-muted);
   font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+
+.cq-row-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .cq-row-title {
@@ -119,19 +184,51 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .cq-row-artist {
-  flex: 1;
-  min-width: 0;
   color: var(--cq-muted);
+  font-size: 12px;
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.cq-row-year {
+.cq-row-handle {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
   color: var(--cq-muted);
-  font-variant-numeric: tabular-nums;
+  border-radius: var(--radius-sm, 8px);
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+
+.cq-row-handle:active,
+.cq-row[data-lifted] .cq-row-handle {
+  cursor: grabbing;
+}
+
+@media (hover: hover) {
+  .cq-row-handle:hover {
+    color: var(--text-secondary, var(--cq-ink));
+    background: var(--cq-lift);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cq-row-glass,
+  .cq-row[data-lifted] .cq-row-glass {
+    background: var(--cq-glass-strong);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    transition: none;
+  }
 }

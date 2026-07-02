@@ -18,7 +18,10 @@ import {
     reuse on real buttons/nav links, not just this card. Returns motion values:
     x/y displacement plus `pull`, the eased 0–1 proximity (drive a scale bump
     from it). Complete no-op on coarse pointers and under reduced motion. */
-export function useMagnetic(ref, { radius, strength } = MAGNETIC_DEFAULTS) {
+export function useMagnetic(
+  ref,
+  { radius, strength, innerRadius, innerDamp } = MAGNETIC_DEFAULTS,
+) {
   const reduceMotion = useReducedMotion() ?? false;
   const x = useSpring(0, MAGNET_SPRING);
   const y = useSpring(0, MAGNET_SPRING);
@@ -46,6 +49,8 @@ export function useMagnetic(ref, { radius, strength } = MAGNETIC_DEFAULTS) {
         event.clientY - (rect.top + rect.height / 2),
         radius,
         strength,
+        innerRadius,
+        innerDamp,
       );
       x.set(next.x);
       y.set(next.y);
@@ -60,7 +65,7 @@ export function useMagnetic(ref, { radius, strength } = MAGNETIC_DEFAULTS) {
       document.documentElement.removeEventListener("pointerleave", rest);
       rest();
     };
-  }, [pull, radius, reduceMotion, ref, strength, x, y]);
+  }, [innerDamp, innerRadius, pull, radius, reduceMotion, ref, strength, x, y]);
 
   return { x, y, pull };
 }
@@ -70,7 +75,7 @@ function DockIcon({ label, children }) {
   const { x, y, pull } = useMagnetic(ref, MAGNETIC_DEFAULTS);
   /* Smoothstep falloff means only the nearest icon sits high on the curve, so
      squaring it keeps the scale bump visually exclusive to that one. */
-  const scale = useTransform(pull, (t) => 1 + t * t * 0.22);
+  const scale = useTransform(pull, (t) => 1 + t * t * 0.05);
 
   return (
     <motion.button
@@ -107,9 +112,6 @@ export function MagneticDockStage({ className }) {
             <IconMapPin size={20} ariaHidden />
           </DockIcon>
         </div>
-        <p className="mgd-hint" aria-hidden>
-          move the cursor near an icon
-        </p>
       </main>
     </div>
   );

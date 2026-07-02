@@ -5,7 +5,8 @@
   --hts-ink: var(--text-strong, #111111);
   --hts-muted: var(--text-muted, #8d8d8d);
   --hts-hairline: var(--border-soft, #e8e8e8);
-  --hts-paper: var(--color-white, #ffffff);
+  /* Surface, not pure white — reads off --exp-canvas in card embeds. */
+  --hts-paper: var(--surface, #f0f0f0);
   --hts-lift: var(--hover-lift, rgba(0, 0, 0, 0.04));
 
   position: relative;
@@ -39,15 +40,19 @@
   border: 0;
   border-radius: var(--radius-pill, 999px);
   background: var(--hts-paper);
-  box-shadow: 0 0 0 1px var(--hts-hairline);
   color: var(--hts-ink);
   font: inherit;
   font-weight: var(--weight-medium, 500);
   cursor: pointer;
+  box-shadow: 0 0 0 1px var(--hts-hairline);
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.hts-button[data-phase="sending"] {
+  cursor: wait;
 }
 
 @media (hover: hover) {

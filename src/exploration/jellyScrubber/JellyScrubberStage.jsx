@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import {
@@ -8,17 +8,32 @@ import {
 } from "@/exploration/jellyScrubber/jellyScrubberSettings.js";
 import {
   jellyControlGeometry,
+  pointerEdgeFromX,
   progressFromValue,
   valueFromProgress,
 } from "@/exploration/jellyScrubber/jellyScrubberPhysics.js";
 
 const VMIN = 0;
-const VMAX = 40;
+const VMAX = 100;
 const STEP = 1;
-const INITIAL_VALUE = 40;
+const INITIAL_VALUE = 100;
 
 function snapValue(value) {
   return gsap.utils.clamp(VMIN, VMAX, Math.round(value / STEP) * STEP);
+}
+
+/* Measure the track in LAYOUT px, not the transformed box. The card's reveal
+   animates scale 0.98 → 1 and the mobile embed keeps a persistent scale(0.9);
+   getBoundingClientRect() reflects those transforms, so sampling width from it
+   seats the thumb a few px short of the edges. offsetWidth is transform-agnostic
+   (true layout width), and scale (visual / layout) normalizes pointer x back
+   into the track's own coordinate space. */
+function measureTrack(el) {
+  if (!el) return null;
+  const rect = el.getBoundingClientRect();
+  const width = el.offsetWidth;
+  if (width <= 0 || rect.width <= 0) return null;
+  return { left: rect.left, width, scale: rect.width / width };
 }
 
 export function useJellyScrubberStage({ settings: controlledSettings, onSettingsChange } = {}) {
@@ -36,8 +51,11 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
   const edgeSideRef = useRef(1);
   const displayValueRef = useRef(INITIAL_VALUE);
   const stateTimerRef = useRef(0);
+  /* Cached track box in layout px (+ visual/layout scale). Read once when the
+     box changes (mount / resize / drag start) so pointer mapping and thumb
+     geometry never sample the frame while it is mid edge-stretch. */
+  const metricsRef = useRef({ left: 0, width: 1, scale: 1 });
 
-  const clampProgress = useMemo(() => gsap.utils.clamp(0, 1), []);
   const progressTarget = useMotionValue(progressFromValue(INITIAL_VALUE, VMIN, VMAX));
   const edgeTarget = useMotionValue(0);
 
@@ -68,10 +86,19 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
   };
 
   useEffect(() => {
+    const measure = () => {
+      const next = measureTrack(trackRef.current);
+      if (next) metricsRef.current = next;
+    };
+
     const sync = () => {
+      // At rest the frame carries no transform, so the live box is the truth —
+      // re-measure every idle sync. During a drag the cached box (taken on
+      // pointerdown) owns mapping, since the frame is then mid edge-stretch.
+      if (!draggingRef.current) measure();
       const pull = edgePull.get();
       const side = edgeSideRef.current;
-      const trackWidth = trackRef.current?.getBoundingClientRect().width ?? 1;
+      const trackWidth = metricsRef.current.width;
       const geometry = jellyControlGeometry(
         progress.get(),
         pull,
@@ -94,8 +121,7 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
       if (thumbRef.current) {
         thumbRef.current.style.left = `${geometry.thumbX}px`;
         thumbRef.current.style.width = `${geometry.thumbWidth}px`;
-        thumbRef.current.style.transform = `translate(-50%, -50%) scale(${geometry.thumbScaleX}, ${geometry.thumbScaleY})`;
-        thumbRef.current.style.transformOrigin = geometry.thumbOrigin;
+        thumbRef.current.style.transform = `translate(-50%, -50%) scaleY(${geometry.thumbScaleY})`;
       }
 
       const nextDisplay = snapValue(valueFromProgress(progress.get(), VMIN, VMAX));
@@ -105,13 +131,41 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
       }
     };
 
+    measure();
     sync();
     const unbindProgress = progress.on("change", sync);
     const unbindEdge = edgePull.on("change", sync);
 
+    /* The card's reveal/enter animation resizes the track by a transform that a
+       ResizeObserver never reports, so the mount-time width is a few px short and
+       the spring rests silently — no "change" event re-seats the thumb. Re-sync
+       next frame and once more after the reveal settles so it lands flush. */
+    const settleRaf = requestAnimationFrame(sync);
+    const settleTimer = window.setTimeout(sync, 650);
+    window.addEventListener("resize", sync);
+
+    /* The spring sits at rest on mount (initial value === target), so no
+       "change" event ever fires to re-seat the thumb after the card finishes
+       sizing or the viewport resizes — that left the thumb short of both edges.
+       Re-measuring + re-syncing on any track resize keeps it flush. */
+    let observer;
+    const trackEl = trackRef.current;
+    if (trackEl && typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => {
+        if (draggingRef.current) return; // input owns the metrics mid-drag
+        measure();
+        sync();
+      });
+      observer.observe(trackEl);
+    }
+
     return () => {
       unbindProgress();
       unbindEdge();
+      observer?.disconnect();
+      cancelAnimationFrame(settleRaf);
+      window.clearTimeout(settleTimer);
+      window.removeEventListener("resize", sync);
     };
   }, [edgePull, progress]);
 
@@ -149,23 +203,12 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
   };
 
   const readPointer = (clientX) => {
-    const rect = trackRef.current?.getBoundingClientRect();
-    if (!rect || rect.width === 0) return null;
+    const { left, width, scale } = metricsRef.current;
+    if (!width) return null;
 
-    const rawX = clientX - rect.left;
-    const progressValue = clampProgress(rawX / rect.width);
-    const edgeOverflow =
-      rawX < 0
-        ? gsap.utils.clamp(0, 1, Math.abs(rawX) / 80)
-        : rawX > rect.width
-          ? gsap.utils.clamp(0, 1, (rawX - rect.width) / 80)
-          : 0;
-
-    return {
-      progress: progressValue,
-      edgeOverflow,
-      edgeSide: rawX < 0 ? -1 : 1,
-    };
+    // clientX is visual px; divide by scale to reach the track's layout space.
+    const rawX = (clientX - left) / (scale || 1);
+    return pointerEdgeFromX(rawX, width, settingsRef.current.handleSize);
   };
 
   const writeFromClient = (clientX) => {
@@ -175,7 +218,7 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
     const nextValue = snapValue(valueFromProgress(next.progress, VMIN, VMAX));
     setLockedValue(nextValue);
 
-    progress.jump(next.progress);
+    // The spring chases the pointer — jumping it here would kill the jelly lag.
     progressTarget.set(next.progress);
 
     if (
@@ -199,6 +242,11 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
   const onPointerDown = (event) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
 
+    /* Refresh the cached box from the resting track before the drag stretches
+       the frame, so the whole gesture maps against clean metrics. */
+    const next = measureTrack(trackRef.current);
+    if (next) metricsRef.current = next;
+
     event.currentTarget.setPointerCapture(event.pointerId);
     draggingRef.current = true;
     setVisualState("dragging");
@@ -220,12 +268,12 @@ export function useJellyScrubberStage({ settings: controlledSettings, onSettings
       // The browser can release capture before pointerup.
     }
 
-    const next = readPointer(event.clientX);
-    if (!next) return;
-
+    // Settle from the last tracked target rather than the event coordinates,
+    // which are unreliable on pointercancel. writeValue snaps to the nearest
+    // step and lets the spring glide there; at the bounds it replays the pulse.
+    setVisualState("idle");
     edgeTarget.set(0);
-    writeValue(valueFromProgress(next.progress, VMIN, VMAX), { jump: true });
-    setVisualState("idle", 140);
+    writeValue(valueFromProgress(progressTarget.get(), VMIN, VMAX));
   };
 
   const onKeyDown = (event) => {

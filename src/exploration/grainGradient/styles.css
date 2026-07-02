@@ -1,4 +1,4 @@
-/* Grain Gradient — ambient blob-drift canvas (GrainGradientStage.jsx). */
+/* Attention Field - salience glow over abstract product geometry. */
 
 .ggr-root {
   position: relative;
@@ -7,20 +7,142 @@
   min-height: 100%;
   overflow: hidden;
   border-radius: inherit;
-  background: var(--color-white);
+  background: var(--exp-canvas);
 }
 
 .ggr-stage {
   position: absolute;
   inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--exp-canvas);
 }
 
-.ggr-canvas {
+.ggr-panel {
+  position: relative;
+  width: min(78%, 320px);
+  aspect-ratio: 1.28;
+  overflow: hidden;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-white) 82%, transparent), transparent 38%),
+    color-mix(in srgb, var(--surface) 58%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--border-soft) 82%, transparent);
+}
+
+.ggr-wire {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+}
+
+.ggr-wire--nav {
+  top: 13%;
+  left: 10%;
+  width: 22%;
+  height: 5px;
+}
+
+.ggr-wire--hero {
+  top: 28%;
+  left: 10%;
+  width: 43%;
+  height: 13%;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text-primary) 7%, transparent);
+}
+
+.ggr-wire--rail {
+  top: 27%;
+  right: 11%;
+  width: 24%;
+  height: 45%;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+}
+
+.ggr-wire--list {
+  bottom: 26%;
+  left: 10%;
+  width: 45%;
+  height: 6px;
+  box-shadow:
+    0 13px 0 color-mix(in srgb, var(--text-primary) 8%, transparent),
+    0 26px 0 color-mix(in srgb, var(--text-primary) 7%, transparent);
+}
+
+.ggr-wire--cta {
+  right: 13%;
+  bottom: 18%;
+  width: 21%;
+  height: 10%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-results) 18%, transparent);
+}
+
+.ggr-blob {
+  position: absolute;
+  inset: -14% -8%;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: inherit;
+  mix-blend-mode: multiply;
+  opacity: 0.82;
+}
+
+.ggr-shader {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  /* Half-res buffer upscales through the browser's smoothing — that blur is
-     the softness, not an artifact. */
-  image-rendering: auto;
+}
+
+.ggr-target {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  width: 18px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-white) 72%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-features) 74%, transparent),
+    0 0 0 7px color-mix(in srgb, var(--accent-features) 12%, transparent);
+}
+
+.ggr-target--primary {
+  top: 34%;
+  left: 42%;
+}
+
+.ggr-target--secondary {
+  right: 21%;
+  bottom: 29%;
+  width: 14px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-results) 72%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--accent-results) 13%, transparent);
+}
+
+.ggr-target--tertiary {
+  left: 22%;
+  bottom: 28%;
+  width: 11px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-ideation) 62%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent-ideation) 10%, transparent);
+}
+
+[data-theme="dark"] .ggr-blob {
+  mix-blend-mode: screen;
+  opacity: 0.72;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ggr-blob {
+    opacity: 0.64;
+  }
 }

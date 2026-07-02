@@ -336,10 +336,9 @@
     max-width: 100%;
     padding: var(--dock-pad);
     border-radius: var(--dock-radius);
+    /* Bare --surface tray — no ring, inner sheen, or frost. Its filled cells
+       (Magnetic Dock language) carry the visual weight. */
     background: var(--dock-bg);
-    box-shadow: var(--bento-fill-shadow);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
   }
 
   .home-bottom-bar .theme-toggle {
@@ -398,9 +397,11 @@
     padding-block: 0;
     padding-inline: var(--space-3);
     border-radius: var(--mobile-tab-radius);
-    /* The box snaps to its new size instantly; the shared fill (layoutId) owns
-       the visible motion, so width/padding must NOT also transition — that would
-       double-animate the swap and race the gliding fill. */
+    /* Every tab is a filled --dock-pill cell (Magnetic Dock language). The
+       selected tab widens to reveal its text label — the section indicator.
+       Width snaps instantly; the dock shell's layoutId projection animates the
+       overall resize, so tab width itself must not transition. */
+    background: var(--dock-pill);
     transition: color var(--dur-fast) var(--ease-standard);
   }
 
@@ -412,11 +413,6 @@
 
   .home-bottom-bar .tab[aria-selected="true"] {
     width: auto;
-  }
-
-  /* Fully-rounded stadium from the fixed 48px height (24px), matched by the fill. */
-  .home-bottom-bar .tab__fill {
-    border-radius: var(--mobile-tab-radius);
   }
 
   .home-bottom-bar .tab__icon {
@@ -470,6 +466,17 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-1);
+}
+
+/* Phones: the theme toggle rides at the top-right of the header, inline with the
+   name/role block, instead of the bottom dock. Overrides the base fixed position
+   so it flows in the identity row; ≥860px keeps the fixed bottom-left placement. */
+@media (max-width: 859px) {
+  .head__identity .theme-toggle {
+    position: static;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
 }
 
 /* Portrait avatar — circle matches name + role stack height (display + gap + body). */
@@ -726,6 +733,21 @@ main {
   color: var(--text-strong);
 }
 
+.viewsel__btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.viewsel__btn:disabled:active {
+  transform: none;
+}
+
+@media (max-width: 520px) {
+  .viewsel__btn:disabled {
+    display: none;
+  }
+}
+
 /* The one shared fill — motion layoutId slides + reshapes it between options. */
 .viewsel__fill {
   position: absolute;
@@ -738,6 +760,13 @@ main {
 .viewsel__icon {
   position: relative;
   z-index: 1;
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .viewsel__btn,
+  .viewsel__fill {
+    corner-shape: var(--corner-smooth);
+  }
 }
 
 /* ---- The morphing grid -------------------------------------------------- *
@@ -1327,7 +1356,10 @@ main {
     padding-inline: var(--space-3) var(--space-4);
     border-radius: calc(var(--cs-dock-h) / 2);
     color: var(--text-strong);
-    background: var(--hover-lift);
+    /* Raised --dock-pill card on the --surface tray — matches the mobile nav's
+       active pill and the Magnetic Dock cells; the accent volume wash
+       (.cs-dock__fill) then reads cleanly on the opaque card. */
+    background: var(--dock-pill);
     transition: transform var(--dur-fast) var(--ease-out-strong);
   }
 
@@ -1816,11 +1848,11 @@ main {
 }
 
 .cs__feature--padded.cs__feature--portrait .cs__feature-frame {
-  background: #ffffff;
+  background: var(--feature-frame-bg, #ffffff);
 }
 
 :root[data-theme="dark"] .cs__feature--padded.cs__feature--portrait .cs__feature-frame {
-  background: var(--feature-stage-bg);
+  background: var(--feature-frame-bg, var(--feature-stage-bg));
 }
 
 .cs__feature--padded .cs__feature-img-wrap,
@@ -1884,7 +1916,12 @@ main {
 }
 
 @supports (corner-shape: superellipse(2)) {
-  .cs__feature-frame {
+  .cs__feature-frame,
+  .cs__feature-caption {
+    corner-shape: var(--corner-smooth);
+  }
+
+  .persona__quirk-icon {
     corner-shape: var(--corner-smooth);
   }
 }
@@ -2016,6 +2053,13 @@ main {
   width: auto;
   max-width: min(100%, 360px);
   max-height: 80vh;
+  margin-inline: auto;
+}
+
+/* Document / proposal stills — readable width without spanning the column. */
+.cs__shot--compact {
+  width: auto;
+  max-width: min(100%, 480px);
   margin-inline: auto;
 }
 
@@ -2771,6 +2815,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  --exp-frame-radius: 24px;
 }
 
 /* border-beam wrapper around the live demo frame — carries the -3px nudge so
@@ -2778,8 +2823,20 @@ main {
 .exp-card__beam {
   width: 100%;
   transform: translateY(-3px);
-  border-radius: var(--radius-lg);
+  border-radius: var(--exp-frame-radius) !important;
   overflow: hidden;
+  isolation: isolate;
+  clip-path: inset(0 round var(--exp-frame-radius));
+}
+
+.exp-card__beam[data-beam]::before,
+.exp-card__beam[data-beam]::after,
+.exp-card__beam[data-beam] [data-beam-bloom] {
+  border-radius: var(--exp-frame-radius) !important;
+}
+
+.exp-card__beam[data-beam]::before {
+  box-shadow: none !important;
 }
 
 @supports (corner-shape: superellipse(2)) {
@@ -2795,9 +2852,11 @@ main {
   width: 100%;
   aspect-ratio: 5 / 4;
   overflow: hidden;
-  background: color-mix(in oklab, var(--surface) 60%, var(--color-white));
-  border-radius: var(--radius-lg);
-  box-shadow: var(--exp-card-fill-shadow);
+  background: var(--exp-card-fill);
+  border-radius: var(--exp-frame-radius);
+  box-shadow: none;
+  isolation: isolate;
+  clip-path: inset(0 round var(--exp-frame-radius));
 }
 
 @supports (corner-shape: superellipse(2)) {
@@ -2826,33 +2885,86 @@ main {
   border-radius: inherit;
 }
 
-.exp-card__meta {
+/* Caption inside the frame: title top-left, optional note top-right.
+   pointer-events: none keeps the live demo's full hit area underneath. */
+.exp-card__caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-3);
-  padding-inline: var(--space-1);
-  text-decoration: none;
-  color: inherit;
+  padding: var(--space-4) var(--space-5);
+  pointer-events: none;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+}
+
+.exp-card__title {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .exp-card__label {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
+  display: block;
   color: var(--text-strong);
+  font-weight: var(--weight-medium, 500);
 }
 
-.exp-card__arrow {
-  opacity: 1;
-  transform: translate(2px, -2px);
-}
-
-.exp-card__sub {
-  flex-shrink: 0;
+.exp-card__subtitle {
+  display: block;
+  color: var(--text-muted);
   font-size: var(--text-sm-size);
   line-height: var(--text-sm-leading);
+}
+
+.exp-card__note {
+  align-self: flex-start;
+  flex-shrink: 0;
   color: var(--text-muted);
+}
+
+.exp-card__fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--exp-canvas);
+}
+
+/* Photo tiles: light ink over a soft top scrim so the caption survives
+   arbitrary imagery. Live demos keep theme ink on their quiet canvas. */
+.exp-card__frame--image .exp-card__caption {
+  padding-bottom: var(--space-8);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+}
+
+.exp-card__frame--image .exp-card__label {
+  color: #ffffff;
+}
+
+.exp-card__frame--image .exp-card__subtitle {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.exp-card__frame--image .exp-card__note {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Linked notes (credits) stay clickable through the pass-through caption */
+.exp-card__note--link {
+  pointer-events: auto;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+.exp-card__note--link:hover,
+.exp-card__note--link:focus-visible {
+  color: var(--text-strong);
 }
 
 /* ---- CSS miniatures ---------------------------------------------------- */

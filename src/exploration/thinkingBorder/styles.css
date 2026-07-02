@@ -1,4 +1,4 @@
-/* Thinking Border — per-state screen-edge glow (ThinkingBorderStage.jsx).
+/* Thinking Border - compact status orb with layered internal glow.
    State config arrives as inline vars: --tbd-hue / --tbd-speed / --tbd-blur /
    --tbd-glow (see thinkingBorderSettings.js). */
 
@@ -9,7 +9,7 @@
   min-height: 100%;
   overflow: hidden;
   border-radius: inherit;
-  background: var(--color-white);
+  background: var(--exp-canvas);
   color: var(--text-primary);
   font-family: var(--font-body, system-ui, sans-serif);
 }
@@ -22,19 +22,41 @@
   padding: var(--space-5);
 }
 
+/* Assistant chip — a quiet --surface card so the orb + status read as a piece
+   of AI-app UI, not a floating art object. Orb sized like an avatar, not a
+   hero. Card fill uses the site's soft-surface shadow (no framing stroke). */
 .tbd-phone {
+  --tbd-orb-size: clamp(46px, 13vw, 54px);
+
   appearance: none;
   border: 0;
   position: relative;
-  width: 128px;
-  height: 232px;
-  padding: 0;
+  display: grid;
+  grid-template-columns: var(--tbd-orb-size) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  width: min(100%, 280px);
+  min-height: calc(var(--tbd-orb-size) + var(--space-4));
+  padding: var(--space-3);
   overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: transparent;
+  box-shadow: none;
   color: inherit;
   font-family: inherit;
+  text-align: left;
   cursor: pointer;
+  isolation: isolate;
+}
+
+.tbd-phone::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
+  box-shadow: var(--surface-fill-shadow);
+  pointer-events: none;
 }
 
 .tbd-phone:focus-visible {
@@ -42,22 +64,60 @@
   outline-offset: var(--focus-offset);
 }
 
-/* Oversized rotating conic sweep, clipped by the phone and mostly hidden
-   behind the screen — only the frame edge shows. */
+.tbd-orb {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  width: var(--tbd-orb-size);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 36% 27%,
+      color-mix(in srgb, var(--surface) 62%, #ffffff) 0 13%,
+      var(--surface) 58%,
+      color-mix(in srgb, var(--surface) 90%, #000000) 100%
+    );
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 0.42),
+    inset 0 -14px 22px rgb(0 0 0 / 0.12),
+    inset 0 0 22px hsl(var(--tbd-hue) 88% 62% / calc(0.14 * var(--tbd-glow))),
+    0 0 0 1px rgb(255 255 255 / 0.2),
+    0 12px 28px hsl(var(--tbd-hue) 88% 52% / calc(0.16 * var(--tbd-glow)));
+  contain: layout paint;
+}
+
+.tbd-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--tbd-hue) 88% 58% / 0.56),
+    inset 0 0 0 2px rgb(255 255 255 / 0.28),
+    inset 0 -1px 0 rgb(0 0 0 / 0.14);
+}
+
+/* Perimeter state light. The interior glow below supplies depth, so this can
+   stay a thin animated border instead of becoming the whole effect. */
 .tbd-ring {
   position: absolute;
-  inset: -40%;
+  inset: -42%;
+  z-index: 0;
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    hsl(var(--tbd-hue) 90% 62%) 70deg,
-    hsl(calc(var(--tbd-hue) + 40) 90% 70%) 120deg,
-    transparent 200deg,
-    hsl(var(--tbd-hue) 90% 62%) 290deg,
+    hsl(var(--tbd-hue) 90% 62%) 64deg,
+    hsl(calc(var(--tbd-hue) + 38) 90% 70%) 118deg,
+    transparent 188deg,
+    hsl(calc(var(--tbd-hue) - 26) 90% 66%) 286deg,
     transparent 360deg
   );
-  filter: blur(var(--tbd-blur));
-  opacity: var(--tbd-glow);
+  filter: blur(calc(var(--tbd-blur) * 0.3));
+  opacity: calc(var(--tbd-glow) * 0.68);
   animation: tbd-spin var(--tbd-speed) linear infinite;
   transition: opacity var(--dur) var(--ease-standard);
   will-change: transform;
@@ -71,38 +131,248 @@
 
 .tbd-screen {
   position: absolute;
-  inset: 4px;
+  inset: 3px;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      circle at 30% 28%,
+      hsl(var(--tbd-hue) 96% 82% / calc(0.36 * var(--tbd-glow))) 0 10%,
+      transparent 31%
+    ),
+    radial-gradient(
+      circle at 66% 61%,
+      hsl(calc(var(--tbd-hue) + 44) 88% 68% / calc(0.28 * var(--tbd-glow))) 0 13%,
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 46% 72%,
+      hsl(calc(var(--tbd-hue) - 28) 86% 64% / calc(0.2 * var(--tbd-glow))) 0 15%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 50% 48%,
+      hsl(var(--tbd-hue) 82% 62% / calc(0.1 * var(--tbd-glow))) 0,
+      transparent 68%
+    ),
+    color-mix(in srgb, var(--surface) 88%, hsl(var(--tbd-hue) 84% 58%) 12%);
+}
+
+.tbd-screen::before,
+.tbd-screen::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.tbd-screen::before {
+  inset: -26%;
+  z-index: 0;
+  background: conic-gradient(
+    from 112deg,
+    transparent 0 22%,
+    hsl(var(--tbd-hue) 96% 70% / 0.45) 30%,
+    transparent 42%,
+    hsl(calc(var(--tbd-hue) + 50) 90% 70% / 0.32) 56%,
+    transparent 70%,
+    hsl(calc(var(--tbd-hue) - 34) 88% 68% / 0.26) 82%,
+    transparent 100%
+  );
+  filter: blur(calc(var(--tbd-blur) * 0.42));
+  opacity: var(--tbd-glow);
+  animation: tbd-inner-drift calc(var(--tbd-speed) * 1.7) linear infinite;
+  will-change: transform;
+}
+
+.tbd-screen::after {
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(circle at 34% 24%, rgb(255 255 255 / 0.42), transparent 30%),
+    radial-gradient(circle at center, transparent 50%, hsl(var(--tbd-hue) 84% 64% / 0.24) 64%, transparent 78%);
+  box-shadow:
+    inset 0 0 18px rgb(0 0 0 / 0.08),
+    inset 0 0 24px hsl(var(--tbd-hue) 84% 60% / calc(0.13 * var(--tbd-glow)));
+}
+
+@keyframes tbd-inner-drift {
+  to {
+    transform: rotate(-1turn);
+  }
+}
+
+.tbd-lumen {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  border-radius: 50%;
+  filter: blur(2.5px);
+  opacity: calc(0.7 * var(--tbd-glow));
+  will-change: transform, opacity;
+}
+
+.tbd-lumen--near {
+  top: 19%;
+  left: 18%;
+  width: 44%;
+  height: 32%;
+  background: radial-gradient(
+    ellipse at center,
+    hsl(var(--tbd-hue) 98% 78% / 0.56),
+    transparent 72%
+  );
+  animation: tbd-lumen-near calc(var(--tbd-speed) * 1.2) var(--ease-in-out-strong) infinite alternate;
+}
+
+.tbd-lumen--far {
+  right: 16%;
+  bottom: 21%;
+  width: 36%;
+  height: 42%;
+  background: radial-gradient(
+    ellipse at center,
+    hsl(calc(var(--tbd-hue) + 44) 94% 72% / 0.4),
+    transparent 74%
+  );
+  animation: tbd-lumen-far calc(var(--tbd-speed) * 1.45) var(--ease-in-out-strong) infinite alternate;
+}
+
+.tbd-lumen--core {
+  top: 44%;
+  left: 38%;
+  width: 34%;
+  height: 34%;
+  background: radial-gradient(
+    circle at center,
+    hsl(calc(var(--tbd-hue) - 24) 92% 68% / 0.32),
+    transparent 70%
+  );
+  animation: tbd-lumen-core calc(var(--tbd-speed) * 1.1) var(--ease-in-out-strong) infinite alternate;
+}
+
+@keyframes tbd-lumen-near {
+  from {
+    transform: translate3d(-4%, 3%, 0) scale(0.96);
+  }
+
+  to {
+    transform: translate3d(7%, -5%, 0) scale(1.08);
+  }
+}
+
+@keyframes tbd-lumen-far {
+  from {
+    transform: translate3d(5%, -3%, 0) scale(1.04);
+  }
+
+  to {
+    transform: translate3d(-6%, 5%, 0) scale(0.94);
+  }
+}
+
+@keyframes tbd-lumen-core {
+  from {
+    transform: translate3d(-2%, -5%, 0) scale(0.92);
+  }
+
+  to {
+    transform: translate3d(4%, 4%, 0) scale(1.12);
+  }
+}
+
+.tbd-content {
+  position: relative;
+  z-index: 2;
   display: flex;
+  min-width: 0;
+  min-height: 44px;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border-radius: calc(var(--radius-lg) - 3px);
-  background: var(--color-white);
+  gap: var(--space-1);
+  width: 100%;
+  overflow: hidden;
+  padding-right: var(--space-1);
 }
 
+/* One text token for every state — the muted gray AI apps use. Activity is
+   signalled by the shimmer sweep below, never by jumping to a darker color. */
 .tbd-state-label {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: var(--text-leading);
   color: var(--text-muted);
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  transition: color var(--dur) var(--ease-standard);
+  font-size: var(--text-size);
+  line-height: var(--text-leading);
+  letter-spacing: 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.tbd-phone[data-state="thinking"] .tbd-state-label,
-.tbd-phone[data-state="responding"] .tbd-state-label {
-  color: var(--text-primary);
+.tbd-state-label-line {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  max-width: 100%;
+  will-change: transform, filter, opacity;
 }
 
-/* Streaming placeholder line — clip-path typewriter reveal. --dur-* tokens
+/* ChatGPT-style status shimmer: gradient clipped to the glyphs, an ink band
+   sliding left-to-right through the muted base. Both keyframe endpoints park
+   the band outside the text, so the loop reads as a clean repeating sweep.
+   Idle keeps the static gray — shimmer means the assistant is doing work. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .tbd-phone[data-state="listening"] .tbd-state-label-line,
+    .tbd-phone[data-state="thinking"] .tbd-state-label-line,
+    .tbd-phone[data-state="responding"] .tbd-state-label-line {
+      color: transparent;
+      background-image: linear-gradient(
+        100deg,
+        var(--text-muted) 0%,
+        var(--text-muted) 38%,
+        var(--text-primary) 50%,
+        var(--text-muted) 62%,
+        var(--text-muted) 100%
+      );
+      background-size: 250% 100%;
+      background-position: 100% 0;
+      background-repeat: no-repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: tbd-shimmer 2.2s linear infinite;
+    }
+  }
+}
+
+@keyframes tbd-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0% 0;
+  }
+}
+
+/* Streaming placeholder line - clip-path typewriter reveal. --dur-* tokens
    stay for UI chrome; this content reveal is paced to the responding hold. */
 .tbd-stream {
-  max-width: 100%;
+  display: block;
+  width: 100%;
+  min-height: var(--text-sm-leading);
   color: var(--text-secondary);
-  font-size: 11px;
-  line-height: 15px;
-  text-align: center;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   clip-path: inset(0 100% 0 0);
   animation: tbd-stream 1.8s var(--ease-out-strong) 0.2s forwards;
 }
@@ -113,12 +383,36 @@
   }
 }
 
-/* Reduced motion — the state is information: keep a static colored ring per
-   state (color alone still says which state is active), stop the sweep. */
+@media (max-width: 420px) {
+  .tbd-phone {
+    --tbd-orb-size: clamp(42px, 15vw, 48px);
+
+    width: min(100%, 248px);
+  }
+}
+
+/* Reduced motion keeps the stateful color layers, but freezes all drift. */
 @media (prefers-reduced-motion: reduce) {
-  .tbd-ring {
+  .tbd-ring,
+  .tbd-screen::before,
+  .tbd-lumen {
     animation: none;
+  }
+
+  .tbd-ring {
     background: hsl(var(--tbd-hue) 85% 62%);
+    filter: blur(6px);
+  }
+
+  .tbd-screen::before {
+    transform: rotate(28deg);
+  }
+
+  .tbd-lumen,
+  .tbd-ring,
+  .tbd-state-label-line,
+  .tbd-screen::before {
+    will-change: auto;
   }
 
   .tbd-stream {

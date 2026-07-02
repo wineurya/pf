@@ -1,0 +1,74 @@
+/* =============================================================================
+   Custom cursor — an ink dot replaces the native pointer on hover-capable
+   fine-pointer devices. Targets annotated with data-cursor (and optionally
+   data-cursor-icon) pop a toast-style tag off the dot's top right; the dot
+   tracks 1:1 while the tag trails on a spring (see components/Cursor.jsx).
+   ========================================================================== */
+
+/* Native pointer disappears everywhere while the ink dot is mounted. */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+.cursor__dot,
+.cursor__tag-anchor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.cursor__dot {
+  --cursor-ink: #000000;
+  --cursor-paper: #ffffff;
+
+  width: 10px;
+  height: 10px;
+  /* Center the dot on the pointer point (motion x/y land on the top-left). */
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--cursor-ink);
+  /* Faint paper ring keeps the dot readable over ink-filled surfaces
+     (black pills, dark covers) in either theme. */
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--cursor-paper) 76%, transparent),
+    0 2px 10px rgb(0 0 0 / 0.18);
+}
+
+/* Zero-size anchor at the pointer point — the tag hangs off its top right. */
+.cursor__tag-anchor {
+  width: 0;
+  height: 0;
+}
+
+/* Same recipe as .copy__toast — the site's black-pill voice; --color-black /
+   --color-white swap in dark theme so the pill auto-inverts. */
+.cursor__tag {
+  --cursor-ink: #000000;
+  --cursor-paper: #ffffff;
+
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: var(--toast-size);
+  line-height: var(--toast-leading);
+  font-weight: var(--weight-medium);
+  color: var(--cursor-paper);
+  background: var(--cursor-ink);
+  padding: 5.76px 9.6px;
+  border-radius: var(--radius-pill);
+  /* Pop grows out of the cursor corner, not the pill center. */
+  transform-origin: bottom left;
+}
+
+.cursor__tag-icon {
+  flex: none;
+}

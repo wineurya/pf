@@ -67,6 +67,13 @@
   --color-white: #fff;
   --bg: #feffff;
   --surface: #f0f0f0;
+  /* Exploration demo canvas — a very slight off-white so the live demos read as
+     a soft surface (no framing stroke), while --surface cards still sit on it.
+     Pre-mixed at ~24% of the prior #f7f7f7 tint (≈2px step from --bg). */
+  --exp-canvas: #fcfdfd;
+  /* Exploration preview card frame — was color-mix(surface 60%, white) ≈ #f6f6f6;
+     same 24% tint strength as --exp-canvas. */
+  --exp-card-fill: #fcfdfd;
   /* Phone-framed feature media — recording / asset matte (#070707), not theme surface. */
   --feature-stage-bg: #070707;
   --surface-fill-shadow:
@@ -174,8 +181,14 @@
   --dock-gap: var(--space-1); /* between cells — Figma gap-[4px] */
   --dock-radius: calc(var(--dock-cell) / 2 + var(--dock-pad));
   --mobile-dock-radius: var(--dock-radius);
-  /* Shell surface — frost + hairline ring only (no drop). Shares bento language. */
-  --dock-bg: color-mix(in srgb, var(--bg) 92%, transparent);
+  /* Dock fills mirror the Magnetic Dock's two-tier system: a recessed --surface
+     tray with raised --color-white cells (the "card" tone) sitting on it. Both
+     are opaque, so the pill separates crisply — a translucent --hover-lift tint
+     would smudge on the opaque tray. --dock-pill derives from --color-white, so
+     it auto-inverts: brighter than the tray in light, darker in dark. */
+  --dock-bg: var(--surface); /* tray */
+  --dock-pill: var(--color-white); /* raised active cell */
+  --dock-border: color-mix(in srgb, var(--border-soft) 50%, transparent);
 
   /* ---- Radius ---------------------------------------------------------- */
   --radius-xs: 6px;
@@ -183,8 +196,9 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-pill: 999px;
-  --corner-smooth: superellipse(2.3);
-  --corner-smooth-max: superellipse(3.2);
+  /* Figma iOS preset — 60% corner smoothing (superellipse ≈ 3.2). */
+  --corner-smooth: superellipse(3.2);
+  --corner-smooth-max: superellipse(4.4);
 
   /* ---- Motion (Emil-style — strong curves, UI ≤300ms) ----------------- */
   --dur-fast: 160ms;
@@ -220,6 +234,9 @@
   --color-white: #161616; /* card / surface base */
   --bg: #0a0a0a;
   --surface: #1c1c1c;
+  /* Pre-mixed at ~24% of prior #191919 lift above --color-white (#161616). */
+  --exp-canvas: #171717;
+  --exp-card-fill: #171717;
   --border-soft: #262626;
 
   --foreground: #f2f2f2;
@@ -236,8 +253,8 @@
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 9%, transparent),
     0 0 0 1px color-mix(in srgb, #ffffff 7%, transparent);
 
-  /* Dock shell — frost + hairline ring only (no drop). */
-  --dock-bg: color-mix(in srgb, #171717 84%, transparent);
+  /* Dock shell — solid --surface fill, matching the Magnetic Dock pill. */
+  --dock-bg: var(--surface);
   --bento-fill-shadow:
     inset 0 1px 0.5px color-mix(in srgb, #ffffff 10%, transparent),
     0 0 0 1px color-mix(in srgb, #ffffff 8%, transparent);
