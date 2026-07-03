@@ -1029,7 +1029,7 @@ export const site = {
       preview: "magnetic",
     },
     {
-      label: "Rolling number counter",
+      label: "Number counter",
       subtitle: "Data display component",
       preview: "odometer",
     },

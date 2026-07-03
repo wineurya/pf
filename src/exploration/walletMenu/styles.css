@@ -218,11 +218,13 @@
   padding: var(--wm-panel-pad-y) 0 10px;
   border-radius: var(--wx-radius-track, 1rem);
   background: var(--wx-white);
-  /* Same shadow recipe as the trigger at rest, for one shared elevation. */
+  /* The open menu floats above the canvas, so it carries a deeper drop
+     shadow than the trigger's resting elevation. */
   box-shadow:
     0 0 0 0.5px color-mix(in srgb, var(--wx-black) 10%, transparent),
     0 1px 2px color-mix(in srgb, var(--wx-black) 6%, transparent),
-    0 6px 20px color-mix(in srgb, var(--wx-black) 10%, transparent);
+    0 12px 32px color-mix(in srgb, var(--wx-black) 12%, transparent),
+    0 28px 64px color-mix(in srgb, var(--wx-black) 8%, transparent);
 }
 
 .wm-section-label {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
-import { Odometer } from "@/exploration/shared/Odometer.jsx";
+import { AnimatedNumber } from "@/exploration/shared/AnimatedNumber.jsx";
 import DIFF_PULSE_EVENTS from "@/exploration/diffPulse/diffPulseData.json";
 
 const TICK_MS = 800;
@@ -124,13 +124,13 @@ export function DiffPulseStage({ className, events = DIFF_PULSE_EVENTS }) {
                 <span className="dfp-sign" aria-hidden>
                   +
                 </span>
-                <Odometer value={totalAdd} />
+                <AnimatedNumber value={totalAdd} />
               </span>
               <span className="dfp-total dfp-total--del">
                 <span className="dfp-sign" aria-hidden>
                   −
                 </span>
-                <Odometer value={totalDel} />
+                <AnimatedNumber value={totalDel} />
               </span>
             </span>
           </div>

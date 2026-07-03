@@ -48,7 +48,7 @@
   gap: var(--space-2);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-sm-size);
-  /* Odometer columns are 1em — loose leading pushed +/− off the digits. */
+  /* Digit columns are 1em — loose leading pushed +/− off the digits. */
   line-height: 1;
   font-weight: var(--weight-medium);
 }

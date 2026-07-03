@@ -1,23 +1,12 @@
 /* Assert-based self-check for the pure exploration math.
    Run: node scripts/check-exploration-math.mjs */
 import assert from "node:assert/strict";
-import { rollPositions } from "../src/exploration/shared/odometerMath.js";
 import { magneticPull, scrubLift, MAGNETIC_DEFAULTS, SCRUB_DEFAULTS } from "../src/exploration/magneticDock/magneticDockPhysics.js";
 import { jellyControlGeometry, pointerEdgeFromX, progressFromPointerX } from "../src/exploration/jellyScrubber/jellyScrubberPhysics.js";
 import {
   nearestSiteIndex,
   buildCellMask,
 } from "../src/exploration/voronoiGrid/voronoiGridMath.js";
-
-/* odometer: 9→10 must roll the ones column forward (9→10, not 9→0 backwards),
-   and grow a tens column that rolls 0→1. */
-assert.deepEqual(rollPositions([9], 9, 10, "10"), [1, 10]);
-/* 99→100: both existing columns carry forward, new leading column rolls 0→1. */
-assert.deepEqual(rollPositions([9, 9], 99, 100, "100"), [1, 10, 10]);
-/* decrease rolls backwards */
-assert.deepEqual(rollPositions([1, 10], 10, 9, "09"), [0, 9]);
-/* unchanged digits keep their positions (stay static in the DOM) */
-assert.deepEqual(rollPositions([1, 2], 12, 13, "13"), [1, 3]);
 
 /* magnetic pull: zero outside the radius, capped near the center, pulls
    toward the cursor (same sign as the offset). */

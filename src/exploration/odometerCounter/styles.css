@@ -1,4 +1,4 @@
-/* Odometer Counter — rolling stat demo built on the shared odometer primitive. */
+/* Number Counter — stat demo built on the shared animated-number primitive. */
 
 .odc-root {
   position: relative;

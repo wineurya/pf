@@ -23,8 +23,8 @@
 }
 
 .cursor__dot {
-  --cursor-ink: #000000;
-  --cursor-paper: #ffffff;
+  --cursor-ink: var(--color-black);
+  --cursor-paper: var(--color-white);
 
   width: 10px;
   height: 10px;
@@ -48,8 +48,8 @@
 /* Same recipe as .copy__toast — the site's black-pill voice; --color-black /
    --color-white swap in dark theme so the pill auto-inverts. */
 .cursor__tag {
-  --cursor-ink: #000000;
-  --cursor-paper: #ffffff;
+  --cursor-ink: var(--color-black);
+  --cursor-paper: var(--color-white);
 
   position: absolute;
   left: var(--space-3);

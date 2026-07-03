@@ -1,41 +1,35 @@
-/* Shared odometer primitive — per-column rolling digit strips (Odometer.jsx). */
+/* Shared animated numeral — per-digit blur/opacity/scale swap
+   (AnimatedNumber.jsx). Columns stay 1ch × 1em so host layouts line the
+   sign glyphs up against the digits with line-height: 1. */
 
-.odo {
+.anum {
   display: inline-flex;
   font-variant-numeric: tabular-nums;
 }
 
-.odo-cols {
+.anum-cols {
   display: inline-flex;
   line-height: 1;
 }
 
-.odo-col {
+.anum-col {
   position: relative;
+  display: inline-flex;
   width: 1ch;
   height: 1em;
-  overflow: hidden;
 }
 
-.odo-strip {
-  position: absolute;
-  inset: 0;
-  transition: transform var(--dur-slow) var(--ease-out-strong);
-  will-change: transform;
-}
-
-.odo-cell {
-  position: absolute;
-  left: 0;
+.anum-digit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1ch;
   height: 1em;
+  will-change: transform, filter, opacity;
 }
 
-/* Screen readers get the plain number; the strips are decoration. */
-.odo-sr {
+/* Screen readers get the plain number; the animated columns are decoration. */
+.anum-sr {
   position: absolute;
   width: 1px;
   height: 1px;
