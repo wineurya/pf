@@ -41,7 +41,7 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
       data-cursor-icon={item.wip ? undefined : "arrow"}
       aria-disabled={item.wip || undefined}
       onClick={openHandler(item, onOpen)}
-      onPointerEnter={item.slug === "incity" ? playDungSfx : undefined}
+      onPointerEnter={item.wip ? undefined : playDungSfx}
       variants={revealItem(reducedMotion)}
       style={{ transformOrigin: "center center" }}
       transition={{ layout: layoutTransition }}

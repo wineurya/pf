@@ -1,4 +1,4 @@
-/** InCity row hover — kosta.fyi-style sine tick, pitched down and softened. */
+/** Work-row hover — kosta.fyi-style sine tick, pitched down and softened. */
 let audioCtx;
 let lastAt = 0;
 let unlockBound = false;
