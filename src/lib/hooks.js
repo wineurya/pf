@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 
+/* Desktop layout breakpoint — must stay in sync with the (min-width: 1024px)
+   media queries in app.css (.pgrid breakout, case-study vertical rail). */
+export const DESKTOP_MIN_VW = 1024;
+export const DESKTOP_MQ = `(min-width: ${DESKTOP_MIN_VW}px)`;
+
 /** True once mounted and webfonts are in — gates the staggered entrance so type
     is prerendered and never reflows mid-animation. A safety cap reveals anyway
     if a font is slow, so the page is never blocked on the network. */

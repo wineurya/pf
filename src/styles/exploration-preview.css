@@ -10,8 +10,11 @@
    exploration demo is comfortably landscape — the shared 5:4 frame aspect
    ratio shrinks below the panel's real height once the card narrows past
    ~530px, clipping the last menu row against the frame edge. Floor the
-   height so the panel always has room, independent of card width. */
-.exp-card__frame:has(.wm-root) {
+   height so the panel always has room, independent of card width.
+   Keyed off the static data-kind (not :has(.wm-root)) so the floor holds even
+   while the offscreen gate has the demo itself unmounted — the card's box
+   must never depend on whether its embed is currently live. */
+.exp-card__frame[data-kind="wallet"] {
   min-height: 430px;
 }
 

@@ -14,6 +14,34 @@
     <meta name="theme-color" content="#feffff" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- The staggered entrance is gated on document.fonts.ready (useReady, 1.2s
+         cap) — preloading both variable fonts starts their fetch with the HTML
+         instead of after CSS parse, so the page reveals sooner. crossorigin is
+         required for font preloads even same-origin, or the fetch is doubled. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/src/assets/fonts/Geist-Variable.woff2"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/src/assets/fonts/InterVariable.woff2"
+    />
+    <!-- The backdrop glow is the page's LCP element, but it's only discovered
+         after the JS bundle executes (CSS background via Backdrop.jsx import).
+         Preload starts the fetch with the HTML; low priority keeps it behind
+         the fonts and modules it would otherwise compete with. -->
+    <link
+      rel="preload"
+      as="image"
+      fetchpriority="low"
+      href="/src/assets/backdrop/bg-pf.webp"
+    />
     <meta
       name="description"
       content="Wineury — product designer who designs and builds."

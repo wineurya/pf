@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { BorderBeam } from "border-beam";
 
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
@@ -121,18 +121,66 @@ function ExplorationImage({ src, alt, label, subtitle, note, noteHref }) {
   );
 }
 
+/* The demos are ambient loops — infinite CSS animations, intervals, one WebGL
+   shader — and running all eleven for the whole tab is what makes the page
+   heavy. Each embed mounts only once its card drifts within MOUNT_MARGIN of
+   the viewport, and unmounts again past UNMOUNT_MARGIN. The wide hysteresis
+   band means a demo never resets anywhere near the visitor's eye, and the
+   two thresholds can't chatter against each other at a boundary. */
+const MOUNT_MARGIN = "40% 0px";
+const UNMOUNT_MARGIN = "180% 0px";
+
+function useNearViewport(ref) {
+  const [near, setNear] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const enter = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setNear(true);
+      },
+      { rootMargin: MOUNT_MARGIN },
+    );
+    const exit = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) setNear(false);
+      },
+      { rootMargin: UNMOUNT_MARGIN },
+    );
+    enter.observe(el);
+    exit.observe(el);
+    return () => {
+      enter.disconnect();
+      exit.disconnect();
+    };
+  }, [ref]);
+
+  return near;
+}
+
 function ExplorationPreview({ kind, previewProps }) {
   const Component = PREVIEW_COMPONENTS[kind];
+  const embedRef = useRef(null);
+  const near = useNearViewport(embedRef);
   if (!Component) return null;
 
   return (
-    <div className="exp-card__embed" onClick={(event) => event.stopPropagation()}>
+    <div
+      ref={embedRef}
+      className="exp-card__embed"
+      onClick={(event) => event.stopPropagation()}
+    >
       <div className="exp-card__embed-inner">
-        <Suspense
-          fallback={<div className="exp-card__fallback" aria-hidden="true" />}
-        >
-          <Component className="exp-card__demo" inheritCanvas {...previewProps} />
-        </Suspense>
+        {near ? (
+          <Suspense
+            fallback={<div className="exp-card__fallback" aria-hidden="true" />}
+          >
+            <Component className="exp-card__demo" inheritCanvas {...previewProps} />
+          </Suspense>
+        ) : (
+          <div className="exp-card__fallback" aria-hidden="true" />
+        )}
       </div>
     </div>
   );
@@ -166,7 +214,7 @@ function ExplorationFrame({
       onFocus={() => setEngaged(true)}
       onBlur={() => setEngaged(false)}
     >
-      <div className="exp-card__frame">
+      <div className="exp-card__frame" data-kind={kind}>
         <ExplorationPreview kind={kind} previewProps={previewProps} />
         <ExplorationCaption
           label={label}

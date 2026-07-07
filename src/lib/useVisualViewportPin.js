@@ -14,12 +14,22 @@ export function useVisualViewportPin() {
 
     const root = document.documentElement;
     let raf = 0;
+    /* Root-level custom-property writes invalidate style for every element
+       that inherits them — and this runs on every scrolled frame. On desktop
+       the frame never moves, so skip the write when nothing changed. */
+    let lastTop = -1;
+    let lastHeight = -1;
+    let lastInset = -1;
 
     function apply() {
       raf = 0;
       const top = Math.max(0, Math.round(vv.offsetTop));
       const height = Math.max(0, Math.round(vv.height));
       const inset = Math.max(0, Math.round(root.clientHeight - height - top));
+      if (top === lastTop && height === lastHeight && inset === lastInset) return;
+      lastTop = top;
+      lastHeight = height;
+      lastInset = inset;
 
       root.style.setProperty("--vv-top", `${top}px`);
       root.style.setProperty("--vv-height", `${height}px`);

@@ -162,6 +162,15 @@
 
   --page-pad: clamp(1.25rem, 5vw, 2rem);
   --rail-offset: clamp(8rem, 15vw, 12rem);
+  /* Desktop work-grid breakout (single = wide, two-up = super wide). Both are
+     capped twice: by --work-avail, which always reserves a page-pad + rail lane
+     on each side so the dodging tab rail has somewhere to land, and (two-up) by
+     --content-max-cs so opening a case study never reads as the page getting
+     NARROWER — the grid grows up to the case column, never past it. */
+  --work-rail-lane: 150px;
+  --work-avail: calc(100vw - 2 * (var(--page-pad) + var(--work-rail-lane)));
+  --work-wide: min(clamp(640px, 52vw, 760px), var(--work-avail));
+  --work-superwide: min(var(--content-max-cs), var(--work-avail));
   /* Extra height the fixed backdrop hangs below the viewport — covers iOS Safari's
      dynamic toolbar reveal so the glow never cuts to blank. JS bandHeight() still
      uses the visible 25vw / 480px band only (see Backdrop.jsx). */

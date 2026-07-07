@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 import { usePrefersReducedMotion } from "../lib/hooks.js";
-import bgBand from "../assets/backdrop/bg-pf.png";
+import bgBand from "../assets/backdrop/bg-pf.webp";
 
 /* Mask SVG geometry — mirrors scrim-blob.svg (Figma node 557:168): the blob
    path's bbox is 1732×669, blurred σ 170 horizontal / 80 vertical, with 2.5σ
@@ -133,8 +133,21 @@ export function Backdrop({ surfaceKey, caseOpen }) {
       const vw = window.innerWidth;
       const bandH = bandHeight();
       const r = content.getBoundingClientRect();
-      column.left = r.left;
-      column.width = r.width;
+      let left = r.left;
+      let right = r.right;
+      /* The home work grid breaks out of the column via negative margins, so
+         bounding rects of the ancestors never grow — union it in explicitly
+         or the kill zone stays column-width and wide cards land on raw glow. */
+      const grid = content.querySelector(".pgrid");
+      if (grid) {
+        const g = grid.getBoundingClientRect();
+        if (g.width > 0) {
+          left = Math.min(left, g.left);
+          right = Math.max(right, g.right);
+        }
+      }
+      column.left = left;
+      column.width = right - left;
 
       /* How deep the copy reaches into the band → how far the blob stretches. */
       const overlap = Math.min(vh, r.bottom) - (vh - bandH);

@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { RevealEyebrow, RevealItem, StaggerGroup } from "./Reveal.jsx";
 import { ThemeToggle } from "./ThemeToggle.jsx";
-import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { DESKTOP_MQ, useMediaQuery, usePrefersReducedMotion } from "../lib/hooks.js";
 import { EASE_OUT, dockMorph, fillMorph, layoutMorph } from "../lib/motion.js";
 import {
   IconArrowLeft,
@@ -68,6 +68,39 @@ const SECTION_ACCENT = {
   "Sprint 1": "sprint",
   Retrospective: "retro",
 };
+
+/* Sheet-row markers — tiny "brand shape" glyphs (sparkle / clover / burst /
+   squircle) cycled by section order so adjacent rows never repeat. Each fills
+   with the row's accent via CSS; a plain dot read as unfinished UI here. */
+const SECTION_GLYPHS = [
+  /* Sparkle — concave four-point star. */
+  <path d="M6 0C6.9 3.8 8.2 5.1 12 6 8.2 6.9 6.9 8.2 6 12 5.1 8.2 3.8 6.9 0 6 3.8 5.1 5.1 3.8 6 0Z" />,
+  /* Clover — four overlapping petals. */
+  <g>
+    <circle cx="6" cy="3.2" r="2.9" />
+    <circle cx="8.8" cy="6" r="2.9" />
+    <circle cx="6" cy="8.8" r="2.9" />
+    <circle cx="3.2" cy="6" r="2.9" />
+  </g>,
+  /* Burst — eight-point star. */
+  <path d="M12 6 9.7 7.53 10.24 10.24 7.53 9.7 6 12 4.47 9.7 1.76 10.24 2.3 7.53 0 6 2.3 4.47 1.76 1.76 4.47 2.3 6 0 7.53 2.3 10.24 1.76 9.7 4.47Z" />,
+  /* Squircle — superellipse coin. */
+  <path d="M6 0C10.5 0 12 1.5 12 6 12 10.5 10.5 12 6 12 1.5 12 0 10.5 0 6 0 1.5 1.5 0 6 0Z" />,
+];
+
+function SectionGlyph({ index, className }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 12 12"
+      width="12"
+      height="12"
+      aria-hidden="true"
+    >
+      {SECTION_GLYPHS[index % SECTION_GLYPHS.length]}
+    </svg>
+  );
+}
 
 /* Optional per-cell glyphs (Central icons) — feature cells can name one to
    anchor the title. Content stays plain data via these slugs; missing/unknown
@@ -282,20 +315,24 @@ export function CaseStudy({
 
   /* Measure how far the active section has been read (its top travelling up past
      a fixed reading line) → 0 when it just arrives, 1 once fully passed. Written
-     to a CSS var so only the dock's fill repaints — no React re-render per scroll
-     frame (the whole case study would otherwise re-render). rAF throttled. */
+     to a CSS var so only the dock's progress ring repaints — no React re-render per scroll
+     frame (the whole case study would otherwise re-render). rAF throttled.
+     Scoped to the dock element, not <html>: a root-level custom-property write
+     every scrolled frame invalidates inherited style document-wide. */
   useEffect(() => {
     if (!activeSection) return;
     const el = document.getElementById(activeSection);
     if (!el) return;
-    const root = document.documentElement;
+    let dock = null;
     let raf = 0;
     const measure = () => {
       raf = 0;
+      if (!dock || !dock.isConnected) dock = document.querySelector(".cs-dock");
+      if (!dock) return;
       const rect = el.getBoundingClientRect();
       const line = window.innerHeight * 0.42;
       const p = (line - rect.top) / (rect.height || 1);
-      root.style.setProperty("--cs-section-progress", Math.max(0, Math.min(1, p)));
+      dock.style.setProperty("--cs-section-progress", Math.max(0, Math.min(1, p)));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(measure);
@@ -310,11 +347,14 @@ export function CaseStudy({
     };
   }, [activeSection, slug]);
 
-  /* Clear the shared progress var when the study closes so a stale fill never
-     leaks into the next-opened study before its first measure. */
+  /* Clear the progress var when the study closes — the dock persists across
+     study→study jumps, so a stale ring must never leak into the next study
+     before its first measure. */
   useEffect(
     () => () =>
-      document.documentElement.style.removeProperty("--cs-section-progress"),
+      document
+        .querySelector(".cs-dock")
+        ?.style.removeProperty("--cs-section-progress"),
     [],
   );
 
@@ -517,19 +557,7 @@ function ContentsNav({ sections, activeId, onSelect }) {
   const navRef = useRef(null);
   const ids = sections.map((s) => s.id);
   const reducedMotion = usePrefersReducedMotion();
-  const [verticalRail, setVerticalRail] = useState(() =>
-    typeof window !== "undefined"
-      ? window.matchMedia("(min-width: 1024px)").matches
-      : true,
-  );
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const sync = () => setVerticalRail(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const verticalRail = useMediaQuery(DESKTOP_MQ);
 
   useEffect(() => {
     const btn = refs.current[activeId];
@@ -597,8 +625,8 @@ function ContentsNav({ sections, activeId, onSelect }) {
 
 /* Mobile-only floating dock (bottom-right). Reuses the home dock's pill shell:
    Back · the section currently in view · theme toggle. The middle button rolls a
-   new section label in (and the old one out) as you scroll, carries a light
-   left→right "volume" fill in that section's accent tracking read-through, and
+   new section label in (and the old one out) as you scroll, carries a small
+   progress ring in that section's accent tracking read-through, and
    on tap opens a sheet of every section. Portaled to <body> so `position:fixed`
    is unaffected by the case article's reveal transform. */
 export function CaseDock({
@@ -617,8 +645,8 @@ export function CaseDock({
   /* Size the rolling label field to the study's longest section title so it
      stays put as the label swaps (no per-section width jitter). */
   const maxLen = sections.reduce((n, s) => Math.max(n, s.title.length), 0);
-  /* progress is fed in via the --cs-section-progress CSS var on <html> (set by
-     the scroll measure above) so the fill repaints without re-rendering here. */
+  /* progress is fed in via the --cs-section-progress CSS var on .cs-dock (set by
+     the scroll measure above) so the ring repaints without re-rendering here. */
 
   useEffect(() => {
     if (!open) return;
@@ -712,7 +740,7 @@ export function CaseDock({
           >
             <p className="cs-dock__sheet-label">On this page</p>
             <ul className="cs-dock__sheet-list">
-              {sections.map((s) => {
+              {sections.map((s, rowIndex) => {
                 const isActive = s.id === activeId;
                 return (
                   <li key={s.id}>
@@ -724,7 +752,10 @@ export function CaseDock({
                       data-accent={SECTION_ACCENT[s.title] || "overview"}
                       onClick={() => pick(s.id)}
                     >
-                      <span className="cs-dock__sheet-dot" aria-hidden="true" />
+                      <SectionGlyph
+                        className="cs-dock__sheet-glyph"
+                        index={rowIndex}
+                      />
                       <span className="cs-dock__sheet-title">{s.title}</span>
                     </button>
                   </li>
@@ -763,7 +794,10 @@ export function CaseDock({
           aria-expanded={open}
           aria-label={`Section: ${active?.title ?? ""}. Show all sections`}
         >
-          <span className="cs-dock__fill" aria-hidden="true" />
+          <svg className="cs-dock__ring" viewBox="0 0 16 16" aria-hidden="true">
+            <circle className="cs-dock__ring-track" cx="8" cy="8" r="6.25" pathLength="100" />
+            <circle className="cs-dock__ring-arc" cx="8" cy="8" r="6.25" pathLength="100" />
+          </svg>
           <span className="cs-dock__roll">
             <AnimatePresence initial={false} mode="wait">
               <motion.span

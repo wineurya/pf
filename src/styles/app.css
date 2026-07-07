@@ -30,32 +30,25 @@
 
 .backdrop__img {
   position: absolute;
-  /* bg-pf.png carries a soft transparent margin baked into its own left/right
-     edges (the glow art doesn't reach the canvas edge). Displayed at width:100%
-     that margin renders as a visible gap of bare page background on both sides.
-     Overscaling the image and centering it crops that dead margin away so the
-     glow bleeds edge-to-edge, matching how the old (tightly-cropped) band asset
-     used to fill the frame. */
-  left: -25%;
-  right: auto;
-  /* Nudged up off the true bottom edge so the glow's brightest band sits
-     slightly higher in the viewport. */
-  bottom: 20px;
-  top: auto;
-  width: 150%;
-  /* Rendered as a CSS background (not an <img>) so width and height scale
-     independently: width still tracks the viewport (150vw) for the edge-to-edge
-     horizontal crop above, but height is a fixed value tied only to the bleed,
-     not to vw. With height:auto (aspect-locked to width) the rendered image
-     grew from ~240px tall on mobile to ~900px+ on desktop — a wildly different
-     peek per breakpoint. background-size: 100% 100% stretches the same source
-     art to this fixed box at every width, so the visible peek stays the same
-     slight sliver on phone, tablet, and desktop alike. */
-  height: calc(140px + var(--backdrop-bleed));
+  /* Fills the band exactly: the element box is the crop window, and — because
+     the mask below positions in element space — this keeps the --blob-* vars
+     from Backdrop.jsx (computed in band/viewport coordinates) aligned. */
+  inset: 0;
   background-image: var(--backdrop-img);
   background-repeat: no-repeat;
-  background-position: center bottom;
-  background-size: 100% 100%;
+  /* bg-pf.webp (2688×1108, from the 4032×1662 master) bakes soft transparent
+     fades into its own canvas:
+     ~7% of the width on the left, ~10% on the right, ~8% of the height at the
+     bottom. Painted edge-to-edge those fades die on-screen as visible blurred
+     rims. Oversize the art uniformly (130% width, height aspect-locked — never
+     stretched) and sink its bottom edge past the band's bottom (which already
+     hangs --backdrop-bleed below the viewport), so every baked fade lands
+     off-screen and the glow runs cleanly off the left, right, and bottom
+     edges. The 1200px floor keeps phones from scaling the art so small that
+     the bleed swallows the whole glow; the 40px sink floor keeps the bottom
+     fade buried when 5vw shrinks below the fade's rendered height. */
+  background-size: max(130%, 1200px) auto;
+  background-position: left 50% bottom calc(-1 * max(5vw, 40px));
   pointer-events: none;
   /* ---- Legibility mask --------------------------------------------------- *
      The blurred blob (Figma 557:168) is composited OUT of the glow
@@ -77,10 +70,10 @@
   mask-composite: exclude;
 }
 
-/* Case studies scroll past long copy that reaches the band — sit the glow
-   lower (back at the true edge, no lift) so less of it competes with content. */
+/* Case studies scroll past long copy that reaches the band — sink the glow
+   ~1.5vw lower so less of it competes with content. */
 .backdrop--case .backdrop__img {
-  bottom: 0;
+  background-position: left 50% bottom calc(-1 * max(6.5vw, 56px));
 }
 
 /* ---- Shell / layout ----------------------------------------------------- */
@@ -226,6 +219,16 @@
     );
     width: max-content;
     height: fit-content;
+    /* Dodge lane — useRailDodge writes --rail-dodge when the wide work grid
+       scrolls up into the sticky band; translate keeps sticky intact. */
+    transform: translateX(var(--rail-dodge, 0px));
+    transition: transform var(--dur-layout) var(--ease-out-strong);
+  }
+}
+
+@media (min-width: 860px) and (prefers-reduced-motion: reduce) {
+  .rail {
+    transition: none;
   }
 }
 
@@ -817,6 +820,25 @@ main {
   }
 }
 
+/* ---- Desktop breakout — gallery views outgrow the 576px column ---------- *
+   Only below the "My work" bar: the head/excerpt column above stays put. The
+   width itself SNAPS on view switches — the pcards' layout FLIP carries all
+   the visible motion, so the container width is never animated twice (CSS
+   transition + Motion layout measuring mid-transition boxes would land the
+   cards wrong). Symmetric negative margins keep the grid centered on the
+   column, which is centered on the viewport. */
+@media (min-width: 1024px) {
+  .pgrid--single {
+    width: var(--work-wide);
+    margin-inline: calc((100% - var(--work-wide)) / 2);
+  }
+
+  .pgrid--two {
+    width: var(--work-superwide);
+    margin-inline: calc((100% - var(--work-superwide)) / 2);
+  }
+}
+
 /* ---- Project item — shared shell, two skins ----------------------------- */
 .pcard {
   position: relative;
@@ -1202,6 +1224,14 @@ main {
     align-items: flex-start;
     gap: var(--space-1);
   }
+
+  /* Section tabs answer hover with full ink (base .tab hover only steps to
+     --text-secondary, which barely reads against the rail's muted resting state). */
+  @media (hover: hover) {
+    .cs-rail__nav .tab:hover {
+      color: var(--text-strong);
+    }
+  }
 }
 
 .cs__back {
@@ -1289,7 +1319,10 @@ main {
     -webkit-backdrop-filter: blur(14px);
   }
 
-  /* Back + theme — round icon buttons. */
+  /* Back + theme — raised --dock-pill cells on the --surface tray, matching the
+     home dock's filled Magnetic Dock cells (a bare icon on the tray read as a
+     different, flatter control). Hover/press tint mixes INTO the opaque pill —
+     translucent --hover-lift would smudge on the opaque tray. */
   .cs-dock__btn {
     flex-shrink: 0;
     display: inline-flex;
@@ -1299,6 +1332,7 @@ main {
     height: var(--cs-dock-h);
     color: var(--text-muted);
     border-radius: 50%;
+    background: var(--dock-pill);
     transition:
       color var(--dur-fast) var(--ease-standard),
       background-color var(--dur) var(--ease-standard),
@@ -1307,12 +1341,13 @@ main {
 
   .cs-dock__btn:active {
     transform: scale(0.94);
+    background: color-mix(in oklab, var(--color-black) 5%, var(--dock-pill));
   }
 
   @media (hover: hover) {
     .cs-dock__btn:hover {
       color: var(--text-strong);
-      background: var(--hover-lift);
+      background: color-mix(in oklab, var(--color-black) 5%, var(--dock-pill));
     }
   }
 
@@ -1325,20 +1360,20 @@ main {
     width: var(--cs-dock-h);
     height: var(--cs-dock-h);
     border-radius: 50%;
-    background: transparent;
+    background: var(--dock-pill);
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
 
   .cs-dock .theme-toggle:active {
-    background: var(--hover-lift);
+    background: color-mix(in oklab, var(--color-black) 5%, var(--dock-pill));
   }
 
   @media (hover: hover) {
     .cs-dock .theme-toggle:hover {
       color: var(--text-strong);
-      background: var(--hover-lift);
+      background: color-mix(in oklab, var(--color-black) 5%, var(--dock-pill));
     }
   }
 
@@ -1357,8 +1392,8 @@ main {
     border-radius: calc(var(--cs-dock-h) / 2);
     color: var(--text-strong);
     /* Raised --dock-pill card on the --surface tray — matches the mobile nav's
-       active pill and the Magnetic Dock cells; the accent volume wash
-       (.cs-dock__fill) then reads cleanly on the opaque card. */
+       active pill and the Magnetic Dock cells; the accent progress ring
+       (.cs-dock__ring) then reads cleanly on the opaque card. */
     background: var(--dock-pill);
     transition: transform var(--dur-fast) var(--ease-out-strong);
   }
@@ -1372,17 +1407,41 @@ main {
     outline-offset: 2px;
   }
 
-  /* Volume fill — a light L→R wash in the active section's accent. scaleX is fed
-     by --cs-section-progress (set on <html> by the scroll measure), so it tracks
-     read-through without re-rendering; transform-origin keeps it filling right. */
-  .cs-dock__fill {
-    position: absolute;
-    inset: 0;
-    transform-origin: left center;
-    transform: scaleX(var(--cs-section-progress, 0));
-    background: color-mix(in srgb, var(--dock-accent, var(--accent-overview)) 20%, transparent);
-    pointer-events: none;
-    will-change: transform;
+  /* Progress ring — a reading-progress dial in the active section's accent
+     (replaces the old L→R volume wash; a ring reads as "position in section"
+     instead of tinting the whole control). pathLength=100 normalizes the
+     circumference so stroke-dashoffset maps 1:1 onto --cs-section-progress
+     (set on .cs-dock by the scroll measure) — no re-render per frame. The
+     short dashoffset transition makes the arc chase its target, so tap-jumps
+     between sections sweep instead of snapping. */
+  .cs-dock__ring {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+  }
+
+  .cs-dock__ring circle {
+    fill: none;
+    stroke-width: 2.25;
+    stroke-linecap: round;
+  }
+
+  .cs-dock__ring-track {
+    stroke: color-mix(in srgb, var(--dock-accent, var(--accent-overview)) 22%, transparent);
+    transition: stroke var(--dur) var(--ease-standard);
+  }
+
+  .cs-dock__ring-arc {
+    stroke: var(--dock-accent, var(--accent-overview));
+    stroke-dasharray: 100 100;
+    stroke-dashoffset: calc(100.01 - 100 * var(--cs-section-progress, 0));
+    transform: rotate(-90deg); /* progress starts at 12 o'clock */
+    transform-origin: center;
+    transition:
+      stroke-dashoffset var(--dur-fast) var(--ease-standard),
+      stroke var(--dur) var(--ease-standard);
   }
 
   /* Rolling section label — clipped line; titles crossfade/slide like wallet rows. */
@@ -1499,18 +1558,25 @@ main {
     outline-offset: -2px;
   }
 
-  .cs-dock__sheet-dot {
+  /* Row markers — accent-filled shape glyphs (sparkle/clover/burst/squircle,
+     cycled by row in the JSX). Dimmed until active; the active one wakes up
+     with full ink and a slight grow. */
+  .cs-dock__sheet-glyph {
     flex-shrink: 0;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--dock-accent, var(--accent-overview));
+    display: block;
+    width: 12px;
+    height: 12px;
+    fill: var(--dock-accent, var(--accent-overview));
     opacity: 0.4;
-    transition: opacity var(--dur-fast) var(--ease-standard);
+    transform: scale(0.9);
+    transition:
+      opacity var(--dur-fast) var(--ease-standard),
+      transform var(--dur-fast) var(--ease-out-strong);
   }
 
-  .cs-dock__sheet-row.is-active .cs-dock__sheet-dot {
+  .cs-dock__sheet-row.is-active .cs-dock__sheet-glyph {
     opacity: 1;
+    transform: scale(1);
   }
 
   .cs-dock__sheet-title {
@@ -2746,7 +2812,7 @@ main {
 }
 
 /* Gradient on the "quick chat" phrase, sampled from the ambient backdrop glow
-   (bg-pf.png): cool sky-blue on the left sweeping to warm gold/orange on the
+   (bg-pf.webp): cool sky-blue on the left sweeping to warm gold/orange on the
    right. The backdrop image is theme-independent, so these hues are fixed. */
 .cs__outro-grad {
   font-weight: calc(var(--weight-display) + 100);
@@ -3559,10 +3625,15 @@ main {
       var(--page-pad),
       calc(50vw - var(--content-max) / 2 - var(--rail-offset))
     );
+    /* Rides the rail's dodge (useRailDodge) so the shared left edge holds
+       while the wide work grid passes; `translate` — not transform — so the
+       :active press-scale composes instead of clobbering the shift. */
+    translate: var(--rail-dodge, 0px) 0;
     transition:
       color var(--dur-fast) var(--ease-standard),
       background-color var(--dur) var(--ease-standard),
-      left var(--dur-layout) var(--ease-out-strong);
+      left var(--dur-layout) var(--ease-out-strong),
+      translate var(--dur-layout) var(--ease-out-strong);
   }
 
   /* Case study column is wider — track the cs-rail as the stage morphs. */

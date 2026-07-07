@@ -23,6 +23,7 @@ import {
 } from "./lib/motion.js";
 import { useTheme } from "./lib/theme.js";
 import { usePageEnter } from "./lib/usePageEnter.js";
+import { useRailDodge } from "./lib/useRailDodge.js";
 import { useVisualViewportPin } from "./lib/useVisualViewportPin.js";
 import { renderRich } from "./lib/richText.jsx";
 import {
@@ -283,6 +284,11 @@ export function App() {
 
   useVisualViewportPin();
 
+  /* The widened work grid can scroll through the sticky tab rail's band and
+     over the fixed theme toggle — this slides both (one shared shift, so
+     their common left edge holds) toward the page edge during the pass. */
+  useRailDodge(!study && tab === "work" && view !== "list", view);
+
   const aboutPortrait = tab === "about";
   const portraitEnter = reducedMotion
     ? { duration: 0.1 }
@@ -321,8 +327,10 @@ export function App() {
 
   return (
     <LayoutGroup>
-      {/* Legibility mask inside re-measures whenever the active surface swaps. */}
-      <Backdrop surfaceKey={`${tab}:${study ?? ""}`} caseOpen={Boolean(study)} />
+      {/* Legibility mask inside re-measures whenever the active surface swaps.
+          `view` is part of the key: gallery views break out wider than the
+          column, so the blob must re-cover the new extent. */}
+      <Backdrop surfaceKey={`${tab}:${view}:${study ?? ""}`} caseOpen={Boolean(study)} />
       <Cursor />
 
       <a className="skip-link" href="#main">
