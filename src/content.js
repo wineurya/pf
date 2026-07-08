@@ -1076,24 +1076,29 @@ export const site = {
   about: [
     "I'm a 23-year-old product designer and researcher based in Atlanta.",
     [
-      "I'm drawn to tools that change what's possible, whether that's ",
+      { text: "I'm drawn to tools that change what's possible, whether that's ", tone: "muted" },
       { tool: "Figma", icon: "figma" },
-      ", ",
+      { text: ", ", tone: "muted" },
       { tool: "Framer", icon: "framer" },
-      ", ",
+      { text: ", ", tone: "muted" },
       { tool: "Rive", icon: "rive" },
-      ", or whatever I haven't tried yet. The current stack is ",
+      { text: ", or whatever I haven't tried yet. The current stack is ", tone: "muted" },
       { tool: "Claude", icon: "claude" },
-      ", ",
+      { text: ", ", tone: "muted" },
       { tool: "Cursor", icon: "cursor" },
-      " & ",
+      { text: " & ", tone: "muted" },
       { tool: "Firebase", icon: "firebase" },
-      ".",
+      { text: ".", tone: "muted" },
     ],
     "I started in mobile UX and behavioral tracking. I think in systems: what stays coherent as a product grows, where the smallest decision carries the most weight, and what makes an interface feel like it was always supposed to be that way.",
-    "I'm open to founding or early product design roles. Work that's still close to the core decisions and has room to shape what the product becomes.",
     [
-      { text: "Outside of work, I love ", tone: "muted" },
+      {
+        text: "I'm open to founding or early product design roles. Work that's still close to the core decisions and has room to shape what the product becomes.",
+        tone: "muted",
+      },
+    ],
+    [
+      "Outside of work, I love ",
       {
         word: "food",
         photos: [
@@ -1102,7 +1107,7 @@ export const site = {
           { src: foodBirria, alt: "Birria tacos with a cup of consommé", cap: "birria, extra consommé" },
         ],
       },
-      { text: ", I'm always wishing I could visit ", tone: "muted" },
+      ", I'm always wishing I could visit ",
       {
         word: "my country",
         photos: [
@@ -1111,7 +1116,7 @@ export const site = {
           { src: travelBallpark, alt: "A winter-league baseball game at night", cap: "winter league nights" },
         ],
       },
-      { text: " more, and I try to stay consistent at ", tone: "muted" },
+      " more, and I try to stay consistent at ",
       {
         word: "the gym",
         photos: [
@@ -1119,14 +1124,14 @@ export const site = {
           { src: gymMirror, alt: "Gym mirror selfie in the locker room", cap: "locker room check-in" },
         ],
       },
-      { text: ". I also like digging through ", tone: "muted" },
+      ". I also like digging through ",
       {
         word: "vinyl",
         photos: [
           { src: vinylOxymoron, alt: "ScHoolboy Q's Oxymoron on vinyl, found in the wild", cap: "oxymoron, found in the wild" },
         ],
       },
-      { text: " bins and hanging out with ", tone: "muted" },
+      " bins and hanging out with ",
       {
         word: "my family's dogs",
         photos: [
@@ -1134,12 +1139,12 @@ export const site = {
           { src: dogPoodle, alt: "A curly toy poodle standing on a wood floor", cap: "the menace" },
         ],
       },
-      { text: ". Oh, and I love me some ", tone: "muted" },
+      ". Oh, and I love me some ",
       {
         word: "Spider-Man",
         photos: [{ src: milesPlush, alt: "A Spider-Man plush", cap: "Spider-Man stays" }],
       },
-      { text: ".", tone: "muted" },
+      ".",
     ],
   ],
 };
