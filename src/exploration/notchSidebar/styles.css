@@ -22,6 +22,24 @@
   initial-value: 128px;
 }
 
+@property --nsb-pv {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --nsb-pw {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --nsb-f {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 .nsb-root {
   --nsb-dock: 3.5rem;
   --nsb-cell: var(--dock-cell, 2.5rem);
@@ -29,6 +47,11 @@
   --nsb-panel-w: 12.5rem;
   --nsb-dur: 420ms;
   --nsb-dur-fast: var(--dur-fast, 160ms);
+  /* Close morph: depth leads, joins ease flat on a lagged beat, cross-axis
+     folds in at the tail — same curve throughout so nothing snaps. */
+  --nsb-morph-delay: 90ms;
+  --nsb-morph-dur: 280ms;
+  --nsb-fold-dur: 200ms;
   --nsb-ease: var(--ease-drawer, cubic-bezier(0.32, 0.72, 0, 1));
   --nsb-ease-out: var(--ease-out-strong, cubic-bezier(0.23, 1, 0.32, 1));
   /* Two-tier dock fills, same as the Magnetic Dock: a recessed surface tray
@@ -84,19 +107,25 @@
   position: absolute;
   inset: 0;
   --nsb-grow: 0;
-  /* Join radius and panel depth both ride the grow, so the panel reads as
-     pushed out of the rail with the neck swelling as it goes. */
-  --nsb-f: calc(var(--nsb-grow) * var(--nsb-radius));
+  /* Grow drives depth (ext). Join radius and cross-axis size overlap the same
+     ease on close — rounded through the retract, flat before the rail seats. */
+  --nsb-f: 0px;
   --nsb-ext: calc(var(--nsb-grow) * var(--nsb-panel-w));
-  --nsb-pv: calc(var(--nsb-grow) * var(--nsb-ph));
-  --nsb-pw: calc(var(--nsb-grow) * var(--nsb-panel-w));
+  --nsb-pv: 0px;
+  --nsb-pw: 0px;
   clip-path: var(--nsb-shape);
   background:
     linear-gradient(var(--nsb-sheen-hi), var(--nsb-sheen-lo) 70%),
     var(--nsb-tray);
   backdrop-filter: blur(24px) saturate(1.5);
   -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  transition: --nsb-grow var(--nsb-dur) var(--nsb-ease);
+  transition:
+    --nsb-grow var(--nsb-dur) var(--nsb-ease),
+    --nsb-f var(--nsb-morph-dur) var(--nsb-ease) var(--nsb-morph-delay),
+    --nsb-pv var(--nsb-fold-dur) var(--nsb-ease)
+      calc(var(--nsb-dur) - var(--nsb-fold-dur)),
+    --nsb-pw var(--nsb-fold-dur) var(--nsb-ease)
+      calc(var(--nsb-dur) - var(--nsb-fold-dur));
   /* No filter/drop-shadow here or on an ancestor: the element's own filter
      would be clipped with the shape, and a wrapper filter becomes a backdrop
      root that cuts the frost off from the canvas behind it. */
@@ -135,11 +164,20 @@
 
 .nsb-notch[data-open="true"] {
   --nsb-grow: 1;
+  --nsb-f: var(--nsb-radius);
+  --nsb-pv: var(--nsb-ph);
+  --nsb-pw: var(--nsb-panel-w);
+  transition:
+    --nsb-grow var(--nsb-dur) var(--nsb-ease),
+    --nsb-f calc(var(--nsb-dur) * 0.5) var(--nsb-ease) 60ms,
+    --nsb-pv 0s,
+    --nsb-pw 0s;
 }
 
-/* Side swap while open: grow/ph pinned on first paint — opacity only. */
+/* Side swap while open: grow/ph/f pinned on first paint — opacity only. */
 .nsb-notch[data-swap-in] {
   --nsb-grow: 1;
+  --nsb-f: var(--nsb-radius);
   transition: none;
   animation: nsb-notch-in 220ms var(--nsb-ease-out);
 }
@@ -167,7 +205,8 @@
 
 /* One closed outline per edge: the rail box, up the dock face into a concave
    join, around the panel's two free corners, back through the second join.
-   At grow 0 every radius and the panel depth are zero — the shape IS the rail. */
+   Grow only slides depth (ext); pv/pw snap full-size on open and after grow
+   on close — at grow 0 every radius and depth are zero and the shape IS the rail. */
 .nsb-notch[data-side="right"] {
   --nsb-shape: shape(
     from calc(100% - var(--nsb-dock)) 0,
@@ -309,17 +348,19 @@
   flex-direction: column;
   gap: 2px;
   opacity: 0;
-  /* Stay visible through the sink — content fades first, visibility after grow. */
+  /* Fade with the same drawer ease as the clip morph. */
   visibility: hidden;
   transition:
-    opacity calc(var(--nsb-dur) * 0.35) var(--nsb-ease-out),
-    visibility 0s linear var(--nsb-dur);
+    opacity calc(var(--nsb-dur) * 0.45) var(--nsb-ease),
+    visibility 0s linear calc(var(--nsb-dur) * 0.55);
 }
 
 .nsb-notch[data-open="true"] .nsb-body {
   visibility: visible;
   opacity: 1;
-  transition: opacity var(--nsb-dur) var(--nsb-ease-out);
+  transition:
+    opacity calc(var(--nsb-dur) * 0.55) var(--nsb-ease) 80ms,
+    visibility 0s;
 }
 
 .nsb-notch[data-side="right"] .nsb-body {

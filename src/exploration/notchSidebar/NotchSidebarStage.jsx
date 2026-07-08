@@ -104,8 +104,9 @@ export function NotchSidebarStage({
     }
   }, [active, side]);
 
-  /* Fresh opens snap the anchor; closes sink with grow. Section changes while
-     open snap ph so the panel doesn't morph height between menus. */
+  /* Fresh opens and closes snap anchor/ph so only depth (grow/ext) animates —
+     side-rail height and top-rail width stay pinned through the slide. Section
+     changes while open snap ph so the panel doesn't morph between menus. */
   useLayoutEffect(() => {
     const stage = stageRef.current;
     const sideChanged = prevSide.current !== side;
@@ -113,7 +114,9 @@ export function NotchSidebarStage({
     const activeChanged = prevActive.current !== active;
     prevActive.current = active;
     const opening = open && !wasOpen.current;
-    const snap = opening || sideChanged || (activeChanged && open);
+    const closing = !open && wasOpen.current;
+    const snap =
+      opening || closing || sideChanged || (activeChanged && open);
     if (snap && stage) {
       stage.style.transition = "none";
       measure();
