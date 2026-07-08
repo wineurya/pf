@@ -16,6 +16,13 @@ const SHADOW_LIFTED = "0 14px 32px rgb(0 0 0 / 0.16)";
 const LIFT_TRANSITION = { duration: 0.18, ease: "easeOut" };
 const LIFT_SCALE = 1.04;
 const LIFT_ROTATE = 2;
+/* Reorder springs often stop at ~0.3px, not 0 — strict === 0 left data-lifted
+   (and scale 1.04 + z-index 2) stuck on multiple rows after a few drags. */
+const Y_SETTLED_PX = 1;
+
+function isYSettled(value) {
+  return Math.abs(value) < Y_SETTLED_PX;
+}
 
 /* Lifted = from pickup until the released card lands. Not just isDragging
    (the lift would drop at release instead of when the row settles), and not
@@ -34,14 +41,21 @@ function useLift(y, dragging, reduceMotion) {
       setLifted(true);
       return undefined;
     }
-    if (y.get() === 0) {
+    if (isYSettled(y.get())) {
       setLifted(false);
       return undefined;
     }
     /* Released mid-flight — drop the lift when the spring brings y home. */
-    return y.on("change", (latest) => {
-      if (latest === 0) setLifted(false);
+    const unsub = y.on("change", (latest) => {
+      if (isYSettled(latest)) setLifted(false);
     });
+    /* ponytail: cap lift if the spring never crosses the threshold (embed scale,
+       long reorder chains). Without this, z-index 2 + scale stack on siblings. */
+    const cap = window.setTimeout(() => setLifted(false), 700);
+    return () => {
+      unsub();
+      window.clearTimeout(cap);
+    };
   }, [y, dragging]);
 
   useEffect(() => {
