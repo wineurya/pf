@@ -1093,25 +1093,25 @@ export const site = {
     "I started in mobile UX and behavioral tracking. I think in systems: what stays coherent as a product grows, where the smallest decision carries the most weight, and what makes an interface feel like it was always supposed to be that way.",
     "I'm open to founding or early product design roles. Work that's still close to the core decisions and has room to shape what the product becomes.",
     [
-      "Off the clock, I'm a devoted ",
+      { text: "Outside of work, I love ", tone: "muted" },
       {
-        word: "foodie",
+        word: "food",
         photos: [
           { src: foodFriedChicken, alt: "A tray of Korean fried chicken", cap: "korean fried chicken run" },
           { src: foodIzakaya, alt: "An izakaya spread of small plates", cap: "izakaya, little plates" },
           { src: foodBirria, alt: "Birria tacos with a cup of consommé", cap: "birria, extra consommé" },
         ],
       },
-      ", usually planning my next ",
+      { text: ", I'm always wishing I could visit ", tone: "muted" },
       {
-        word: "trip home",
+        word: "my country",
         photos: [
           { src: travelBeach, alt: "Palm trees over a Caribbean beach", cap: "home beach, no filter" },
           { src: travelDrStreet, alt: "A sunny street in the Dominican Republic", cap: "DR streets, golden hour" },
           { src: travelBallpark, alt: "A winter-league baseball game at night", cap: "winter league nights" },
         ],
       },
-      " to the Dominican Republic, getting a session in at ",
+      { text: " more, and I try to stay consistent at ", tone: "muted" },
       {
         word: "the gym",
         photos: [
@@ -1119,14 +1119,14 @@ export const site = {
           { src: gymMirror, alt: "Gym mirror selfie in the locker room", cap: "locker room check-in" },
         ],
       },
-      ", digging through ",
+      { text: ". I also like digging through ", tone: "muted" },
       {
         word: "vinyl",
         photos: [
           { src: vinylOxymoron, alt: "ScHoolboy Q's Oxymoron on vinyl, found in the wild", cap: "oxymoron, found in the wild" },
         ],
       },
-      " bins, or hanging out with ",
+      { text: " bins and hanging out with ", tone: "muted" },
       {
         word: "my family's dogs",
         photos: [
@@ -1134,12 +1134,12 @@ export const site = {
           { src: dogPoodle, alt: "A curly toy poodle standing on a wood floor", cap: "the menace" },
         ],
       },
-      ". The ",
+      { text: ". Oh, and I love me some ", tone: "muted" },
       {
-        word: "Miles Morales",
-        photos: [{ src: milesPlush, alt: "A Miles Morales Spider-Man plush", cap: "the plush stays" }],
+        word: "Spider-Man",
+        photos: [{ src: milesPlush, alt: "A Spider-Man plush", cap: "Spider-Man stays" }],
       },
-      " plush is non-negotiable.",
+      { text: ".", tone: "muted" },
     ],
   ],
 };

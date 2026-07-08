@@ -205,6 +205,16 @@ function AboutPanel() {
               {p.map((seg, j) => {
                 if (typeof seg === "string") return seg;
                 if (seg.tool) return <ToolWord key={j} {...seg} />;
+                if (seg.text) {
+                  return (
+                    <span
+                      key={j}
+                      className={seg.tone === "muted" ? "about-muted" : undefined}
+                    >
+                      {seg.text}
+                    </span>
+                  );
+                }
                 return (
                   <HoverWord
                     key={j}

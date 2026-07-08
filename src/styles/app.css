@@ -580,6 +580,10 @@ main {
   margin: 0;
 }
 
+.about-muted {
+  color: var(--text-muted);
+}
+
 .list {
   position: relative;
   display: flex;
