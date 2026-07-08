@@ -28,25 +28,24 @@
   -webkit-backface-visibility: hidden;
 }
 
-/* Phones — the 1200px background-size floor scales the art so its baked top
-   fade sits ABOVE the band's crop window, and the window's top edge sliced the
-   glow mid-alpha (a hard horizontal line, ~44% opaque at 375w). Feather the
-   window's own top edge so any crop eases out instead of cutting. Applied to
-   the parent so it stays independent of the blob exclude-mask on the child.
-   ≥600px the crop line already lands in the art's transparent margin — no mask. */
-@media (max-width: 767px) {
-  .backdrop {
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent,
-      #000 clamp(40px, 16vw, 72px)
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent,
-      #000 clamp(40px, 16vw, 72px)
-    );
-  }
+/* Feather the band's own top edge so wherever the crop window lands it eases
+   out instead of cutting a hard horizontal line. The art's baked top fade only
+   lands above the crop window at narrow widths; as the viewport widens the band
+   top (25vw, capped 480) sits progressively deeper into the image (~18% in at
+   1024w → ~30% at 1920w), slicing opaque glow mid-alpha. Applied to the parent
+   so it stays independent of the blob exclude-mask on the child. Feather height
+   caps at 72px so it never eats into the glow's lower core. */
+.backdrop {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 clamp(40px, 16vw, 72px)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 clamp(40px, 16vw, 72px)
+  );
 }
 
 .backdrop__img {
