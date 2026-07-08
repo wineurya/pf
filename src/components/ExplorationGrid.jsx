@@ -10,6 +10,7 @@ import "@/exploration/grainGradient/styles.css";
 import "@/exploration/holdToSend/styles.css";
 import "@/exploration/jellyScrubber/styles.css";
 import "@/exploration/magneticDock/styles.css";
+import "@/exploration/notchSidebar/styles.css";
 import "@/exploration/odometerCounter/styles.css";
 import "@/exploration/thinkingBorder/styles.css";
 import "@/exploration/voronoiGrid/styles.css";
@@ -46,6 +47,10 @@ const PREVIEW_COMPONENTS = {
   magnetic: lazyPreview(
     () => import("@/exploration/magneticDock/MagneticDockStage.jsx"),
     "MagneticDockStage",
+  ),
+  notch: lazyPreview(
+    () => import("@/exploration/notchSidebar/NotchSidebarStage.jsx"),
+    "NotchSidebarStage",
   ),
   odometer: lazyPreview(
     () => import("@/exploration/odometerCounter/OdometerCounterStage.jsx"),

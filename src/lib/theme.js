@@ -51,7 +51,15 @@ export function useTheme() {
       return;
     }
 
-    if (document.startViewTransition) {
+    // Phones skip the View Transition even where supported: startViewTransition
+    // rasterizes the whole page twice up front (masked backdrop photo, blurred
+    // dock) and freezes input for the fade — on mobile GPUs that capture drops
+    // frames and the swap reads as a stutter + lock-up. The scoped live color
+    // transition below is per-property interpolation with no snapshot and no
+    // freeze, so it stays smooth under a thumb. Desktop keeps the crossfade.
+    const phone = window.matchMedia("(max-width: 1023px)").matches;
+
+    if (document.startViewTransition && !phone) {
       // The whole page crossfades inside one transition. Mutate the DOM
       // synchronously in the callback so the new frame gets captured; React
       // state (icon morph) follows on its own clock.
@@ -60,8 +68,8 @@ export function useTheme() {
       return;
     }
 
-    // No View Transitions API (e.g. older Firefox): ease the swap with a
-    // scoped CSS transition instead of letting the background snap.
+    // Phones + no View Transitions API (e.g. older Firefox): ease the swap with
+    // a scoped CSS transition instead of letting the background snap.
     const root = document.documentElement;
     root.classList.add("theme-switching");
     applyTheme(next);

@@ -73,21 +73,23 @@ export function ThinkingBorderStage({ className }) {
           onClick={() => setIndex((i) => (i + 1) % THINKING_SEQUENCE.length)}
           aria-label={`Assistant state: ${config.label} - activate to step to the next state`}
         >
-          <span className="tbd-orb" aria-hidden>
-            <span className="tbd-ring" />
-            <span className="tbd-screen">
-              <span className="tbd-lumen tbd-lumen--near" />
-              <span className="tbd-lumen tbd-lumen--far" />
-              <span className="tbd-lumen tbd-lumen--core" />
-            </span>
-          </span>
-          <span className="tbd-content">
-            <StateLabel label={config.label} state={state} reduceMotion={reduceMotion} />
-            {state === "responding" ? (
-              <span className="tbd-stream" key={index}>
-                Here&rsquo;s a plan for your afternoon&hellip;
+          <span className="tbd-chip">
+            <span className="tbd-orb" aria-hidden>
+              <span className="tbd-ring" />
+              <span className="tbd-screen">
+                <span className="tbd-lumen tbd-lumen--near" />
+                <span className="tbd-lumen tbd-lumen--far" />
+                <span className="tbd-lumen tbd-lumen--core" />
               </span>
-            ) : null}
+            </span>
+            <span className="tbd-content">
+              <StateLabel label={config.label} state={state} reduceMotion={reduceMotion} />
+              {state === "responding" ? (
+                <span className="tbd-stream" key={index}>
+                  Here&rsquo;s a plan for your afternoon&hellip;
+                </span>
+              ) : null}
+            </span>
           </span>
         </button>
 

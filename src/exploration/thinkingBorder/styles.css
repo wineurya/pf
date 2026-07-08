@@ -28,23 +28,16 @@
    of AI-app UI, not a floating art object. Orb sized like an avatar, not a
    hero. Card fill uses the site's soft-surface shadow (no framing stroke);
    the pill holds a solid rounded left edge and only fades off the right,
-   where it runs into the frame edge. */
+   where it runs into the frame edge. Padding on .tbd-chip is the single
+   source of equal orb inset from the pill's top, bottom, and left edges.
+   Chip padding plus orb margin (--space-4 + --focus-width) keeps the gutter
+   on design tokens without ad-hoc calc. */
 .tbd-phone {
-  --tbd-orb-size: clamp(46px, 13vw, 54px);
-  --tbd-left-run: 14px;
-  --tbd-edge-run: 0px;
-  --tbd-edge-fade: clamp(0px, var(--tbd-edge-run), 72px);
-
   appearance: none;
   border: 0;
   position: relative;
-  display: grid;
-  grid-template-columns: var(--tbd-orb-size) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-3);
   width: min(100%, 280px);
-  min-height: calc(var(--tbd-orb-size) + var(--space-4));
-  padding: var(--space-3);
+  padding: 0;
   overflow: visible;
   background: transparent;
   box-shadow: none;
@@ -55,8 +48,24 @@
   isolation: isolate;
 }
 
+.tbd-chip {
+  --tbd-orb-size: clamp(46px, 13vw, 54px);
+  --tbd-edge-run: 0px;
+  --tbd-edge-fade: clamp(0px, var(--tbd-edge-run), 72px);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--tbd-orb-size) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding-block: var(--space-4);
+  padding-inline: var(--space-4) var(--space-3);
+  isolation: isolate;
+}
+
 @container (min-width: 0) {
-  .tbd-phone {
+  .tbd-chip {
     --tbd-edge-run: max(
       0px,
       calc((100cqw - 2 * var(--space-5) - 100%) / 2)
@@ -64,14 +73,12 @@
   }
 }
 
-.tbd-phone::before {
+.tbd-chip::before {
   content: "";
   position: absolute;
   z-index: 0;
-  top: 0;
+  inset: 0;
   right: calc(-1 * var(--tbd-edge-run));
-  bottom: 0;
-  left: calc(-1 * var(--tbd-left-run));
   border-radius: var(--radius-pill) 0 0 var(--radius-pill);
   background: color-mix(in srgb, var(--surface) 56%, transparent);
   box-shadow: var(--surface-fill-shadow);
@@ -98,6 +105,8 @@
 .tbd-orb {
   position: relative;
   z-index: 1;
+  margin-block: var(--focus-width);
+  margin-inline-start: var(--focus-width);
   isolation: isolate;
   width: var(--tbd-orb-size);
   aspect-ratio: 1;
@@ -342,6 +351,7 @@
   justify-content: center;
   gap: var(--space-1);
   width: 100%;
+  margin-inline-start: var(--focus-width);
   overflow: hidden;
   padding-right: var(--space-1);
 }
@@ -433,9 +443,11 @@
 }
 
 @media (max-width: 420px) {
-  .tbd-phone {
+  .tbd-chip {
     --tbd-orb-size: clamp(42px, 15vw, 48px);
+  }
 
+  .tbd-phone {
     width: min(100%, 248px);
   }
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Keep in sync with CASE_STUDY_ORDER in src/content.js -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://wineury.vercel.app/</loc>
+  </url>
+  <url>
+    <loc>https://wineury.vercel.app/work/kinetix</loc>
+  </url>
+  <url>
+    <loc>https://wineury.vercel.app/work/avance</loc>
+  </url>
+  <url>
+    <loc>https://wineury.vercel.app/work/incity</loc>
+  </url>
+  <url>
+    <loc>https://wineury.vercel.app/work/logitech</loc>
+  </url>
+  <url>
+    <loc>https://wineury.vercel.app/work/siren</loc>
+  </url>
+  <url>
+    <loc>https://wineury.vercel.app/work/resolutions</loc>
+  </url>
+</urlset>

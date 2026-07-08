@@ -1029,6 +1029,12 @@ export const site = {
       preview: "magnetic",
     },
     {
+      label: "Notch sidebar",
+      subtitle: "Pop-out panel component",
+      preview: "notch",
+      previewProps: { defaultOpen: true },
+    },
+    {
       label: "Number counter",
       subtitle: "Data display component",
       preview: "odometer",

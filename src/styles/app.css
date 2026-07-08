@@ -28,6 +28,27 @@
   -webkit-backface-visibility: hidden;
 }
 
+/* Phones — the 1200px background-size floor scales the art so its baked top
+   fade sits ABOVE the band's crop window, and the window's top edge sliced the
+   glow mid-alpha (a hard horizontal line, ~44% opaque at 375w). Feather the
+   window's own top edge so any crop eases out instead of cutting. Applied to
+   the parent so it stays independent of the blob exclude-mask on the child.
+   ≥600px the crop line already lands in the art's transparent margin — no mask. */
+@media (max-width: 767px) {
+  .backdrop {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 clamp(40px, 16vw, 72px)
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 clamp(40px, 16vw, 72px)
+    );
+  }
+}
+
 .backdrop__img {
   position: absolute;
   /* Fills the band exactly: the element box is the crop window, and — because
@@ -1496,7 +1517,15 @@ main {
     left: 50%;
     right: auto;
     margin-left: calc(var(--cs-sheet-w) / -2);
-    bottom: calc(var(--cs-dock-h) + 6px + var(--space-2));
+    /* Sit a --space-2 above the bar's TOP edge. Absolute `bottom` measures from
+       the container's border box, so the container's bottom padding (rail gap +
+       home-indicator inset) and the bar's own height (cell + shell padding) must
+       be added back — a bare cell-height offset overlapped the bar, worst on
+       notched phones where the safe-area inset pushed the bar up underneath. */
+    bottom: calc(
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px) +
+      var(--cs-dock-h) + 2 * var(--dock-pad) + var(--space-2)
+    );
     z-index: 2;
     width: var(--cs-sheet-w);
     max-height: 56vh;
@@ -3734,16 +3763,28 @@ main {
   }
 }
 
-/* Fallback for browsers without the View Transitions API: theme.js adds
-   `.theme-switching` to <html> for one --dur-theme so the page background and
-   ink ease across the swap instead of snapping. (View-Transition browsers never
-   add this class — the crossfade above owns the fade there.) */
+/* Live theme fade — phones always take this path (theme.js skips the View
+   Transition there: the double full-page snapshot + input freeze stutters on
+   mobile GPUs), and it's also the fallback for browsers without the API.
+   theme.js adds `.theme-switching` to <html> for one --dur-theme; every
+   element's paint colors ease across the swap in place. Colors only — never
+   transform/opacity/layout, so Motion-driven animation is untouched. Gradient
+   backgrounds and theme-swapped images snap under it; they're small accents.
+   (Desktop View-Transition swaps never add this class — the crossfade above
+   owns the fade there.) */
 @media (prefers-reduced-motion: no-preference) {
   :root.theme-switching,
-  :root.theme-switching body {
+  :root.theme-switching body,
+  :root.theme-switching *,
+  :root.theme-switching *::before,
+  :root.theme-switching *::after {
     transition:
       background-color var(--dur-theme) var(--ease-standard),
-      color var(--dur-theme) var(--ease-standard);
+      color var(--dur-theme) var(--ease-standard),
+      border-color var(--dur-theme) var(--ease-standard),
+      box-shadow var(--dur-theme) var(--ease-standard),
+      fill var(--dur-theme) var(--ease-standard),
+      stroke var(--dur-theme) var(--ease-standard);
   }
 }
 
