@@ -368,9 +368,13 @@ export function App() {
   useRailDodge(!study && tab === "work" && view !== "list", view);
 
   const aboutPortrait = tab === "about";
+  /* Enter mirrors the exit's two-phase staging: the slot opens first (clip+push
+     on portraitProgress, DUR_LAYOUT), THEN the photo fades/scales in — so the
+     delay = the slot-open duration. Exit runs it in reverse (photo fades, then
+     slot collapses), which is the read we're matching. */
   const portraitEnter = reducedMotion
     ? { duration: 0.1 }
-    : { duration: DUR_UI, ease: EASE_OUT };
+    : { duration: DUR_UI, ease: EASE_OUT, delay: DUR_LAYOUT };
   const portraitExit = reducedMotion
     ? { duration: 0.1 }
     : { duration: DUR_UI_EXIT, ease: EASE_OUT };
@@ -552,18 +556,31 @@ export function App() {
                       ) : null}
                     </div>
                   </RevealItem>
-                  <AnimatePresence>
+                  {/* The excerpt's SPACE is animated (height), not just its
+                      opacity: when it toggles for About the header would otherwise
+                      snap 44↔165px in one frame and teleport the panel below by
+                      ~120px. Animating height over the same beat as the reshape
+                      glides the panel instead. initial={false} keeps first paint
+                      static so the page-entrance reveal (inner StaggerGroup) owns
+                      the load. overflow clips the text as the box collapses. */}
+                  <AnimatePresence initial={false}>
                     {tab === "about" ? null : (
-                      <StaggerGroup
+                      <motion.div
                         key="head-excerpt"
-                        className="head__excerpt-group"
+                        style={{ overflow: "hidden" }}
+                        initial={{ height: 0 }}
+                        animate={{ height: "auto" }}
+                        exit={{ height: 0 }}
+                        transition={{ height: headerLayout }}
                       >
-                        {site.excerpt.map((paragraph, index) => (
-                          <RevealItem key={index} as="p" className="head__excerpt">
-                            {renderRich(paragraph)}
-                          </RevealItem>
-                        ))}
-                      </StaggerGroup>
+                        <StaggerGroup className="head__excerpt-group">
+                          {site.excerpt.map((paragraph, index) => (
+                            <RevealItem key={index} as="p" className="head__excerpt">
+                              {renderRich(paragraph)}
+                            </RevealItem>
+                          ))}
+                        </StaggerGroup>
+                      </motion.div>
                     )}
                   </AnimatePresence>
                 </StaggerGroup>

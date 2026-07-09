@@ -972,7 +972,7 @@ export const site = {
   role: "Independent Product Designer",
   /* Header bio — single ~2-line block at 576px (Figma excerpt rhythm). */
   excerpt: [
-    "I'm an independent product designer based in Atlanta. I'm currently exploring passion projects, sharpening my eye for interfaces, and experimenting with new design tools.",
+    "I'm an independent product designer, exploring passion projects, sharpening my eye for interfaces, and experimenting with new design tools.",
     "Case studies are ::trafficCone==under construction.==",
   ],
   email: "contact@wineury.design",
