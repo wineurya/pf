@@ -88,7 +88,28 @@
   transform: translate(-50%, 0) scale(1);
 }
 
-/* About contact row — You can reach me at Email · LinkedIn · X */
+/* Contact — About (inline) + Work intro (note + links under excerpt) */
+.contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+}
+
+.contact-block__note {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.contact-links {
+  margin-top: var(--space-2);
+}
+
+.contact-block .contact-links {
+  margin-top: 0;
+}
+
 .contact-links__lead {
   color: var(--text-default);
 }

@@ -3,6 +3,7 @@ import { BorderBeam } from "border-beam";
 import { MotionConfig, correctParentTransform } from "motion/react";
 
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
+import { CaseStudyOutro } from "./caseStudy/blocks.jsx";
 
 import "@/exploration/crateQueue/styles.css";
 import "@/exploration/diffPulse/styles.css";
@@ -228,6 +229,7 @@ export function ExplorationGrid({ items, theme = "light" }) {
           </RevealItem>
         );
       })}
+      <CaseStudyOutro />
     </StaggerGroup>
   );
 }

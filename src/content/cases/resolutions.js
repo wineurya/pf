@@ -14,7 +14,7 @@ import resolutionsHifiDay from "../../assets/case/resolutions-hifi-day.webp";
 
 export const resolutions = {
     title: "Resolutions",
-    meta: "Habit Building",
+    meta: "Daily Planner",
     hero: "image",
     cover: resolutionsCover,
     coverAlt: "Resolutions habit-building app cover",

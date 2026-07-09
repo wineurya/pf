@@ -5,8 +5,10 @@ const HOLD_MS = 780;
 /* Progress past this while still pressed — committed; release no longer cancels. */
 const COMMIT_AT = 0.82;
 const SENDING_FILL_MS = 140;
-const SENDING_MS = 720;
-const SENT_HOLD_MS = 1500;
+const SENDING_MS = 560;
+const SENT_HOLD_MS = 1600;
+/* Brief beat so the blue→green glass morph reads before we reset. */
+const SENT_COLOR_MS = 420;
 
 function CheckMark() {
   return (
@@ -111,16 +113,16 @@ export function HoldToSendStage({ className }) {
 
   const finishSent = () => {
     setPhase("sent");
-
+    /* Drop the deep fill so the green glass (inset + hairline) reads cleanly. */
+    setFillHidden(true);
     resetTimerRef.current = window.setTimeout(() => {
-      setFillHidden(true);
       resetTimerRef.current = window.setTimeout(() => {
         resetTimerRef.current = 0;
         progress.jump(0);
         setFillHidden(false);
         committedRef.current = false;
         setPhase("idle");
-      }, 280);
+      }, SENT_COLOR_MS);
     }, SENT_HOLD_MS);
   };
 

@@ -12,7 +12,7 @@ import sirenHifiPass from "../../assets/case/siren-hifi-pass.webp";
 
 export const siren = {
     title: "Siren",
-    meta: "Safer Dating",
+    meta: "Dating Safety",
     hero: "image",
     cover: sirenCover,
     coverAlt: "Siren safer dating app cover",

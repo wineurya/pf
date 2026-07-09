@@ -96,6 +96,12 @@ function useStudyRoute() {
   return [study, open, close];
 }
 
+/* Contact cursor tags — pipe-separated; Cursor picks a fresh one each enter. */
+const CONTACT_CURSOR_EMAIL =
+  "Say hello|Let's talk|Drop a line|I'm around|Ping me";
+const CONTACT_CURSOR_SOCIAL =
+  "Let's chat|Say hi|Come say hello|Happy to connect|Find me here";
+
 function CopyEmail({ email, label }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef(null);
@@ -116,7 +122,14 @@ function CopyEmail({ email, label }) {
 
   return (
     <span className={`copy${copied ? " is-copied" : ""}`}>
-      <button type="button" className="copy__btn" onClick={copy}>
+      <button
+        type="button"
+        className="copy__btn"
+        onClick={copy}
+        data-cursor={copied ? "Copied" : undefined}
+        data-cursor-rotate={copied ? undefined : CONTACT_CURSOR_EMAIL}
+        data-cursor-icon={copied ? "copy" : "wave"}
+      >
         {copied ? (
           <IconCheckmark1Small className="copy__icon" size={14} ariaHidden />
         ) : (
@@ -138,40 +151,57 @@ function CopyEmail({ email, label }) {
    ToolWord brand marks, so every channel gets an identity, not just Email. */
 const CONTACT_ICONS = {
   LinkedIn: IconLinkedIn,
-  X: IconXLogo,
+  "X/Twitter": IconXLogo,
 };
 
-function AboutContact() {
+/** Shared contact — About (inline lead) + Work intro (quiet note + links). */
+export function ContactLinks({
+  lead = "You can reach me at ",
+  note = null,
+}) {
+  const links = site.contact.map((item, i) => {
+    const Icon = CONTACT_ICONS[item.label];
+    return (
+      <Fragment key={item.label}>
+        {i > 0 ? (
+          <span className="contact-links__sep" aria-hidden="true">
+            {" · "}
+          </span>
+        ) : null}
+        {item.type === "email" ? (
+          <CopyEmail email={item.value} label={item.label} />
+        ) : (
+          <a
+            className="contact-links__link"
+            href={item.href}
+            target="_blank"
+            rel="noreferrer"
+            data-cursor-rotate={CONTACT_CURSOR_SOCIAL}
+            data-cursor-icon="wave"
+          >
+            {Icon ? (
+              <Icon className="contact-links__icon" size={14} ariaHidden />
+            ) : null}
+            {item.label}
+          </a>
+        )}
+      </Fragment>
+    );
+  });
+
+  if (note) {
+    return (
+      <RevealItem className="contact-block">
+        <p className="contact-block__note">{note}</p>
+        <p className="panel__lead contact-links">{links}</p>
+      </RevealItem>
+    );
+  }
+
   return (
     <RevealItem as="p" className="panel__lead contact-links">
-      <span className="contact-links__lead">You can reach me at </span>
-      {site.contact.map((item, i) => {
-        const Icon = CONTACT_ICONS[item.label];
-        return (
-          <Fragment key={item.label}>
-            {i > 0 ? (
-              <span className="contact-links__sep" aria-hidden="true">
-                {" · "}
-              </span>
-            ) : null}
-            {item.type === "email" ? (
-              <CopyEmail email={item.value} label={item.label} />
-            ) : (
-              <a
-                className="contact-links__link"
-                href={item.href}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {Icon ? (
-                  <Icon className="contact-links__icon" size={14} ariaHidden />
-                ) : null}
-                {item.label}
-              </a>
-            )}
-          </Fragment>
-        );
-      })}
+      {lead ? <span className="contact-links__lead">{lead}</span> : null}
+      {links}
     </RevealItem>
   );
 }
@@ -292,7 +322,7 @@ function AboutPanel() {
           </RevealItem>
         );
       })}
-      <AboutContact />
+      <ContactLinks />
       <RevealItem>
         <AboutFilmstrip
           groups={aboutWordGroups}
@@ -600,6 +630,7 @@ export function App() {
                               {renderRich(paragraph)}
                             </RevealItem>
                           ))}
+                          <ContactLinks note="Open to product design work." />
                         </StaggerGroup>
                       </motion.div>
                     )}

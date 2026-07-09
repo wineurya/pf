@@ -69,7 +69,7 @@
   }
 
   .exp-card__demo .jvs-stage {
-    padding: var(--space-5);
+    padding: var(--space-3) var(--space-5);
   }
 }
 
@@ -99,7 +99,7 @@
 .exp-card__demo .wm-stage {
   position: absolute;
   inset: 0;
-  padding: clamp(0.75rem, 4vw, 1.5rem);
+  padding: clamp(0.5rem, 2.5vw, 1rem) clamp(0.75rem, 4vw, 1.5rem);
 }
 
 /* Trigger sits above the panel — extra top inset so it clears the frame edge */
@@ -144,33 +144,22 @@
   --jvs-ink: #f2f2f2;
   --jvs-soft-ink: #a0a0a0;
   --jvs-muted: #8d8d8d;
-  --jvs-border: #333333;
+  --jvs-border: #3a3a3a;
   --jvs-page: var(--color-white);
   --jvs-paper: var(--surface);
-  --jvs-thumb: #666666;
+  --jvs-track-fill: var(--surface);
+  --jvs-thumb: #a8a8a8;
 }
 
 [data-theme="dark"] .exp-card__demo .jvs-track-surface {
-  background: #262626;
-}
-
-[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="hover"] {
-  border-color: #444444;
-}
-
-[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="dragging"] {
-  border-color: #555555;
-}
-
-[data-theme="dark"] .exp-card__demo .jvs-frame[data-state="edge"] {
-  border-color: #666666;
+  background: var(--jvs-track-fill);
 }
 
 [data-theme="dark"] .exp-card__demo .jvs-frame[data-state="hover"] .jvs-edge-thumb {
-  background: #555555;
+  background: #c4c4c4;
 }
 
 [data-theme="dark"] .exp-card__demo .jvs-frame[data-state="dragging"] .jvs-edge-thumb,
 [data-theme="dark"] .exp-card__demo .jvs-frame[data-state="edge"] .jvs-edge-thumb {
-  background: #666666;
+  background: #e0e0e0;
 }

@@ -11,7 +11,6 @@ import { IconCompassRound } from "central-icons/IconCompassRound";
 import { IconCrossSmall } from "central-icons/IconCrossSmall";
 import { IconEyeOpen } from "central-icons/IconEyeOpen";
 import { IconFolder1 } from "central-icons/IconFolder1";
-import { IconRaisingHand5Finger } from "central-icons/IconRaisingHand5Finger";
 import { IconTouch } from "central-icons/IconTouch";
 import { IconUser as CentralIconUser } from "central-icons/IconUser";
 import { IconWarningSign } from "central-icons/IconWarningSign";
@@ -48,6 +47,7 @@ import { Users } from "@phosphor-icons/react/dist/csr/Users";
 import { Signpost } from "@phosphor-icons/react/dist/csr/Signpost";
 import { Warning } from "@phosphor-icons/react/dist/csr/Warning";
 import { HandTap } from "@phosphor-icons/react/dist/csr/HandTap";
+import { HandWaving } from "@phosphor-icons/react/dist/csr/HandWaving";
 import { PersonSimpleWalk } from "@phosphor-icons/react/dist/csr/PersonSimpleWalk";
 import { Question } from "@phosphor-icons/react/dist/csr/Question";
 /* InCity outcome stats — one premium glyph per result metric. */
@@ -191,8 +191,8 @@ function IconDeltaUp({ size = 12, className, ariaHidden = true }) {
 function IconDeltaDown({ size = 12, className, ariaHidden = true }) {
   return <PixelArrow dir="down" size={size} className={className} ariaHidden={ariaHidden} />;
 }
-/* Waving hand for the case-study sign-off. */
-const IconWave = makeCentralIcon(IconRaisingHand5Finger);
+/* Filled wave — outline vanishes on the dark cursor tag. */
+const IconWave = makeIcon(HandWaving);
 function IconFigmaMark({ className, size = 14, ariaHidden }) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden={ariaHidden || undefined} xmlns="http://www.w3.org/2000/svg">

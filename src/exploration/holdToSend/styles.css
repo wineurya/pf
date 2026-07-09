@@ -1,17 +1,22 @@
-/* Hold to send — press-and-hold confirm pill. Scoped: hts-
-   Two stacked labels: an ink-on-paper base and a paper-on-ink clone inside the
-   clipped fill, so the sweep re-inks the text as it passes. */
+/* Hold to send — Figma glass pill (189:5). One accent drives fill + ring +
+   drop for every phase: blue idle → black sending → green sent. */
+
 .hts-root {
-  --hts-ink: var(--text-strong, #111111);
-  --hts-muted: var(--text-muted, #8d8d8d);
-  --hts-hairline: var(--border-soft, #e8e8e8);
-  /* Surface, not pure white — reads off --exp-canvas in card embeds. */
-  --hts-paper: var(--surface, #f0f0f0);
-  --hts-lift: var(--hover-lift, rgba(0, 0, 0, 0.04));
+  --hts-blue: #2a6ff0;
+  --hts-black: #111111;
+  --hts-green: #22a06b;
+  --hts-accent: var(--hts-blue);
+  --hts-ink: #ffffff;
+  --hts-fill-deep: color-mix(in oklab, var(--hts-accent) 78%, #000);
+  --hts-inset: inset 0 0 6px 2px rgba(255, 255, 255, 0.24);
+  --hts-ease: var(--ease-standard, cubic-bezier(0.23, 1, 0.32, 1));
 
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--exp-canvas);
   font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
   font-size: 14px;
   line-height: 20px;
@@ -34,39 +39,98 @@
 }
 
 .hts-button {
+  /* Stroke: white 40% → 0% top→bottom via masked ::before (Afif / Frain).
+     Refs: https://dev.to/afif/border-with-gradient-and-radius-387f
+           https://benfrain.com/how-to-create-rounded-gradient-borders-with-any-background-in-css/ */
+  --hts-stroke-width: 1px;
+  --hts-stroke: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 40%),
+    rgb(255 255 255 / 0%)
+  );
+  /* Ring + drop both keyed off --hts-accent so phase swaps recolor everything. */
+  --hts-ring: var(--hts-accent);
+  --hts-drop: 0 3px 8px color-mix(in oklab, var(--hts-accent) 42%, transparent);
+
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   padding: 11px 26px;
   border: 0;
   border-radius: var(--radius-pill, 999px);
-  background: var(--hts-paper);
+  background: var(--hts-accent);
   color: var(--hts-ink);
   font: inherit;
   font-weight: var(--weight-medium, 500);
   cursor: pointer;
-  box-shadow: 0 0 0 1px var(--hts-hairline);
+  box-shadow:
+    0 0 0 1px var(--hts-ring),
+    var(--hts-drop),
+    var(--hts-inset);
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 380ms var(--hts-ease),
+    box-shadow 380ms var(--hts-ease);
 }
 
+/* Gradient stroke ring — above the hold fill so the rim stays visible. */
+.hts-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  padding: var(--hts-stroke-width);
+  background: var(--hts-stroke);
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Idle + holding — blue chrome (fill, ring, drop). */
+.hts-button[data-phase="idle"],
+.hts-button[data-phase="holding"] {
+  --hts-accent: var(--hts-blue);
+}
+
+/* Sending — black chrome across fill / ring / drop. */
 .hts-button[data-phase="sending"] {
+  --hts-accent: var(--hts-black);
+  --hts-fill-deep: #000000;
   cursor: wait;
+}
+
+/* Sent — green chrome across fill / ring / drop. */
+.hts-button[data-phase="sent"] {
+  --hts-accent: var(--hts-green);
+  --hts-fill-deep: color-mix(in oklab, var(--hts-green) 78%, #000);
+  cursor: default;
 }
 
 @media (hover: hover) {
   .hts-button[data-phase="idle"]:hover {
-    background: color-mix(in oklab, var(--hts-lift), var(--hts-paper));
+    filter: brightness(1.06);
   }
 }
 
 .hts-button:focus-visible {
-  outline: var(--focus-width, 2px) solid var(--focus-ring, currentColor);
+  outline: var(--focus-width, 2px) solid color-mix(in oklab, var(--hts-accent) 55%, white);
   outline-offset: var(--focus-offset, 3px);
 }
 
-/* In-flow but invisible — pins the pill width across label swaps. */
+.hts-button[data-pressed] {
+  filter: brightness(0.96);
+}
+
 .hts-sizer {
   visibility: hidden;
   white-space: nowrap;
@@ -75,6 +139,7 @@
 .hts-layer {
   position: absolute;
   inset: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,12 +152,17 @@
   white-space: nowrap;
 }
 
+/* Hold fill — deeper accent sweeps L→R; inherits phase accent. */
 .hts-fill {
   position: absolute;
   inset: 0;
-  background: var(--hts-ink);
+  z-index: 1;
+  background: var(--hts-fill-deep);
   clip-path: inset(0 100% 0 0);
-  transition: opacity 240ms var(--ease-standard, ease-out);
+  transition:
+    opacity 280ms var(--hts-ease),
+    background-color 380ms var(--hts-ease);
+  border-radius: inherit;
 }
 
 .hts-fill--hidden {
@@ -100,14 +170,13 @@
 }
 
 .hts-layer--fill {
-  color: var(--hts-paper);
+  color: var(--hts-ink);
 }
 
 .hts-check {
   flex-shrink: 0;
 }
 
-/* Visually hidden live region for the "Sent" announcement. */
 .hts-status {
   position: absolute;
   width: 1px;
@@ -115,4 +184,11 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hts-button,
+  .hts-fill {
+    transition-duration: 0.01ms;
+  }
 }

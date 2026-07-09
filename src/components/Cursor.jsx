@@ -12,14 +12,61 @@ import {
 } from "../lib/icons.jsx";
 
 /* Tag glyphs by name — a target picks one via data-cursor-icon. Central icons
-   where the family has the glyph (eye, wave); Phosphor covers the rest. */
+   where the family has the glyph (eye); Phosphor covers the rest. Wave is
+   always fill so it reads on the dark pill. */
 const TAG_ICONS = {
   eye: IconGuideAccess,
   arrow: IconCursorArrow,
   lock: IconLock,
   copy: IconClipboard,
-  wave: IconWave,
+  wave: (props) => <IconWave {...props} weight="fill" />,
 };
+
+/* Module-level so consecutive hovers (even across links) never repeat. */
+let lastRotatePhrase = null;
+let rotateTarget = null;
+const rotatePhraseByEl = new WeakMap();
+
+function pickRotatePhrase(raw) {
+  const options = raw
+    .split("|")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (options.length === 0) return null;
+  if (options.length === 1) {
+    lastRotatePhrase = options[0];
+    return options[0];
+  }
+  let next = options[Math.floor(Math.random() * options.length)];
+  let guard = 0;
+  while (next === lastRotatePhrase && guard++ < 12) {
+    next = options[Math.floor(Math.random() * options.length)];
+  }
+  lastRotatePhrase = next;
+  return next;
+}
+
+function resolveCursorTag(el) {
+  if (!el) {
+    rotateTarget = null;
+    return null;
+  }
+  const rotate = el.dataset.cursorRotate;
+  if (rotate) {
+    /* Pick once per enter — pointerover fires on every child move. */
+    if (el !== rotateTarget) {
+      rotateTarget = el;
+      const text = pickRotatePhrase(rotate);
+      if (text) rotatePhraseByEl.set(el, text);
+      else rotatePhraseByEl.delete(el);
+    }
+    const text = rotatePhraseByEl.get(el);
+    return text ? { text, icon: el.dataset.cursorIcon } : null;
+  }
+  rotateTarget = null;
+  if (!el.dataset.cursor) return null;
+  return { text: el.dataset.cursor, icon: el.dataset.cursorIcon };
+}
 
 /* Only replace the pointer where one exists — never on touch devices. */
 const FINE_POINTER = "(hover: hover) and (pointer: fine)";
@@ -35,9 +82,10 @@ const DOT_SCALE = { type: "spring", stiffness: 500, damping: 30 };
  * it hides the native cursor (html.has-custom-cursor) and follows the pointer
  * with a small dot in the page's ink color. Any element carrying a
  * `data-cursor="Label"` attribute (plus optional `data-cursor-icon`) pops a
- * toast-style tag off the dot's top right while hovered; `data-cursor=""` on a
- * descendant clears the tag again (escape hatch for interactive regions inside
- * an annotated card).
+ * toast-style tag off the dot's top right while hovered; `data-cursor-rotate`
+ * takes a pipe-separated list and picks a fresh phrase each enter (no
+ * back-to-back repeats). `data-cursor=""` on a descendant clears the tag
+ * again (escape hatch for interactive regions inside an annotated card).
  */
 export function Cursor() {
   const enabled = useMediaQuery(FINE_POINTER);
@@ -86,11 +134,8 @@ export function Cursor() {
     }
 
     function onOver(e) {
-      const el = e.target.closest?.("[data-cursor]");
-      const next =
-        el && el.dataset.cursor
-          ? { text: el.dataset.cursor, icon: el.dataset.cursorIcon }
-          : null;
+      const el = e.target.closest?.("[data-cursor], [data-cursor-rotate]");
+      const next = resolveCursorTag(el);
       setTag((prev) =>
         prev?.text === next?.text && prev?.icon === next?.icon ? prev : next,
       );

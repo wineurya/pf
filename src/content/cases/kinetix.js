@@ -4,7 +4,7 @@ import kinetixCover from "../../assets/case/kinetix-cover.webp";
 
 export const kinetix = {
     title: "Kinetix",
-    meta: "Synthetic UX Testing",
+    meta: "Synthetic Testing",
     hero: "prototype",
     cover: kinetixCover,
     coverAlt: "Kinetix synthetic UX testing dashboard cover",

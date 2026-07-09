@@ -70,17 +70,21 @@ export const site = {
   ],
   email: "contact@wineury.design",
   contact: [
-    { type: "email", label: "Email", value: "contact@wineury.design" },
+    {
+      type: "email",
+      label: "contact@wineury.design",
+      value: "contact@wineury.design",
+    },
     {
       type: "link",
       label: "LinkedIn",
       href: "https://www.linkedin.com/in/wineury",
     },
-    { type: "link", label: "X", href: "https://x.com/wineurya" },
+    { type: "link", label: "X/Twitter", href: "https://x.com/wineurya" },
   ],
 
-  /* Right-side metas: a 2–3 word Title Case tag for what each project does.
-     Rows open the in-app case study at /work/<slug> (see CaseStudy). */
+  /* Right-side metas: 2–3 word Title Case noun phrase for what the project
+     is (Emil/Paco pattern: "toast component", not a tagline or "X App"). */
   work: CASE_STUDY_ORDER.map((slug) => {
     const study = caseStudies[slug];
     const coverDims = COVER_DIMS.get(study.cover);

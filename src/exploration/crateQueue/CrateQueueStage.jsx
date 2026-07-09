@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Reorder,
   animate,
@@ -84,7 +84,6 @@ function RecordRow({
   reduceMotion,
   rowTransition,
   dragConstraints,
-  transformPagePoint,
   onKeyDown,
 }) {
   const controls = useDragControls();
@@ -107,7 +106,6 @@ function RecordRow({
       dragConstraints={dragConstraints}
       dragElastic={0.08}
       dragMomentum={false}
-      transformPagePoint={transformPagePoint}
       onDragStart={() => setDragging(true)}
       onDragEnd={() => setDragging(false)}
       onKeyDown={onKeyDown}
@@ -153,39 +151,9 @@ function RecordRow({
 /** Interactive crate-queue canvas — no demo frame or dock. */
 export function CrateQueueStage({ className }) {
   const reduceMotion = useReducedMotion() ?? false;
-  const rootRef = useRef(null);
   const listRef = useRef(null);
   const [records, setRecords] = useState(CRATE_RECORDS);
   const rowTransition = reduceMotion ? { duration: 0 } : ROW_SPRING;
-  const transformPagePoint = useCallback((point) => {
-    const root = rootRef.current;
-    if (!root) return point;
-
-    const rect = root.getBoundingClientRect();
-    const scaleX = rect.width / (root.offsetWidth || rect.width || 1);
-    const scaleY = rect.height / (root.offsetHeight || rect.height || 1);
-
-    if (
-      !Number.isFinite(scaleX) ||
-      !Number.isFinite(scaleY) ||
-      !scaleX ||
-      !scaleY
-    ) {
-      return point;
-    }
-
-    if (Math.abs(scaleX - 1) < 0.001 && Math.abs(scaleY - 1) < 0.001) {
-      return point;
-    }
-
-    const left = rect.left + window.scrollX;
-    const top = rect.top + window.scrollY;
-
-    return {
-      x: left + (point.x - left) / scaleX,
-      y: top + (point.y - top) / scaleY,
-    };
-  }, []);
 
   const onRowKeyDown = (event, index) => {
     if (event.key === "ArrowUp") {
@@ -198,10 +166,7 @@ export function CrateQueueStage({ className }) {
   };
 
   return (
-    <div
-      ref={rootRef}
-      className={className ? `cq-root ${className}` : "cq-root"}
-    >
+    <div className={className ? `cq-root ${className}` : "cq-root"}>
       <main className="cq-stage" aria-label="Crate queue">
         <a
           className="cq-credit"
@@ -235,7 +200,6 @@ export function CrateQueueStage({ className }) {
                 reduceMotion={reduceMotion}
                 rowTransition={rowTransition}
                 dragConstraints={listRef}
-                transformPagePoint={transformPagePoint}
                 onKeyDown={(event) => onRowKeyDown(event, index)}
               />
             ))}
