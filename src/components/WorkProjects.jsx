@@ -43,7 +43,16 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
       onClick={openHandler(item, onOpen)}
       onPointerEnter={item.wip ? undefined : playDungSfx}
       variants={revealItem(reducedMotion)}
-      style={{ transformOrigin: "center center" }}
+      style={{
+        transformOrigin: "center center",
+        /* Pin the two-up card to the cover's true ratio up front (not onLoad), so
+           the masonry tile reserves its height before the lazy cover loads — no
+           reflow when the caption opens on hover, and no load-time size jump for
+           Motion's layout to animate into a stretch. */
+        ...(item.coverW && item.coverH
+          ? { "--card-ar": `${item.coverW} / ${item.coverH}` }
+          : null),
+      }}
       transition={{ layout: layoutTransition }}
     >
       <AnimatePresence initial={false} mode="popLayout">
@@ -65,17 +74,10 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
                 className="pcard__cover"
                 src={item.cover}
                 alt={`${item.label} project cover`}
+                width={item.coverW}
+                height={item.coverH}
                 loading="lazy"
                 decoding="async"
-                onLoad={(e) => {
-                  /* Pin the 2×2 card to the cover's true ratio so its height is
-                     fixed (no masonry reflow when the caption opens on hover). */
-                  const card = e.currentTarget.closest(".pcard");
-                  card?.style.setProperty(
-                    "--card-ar",
-                    `${e.currentTarget.naturalWidth} / ${e.currentTarget.naturalHeight}`,
-                  );
-                }}
               />
             ) : (
               <motion.span layout className="pcard__media-label">

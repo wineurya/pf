@@ -25,6 +25,21 @@ import resolutionsCover from "./assets/case/resolutions-cover.webp";
 import sirenCover from "./assets/case/siren-cover.webp";
 import paniTest from "./assets/exploration/pani-test.webp";
 
+/* Intrinsic pixel size of each cover, keyed by its imported URL. The gallery card
+   stamps these as the <img> width/height so the media tile reserves the cover's
+   true aspect ratio *before* the lazy image loads — no layout shift on load, which
+   is what made the cover appear stretched for a few frames when a Work card
+   morphed from list row to gallery tile (Motion animates any post-mount size jump
+   on the layout-tracked media as a scaleY stretch). Also removes the CLS. */
+const COVER_DIMS = new Map([
+  [avanceCover, { w: 1600, h: 1600 }],
+  [incityCover, { w: 2400, h: 715 }],
+  [kinetixCover, { w: 1600, h: 1067 }],
+  [logitechCover, { w: 1024, h: 476 }],
+  [resolutionsCover, { w: 2048, h: 1148 }],
+  [sirenCover, { w: 2048, h: 1152 }],
+]);
+
 /* InCity "old flow" screen recording (the original ATL311 on mobile). Recorded at
    the iPhone Pro Max logical resolution; its own status bar is cropped in the
    phone mock and replaced with a clean synthetic one. WebM first, mp4 fallback. */
@@ -975,6 +990,7 @@ export const site = {
      Rows open the in-app case study at /work/<slug> (see CaseStudy). */
   work: CASE_STUDY_ORDER.map((slug) => {
     const study = caseStudies[slug];
+    const coverDims = COVER_DIMS.get(study.cover);
     return {
       label: study.title,
       meta: study.meta,
@@ -987,6 +1003,9 @@ export const site = {
          cover, when present, fills that media tile with the real project art. */
       hero: study.hero,
       cover: study.cover,
+      /* Intrinsic cover size — reserves the tile's aspect ratio before load. */
+      coverW: coverDims?.w,
+      coverH: coverDims?.h,
     };
   }),
 

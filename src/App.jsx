@@ -479,15 +479,20 @@ export function App() {
                   </motion.div>
                 )}
               </div>
+              {/* layout="position" (not full layout): the header/column reshapes
+                  when the About portrait reveals or the excerpt appears, but only
+                  its POSITION is ever translated — never its size via scale. A full
+                  `layout` animates height with scaleY, which squished the non-layout
+                  panel/identity descendants for a few frames on every tab swap. */}
               <StaggerGroup
                 className="content-main"
-                layout
+                layout="position"
                 transition={{ layout: headerLayout }}
               >
                 <StaggerGroup
                   as="header"
                   className="head"
-                  layout
+                  layout="position"
                   transition={{ layout: headerLayout }}
                 >
                   <RevealItem>
