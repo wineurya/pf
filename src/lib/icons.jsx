@@ -4,12 +4,16 @@
 
 import { IconColorPalette as CentralColorPalette } from "central-icons/IconColorPalette";
 import { IconArrowUpRight as CentralArrowUpRight } from "central-icons/IconArrowUpRight";
+import { IconCheckmark1Small as CentralCheckmark1Small } from "central-icons/IconCheckmark1Small";
+import { IconCirclePlaceholderOn } from "central-icons/IconCirclePlaceholderOn";
 import { IconCompassRound } from "central-icons/IconCompassRound";
+import { IconCrossSmall } from "central-icons/IconCrossSmall";
 import { IconEyeOpen } from "central-icons/IconEyeOpen";
 import { IconFolder1 } from "central-icons/IconFolder1";
 import { IconRaisingHand5Finger } from "central-icons/IconRaisingHand5Finger";
 import { IconTouch } from "central-icons/IconTouch";
 import { IconUser as CentralIconUser } from "central-icons/IconUser";
+import { IconWarningSign } from "central-icons/IconWarningSign";
 import { ArrowElbowRightDown } from "@phosphor-icons/react/dist/csr/ArrowElbowRightDown";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
@@ -135,6 +139,11 @@ const IconGuideAccess = makeCentralIcon(IconEyeOpen);
 const IconGuideInteraction = makeCentralIcon(IconTouch);
 const IconCursorArrow = makeCentralIcon(CentralArrowUpRight);
 const IconTrafficCone = makeIcon(TrafficCone);
+/* Toast stack marks + dismiss — Central Icons. */
+const IconToastCheck = makeCentralIcon(CentralCheckmark1Small);
+const IconToastWarn = makeCentralIcon(IconWarningSign);
+const IconToastDot = makeCentralIcon(IconCirclePlaceholderOn);
+const IconToastClose = makeCentralIcon(IconCrossSmall);
 /* Waving hand for the case-study sign-off. */
 const IconWave = makeCentralIcon(IconRaisingHand5Finger);
 function IconFigmaMark({ className, size = 14, ariaHidden }) {
@@ -224,6 +233,10 @@ export {
   IconTabAbout,
   IconTabExploration,
   IconTabWork,
+  IconToastCheck,
+  IconToastClose,
+  IconToastDot,
+  IconToastWarn,
   IconUser,
   IconWave,
 };

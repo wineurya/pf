@@ -13,6 +13,12 @@ import {
   TOAST_MAX,
   TOAST_SAMPLES,
 } from "@/exploration/toastStack/toastStackData.js";
+import {
+  IconToastCheck,
+  IconToastClose,
+  IconToastDot,
+  IconToastWarn,
+} from "@/lib/icons.jsx";
 
 /* Slightly slower ease — Sonner vibe (emil-design-eng). */
 const EASE = [0.22, 1, 0.36, 1];
@@ -29,26 +35,22 @@ function ToneMark({ tone }) {
   if (tone === "success") {
     return (
       <span className="ts-mark ts-mark--success" aria-hidden>
-        <svg viewBox="0 0 14 14" width="12" height="12" fill="none">
-          <path
-            d="M2.5 7.2 5.5 10.2 11.5 3.8"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <IconToastCheck size={14} />
       </span>
     );
   }
   if (tone === "warning") {
     return (
       <span className="ts-mark ts-mark--warning" aria-hidden>
-        !
+        <IconToastWarn size={14} />
       </span>
     );
   }
-  return <span className="ts-mark ts-mark--default" aria-hidden />;
+  return (
+    <span className="ts-mark ts-mark--default" aria-hidden>
+      <IconToastDot size={10} />
+    </span>
+  );
 }
 
 function ToastItem({
@@ -129,14 +131,7 @@ function ToastItem({
           onClick={() => onDismiss(toast.key)}
           aria-label={`Dismiss ${toast.title}`}
         >
-          <svg viewBox="0 0 12 12" width="10" height="10" fill="none" aria-hidden>
-            <path
-              d="M2 2l8 8M10 2l-8 8"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
+          <IconToastClose size={12} />
         </button>
       </div>
     </motion.li>

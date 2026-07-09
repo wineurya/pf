@@ -43,33 +43,8 @@
   padding: var(--space-6) var(--space-5) var(--space-7);
 }
 
-/* Very light Bayer dither wash from the stage's right edge. */
-.ts-stage::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Crect width='1' height='1' fill='%23000'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23000'/%3E%3C/svg%3E");
-  background-size: 4px 4px;
-  background-repeat: repeat;
-  -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 38%);
-  mask-image: linear-gradient(to left, #000 0%, transparent 38%);
-}
-
-:root[data-theme="dark"] .ts-stage::after {
-  opacity: 0.055;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
-}
-
-.ts-stack-wrap,
-.ts-trigger {
-  position: relative;
-  z-index: 1;
-}
-
 .ts-stack-wrap {
+  position: relative;
   width: min(320px, 100%);
   height: 168px;
   display: flex;
@@ -92,6 +67,8 @@
 
 /* Realistic toast card — rounded rect, not a pill button. */
 .ts-toast {
+  --ts-dither: var(--ts-muted);
+
   position: absolute;
   left: 0;
   right: 0;
@@ -106,11 +83,50 @@
   overflow: hidden;
 }
 
+.ts-toast[data-tone="success"] {
+  --ts-dither: var(--ts-success);
+}
+
+.ts-toast[data-tone="warning"] {
+  --ts-dither: var(--ts-warning);
+}
+
+/* Tone-colored dither fade from the toast card's right edge. */
+.ts-toast::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: auto;
+  width: 48%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.28;
+  background-color: var(--ts-dither);
+  -webkit-mask-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Ccircle cx='1' cy='1' r='0.75' fill='%23fff'/%3E%3Ccircle cx='5' cy='3' r='0.75' fill='%23fff'/%3E%3Ccircle cx='3' cy='5' r='0.75' fill='%23fff'/%3E%3Ccircle cx='7' cy='7' r='0.75' fill='%23fff'/%3E%3C/svg%3E"),
+    linear-gradient(to left, #000 0%, #000 22%, transparent 100%);
+  -webkit-mask-size: 8px 8px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  -webkit-mask-composite: source-in;
+  mask-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Ccircle cx='1' cy='1' r='0.75' fill='%23fff'/%3E%3Ccircle cx='5' cy='3' r='0.75' fill='%23fff'/%3E%3Ccircle cx='3' cy='5' r='0.75' fill='%23fff'/%3E%3Ccircle cx='7' cy='7' r='0.75' fill='%23fff'/%3E%3C/svg%3E"),
+    linear-gradient(to left, #000 0%, #000 22%, transparent 100%);
+  mask-size: 8px 8px, 100% 100%;
+  mask-repeat: repeat, no-repeat;
+  mask-composite: intersect;
+}
+
+:root[data-theme="dark"] .ts-toast::after {
+  opacity: 0.34;
+}
+
 .ts-toast:active {
   cursor: grabbing;
 }
 
 .ts-toast-body {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -118,23 +134,21 @@
   padding: 12px 12px 12px 14px;
 }
 
-/* Bare mark — no chip fill; vertically centered with copy. */
+/* Bare Central mark — no chip fill; vertically centered with copy. */
 .ts-mark {
   display: grid;
   place-items: center;
   width: 14px;
   height: 14px;
-  border-radius: 0;
   flex-shrink: 0;
   background: transparent;
+  color: var(--ts-muted);
 }
 
 .ts-mark--default {
-  width: 6px;
-  height: 6px;
-  margin-inline: 4px;
-  border-radius: 999px;
-  background: var(--ts-muted);
+  width: 10px;
+  height: 10px;
+  margin-inline: 2px;
   opacity: 0.55;
 }
 
@@ -144,9 +158,6 @@
 
 .ts-mark--warning {
   color: var(--ts-warning);
-  font-size: 12px;
-  font-weight: var(--weight-medium);
-  line-height: 1;
 }
 
 .ts-toast-copy {
@@ -199,6 +210,7 @@
 
 /* Trigger stays a quiet control — not competing with toast chrome. */
 .ts-trigger {
+  position: relative;
   z-index: 4;
   padding: 8px 16px;
   border: 1px solid var(--ts-border);
