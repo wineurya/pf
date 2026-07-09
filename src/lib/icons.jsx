@@ -147,12 +147,25 @@ const IconToastWarn = makeCentralIcon(IconWarningSign);
 const IconToastError = makeCentralIcon(IconCircleX);
 const IconToastClose = makeCentralIcon(IconCrossSmall);
 
-/* 8-bit / dither-feel delta arrows — stepped pixel triangles, not smooth strokes. */
+/* 8-bit / dither-feel delta arrows — 1×1 cells on an 8×8 grid. */
 function PixelArrow({ dir = "up", size = 12, className, ariaHidden = true }) {
-  const up =
-    "M3 1h2v1h1v1h1v1h1v1H6v1H5v2H3V6H2V5H1V4h1V3h1V2h1V1z";
-  const down =
-    "M3 1h2v2h1v1h1v1h1v1H6v1H5v1H3v-1H2v-1H1V5h1V4h1V3h1V1z";
+  const upCells = [
+    [3, 1], [4, 1],
+    [2, 2], [3, 2], [4, 2], [5, 2],
+    [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3],
+    [3, 4], [4, 4],
+    [3, 5], [4, 5],
+    [3, 6], [4, 6],
+  ];
+  const downCells = [
+    [3, 1], [4, 1],
+    [3, 2], [4, 2],
+    [3, 3], [4, 3],
+    [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4],
+    [2, 5], [3, 5], [4, 5], [5, 5],
+    [3, 6], [4, 6],
+  ];
+  const cells = dir === "up" ? upCells : downCells;
   return (
     <svg
       className={className}
@@ -164,7 +177,9 @@ function PixelArrow({ dir = "up", size = 12, className, ariaHidden = true }) {
       shapeRendering="crispEdges"
       aria-hidden={ariaHidden || undefined}
     >
-      <path d={dir === "up" ? up : down} />
+      {cells.map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} />
+      ))}
     </svg>
   );
 }
