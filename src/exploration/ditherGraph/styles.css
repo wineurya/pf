@@ -1,0 +1,119 @@
+/* Dither metric graph — canvas Bayer dither, accent → white. Scoped: dg- */
+
+.dg-root {
+  --dg-ink: var(--text-primary);
+  --dg-muted: var(--text-muted);
+  --dg-up: var(--accent-wireframes);
+  --dg-down: var(--accent-problem);
+  --dg-accent: #3b82f6;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--exp-canvas);
+  color: var(--dg-ink);
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+
+.dg-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+
+.dg-card {
+  display: grid;
+  gap: var(--space-3);
+  width: min(280px, 100%);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dg-card:focus-visible {
+  outline: var(--focus-width, 2px) solid color-mix(in oklab, var(--dg-accent) 70%, var(--dg-ink));
+  outline-offset: 6px;
+  border-radius: var(--radius-md, 12px);
+}
+
+/* Stable header — label over value + delta. Layout variety is the card
+   proportions / graph, not shuffling text left↔right. */
+.dg-head {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.dg-label {
+  margin: 0;
+  color: var(--dg-muted);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  font-weight: var(--weight-medium);
+}
+
+.dg-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.dg-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.dg-unit {
+  margin-left: 2px;
+  font-size: var(--text-sm-size);
+  line-height: 1;
+  color: var(--dg-muted);
+  font-weight: var(--weight-medium);
+}
+
+.dg-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--text-sm-size);
+  line-height: 1;
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.dg-delta--up {
+  color: var(--dg-up);
+}
+
+.dg-delta--down {
+  color: var(--dg-down);
+}
+
+.dg-delta-arrow {
+  font-size: 8px;
+  line-height: 1;
+}
+
+.dg-graph {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 280 / 100;
+  image-rendering: pixelated;
+  border-radius: 2px;
+}

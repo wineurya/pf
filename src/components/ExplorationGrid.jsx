@@ -1,14 +1,17 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { BorderBeam } from "border-beam";
+import { MotionConfig, correctParentTransform } from "motion/react";
 
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
 
 import "@/exploration/crateQueue/styles.css";
 import "@/exploration/diffPulse/styles.css";
+import "@/exploration/ditherGraph/styles.css";
 import "@/exploration/holdToSend/styles.css";
 import "@/exploration/jellyScrubber/styles.css";
 import "@/exploration/magneticDock/styles.css";
 import "@/exploration/thinkingBorder/styles.css";
+import "@/exploration/toastStack/styles.css";
 import "@/exploration/walletMenu/styles.css";
 import "../styles/exploration-preview.css";
 
@@ -46,6 +49,14 @@ const PREVIEW_COMPONENTS = {
   diff: lazyPreview(
     () => import("@/exploration/diffPulse/DiffPulseStage.jsx"),
     "DiffPulseStage",
+  ),
+  dither: lazyPreview(
+    () => import("@/exploration/ditherGraph/DitherGraphStage.jsx"),
+    "DitherGraphStage",
+  ),
+  toast: lazyPreview(
+    () => import("@/exploration/toastStack/ToastStackStage.jsx"),
+    "ToastStackStage",
   ),
 };
 
@@ -120,6 +131,13 @@ function useNearViewport(ref) {
 function ExplorationPreview({ kind, previewProps }) {
   const Component = PREVIEW_COMPONENTS[kind];
   const embedRef = useRef(null);
+  /* Mobile cards scale the embed-inner (translate + scale 0.9). Motion drag /
+     reorder read page points in unscaled space — correct through this node. */
+  const innerRef = useRef(null);
+  const transformPagePoint = useMemo(
+    () => correctParentTransform(innerRef),
+    [],
+  );
   const near = useNearViewport(embedRef);
   if (!Component) return null;
 
@@ -129,17 +147,19 @@ function ExplorationPreview({ kind, previewProps }) {
       className="exp-card__embed"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className="exp-card__embed-inner">
-        {near ? (
-          <Suspense
-            fallback={<div className="exp-card__fallback" aria-hidden="true" />}
-          >
-            <Component className="exp-card__demo" inheritCanvas {...previewProps} />
-          </Suspense>
-        ) : (
-          <div className="exp-card__fallback" aria-hidden="true" />
-        )}
-      </div>
+      <MotionConfig transformPagePoint={transformPagePoint}>
+        <div ref={innerRef} className="exp-card__embed-inner">
+          {near ? (
+            <Suspense
+              fallback={<div className="exp-card__fallback" aria-hidden="true" />}
+            >
+              <Component className="exp-card__demo" inheritCanvas {...previewProps} />
+            </Suspense>
+          ) : (
+            <div className="exp-card__fallback" aria-hidden="true" />
+          )}
+        </div>
+      </MotionConfig>
     </div>
   );
 }

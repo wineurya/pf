@@ -124,6 +124,16 @@ export const site = {
       preview: "hold",
     },
     {
+      label: "Toast stack",
+      subtitle: "Notification component",
+      preview: "toast",
+    },
+    {
+      label: "Dither metric graph",
+      subtitle: "Chart component",
+      preview: "dither",
+    },
+    {
       label: "Jelly volume slider",
       subtitle: "Input slider component",
       preview: "jelly",

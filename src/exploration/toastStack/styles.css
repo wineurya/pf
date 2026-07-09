@@ -1,0 +1,233 @@
+/* Toast stack — Sonner-style cards on theme canvas. Scoped: ts- */
+
+.ts-root {
+  --ts-card: var(--color-white);
+  --ts-ink: var(--text-primary);
+  --ts-muted: var(--text-muted);
+  --ts-border: var(--border-soft);
+  --ts-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 0 0 1px color-mix(in oklab, var(--ts-border) 80%, transparent);
+  --ts-success: var(--accent-wireframes);
+  --ts-warning: var(--accent-overview);
+  --ts-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--exp-canvas);
+  color: var(--ts-ink);
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+:root[data-theme="dark"] .ts-root {
+  --ts-card: var(--surface);
+  --ts-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.35),
+    0 0 0 1px color-mix(in oklab, var(--ts-border) 90%, transparent);
+}
+
+.ts-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-5) var(--space-7);
+}
+
+/* Very light Bayer dither wash from the stage's right edge. */
+.ts-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Crect width='1' height='1' fill='%23000'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23000'/%3E%3C/svg%3E");
+  background-size: 4px 4px;
+  background-repeat: repeat;
+  -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 38%);
+  mask-image: linear-gradient(to left, #000 0%, transparent 38%);
+}
+
+:root[data-theme="dark"] .ts-stage::after {
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Crect width='1' height='1' fill='%23fff'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23fff'/%3E%3C/svg%3E");
+}
+
+.ts-stack-wrap,
+.ts-trigger {
+  position: relative;
+  z-index: 1;
+}
+
+.ts-stack-wrap {
+  width: min(320px, 100%);
+  height: 168px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ts-stack {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  min-height: 56px;
+}
+
+/* Realistic toast card — rounded rect, not a pill button. */
+.ts-toast {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  list-style: none;
+  border-radius: 12px;
+  background: var(--ts-card);
+  box-shadow: var(--ts-shadow);
+  transform-origin: center bottom;
+  touch-action: pan-y;
+  cursor: grab;
+  overflow: hidden;
+}
+
+.ts-toast:active {
+  cursor: grabbing;
+}
+
+.ts-toast-body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px 12px 14px;
+}
+
+/* Bare mark — no chip fill; vertically centered with copy. */
+.ts-mark {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.ts-mark--default {
+  width: 6px;
+  height: 6px;
+  margin-inline: 4px;
+  border-radius: 999px;
+  background: var(--ts-muted);
+  opacity: 0.55;
+}
+
+.ts-mark--success {
+  color: var(--ts-success);
+}
+
+.ts-mark--warning {
+  color: var(--ts-warning);
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+}
+
+.ts-toast-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.ts-toast-title {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: var(--weight-medium);
+  color: var(--ts-ink);
+}
+
+.ts-toast-desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ts-muted);
+}
+
+.ts-toast-close {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: -2px -2px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ts-muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .ts-toast-close:hover {
+    background: color-mix(in oklab, var(--ts-ink) 6%, transparent);
+    color: var(--ts-ink);
+  }
+}
+
+.ts-toast-close:focus-visible {
+  outline: var(--focus-width, 2px) solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+/* Trigger stays a quiet control — not competing with toast chrome. */
+.ts-trigger {
+  z-index: 4;
+  padding: 8px 16px;
+  border: 1px solid var(--ts-border);
+  border-radius: 8px;
+  background: var(--ts-card);
+  color: var(--ts-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+@media (hover: hover) {
+  .ts-trigger:hover {
+    background: color-mix(in oklab, var(--ts-ink) 3%, var(--ts-card));
+  }
+}
+
+.ts-trigger:focus-visible {
+  outline: var(--focus-width, 2px) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-toast,
+  .ts-trigger {
+    transition: none;
+  }
+}
