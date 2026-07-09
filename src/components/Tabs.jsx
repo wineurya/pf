@@ -9,6 +9,7 @@ import {
 } from "../lib/icons.jsx";
 import { fillMorph } from "../lib/motion.js";
 import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { playDungSfx } from "../lib/dungSfx.js";
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
 
 const TAB_ICONS = {
@@ -83,6 +84,7 @@ export function Tabs({ items, value, onChange }) {
           "aria-label": t.label,
           tabIndex: selected ? 0 : -1,
           onClick: () => pick(t.id),
+          onPointerEnter: playDungSfx,
         };
 
         if (!verticalRail) {

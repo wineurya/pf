@@ -44,17 +44,20 @@ export function magneticPull(
   innerDamp = 1,
 ) {
   const dist = Math.hypot(dx, dy);
-  if (dist >= radius || dist === 0) return { x: 0, y: 0, t: 0 };
+  if (dist >= radius) return { x: 0, y: 0, t: 0 };
+  /* Dead-center: full proximity, no displacement (direction undefined). */
+  if (dist === 0) return { x: 0, y: 0, t: 1 };
 
   const linear = 1 - dist / radius;
-  let t = linear * linear * (3 - 2 * linear);
+  const t = linear * linear * (3 - 2 * linear);
   let mag = strength * t;
 
+  /* Damp displacement only — leave t as true proximity so fill/scale still
+     peak on the icon instead of dipping inside the hit area. */
   if (innerRadius > 0 && dist < innerRadius) {
     const blend = dist / innerRadius;
     const damp = innerDamp + (1 - innerDamp) * blend;
     mag *= damp;
-    t *= damp;
   }
 
   return { x: (dx / dist) * mag, y: (dy / dist) * mag, t };

@@ -12,10 +12,16 @@ import {
    toward the cursor (same sign as the offset). */
 const { radius, strength } = MAGNETIC_DEFAULTS;
 assert.deepEqual(magneticPull(200, 0, radius, strength), { x: 0, y: 0, t: 0 });
+assert.deepEqual(magneticPull(0, 0, radius, strength), { x: 0, y: 0, t: 1 });
 const near = magneticPull(10, 0, radius, strength);
 assert.ok(near.x > 0 && near.x <= strength && near.t > 0.9);
 const diag = magneticPull(-50, 50, radius, strength);
 assert.ok(diag.x < 0 && diag.y > 0);
+/* Inner damp softens displacement only — proximity t still peaks on-icon. */
+const { innerRadius, innerDamp } = MAGNETIC_DEFAULTS;
+const onIcon = magneticPull(5, 0, radius, strength, innerRadius, innerDamp);
+const undamped = magneticPull(5, 0, radius, strength);
+assert.ok(onIcon.t === undamped.t && onIcon.x < undamped.x);
 
 /* touch scrub: zero outside the radius, full lift (upward) directly under
    the finger, partial lift in between, symmetric either side. */

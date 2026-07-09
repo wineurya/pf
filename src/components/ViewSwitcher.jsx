@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion } from "motion/react";
 import { fillMorph } from "../lib/motion.js";
 import { useMediaQuery, usePrefersReducedMotion } from "../lib/hooks.js";
+import { playDungSfx } from "../lib/dungSfx.js";
 import {
   IconLayoutGrid2,
   IconList,
@@ -71,6 +72,7 @@ export function ViewSwitcher({ value, onChange }) {
             tabIndex={selected && !disabled ? 0 : -1}
             disabled={disabled}
             onClick={() => onChange(id)}
+            onPointerEnter={disabled ? undefined : playDungSfx}
           >
             {selected && (
               <motion.span

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { EASE_OUT } from "../lib/motion.js";
 import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { playDungSfx } from "../lib/dungSfx.js";
 import { renderRich } from "../lib/richText.jsx";
 import { IconChevronLeft, IconChevronRight } from "../lib/icons.jsx";
 
@@ -93,6 +94,7 @@ export function CaseSlider({ slides, label }) {
           className="cs__slider-btn"
           aria-label="Previous principle"
           onClick={() => go(index - 1, -1)}
+          onPointerEnter={playDungSfx}
         >
           <IconChevronLeft size={15} ariaHidden />
         </button>
@@ -113,6 +115,7 @@ export function CaseSlider({ slides, label }) {
           className="cs__slider-btn"
           aria-label="Next principle"
           onClick={() => go(index + 1, 1)}
+          onPointerEnter={playDungSfx}
         >
           <IconChevronRight size={15} ariaHidden />
         </button>

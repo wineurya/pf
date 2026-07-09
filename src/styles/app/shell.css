@@ -35,7 +35,7 @@
 
 @media (hover: hover) {
   .tab:hover {
-    color: var(--text-secondary);
+    color: var(--text-strong);
   }
 }
 

@@ -16,50 +16,67 @@ import {
   IconTabWork,
 } from "@/lib/icons.jsx";
 
-/** Magnetic pull toward the cursor for the element behind `ref`. Meant for
-    reuse on real buttons/nav links, not just this card. Returns motion values:
-    x/y displacement plus `pull`, the eased 0–1 proximity (drive a scale bump
-    from it). Complete no-op on coarse pointers and under reduced motion. */
-export function useMagnetic(
-  ref,
-  { radius, strength, innerRadius, innerDamp } = MAGNETIC_DEFAULTS,
-) {
+/** One window pointermove for the whole dock — batches layout reads, then
+    writes springs. Fine pointer only; touch belongs to useDockScrub. */
+function useDockMagnet(dockRef, registry) {
   const reduceMotion = useReducedMotion() ?? false;
-  const x = useSpring(0, MAGNET_SPRING);
-  const y = useSpring(0, MAGNET_SPRING);
-  const pull = useSpring(0, MAGNET_SPRING);
 
   useEffect(() => {
+    const dock = dockRef.current;
     /* ponytail: pointer capability checked once at mount — devices that swap
        pointers mid-session re-evaluate on next mount, which is fine here. */
-    if (reduceMotion || !window.matchMedia("(pointer: fine)").matches) {
+    if (
+      !dock ||
+      reduceMotion ||
+      !window.matchMedia("(pointer: fine)").matches
+    ) {
       return undefined;
     }
 
+    const { radius, strength, innerRadius, innerDamp } = MAGNETIC_DEFAULTS;
+
     const rest = () => {
-      x.set(0);
-      y.set(0);
-      pull.set(0);
+      for (const entry of registry.current) {
+        entry.magnetX.set(0);
+        entry.magnetY.set(0);
+        entry.magnetPull.set(0);
+      }
     };
 
     const onMove = (event) => {
-      /* Touch moves belong to the dock scrub — on hybrid devices both paths
-         are live, and the magnet must not also chase a scrubbing finger. */
       if (event.pointerType === "touch") return;
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const next = magneticPull(
-        event.clientX - (rect.left + rect.width / 2),
-        event.clientY - (rect.top + rect.height / 2),
-        radius,
-        strength,
-        innerRadius,
-        innerDamp,
-      );
-      x.set(next.x);
-      y.set(next.y);
-      pull.set(next.t);
+
+      const dockRect = dock.getBoundingClientRect();
+      const { clientX, clientY } = event;
+      const entries = registry.current;
+
+      /* Reads first (offset* ignores transform — no magnet feedback loop). */
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        const el = entry.el.current;
+        if (!el) {
+          entry._dx = 0;
+          entry._dy = radius;
+          continue;
+        }
+        entry._dx = clientX - (dockRect.left + el.offsetLeft + el.offsetWidth / 2);
+        entry._dy = clientY - (dockRect.top + el.offsetTop + el.offsetHeight / 2);
+      }
+
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        const next = magneticPull(
+          entry._dx,
+          entry._dy,
+          radius,
+          strength,
+          innerRadius,
+          innerDamp,
+        );
+        entry.magnetX.set(next.x);
+        entry.magnetY.set(next.y);
+        entry.magnetPull.set(next.t);
+      }
     };
 
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -70,16 +87,12 @@ export function useMagnetic(
       document.documentElement.removeEventListener("pointerleave", rest);
       rest();
     };
-  }, [innerDamp, innerRadius, pull, radius, reduceMotion, ref, strength, x, y]);
-
-  return { x, y, pull };
+  }, [dockRef, reduceMotion, registry]);
 }
 
-/** Touch companion to `useMagnetic`: press-and-drag along the dock lifts the
-    icon nearest the finger (macOS-dock scrub, keyboard-key-preview style).
-    Icons registered by DockIcon expose their own springs; this hook only
-    drives them. No-op unless a coarse pointer exists; ignores mouse input so
-    hybrid devices keep the fine-pointer magnet. */
+/** Touch companion: press-and-drag along the dock lifts the icon nearest the
+    finger. No-op unless a coarse pointer exists; ignores mouse so hybrids keep
+    the fine-pointer magnet. */
 function useDockScrub(dockRef, registry) {
   const reduceMotion = useReducedMotion() ?? false;
 
@@ -98,26 +111,30 @@ function useDockScrub(dockRef, registry) {
     const rest = () => {
       activePointer = null;
       for (const entry of registry.current) {
-        entry.y.set(0);
-        entry.pull.set(0);
+        entry.scrubY.set(0);
+        entry.scrubPull.set(0);
       }
     };
 
-    /* Horizontal-only distance: translateY and scale (origin center) leave
-       each rect's center x stable, so reading rects mid-scrub can't feed back
-       into the falloff the way the 2D cursor magnet would. */
     const update = (clientX) => {
-      for (const entry of registry.current) {
+      const dockRect = dock.getBoundingClientRect();
+      const entries = registry.current;
+
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
         const el = entry.el.current;
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        const next = scrubLift(
-          clientX - (rect.left + rect.width / 2),
-          SCRUB_DEFAULTS.radius,
-          SCRUB_DEFAULTS.lift,
-        );
-        entry.y.set(next.y);
-        entry.pull.set(next.t);
+        if (!el) {
+          entry._dx = SCRUB_DEFAULTS.radius;
+          continue;
+        }
+        entry._dx = clientX - (dockRect.left + el.offsetLeft + el.offsetWidth / 2);
+      }
+
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        const next = scrubLift(entry._dx, SCRUB_DEFAULTS.radius, SCRUB_DEFAULTS.lift);
+        entry.scrubY.set(next.y);
+        entry.scrubPull.set(next.t);
       }
     };
 
@@ -152,28 +169,43 @@ function useDockScrub(dockRef, registry) {
 
 function DockIcon({ label, registry, children }) {
   const ref = useRef(null);
-  const magnet = useMagnetic(ref, MAGNETIC_DEFAULTS);
+  const magnetX = useSpring(0, MAGNET_SPRING);
+  const magnetY = useSpring(0, MAGNET_SPRING);
+  const magnetPull = useSpring(0, MAGNET_SPRING);
   const scrubY = useSpring(0, MAGNET_SPRING);
   const scrubPull = useSpring(0, MAGNET_SPRING);
 
   useEffect(() => {
-    const entry = { el: ref, y: scrubY, pull: scrubPull };
+    const entry = {
+      el: ref,
+      magnetX,
+      magnetY,
+      magnetPull,
+      scrubY,
+      scrubPull,
+    };
     const list = registry.current;
     list.push(entry);
     return () => {
       const index = list.indexOf(entry);
       if (index !== -1) list.splice(index, 1);
     };
-  }, [registry, scrubY, scrubPull]);
+  }, [registry, magnetX, magnetY, magnetPull, scrubY, scrubPull]);
 
   /* Only one path moves per pointer type, so summing is safe on hybrids. */
-  const y = useTransform([magnet.y, scrubY], ([m, s]) => m + s);
+  const y = useTransform([magnetY, scrubY], ([m, s]) => m + s);
   /* Smoothstep falloff means only the nearest icon sits high on the curve, so
      squaring it keeps the scale bump visually exclusive to that one. The
      scrub term is stronger — on touch, lift + scale carry the whole effect. */
   const scale = useTransform(
-    [magnet.pull, scrubPull],
+    [magnetPull, scrubPull],
     ([m, s]) => 1 + m * m * 0.05 + s * SCRUB_DEFAULTS.scale,
+  );
+  /* Strongest proximity wins — drives fill opacity in styles.css.
+     Square the magnet term so only the nearest icon lights up. */
+  const pull = useTransform(
+    [magnetPull, scrubPull],
+    ([m, s]) => Math.max(m * m, s),
   );
 
   return (
@@ -181,7 +213,7 @@ function DockIcon({ label, registry, children }) {
       ref={ref}
       type="button"
       className="mgd-icon"
-      style={{ x: magnet.x, y, scale }}
+      style={{ x: magnetX, y, scale, "--mgd-pull": pull }}
       aria-label={label}
     >
       {children}
@@ -193,6 +225,7 @@ function DockIcon({ label, registry, children }) {
 export function MagneticDockStage({ className }) {
   const dockRef = useRef(null);
   const registry = useRef([]);
+  useDockMagnet(dockRef, registry);
   useDockScrub(dockRef, registry);
 
   return (

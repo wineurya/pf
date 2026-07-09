@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { EASE_OUT, fillMorph } from "../lib/motion.js";
 import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { playDungSfx } from "../lib/dungSfx.js";
 import { renderRich } from "../lib/richText.jsx";
 /* Quirk glyphs pulled straight from Phosphor and kept local to this component. */
 import { HandTap } from "@phosphor-icons/react/dist/csr/HandTap";
@@ -181,6 +182,7 @@ export function PersonaSwitch({ personas }) {
                   aria-controls="persona-panel"
                   tabIndex={selected ? 0 : -1}
                   onClick={() => select(i)}
+                  onPointerEnter={playDungSfx}
                 >
                   {accented ? (
                     <motion.span

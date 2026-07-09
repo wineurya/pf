@@ -1,3 +1,5 @@
+import { playDungSfx } from "../lib/dungSfx.js";
+
 /**
  * Sun ⟷ moon morph toggle, fixed to the bottom-left and x-aligned with the
  * rail tabs. The core circle grows into a disc while a mask circle slides in
@@ -15,6 +17,7 @@ export function ThemeToggle({ theme, onToggle, caseOpen = false }) {
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
       aria-pressed={dark}
       onClick={onToggle}
+      onPointerEnter={playDungSfx}
     >
       <svg
         className="tt"

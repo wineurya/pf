@@ -1,3 +1,5 @@
+import { playDungSfx } from "../lib/dungSfx.js";
+
 const canHover =
   typeof window !== "undefined" &&
   window.matchMedia("(hover: hover)").matches;
@@ -19,7 +21,14 @@ export function HoverWord({
   return (
     <span
       className={`hw${expanded ? " is-expanded" : ""}`}
-      onMouseEnter={canHover ? () => onHoverChange?.(true) : undefined}
+      onMouseEnter={
+        canHover
+          ? () => {
+              playDungSfx();
+              onHoverChange?.(true);
+            }
+          : undefined
+      }
       onMouseLeave={canHover ? () => onHoverChange?.(false) : undefined}
     >
       <button

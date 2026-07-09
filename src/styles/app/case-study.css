@@ -1744,8 +1744,21 @@
   color: transparent;
 }
 
-/* Primary CTA — filled pill that sits close under the quip. */
+/* Primary CTA — Hold-to-send glass chrome, theme-aware mono fill.
+   True pill (no corner-shape) so the stroke mask matches the radius. */
 .cs__outro-cta {
+  --cs-outro-accent: var(--text-strong);
+  --cs-outro-ink: var(--bg);
+  --cs-outro-stroke-width: 1px;
+  --cs-outro-stroke: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--cs-outro-ink) 40%, transparent),
+    transparent
+  );
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1753,33 +1766,54 @@
   padding: var(--space-3) var(--space-6);
   font-size: var(--text-size);
   font-weight: var(--weight-display);
-  color: var(--bg);
-  background: var(--text-strong);
+  color: var(--cs-outro-ink);
+  background: var(--cs-outro-accent);
   border-radius: var(--radius-pill);
+  /* Drop stays a real shadow (not accent-tinted) so light fill on dark
+     theme doesn't bloom into a white halo. */
+  box-shadow:
+    0 0 0 1px var(--cs-outro-accent),
+    0 3px 8px rgb(0 0 0 / 0.22),
+    inset 0 0 6px 2px color-mix(in oklab, var(--cs-outro-ink) 24%, transparent);
   transition:
     transform var(--dur-fast) var(--ease-out-strong),
-    opacity var(--dur-fast) var(--ease-standard);
+    filter var(--dur-fast) var(--ease-standard);
+}
+
+/* Gradient stroke ring — same Afif/Frain mask as .hts-button::before. */
+.cs__outro-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: var(--cs-outro-stroke-width);
+  background: var(--cs-outro-stroke);
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
 }
 
 @media (hover: hover) {
   .cs__outro-cta:hover {
     transform: translateY(-1px);
-    opacity: 0.92;
+    filter: brightness(1.06);
   }
 }
 
 .cs__outro-cta:active {
   transform: scale(0.97);
+  filter: brightness(0.96);
 }
 
 .cs__outro-cta:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-}
-
-@supports (corner-shape: superellipse(2)) {
-  .cs__outro-cta {
-    corner-shape: var(--corner-smooth);
-  }
 }
 

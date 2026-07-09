@@ -39,6 +39,7 @@ import { useTheme } from "./lib/theme.js";
 import { usePageEnter } from "./lib/usePageEnter.js";
 import { useRailDodge } from "./lib/useRailDodge.js";
 import { useVisualViewportPin } from "./lib/useVisualViewportPin.js";
+import { playDungSfx } from "./lib/dungSfx.js";
 import { renderRich } from "./lib/richText.jsx";
 import {
   BRAND_ICONS,
@@ -126,6 +127,7 @@ function CopyEmail({ email, label }) {
         type="button"
         className="copy__btn"
         onClick={copy}
+        onPointerEnter={playDungSfx}
         data-cursor={copied ? "Copied" : undefined}
         data-cursor-rotate={copied ? undefined : CONTACT_CURSOR_EMAIL}
         data-cursor-icon={copied ? "copy" : "wave"}
@@ -176,6 +178,7 @@ export function ContactLinks({
             href={item.href}
             target="_blank"
             rel="noreferrer"
+            onPointerEnter={playDungSfx}
             data-cursor-rotate={CONTACT_CURSOR_SOCIAL}
             data-cursor-icon="wave"
           >

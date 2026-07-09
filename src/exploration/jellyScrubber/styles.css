@@ -1,13 +1,20 @@
 /* Jelly value scrubber — elastic volume pill. Scoped: jvs-
-   Grayscale ink/paper ramp; idle → hover → drag steps contrast. */
+   Track fill matches the exploration card; mono outline steps up on hover / drag / edge. */
 .jvs-root {
   --jvs-ink: var(--text-strong, #151515);
   --jvs-muted: var(--text-muted, #8d8d8d);
-  --jvs-page: var(--color-white, #ffffff);
-  --jvs-border: color-mix(in srgb, var(--jvs-ink) 22%, var(--jvs-page));
-  /* Same recessed tray as Magnetic Dock (.mgd-dock → --surface). */
-  --jvs-track-fill: var(--surface);
-  --jvs-thumb: color-mix(in srgb, var(--jvs-ink) 58%, var(--jvs-page));
+  /* Same fill as .exp-card__frame — blends into the card, outline does the edge. */
+  --jvs-track-fill: var(--exp-card-fill);
+  --jvs-border: color-mix(in srgb, var(--jvs-ink) 18%, transparent);
+  --jvs-border-strong: color-mix(in srgb, var(--jvs-ink) 32%, transparent);
+  --jvs-thumb: color-mix(in srgb, var(--jvs-ink) 58%, var(--jvs-track-fill));
+  --jvs-thumb-strong: color-mix(in srgb, var(--jvs-ink) 78%, var(--jvs-track-fill));
+  --jvs-thumb-active: var(--jvs-ink);
+  --jvs-inset-hi: color-mix(in srgb, #ffffff 90%, transparent);
+  --jvs-inset-lo: color-mix(in srgb, #000000 4%, transparent);
+  --jvs-drop: color-mix(in srgb, #000000 5%, transparent);
+  --jvs-drop-hover: color-mix(in srgb, #000000 8%, transparent);
+  --jvs-drop-drag: color-mix(in srgb, #000000 10%, transparent);
   --jvs-focus: var(--focus-ring, currentColor);
   --jvs-frame-offset: 0px;
   --jvs-frame-scale: 1;
@@ -21,6 +28,16 @@
   color: var(--jvs-ink);
   font-family: var(--font-body, system-ui, sans-serif);
   background: var(--exp-canvas);
+}
+
+:root[data-theme="dark"] .jvs-root {
+  --jvs-border: color-mix(in srgb, #ffffff 20%, transparent);
+  --jvs-border-strong: color-mix(in srgb, #ffffff 38%, transparent);
+  --jvs-inset-hi: color-mix(in srgb, #ffffff 10%, transparent);
+  --jvs-inset-lo: color-mix(in srgb, #000000 35%, transparent);
+  --jvs-drop: color-mix(in srgb, #000000 35%, transparent);
+  --jvs-drop-hover: color-mix(in srgb, #000000 45%, transparent);
+  --jvs-drop-drag: color-mix(in srgb, #000000 55%, transparent);
 }
 
 .jvs-stage {
@@ -57,7 +74,9 @@
   padding: 1px 3px;
   border-radius: var(--radius-sm, 8px);
   background: transparent;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 0 0 1px var(--jvs-border),
+    0 1px 3px var(--jvs-drop);
   transform: translateX(var(--jvs-frame-offset)) scaleX(var(--jvs-frame-scale));
   transform-origin: var(--jvs-frame-origin);
   transition: box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -89,10 +108,21 @@
   pointer-events: none;
   border-radius: inherit;
   background: var(--jvs-track-fill);
+  box-shadow: inset 0 1px 0 var(--jvs-inset-hi), inset 0 -1px 0 var(--jvs-inset-lo);
 }
 
+.jvs-frame[data-state="hover"] {
+  box-shadow:
+    0 0 0 2px var(--jvs-border-strong),
+    0 2px 8px var(--jvs-drop-hover);
+}
+
+.jvs-frame[data-state="dragging"],
 .jvs-frame[data-state="edge"] {
-  box-shadow: 0 1px 5px rgba(20, 20, 20, 0.08);
+  box-shadow:
+    0 0 0 2px var(--jvs-border-strong),
+    0 0 0 6px color-mix(in srgb, var(--jvs-ink) 8%, transparent),
+    0 3px 10px var(--jvs-drop-drag);
 }
 
 /* The track carries focus but sits inside an overflow-clipped frame, so the
@@ -136,7 +166,7 @@
   height: min(18px, calc(100% - 8px));
   border-radius: var(--radius-pill, 999px);
   background: var(--jvs-thumb);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
   pointer-events: none;
   transform: translate(-50%, -50%);
   transition:
@@ -146,13 +176,13 @@
 }
 
 .jvs-frame[data-state="hover"] .jvs-edge-thumb {
-  background: color-mix(in srgb, var(--jvs-ink) 68%, var(--jvs-page));
+  background: var(--jvs-thumb-strong);
 }
 
 .jvs-frame[data-state="dragging"] .jvs-edge-thumb,
 .jvs-frame[data-state="edge"] .jvs-edge-thumb {
   height: min(20px, calc(100% - 6px));
-  background: color-mix(in srgb, var(--jvs-ink) 78%, var(--jvs-page));
+  background: var(--jvs-thumb-active);
 }
 
 @media (width <= 680px) {

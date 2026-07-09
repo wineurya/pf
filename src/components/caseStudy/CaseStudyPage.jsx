@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { RevealEyebrow, RevealItem, StaggerGroup } from "../Reveal.jsx";
 import { DESKTOP_MQ, useMediaQuery, usePrefersReducedMotion } from "../../lib/hooks.js";
+import { playDungSfx } from "../../lib/dungSfx.js";
 import { fillMorph, layoutMorph } from "../../lib/motion.js";
 import { IconArrowLeft } from "../../lib/icons.jsx";
 import { caseStudies } from "../../content.js";
@@ -193,7 +194,12 @@ export function CaseStudy({
       <div className="cs-layout">
         <aside className="cs-rail" aria-label="Case study navigation">
           <RevealItem>
-            <button type="button" className="cs__back" onClick={onBack}>
+            <button
+              type="button"
+              className="cs__back"
+              onClick={onBack}
+              onPointerEnter={playDungSfx}
+            >
               <IconArrowLeft size={15} ariaHidden />
               Back
             </button>
@@ -368,6 +374,7 @@ function ContentsNav({ sections, activeId, onSelect }) {
             aria-selected={selected}
             tabIndex={selected ? 0 : -1}
             onClick={() => onSelect(section.id)}
+            onPointerEnter={playDungSfx}
           >
             {selected && verticalRail ? (
               <motion.span

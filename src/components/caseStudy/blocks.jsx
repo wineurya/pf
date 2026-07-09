@@ -4,6 +4,7 @@ import { RevealEyebrow, RevealItem } from "../Reveal.jsx";
 import { ToolBrandIcon } from "../ToolBrandIcon.jsx";
 import { PersonaSwitch } from "../PersonaSwitch.jsx";
 import { CaseSlider } from "../CaseSlider.jsx";
+import { playDungSfx } from "../../lib/dungSfx.js";
 import { renderRich } from "../../lib/richText.jsx";
 import {
   CELL_ICONS,
@@ -48,6 +49,7 @@ export function CaseStudyOutro() {
           href="https://www.linkedin.com/in/wineury"
           target="_blank"
           rel="noopener noreferrer"
+          onPointerEnter={playDungSfx}
         >
           Wineury A.
         </a>
@@ -56,7 +58,11 @@ export function CaseStudyOutro() {
         <span className="cs__outro-quip-lead">Care for a</span>{" "}
         <span className="cs__outro-grad">quick chat</span>?
       </p>
-      <a className="cs__outro-cta" href="mailto:contact@wineury.design">
+      <a
+        className="cs__outro-cta"
+        href="mailto:contact@wineury.design"
+        onPointerEnter={playDungSfx}
+      >
         Let&rsquo;s talk
       </a>
     </RevealItem>

@@ -4,6 +4,7 @@ import { MotionConfig, correctParentTransform } from "motion/react";
 
 import { RevealItem, StaggerGroup } from "./Reveal.jsx";
 import { CaseStudyOutro } from "./caseStudy/blocks.jsx";
+import { playDungSfx } from "../lib/dungSfx.js";
 
 import "@/exploration/crateQueue/styles.css";
 import "@/exploration/diffPulse/styles.css";
@@ -82,6 +83,7 @@ function ExplorationCaption({ label, subtitle, note, noteHref }) {
             href={noteHref}
             target="_blank"
             rel="noopener noreferrer"
+            onPointerEnter={playDungSfx}
           >
             {note}
           </a>

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { ThemeToggle } from "../ThemeToggle.jsx";
 import { usePrefersReducedMotion } from "../../lib/hooks.js";
+import { playDungSfx } from "../../lib/dungSfx.js";
 import { dockMorph, EASE_OUT, fillMorph } from "../../lib/motion.js";
 import { IconArrowLeft, IconChevronRight } from "../../lib/icons.jsx";
 import { SECTION_ACCENT, SectionGlyph } from "./shared.jsx";
@@ -135,6 +136,7 @@ export function CaseDock({
                       className={`cs-dock__sheet-row${isActive ? " is-active" : ""}`}
                       data-accent={SECTION_ACCENT[s.title] || "overview"}
                       onClick={() => pick(s.id)}
+                      onPointerEnter={playDungSfx}
                     >
                       <SectionGlyph
                         className="cs-dock__sheet-glyph"
@@ -165,6 +167,7 @@ export function CaseDock({
           type="button"
           className="cs-dock__btn cs-dock__back"
           onClick={onBack}
+          onPointerEnter={playDungSfx}
           aria-label="Back to work"
         >
           <IconArrowLeft size={17} ariaHidden />
@@ -174,6 +177,7 @@ export function CaseDock({
           type="button"
           className="cs-dock__section"
           onClick={() => setOpen((o) => !o)}
+          onPointerEnter={playDungSfx}
           aria-haspopup="true"
           aria-expanded={open}
           aria-label={`Section: ${active?.title ?? ""}. Show all sections`}
