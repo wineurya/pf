@@ -7,6 +7,7 @@ import {
   MORPH_MS,
   SWAP_MS,
 } from "@/exploration/ditherGraph/ditherGraphData.js";
+import { IconDeltaDown, IconDeltaUp } from "@/lib/icons.jsx";
 
 const GRAPH_W = 280;
 const GRAPH_H = 100;
@@ -147,7 +148,11 @@ function MetricHeader({ metric }) {
           }
         >
           <span className="dg-delta-arrow" aria-hidden>
-            {metric.delta >= 0 ? "▲" : "▼"}
+            {metric.delta >= 0 ? (
+              <IconDeltaUp size={12} />
+            ) : (
+              <IconDeltaDown size={12} />
+            )}
           </span>
           <AnimatedNumber value={Math.abs(metric.delta)} />
         </span>

@@ -3,6 +3,8 @@
    where deep CJS entry points resolve under Vite (tab marks, case glyphs). */
 
 import { IconColorPalette as CentralColorPalette } from "central-icons/IconColorPalette";
+import { IconArrowDown as CentralArrowDown } from "central-icons/IconArrowDown";
+import { IconArrowUp as CentralArrowUp } from "central-icons/IconArrowUp";
 import { IconArrowUpRight as CentralArrowUpRight } from "central-icons/IconArrowUpRight";
 import { IconCheckmark1Small as CentralCheckmark1Small } from "central-icons/IconCheckmark1Small";
 import { IconCirclePlaceholderOn } from "central-icons/IconCirclePlaceholderOn";
@@ -146,6 +148,9 @@ const IconToastWarn = makeCentralIcon(IconWarningSign);
 const IconToastError = makeCentralIcon(IconCircleX);
 const IconToastDot = makeCentralIcon(IconCirclePlaceholderOn);
 const IconToastClose = makeCentralIcon(IconCrossSmall);
+/* Dither metric delta arrows — Central Icons. */
+const IconDeltaUp = makeCentralIcon(CentralArrowUp);
+const IconDeltaDown = makeCentralIcon(CentralArrowDown);
 /* Waving hand for the case-study sign-off. */
 const IconWave = makeCentralIcon(IconRaisingHand5Finger);
 function IconFigmaMark({ className, size = 14, ariaHidden }) {
@@ -203,6 +208,8 @@ export {
   IconColorPalette,
   IconCursorArrow,
   IconCreditCard,
+  IconDeltaDown,
+  IconDeltaUp,
   IconEnvelope,
   IconLinkedIn,
   IconXLogo,

@@ -12,6 +12,18 @@ export const TOAST_SAMPLES = [
     tone: "success",
   },
   {
+    id: "error",
+    title: "Upload failed",
+    description: "Could not reach the server",
+    tone: "error",
+  },
+  {
+    id: "warn",
+    title: "Connection unstable",
+    description: "Retrying in the background",
+    tone: "warning",
+  },
+  {
     id: "invite",
     title: "Invite sent",
     description: "alex@studio.co will get an email",
@@ -28,18 +40,6 @@ export const TOAST_SAMPLES = [
     title: "Sync complete",
     description: "3 files updated from the cloud",
     tone: "success",
-  },
-  {
-    id: "warn",
-    title: "Connection unstable",
-    description: "Retrying in the background",
-    tone: "warning",
-  },
-  {
-    id: "error",
-    title: "Upload failed",
-    description: "Could not reach the server",
-    tone: "error",
   },
 ];
 

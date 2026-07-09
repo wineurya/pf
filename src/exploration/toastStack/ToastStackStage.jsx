@@ -182,7 +182,14 @@ export function ToastStackStage({ className }) {
   const pushToast = () => {
     const sample = nextSample(sampleRef.current++);
     const key = `${sample.id}-${++toastSeq}`;
-    setToasts((list) => [{ ...sample, key }, ...list].slice(0, TOAST_MAX));
+    setToasts((list) => {
+      const next = [{ ...sample, key }, ...list].slice(0, TOAST_MAX);
+      /* Drop timers for toasts that fell off the stack. */
+      for (const t of list) {
+        if (!next.some((n) => n.key === t.key)) clearTimer(t.key);
+      }
+      return next;
+    });
     armTimer(key);
   };
 
@@ -212,13 +219,8 @@ export function ToastStackStage({ className }) {
   useEffect(() => {
     if (reduceMotion || paused) return undefined;
     const id = window.setInterval(() => {
-      setToasts((list) => {
-        if (list.length >= TOAST_MAX) return list;
-        const sample = nextSample(sampleRef.current++);
-        const key = `${sample.id}-${++toastSeq}`;
-        armTimer(key);
-        return [{ ...sample, key }, ...list].slice(0, TOAST_MAX);
-      });
+      /* Always cycle — at max, replace the oldest so every tone (incl. error) shows. */
+      pushToast();
     }, TOAST_AUTO_MS);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
