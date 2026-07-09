@@ -1,5 +1,19 @@
-import { Fragment, startTransition, useEffect, useRef, useState } from "react";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
+import {
+  Fragment,
+  startTransition,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  animate,
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "motion/react";
 
 import { Backdrop } from "./components/Backdrop.jsx";
 import { CaseStudy, CaseDock, sectionsForStudy } from "./components/CaseStudy.jsx";
@@ -10,7 +24,7 @@ import { Portrait } from "./components/Portrait.jsx";
 import { RevealItem, StaggerGroup } from "./components/Reveal.jsx";
 import { Tabs } from "./components/Tabs.jsx";
 import { ThemeToggle } from "./components/ThemeToggle.jsx";
-import { WordBento } from "./components/WordBento.jsx";
+import { AboutFilmstrip } from "./components/AboutFilmstrip.jsx";
 import { WorkProjects } from "./components/WorkProjects.jsx";
 import { useReady, usePrefersReducedMotion, useMediaQuery } from "./lib/hooks.js";
 import {
@@ -172,17 +186,38 @@ function ToolWord({ tool, icon }) {
   );
 }
 
+/* Every hover-word segment across the About paragraphs, in prose order —
+   the filmstrip's photo source. */
+const aboutWordGroups = site.about
+  .filter(Array.isArray)
+  .flatMap((p) => p.filter((seg) => typeof seg === "object" && seg.word));
+
 function AboutPanel() {
-  const [expandedWord, setExpandedWord] = useState(null);
+  /* A hover-word can be *held* (transient — set on hover, dropped on leave) or
+     *locked* (deliberate — set on click / tap / a filmstrip photo). Only a
+     locked selection auto-returns to the drift; a held one is owned by the
+     pointer, so the 6s timer must never yank the strip out from under a hover. */
+  const [selection, setSelection] = useState({ word: null, locked: false });
+  const { word: selectedWord, locked } = selection;
+  const clear = useCallback(() => setSelection({ word: null, locked: false }), []);
 
   useEffect(() => {
-    if (!expandedWord) return;
+    if (!selectedWord) return;
+    const timer = locked ? setTimeout(clear, 6000) : null;
     function onKeyDown(e) {
-      if (e.key === "Escape") setExpandedWord(null);
+      if (e.key === "Escape") clear();
+    }
+    function onPointerDown(e) {
+      if (!e.target.closest(".hw, .afilm")) clear();
     }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [expandedWord]);
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      if (timer) clearTimeout(timer);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [selectedWord, locked, clear]);
 
   return (
     <>
@@ -195,52 +230,59 @@ function AboutPanel() {
           );
         }
 
-        const expandedSeg = p.find(
-          (seg) => typeof seg === "object" && seg.word === expandedWord,
-        );
-
         return (
-          <Fragment key={i}>
-            <RevealItem as="p" className="panel__lead">
-              {p.map((seg, j) => {
-                if (typeof seg === "string") return seg;
-                if (seg.tool) return <ToolWord key={j} {...seg} />;
-                if (seg.text) {
-                  return (
-                    <span
-                      key={j}
-                      className={seg.tone === "muted" ? "about-muted" : undefined}
-                    >
-                      {seg.text}
-                    </span>
-                  );
-                }
+          <RevealItem key={i} as="p" className="panel__lead">
+            {p.map((seg, j) => {
+              if (typeof seg === "string") return seg;
+              if (seg.tool) return <ToolWord key={j} {...seg} />;
+              if (seg.text) {
                 return (
-                  <HoverWord
+                  <span
                     key={j}
-                    word={seg.word}
-                    photos={seg.photos}
-                    expanded={expandedWord === seg.word}
-                    onToggle={() =>
-                      setExpandedWord((w) => (w === seg.word ? null : seg.word))
-                    }
-                  />
+                    className={seg.tone === "muted" ? "about-muted" : undefined}
+                  >
+                    {seg.text}
+                  </span>
                 );
-              })}
-            </RevealItem>
-            <AnimatePresence initial={false} mode="wait">
-              {expandedSeg ? (
-                <WordBento
-                  key={expandedSeg.word}
-                  word={expandedSeg.word}
-                  photos={expandedSeg.photos}
+              }
+              return (
+                <HoverWord
+                  key={j}
+                  word={seg.word}
+                  expanded={selectedWord === seg.word}
+                  onToggle={() =>
+                    setSelection((s) =>
+                      s.locked && s.word === seg.word
+                        ? { word: null, locked: false }
+                        : { word: seg.word, locked: true },
+                    )
+                  }
+                  onHoverChange={(on) =>
+                    setSelection((s) => {
+                      if (on) return s.locked ? s : { word: seg.word, locked: false };
+                      return !s.locked && s.word === seg.word
+                        ? { word: null, locked: false }
+                        : s;
+                    })
+                  }
                 />
-              ) : null}
-            </AnimatePresence>
-          </Fragment>
+              );
+            })}
+          </RevealItem>
         );
       })}
       <AboutContact />
+      <RevealItem>
+        <AboutFilmstrip
+          groups={aboutWordGroups}
+          selectedWord={selectedWord}
+          onSelect={(word) =>
+            setSelection(
+              word ? { word, locked: true } : { word: null, locked: false },
+            )
+          }
+        />
+      </RevealItem>
     </>
   );
 }
@@ -264,6 +306,32 @@ function PanelContent({ tab, theme, onOpenStudy, view, onView }) {
   }
 
   return <AboutPanel />;
+}
+
+/* Avatar reveal, expressed as one 0→1 progress so the two halves stay locked:
+   at progress p the name/role block is pushed x = p·shift (a transform, was the
+   old animated width + marginRight) and the avatar is wiped in left-to-right via
+   clip-path right-inset = (1−p)·100% (a paint, was the slot's overflow-clipped
+   width). Because both read the SAME p, the revealed edge (52·p) always trails
+   the name's left edge (64·p) by the 12·p gap — no overlap at any frame. Driving
+   them as two independent tweens on the same curve did not stay in step. */
+const portraitClipFor = (p) => `inset(0px ${((1 - p) * 100).toFixed(3)}% 0px 0px)`;
+
+/* How far the name/role block slides to open room for the avatar: the portrait
+   box (display + gap + body leading) plus its gap. Read off the type/space
+   tokens — all viewport-invariant, so a one-time read tracks the CSS without a
+   resize listener — with the composed 52 + 12 as a fallback. */
+function measurePortraitShift() {
+  const fallback = 64;
+  if (typeof document === "undefined") return fallback;
+  const cs = getComputedStyle(document.documentElement);
+  const px = (name) => parseFloat(cs.getPropertyValue(name));
+  const shift =
+    px("--text-display-leading") +
+    px("--space-1") +
+    px("--text-leading") +
+    px("--space-3");
+  return Number.isFinite(shift) && shift > 0 ? shift : fallback;
 }
 
 export function App() {
@@ -306,12 +374,32 @@ export function App() {
   const portraitExit = reducedMotion
     ? { duration: 0.1 }
     : { duration: DUR_UI_EXIT, ease: EASE_OUT };
-  /* Collapse slot after the avatar finishes fading out; expand immediately on enter. */
-  const portraitSlotLayout = reducedMotion
+
+  /* One driver for the reveal: `portraitProgress` (0→1) feeds both the name/role
+     push and the avatar's clip-wipe, so they stay locked (two same-curve tweens
+     drifted apart in testing). Push distance = the avatar box + its gap, read
+     once from the viewport-invariant tokens. */
+  const [portraitShift] = useState(measurePortraitShift);
+  const portraitProgress = useMotionValue(aboutPortrait ? 1 : 0);
+  const nameShift = useTransform(portraitProgress, (p) => p * portraitShift);
+  const portraitClip = useTransform(portraitProgress, portraitClipFor);
+  useEffect(() => {
+    /* Open immediately on enter; on exit hold open until the avatar has faded
+       (delay = the fade), then close — the old two-phase choreography. */
+    const controls = animate(
+      portraitProgress,
+      aboutPortrait ? 1 : 0,
+      reducedMotion
+        ? { duration: 0.1 }
+        : aboutPortrait
+          ? { duration: DUR_LAYOUT, ease: EASE_IN_OUT }
+          : { duration: DUR_LAYOUT, ease: EASE_IN_OUT, delay: DUR_UI_EXIT },
+    );
+    return () => controls.stop();
+  }, [aboutPortrait, reducedMotion, portraitProgress]);
+  const headerLayout = reducedMotion
     ? { duration: 0.1 }
-    : aboutPortrait
-      ? { duration: DUR_LAYOUT, ease: EASE_IN_OUT }
-      : { duration: DUR_LAYOUT, ease: EASE_IN_OUT, delay: DUR_UI_EXIT };
+    : { duration: DUR_LAYOUT, ease: EASE_IN_OUT };
 
   useEffect(() => {
     if (!study) deepLoaded.current = false;
@@ -391,76 +479,96 @@ export function App() {
                   </motion.div>
                 )}
               </div>
-              <StaggerGroup className="content-main">
-                <StaggerGroup as="header" className="head">
+              <StaggerGroup
+                className="content-main"
+                layout
+                transition={{ layout: headerLayout }}
+              >
+                <StaggerGroup
+                  as="header"
+                  className="head"
+                  layout
+                  transition={{ layout: headerLayout }}
+                >
                   <RevealItem>
                     <div className="head__identity">
+                      {/* About reveal, off one progress value (portraitProgress):
+                          the avatar is lifted out of flow (absolute) and wiped in
+                          left-to-right via clip-path — a paint, not a reflow —
+                          while the name/role block translates right to open its
+                          gap. Same motion the old animated width/marginRight gave,
+                          off the layout path. The fade/scale ride AnimatePresence;
+                          the clip + push ride the shared motion values. */}
+                      <AnimatePresence initial={false}>
+                        {aboutPortrait ? (
+                          <motion.div
+                            key="pfp"
+                            className="head__identity-portrait"
+                            initial={
+                              reducedMotion
+                                ? { opacity: 0 }
+                                : { opacity: 0, scale: 0.88 }
+                            }
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={
+                              reducedMotion
+                                ? { opacity: 0, transition: portraitExit }
+                                : {
+                                    opacity: 0,
+                                    scale: 0.92,
+                                    transition: {
+                                      opacity: portraitExit,
+                                      scale: portraitExit,
+                                    },
+                                  }
+                            }
+                            transition={{
+                              opacity: portraitEnter,
+                              scale: portraitEnter,
+                            }}
+                            style={{
+                              clipPath: portraitClip,
+                              transformOrigin: "center center",
+                            }}
+                          >
+                            <Portrait />
+                          </motion.div>
+                        ) : null}
+                      </AnimatePresence>
                       <motion.div
-                        className="head__identity-portrait-slot"
-                        initial={false}
-                        animate={{
-                          width: aboutPortrait ? "var(--portrait-size)" : 0,
-                          marginRight: aboutPortrait ? "var(--space-3)" : 0,
-                        }}
-                        transition={{
-                          width: portraitSlotLayout,
-                          marginRight: portraitSlotLayout,
-                        }}
+                        className="head__name-role"
+                        style={{ x: nameShift }}
                       >
-                        <AnimatePresence initial={false}>
-                          {aboutPortrait ? (
-                            <motion.div
-                              key="pfp"
-                              className="head__identity-portrait"
-                              initial={
-                                reducedMotion
-                                  ? { opacity: 0 }
-                                  : { opacity: 0, scale: 0.88 }
-                              }
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={
-                                reducedMotion
-                                  ? { opacity: 0, transition: portraitExit }
-                                  : {
-                                      opacity: 0,
-                                      scale: 0.92,
-                                      transition: {
-                                        opacity: portraitExit,
-                                        scale: portraitExit,
-                                      },
-                                    }
-                              }
-                              transition={{
-                                opacity: portraitEnter,
-                                scale: portraitEnter,
-                              }}
-                              style={{ transformOrigin: "center center" }}
-                            >
-                              <Portrait />
-                            </motion.div>
-                          ) : null}
-                        </AnimatePresence>
-                      </motion.div>
-                      <div className="head__name-role">
                         <span className="head__name">{site.name}</span>
                         <span className="head__role">{site.role}</span>
-                      </div>
+                      </motion.div>
                       {isMobileDock ? (
                         <ThemeToggle theme={theme} onToggle={toggleTheme} />
                       ) : null}
                     </div>
                   </RevealItem>
-                  <StaggerGroup className="head__excerpt-group">
-                    {site.excerpt.map((paragraph, index) => (
-                      <RevealItem key={index} as="p" className="head__excerpt">
-                        {renderRich(paragraph)}
-                      </RevealItem>
-                    ))}
-                  </StaggerGroup>
+                  <AnimatePresence>
+                    {tab === "about" ? null : (
+                      <StaggerGroup
+                        key="head-excerpt"
+                        className="head__excerpt-group"
+                      >
+                        {site.excerpt.map((paragraph, index) => (
+                          <RevealItem key={index} as="p" className="head__excerpt">
+                            {renderRich(paragraph)}
+                          </RevealItem>
+                        ))}
+                      </StaggerGroup>
+                    )}
+                  </AnimatePresence>
                 </StaggerGroup>
 
                 <main id="main">
-                  <AnimatePresence mode="wait">
+                  {/* popLayout (not "wait"): the incoming panel enters while the
+                      old one fades out on top — no exit-then-enter dead time —
+                      and the exiting panel is popped from flow so its height
+                      never collapses the column mid-swap. */}
+                  <AnimatePresence mode="popLayout">
                     <StaggerGroup key={tab} className="panel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0}>
                       <PanelContent
                         tab={tab}

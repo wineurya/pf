@@ -467,21 +467,24 @@
 .head__identity {
   display: flex;
   align-items: center;
-}
-
-.head__identity-portrait-slot {
+  /* Anchor for the absolutely-placed avatar below. */
+  position: relative;
   --portrait-size: calc(
     var(--text-display-leading) + var(--space-1) + var(--text-leading)
   );
-  flex-shrink: 0;
-  width: 0;
-  height: var(--portrait-size);
-  overflow: hidden;
 }
 
+/* Avatar sits out of flow so revealing it never reflows the identity row — the
+   name/role block translates to open its gap instead. Pinned to the row's left
+   edge and centred to its height via auto margins (no transform: those belong
+   to the fade/scale/clip reveal). */
 .head__identity-portrait {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  left: 0;
+  inset-block: 0;
+  margin-block: auto;
+  width: var(--portrait-size);
+  height: var(--portrait-size);
 }
 
 .head__name-role {
@@ -3394,86 +3397,10 @@ main {
     text-decoration-color var(--dur-fast) var(--ease-standard);
 }
 
-.hw.is-open .hw__word,
 .hw.is-expanded .hw__word {
   color: var(--text-strong);
   text-decoration-style: solid;
   text-decoration-color: var(--color-black);
-}
-
-.hw__stack {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + var(--space-2));
-  width: 0; /* photos position themselves around this anchor */
-  pointer-events: none;
-  z-index: 60;
-}
-
-.hw__photo {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 150px;
-  width: auto;
-  max-width: none;
-  border-radius: var(--radius-sm);
-  /* white print border — no drop shadow */
-  box-shadow:
-    0 0 0 3px var(--color-white),
-    0 0 0 4px color-mix(in oklab, var(--color-black) 12%, transparent);
-  opacity: 0;
-  transform: translate(-50%, 10px) rotate(0deg) scale(0.92);
-  transition:
-    opacity var(--dur-fast) var(--ease-standard),
-    transform var(--dur) var(--ease-overshoot);
-  transition-delay: 0ms;
-}
-
-/* Fanned resting offsets — work for 1, 2 or 3 photos. */
-.hw__photo:nth-child(1) {
-  --tx: -102%;
-  --rot: -8deg;
-}
-.hw__photo:nth-child(2) {
-  --tx: 2%;
-  --rot: 6deg;
-}
-.hw__photo:nth-child(3) {
-  --tx: -50%;
-  --rot: -2deg;
-  z-index: 1;
-}
-/* A single photo sits centred instead of fanned left. */
-.hw__photo:only-child {
-  --tx: -50%;
-  --rot: -3deg;
-}
-
-.hw.is-open .hw__photo {
-  opacity: 1;
-  transform: translate(var(--tx, -50%), 0) rotate(var(--rot, 0deg)) scale(1);
-}
-
-.hw.is-open .hw__photo:nth-child(2) {
-  transition-delay: 40ms;
-}
-.hw.is-open .hw__photo:nth-child(3) {
-  transition-delay: 80ms;
-}
-
-@media (max-width: 600px) {
-  .hw__photo {
-    height: 104px;
-  }
-
-  /* Tighter fan so edge-of-screen words keep their photos mostly on-screen. */
-  .hw__photo:nth-child(1) {
-    --tx: -82%;
-  }
-  .hw__photo:nth-child(2) {
-    --tx: -18%;
-  }
 }
 
 /* =============================================================================
@@ -3518,74 +3445,105 @@ main {
 }
 
 /* =============================================================================
-   Word bento — full photo set for a clicked hover-word, expanding under its
-   paragraph. Tile hover: slight blur + centered caption.
+   About filmstrip — full photo set for every hover-word, drifting in a
+   seamless loop at the bottom of the panel. Selecting a word glides the
+   strip to its photos and dims the rest; edges fade via mask.
    ========================================================================== */
-.wbento {
+.afilm {
+  --afilm-bleed: 120px;
+  margin-top: var(--gap-section);
+  /* Kill the track's max-content contribution so the strip can't inflate
+     the flex column (content-main) — then take the real width back. */
+  width: 0;
+  min-width: 100%;
+}
+
+.afilm__viewport {
+  /* The strip feeds symmetrically past the text column: photos hold full
+     ink across the column and fade out over the bleed zone beyond each
+     edge (base.css hides overflow-x). The definite width also stops the
+     track's max-content size inflating the flex column. */
+  width: calc(100% + 2 * var(--afilm-bleed));
+  margin-left: calc(-1 * var(--afilm-bleed));
   overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--afilm-bleed),
+    #000 calc(100% - var(--afilm-bleed)),
+    transparent
+  );
 }
 
-.wbento__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--gap-section-inner);
+.afilm__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
 }
 
-.wbento__tile {
-  position: relative;
-  margin: 0;
-  aspect-ratio: 3 / 2;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--surface);
-  box-shadow: var(--bento-fill-shadow);
+.afilm__strip {
+  display: flex;
+  gap: var(--space-3);
+  padding-right: var(--space-3); /* keeps the copy seam the same gap */
 }
 
-/* One photo: a single wide tile. Three: wide on top, pair below. */
-.wbento__grid--1 .wbento__tile,
-.wbento__grid--3 .wbento__tile:first-child {
-  grid-column: 1 / -1;
-  aspect-ratio: 16 / 7;
+.afilm__photo {
+  padding: var(--space-1) 0; /* headroom so the hover scale never clips */
+  border: 0;
+  background: none;
+  cursor: pointer;
+  flex: none;
 }
 
-@supports (corner-shape: superellipse(2)) {
-  .wbento__tile {
-    corner-shape: var(--corner-smooth);
-  }
-}
-
-.wbento__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.afilm__img {
   display: block;
-  transition: transform var(--dur-slow) var(--ease-out-strong);
+  height: 168px;
+  width: auto;
+  /* Never narrower than square — portrait shots crop to 1:1; landscape
+     shots keep their natural (wider) ratio. */
+  min-width: 168px;
+  object-fit: cover;
+  max-width: none;
+  border-radius: var(--radius-sm);
+  transition:
+    opacity var(--dur) var(--ease-standard),
+    filter var(--dur) var(--ease-standard),
+    /* transform (hover / press) reacts faster than the selection dim so the
+       feedback feels instant — Emil: hover should never feel delayed */
+    transform var(--dur-fast) var(--ease-standard);
 }
 
-.wbento__cap {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  margin: 0;
-  padding: var(--space-3);
-  text-align: center;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.32);
-  font-size: var(--text-sm-size);
-  line-height: var(--text-sm-leading);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur) var(--ease-standard);
+/* Selection: the chosen word's photos hold full ink; the rest recede. */
+.afilm[data-has-selection="true"] .afilm__photo:not(.is-active) .afilm__img {
+  opacity: 0.3;
+  filter: grayscale(0.7);
+}
+
+.afilm[data-has-selection="true"] .afilm__photo.is-active .afilm__img {
+  transform: scale(1.02);
 }
 
 @media (hover: hover) {
-  .wbento__tile:hover .wbento__img {
-    transform: scale(1.05);
+  .afilm__photo:hover .afilm__img {
+    transform: scale(1.02);
+  }
+}
+
+/* Press feedback (Emil: pressable tiles must feel responsive). Outside the
+   hover query so taps get it too; after :hover so a press while hovering wins. */
+.afilm__photo:active .afilm__img {
+  transform: scale(0.98);
+}
+
+@media (max-width: 600px) {
+  /* Bleed to the window edges exactly — the column's own side padding. */
+  .afilm {
+    --afilm-bleed: var(--page-pad);
   }
 
-  .wbento__tile:hover .wbento__cap {
-    opacity: 1;
+  .afilm__img {
+    height: 120px;
+    min-width: 120px;
   }
 }
 
@@ -3795,11 +3753,6 @@ main {
    Reduced motion
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hw__photo {
-    transition: opacity 0.01ms !important;
-    transform: translate(var(--tx, -50%), 0) rotate(var(--rot, 0deg)) scale(1);
-  }
-
   .rail {
     opacity: 1 !important;
     transition: none !important;
