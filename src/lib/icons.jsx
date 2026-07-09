@@ -6,6 +6,7 @@ import { IconColorPalette as CentralColorPalette } from "central-icons/IconColor
 import { IconArrowUpRight as CentralArrowUpRight } from "central-icons/IconArrowUpRight";
 import { IconCheckmark1Small as CentralCheckmark1Small } from "central-icons/IconCheckmark1Small";
 import { IconCirclePlaceholderOn } from "central-icons/IconCirclePlaceholderOn";
+import { IconCircleX } from "central-icons/IconCircleX";
 import { IconCompassRound } from "central-icons/IconCompassRound";
 import { IconCrossSmall } from "central-icons/IconCrossSmall";
 import { IconEyeOpen } from "central-icons/IconEyeOpen";
@@ -142,6 +143,7 @@ const IconTrafficCone = makeIcon(TrafficCone);
 /* Toast stack marks + dismiss — Central Icons. */
 const IconToastCheck = makeCentralIcon(CentralCheckmark1Small);
 const IconToastWarn = makeCentralIcon(IconWarningSign);
+const IconToastError = makeCentralIcon(IconCircleX);
 const IconToastDot = makeCentralIcon(IconCirclePlaceholderOn);
 const IconToastClose = makeCentralIcon(IconCrossSmall);
 /* Waving hand for the case-study sign-off. */
@@ -236,6 +238,7 @@ export {
   IconToastCheck,
   IconToastClose,
   IconToastDot,
+  IconToastError,
   IconToastWarn,
   IconUser,
   IconWave,

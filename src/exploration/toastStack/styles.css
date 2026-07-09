@@ -10,6 +10,7 @@
     0 0 0 1px color-mix(in oklab, var(--ts-border) 80%, transparent);
   --ts-success: var(--accent-wireframes);
   --ts-warning: var(--accent-overview);
+  --ts-error: var(--accent-problem);
   --ts-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   position: relative;
@@ -91,6 +92,10 @@
   --ts-dither: var(--ts-warning);
 }
 
+.ts-toast[data-tone="error"] {
+  --ts-dither: var(--ts-error);
+}
+
 /* Tone-colored dither fade from the toast card's right edge. */
 .ts-toast::after {
   content: "";
@@ -158,6 +163,10 @@
 
 .ts-mark--warning {
   color: var(--ts-warning);
+}
+
+.ts-mark--error {
+  color: var(--ts-error);
 }
 
 .ts-toast-copy {

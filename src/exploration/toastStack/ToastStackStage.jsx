@@ -17,6 +17,7 @@ import {
   IconToastCheck,
   IconToastClose,
   IconToastDot,
+  IconToastError,
   IconToastWarn,
 } from "@/lib/icons.jsx";
 
@@ -43,6 +44,13 @@ function ToneMark({ tone }) {
     return (
       <span className="ts-mark ts-mark--warning" aria-hidden>
         <IconToastWarn size={14} />
+      </span>
+    );
+  }
+  if (tone === "error") {
+    return (
+      <span className="ts-mark ts-mark--error" aria-hidden>
+        <IconToastError size={14} />
       </span>
     );
   }

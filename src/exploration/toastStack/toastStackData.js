@@ -35,6 +35,12 @@ export const TOAST_SAMPLES = [
     description: "Retrying in the background",
     tone: "warning",
   },
+  {
+    id: "error",
+    title: "Upload failed",
+    description: "Could not reach the server",
+    tone: "error",
+  },
 ];
 
 export const TOAST_LIFETIME_MS = 4200;
