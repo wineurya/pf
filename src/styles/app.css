@@ -332,13 +332,11 @@
   }
 
   .home-bottom-bar {
-    /* iOS 26/27: frame matches visual viewport (GoodTurn); no transform here. */
     position: fixed;
     left: 0;
     right: 0;
-    top: var(--vv-top, 0px);
-    height: var(--vv-height, 100%);
-    bottom: auto;
+    top: auto;
+    bottom: 0;
     z-index: 45;
     display: flex;
     flex-direction: column;
@@ -349,6 +347,7 @@
       var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px)
     );
     pointer-events: none;
+    translate: 0 calc(-1 * var(--vv-bottom-offset, 0px));
   }
 
   .home-bottom-bar__dock {
@@ -1307,13 +1306,8 @@ main {
 
 @media (max-width: 1023px) {
   .cs-dock {
-    /* iOS 26/27: same vv frame as home dock; scrim/sheet stay inside, bar at bottom. */
     position: fixed;
-    left: 0;
-    right: 0;
-    top: var(--vv-top, 0px);
-    height: var(--vv-height, 100%);
-    bottom: auto;
+    inset: 0;
     z-index: 60;
     display: flex;
     flex-direction: column;
@@ -1344,6 +1338,7 @@ main {
     box-shadow: var(--bento-fill-shadow);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    translate: 0 calc(-1 * var(--vv-bottom-offset, 0px));
   }
 
   /* Back + theme — raised --dock-pill cells on the --surface tray, matching the
@@ -1548,6 +1543,7 @@ main {
     -webkit-backdrop-filter: blur(18px);
     transform-origin: bottom center;
     will-change: clip-path, opacity;
+    translate: 0 calc(-1 * var(--vv-bottom-offset, 0px));
   }
 
   .cs-dock__sheet-label {
@@ -3381,7 +3377,9 @@ main {
    ========================================================================== */
 .hw {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
 }
 
 .hw__word {
@@ -3401,6 +3399,10 @@ main {
   color: var(--text-strong);
   text-decoration-style: solid;
   text-decoration-color: var(--color-black);
+}
+
+.hw__punct {
+  color: var(--text-default);
 }
 
 /* =============================================================================

@@ -192,6 +192,17 @@ const aboutWordGroups = site.about
   .filter(Array.isArray)
   .flatMap((p) => p.filter((seg) => typeof seg === "object" && seg.word));
 
+const hoverWordPunctuation = /^[,.;:!?]+/;
+
+function leadingHoverPunctuation(value) {
+  return value.match(hoverWordPunctuation)?.[0] ?? "";
+}
+
+function stripLeadingHoverPunctuation(value) {
+  const punctuation = leadingHoverPunctuation(value);
+  return punctuation ? value.slice(punctuation.length) : value;
+}
+
 function AboutPanel() {
   /* A hover-word can be *held* (transient — set on hover, dropped on leave) or
      *locked* (deliberate — set on click / tap / a filmstrip photo). Only a
@@ -233,7 +244,12 @@ function AboutPanel() {
         return (
           <RevealItem key={i} as="p" className="panel__lead">
             {p.map((seg, j) => {
-              if (typeof seg === "string") return seg;
+              if (typeof seg === "string") {
+                const prev = p[j - 1];
+                return prev && typeof prev === "object" && prev.word
+                  ? stripLeadingHoverPunctuation(seg)
+                  : seg;
+              }
               if (seg.tool) return <ToolWord key={j} {...seg} />;
               if (seg.text) {
                 return (
@@ -249,6 +265,11 @@ function AboutPanel() {
                 <HoverWord
                   key={j}
                   word={seg.word}
+                  suffix={
+                    typeof p[j + 1] === "string"
+                      ? leadingHoverPunctuation(p[j + 1])
+                      : ""
+                  }
                   expanded={selectedWord === seg.word}
                   onToggle={() =>
                     setSelection((s) =>

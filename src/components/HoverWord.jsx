@@ -9,7 +9,13 @@ const canHover =
  * locks the selection (for touch and keyboard). Selection state is owned by
  * the About panel via `expanded` / `onToggle` / `onHoverChange`.
  */
-export function HoverWord({ word, expanded = false, onToggle, onHoverChange }) {
+export function HoverWord({
+  word,
+  suffix = "",
+  expanded = false,
+  onToggle,
+  onHoverChange,
+}) {
   return (
     <span
       className={`hw${expanded ? " is-expanded" : ""}`}
@@ -26,6 +32,7 @@ export function HoverWord({ word, expanded = false, onToggle, onHoverChange }) {
       >
         {word}
       </button>
+      {suffix ? <span className="hw__punct">{suffix}</span> : null}
     </span>
   );
 }
