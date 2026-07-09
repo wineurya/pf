@@ -14,7 +14,6 @@
     "scrape:wineury-design": "node scripts/scrape-wineury-design.mjs"
   },
   "dependencies": {
-    "@paper-design/shaders-react": "0.0.76",
     "@phosphor-icons/react": "^2.1.10",
     "border-beam": "^1.2.0",
     "central-icons": "npm:@central-icons-react/round-outlined-radius-3-stroke-2@^1.1.257",

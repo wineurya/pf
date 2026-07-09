@@ -1,0 +1,543 @@
+/* =============================================================================
+   Left rail — vertical tabs in the left margin (desktop); horizontal on top
+   (mobile). Selected tab = fully-rounded background fill, no dot.
+   ========================================================================== */
+.rail {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  z-index: 40;
+  margin-bottom: var(--space-2);
+  margin-left: calc(-1 * var(--space-3)); /* offset pill padding to align */
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  letter-spacing: var(--tracking);
+  color: var(--text-muted);
+  background: transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-out-strong);
+}
+
+.tab:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .tab:hover {
+    color: var(--text-secondary);
+  }
+}
+
+.tab[aria-selected="true"] {
+  color: var(--text-strong);
+}
+
+/* Shared fill — layoutId glide (both layouts). Radius is a FINITE half-height
+   stadium (14px for the 28px-tall desktop pill), not a 999px pill: the giant
+   value clamps unevenly while the projection scales the box mid-glide and reads
+   as an oval. A finite half-height value stays a clean stadium at every width
+   because the tab height is constant (the projection only scales X). */
+.tab__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--hover-lift);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.tab__label {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Icons are mobile-home only — desktop rail stays text labels. */
+.tab__icon {
+  display: none;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+@media (min-width: 860px) {
+  .rail {
+    position: sticky;
+    top: 100px;
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: start;
+    z-index: 40;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: var(--space-1);
+    margin-bottom: 0;
+    /* Same left edge as .theme-toggle — max(page-pad, column edge − offset). */
+    margin-left: max(
+      calc(var(--page-pad) - 50vw + var(--content-max) / 2),
+      calc(-1 * var(--rail-offset))
+    );
+    width: max-content;
+    height: fit-content;
+    /* Dodge lane — useRailDodge writes --rail-dodge when the wide work grid
+       scrolls up into the sticky band; translate keeps sticky intact. */
+    transform: translateX(var(--rail-dodge, 0px));
+    transition: transform var(--dur-layout) var(--ease-out-strong);
+  }
+}
+
+@media (min-width: 860px) and (prefers-reduced-motion: reduce) {
+  .rail {
+    transition: none;
+  }
+}
+
+/* =============================================================================
+   Header + portrait
+   ========================================================================== */
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1); /* 4px — Figma header gap */
+}
+
+.content-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  width: 100%;
+  overflow: visible;
+}
+
+.content-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  width: 100%;
+  overflow: visible;
+  /* Inset copy without growing the 576px column — margin cancels padding */
+  padding: var(--content-main-pad);
+  margin: calc(-1 * var(--content-main-pad));
+}
+
+@media (min-width: 860px) {
+  .content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .content-main {
+    grid-row: 1;
+    grid-column: 1;
+    gap: var(--gap-section);
+  }
+}
+
+/* =============================================================================
+   Mobile home — bottom chrome (theme + section dock) + full-width content
+   Scoped to .stage__home so case study + desktop layouts stay untouched.
+   ========================================================================== */
+@media (max-width: 859px) {
+  .shell {
+    /* viewport-fit=cover draws edge-to-edge, so reserve the top inset too —
+       when Safari's top bar collapses on scroll, content would otherwise slide
+       under the notch / status bar. The inset is 0 while the top bar is shown. */
+    padding-top: calc(
+      var(--shell-pad-top-mobile) + env(safe-area-inset-top, 0px)
+    );
+    padding-bottom: calc(
+      var(--space-10) + var(--mobile-rail-h) + var(--mobile-rail-gap) +
+        env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .stage__home .content-wrapper {
+    gap: var(--gap-section);
+    width: 100%;
+    min-height: calc(
+      100svh - var(--shell-pad-top-mobile) - var(--space-10) -
+        var(--mobile-rail-h) - var(--mobile-rail-gap) -
+        env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .stage__home .content-main {
+    flex: 1;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .home-bottom-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    z-index: 45;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-inline: var(--page-pad);
+    padding-bottom: calc(
+      var(--mobile-rail-gap) + env(safe-area-inset-bottom, 0px)
+    );
+    pointer-events: none;
+    translate: 0 calc(-1 * var(--vv-bottom-offset, 0px));
+  }
+
+  .home-bottom-bar__dock {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dock-gap);
+    max-width: 100%;
+    padding: var(--dock-pad);
+    border-radius: var(--dock-radius);
+    /* Bare --surface tray — no ring, inner sheen, or frost. Its filled cells
+       (Magnetic Dock language) carry the visual weight. */
+    background: var(--dock-bg);
+  }
+
+  .home-bottom-bar .theme-toggle {
+    position: static;
+    left: auto;
+    bottom: auto;
+    flex-shrink: 0;
+    width: var(--dock-cell);
+    height: var(--dock-cell);
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .home-bottom-bar .theme-toggle:active {
+    background: var(--hover-lift);
+  }
+
+  @media (hover: hover) {
+    .home-bottom-bar .theme-toggle:hover {
+      color: var(--text-strong);
+      background: var(--hover-lift);
+    }
+  }
+
+  .home-bottom-bar .rail {
+    position: static;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    transform: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .home-bottom-bar .tab {
+    gap: 6px;
+    box-sizing: border-box;
+    height: var(--dock-cell);
+    min-height: var(--dock-cell);
+    max-height: var(--dock-cell);
+    min-width: var(--dock-cell);
+    padding-block: 0;
+    padding-inline: var(--space-3);
+    border-radius: var(--mobile-tab-radius);
+    /* Every tab is a filled --dock-pill cell (Magnetic Dock language). The
+       selected tab widens to reveal its text label — the section indicator.
+       Width snaps instantly; the dock shell's layoutId projection animates the
+       overall resize, so tab width itself must not transition. */
+    background: var(--dock-pill);
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+
+  .home-bottom-bar .tab:not([aria-selected="true"]) {
+    width: var(--dock-cell);
+    min-width: var(--dock-cell);
+    padding-inline: 0;
+  }
+
+  .home-bottom-bar .tab[aria-selected="true"] {
+    width: auto;
+  }
+
+  .home-bottom-bar .tab__icon {
+    display: block;
+  }
+
+  .home-bottom-bar .tab__label {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 860px) {
+  /* Dissolve BOTH the bar and its inner dock wrapper so the rail + theme toggle
+     become direct grid children again — the rail then takes its left-margin grid
+     cell and sticks aligned with the top of the header text (the dock pill is a
+     mobile-only shape). */
+  .home-bottom-bar,
+  .home-bottom-bar__dock {
+    display: contents;
+  }
+}
+
+/* Second excerpt block moved to About — keep header→work breathing room */
+#panel-work {
+  margin-top: var(--gap-paragraph);
+}
+
+.head__identity {
+  display: flex;
+  align-items: center;
+  /* Anchor for the absolutely-placed avatar below. */
+  position: relative;
+  --portrait-size: calc(
+    var(--text-display-leading) + var(--space-1) + var(--text-leading)
+  );
+}
+
+/* Avatar sits out of flow so revealing it never reflows the identity row — the
+   name/role block translates to open its gap instead. Pinned to the row's left
+   edge and centred to its height via auto margins (no transform: those belong
+   to the fade/scale/clip reveal). */
+.head__identity-portrait {
+  position: absolute;
+  left: 0;
+  inset-block: 0;
+  margin-block: auto;
+  width: var(--portrait-size);
+  height: var(--portrait-size);
+}
+
+.head__name-role {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+/* Phones: the theme toggle rides at the top-right of the header, inline with the
+   name/role block, instead of the bottom dock. Overrides the base fixed position
+   so it flows in the identity row; ≥860px keeps the fixed bottom-left placement. */
+@media (max-width: 859px) {
+  .head__identity .theme-toggle {
+    position: static;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+}
+
+/* Portrait avatar — circle matches name + role stack height (display + gap + body). */
+.head__identity .portrait-wrap {
+  --portrait-size: calc(
+    var(--text-display-leading) + var(--space-1) + var(--text-leading)
+  );
+  width: var(--portrait-size);
+  height: var(--portrait-size);
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.head__identity .portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.head__name {
+  color: var(--text-strong);
+}
+
+.head__role {
+  color: var(--text-muted);
+}
+
+.head__excerpt-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-paragraph);
+  width: 100%;
+  /* 20px from role → excerpt; .head flex gap (--space-1) covers the first 4px */
+  margin-top: calc(var(--gap-paragraph) - var(--space-1));
+}
+
+.head__excerpt {
+  color: var(--text-default);
+  width: 100%;
+  margin: 0;
+}
+
+/* Icon immediately before a ==highlight== (see renderRich ::iconKey==…==). */
+.rich__icon-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.15em;
+  white-space: nowrap;
+}
+
+.rich__icon-mark-icon {
+  flex-shrink: 0;
+  align-self: center;
+  color: inherit;
+}
+
+/* =============================================================================
+   Panels + link lists (single sliding highlight, no border)
+   ========================================================================== */
+main {
+  width: 100%;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-paragraph);
+  width: 100%;
+}
+
+.panel__lead {
+  color: var(--text-default);
+  width: 100%;
+  margin: 0;
+}
+
+.about-muted {
+  color: var(--text-muted);
+}
+
+.list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-list);
+  margin: 0 calc(var(--space-3) * -1);
+}
+
+/* The one shared pill that follows cursor/focus — contrast from fill, no border. */
+.list__highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  border-radius: var(--radius-md);
+  background: var(--hover-lift);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dur) var(--ease-out-strong),
+    height var(--dur) var(--ease-out-strong),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+.row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .list__highlight,
+  .row {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+@media (hover: hover) {
+  .row:hover {
+    color: var(--text-strong);
+  }
+}
+
+.row:focus-visible {
+  color: var(--text-strong);
+}
+
+.row__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.row__meta {
+  flex-shrink: 0;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .row:hover .row__meta {
+    color: var(--text-secondary);
+  }
+}
+
+.row:focus-visible .row__meta {
+  color: var(--text-secondary);
+}
+
+.row__arrow {
+  width: 15px;
+  height: 15px;
+  opacity: 0.5;
+  transition:
+    transform var(--dur-fast) var(--ease-out-strong),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .row:hover .row__arrow {
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--text-primary);
+}
+

@@ -104,9 +104,9 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
               {item.label}
             </motion.span>
             {item.wip ? (
-              <span className="pcard__wip">
-                <IconLock className="pcard__wip-icon" size={10} ariaHidden />
-                WIP
+              <span className="pcard__wip" aria-label="Coming soon">
+                <IconLock className="pcard__wip-icon" size={12} ariaHidden />
+                <span className="pcard__wip-label">Coming soon</span>
               </span>
             ) : null}
             {isCard && !item.wip ? (

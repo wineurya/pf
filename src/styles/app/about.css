@@ -1,0 +1,528 @@
+/* =============================================================================
+   About bento — blank tiles (1 wide top, 2 below); slight fill, no outline.
+   ========================================================================== */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap-section-inner);
+}
+
+.bento__tile {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bento-fill-shadow);
+  aspect-ratio: 3 / 2;
+}
+
+.bento__tile--wide {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 6;
+}
+
+/* =============================================================================
+   Copy-to-clipboard (About panel) — Figma 220:51 dotted underline trigger
+   ========================================================================== */
+.copy {
+  position: relative;
+  display: inline;
+  vertical-align: baseline;
+}
+
+.copy__btn {
+  display: inline;
+  vertical-align: baseline;
+  color: var(--text-default);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: from-font;
+  text-decoration-color: var(--color-black);
+  text-underline-position: from-font;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    text-decoration-color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .copy__btn:hover {
+    color: var(--text-strong);
+    text-decoration-color: var(--color-black);
+  }
+
+  .copy__btn:hover .copy__icon {
+    opacity: 1;
+  }
+}
+
+.copy__icon,
+.contact-links__icon {
+  display: inline-block;
+  vertical-align: -2px; /* ponytail: same optical nudge as .tool__icon in 20px body line */
+  margin-right: 3px;
+  opacity: 0.8;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+
+/* Figma 220:52 — black pill above the trigger, white 13.4/19.2 text. */
+.copy__toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--space-2));
+  white-space: nowrap;
+  font-size: var(--toast-size);
+  line-height: var(--toast-leading);
+  color: var(--color-white);
+  background: var(--color-black);
+  padding: 5.76px 9.6px;
+  border-radius: var(--radius-pill);
+  opacity: 0;
+  transform: translate(-50%, 4px) scale(0.96);
+  transform-origin: bottom center;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-fast) var(--ease-standard),
+    transform var(--dur) var(--ease-overshoot);
+}
+
+.copy.is-copied .copy__toast {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+/* About contact row — You can reach me at Email · LinkedIn · X */
+.contact-links__lead {
+  color: var(--text-default);
+}
+
+.contact-links__link {
+  color: var(--text-default);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: from-font;
+  text-decoration-color: var(--color-black);
+  text-underline-position: from-font;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    text-decoration-color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .contact-links__link:hover {
+    color: var(--text-strong);
+    text-decoration-color: var(--color-black);
+  }
+
+  .contact-links__link:hover .contact-links__icon {
+    opacity: 1;
+  }
+}
+
+.contact-links__sep {
+  color: var(--text-muted);
+}
+
+/* =============================================================================
+   Hover words (About panel) — Figma 220:24 dotted underline card triggers
+   ========================================================================== */
+.hw {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.hw__word {
+  color: var(--text-default);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: from-font;
+  text-decoration-color: var(--color-black);
+  text-underline-position: from-font;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    text-decoration-color var(--dur-fast) var(--ease-standard);
+}
+
+.hw.is-expanded .hw__word {
+  color: var(--text-strong);
+  text-decoration-style: solid;
+  text-decoration-color: var(--color-black);
+}
+
+.hw__punct {
+  color: var(--text-default);
+}
+
+/* =============================================================================
+   Inline tool mentions — a small Central brand mark riding with the word.
+   ========================================================================== */
+.tool {
+  white-space: nowrap;
+}
+
+.tool__icon {
+  display: inline-block;
+  vertical-align: -2px; /* optically centers a 14px mark in the 20px line */
+  margin-right: 3px;
+}
+
+.tool--figma {
+  color: var(--tool-figma);
+}
+
+.tool--framer {
+  color: var(--tool-framer);
+}
+
+.tool--rive {
+  color: var(--tool-rive);
+}
+
+.tool--claude {
+  color: var(--tool-claude);
+}
+
+.tool--cursor {
+  color: var(--tool-cursor);
+}
+
+.tool--firebase {
+  color: var(--tool-firebase);
+}
+
+.tool[class*="tool--"] .tool__icon {
+  color: currentColor;
+}
+
+/* =============================================================================
+   About filmstrip — full photo set for every hover-word, drifting in a
+   seamless loop at the bottom of the panel. Selecting a word glides the
+   strip to its photos and dims the rest; edges fade via mask.
+   ========================================================================== */
+.afilm {
+  --afilm-bleed: 120px;
+  margin-top: var(--gap-section);
+  /* Kill the track's max-content contribution so the strip can't inflate
+     the flex column (content-main) — then take the real width back. */
+  width: 0;
+  min-width: 100%;
+}
+
+.afilm__viewport {
+  /* The strip feeds symmetrically past the text column: photos hold full
+     ink across the column and fade out over the bleed zone beyond each
+     edge (base.css hides overflow-x). The definite width also stops the
+     track's max-content size inflating the flex column. */
+  width: calc(100% + 2 * var(--afilm-bleed));
+  margin-left: calc(-1 * var(--afilm-bleed));
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--afilm-bleed),
+    #000 calc(100% - var(--afilm-bleed)),
+    transparent
+  );
+}
+
+.afilm__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.afilm__strip {
+  display: flex;
+  gap: var(--space-3);
+  padding-right: var(--space-3); /* keeps the copy seam the same gap */
+}
+
+.afilm__photo {
+  padding: var(--space-1) 0; /* headroom so the hover scale never clips */
+  border: 0;
+  background: none;
+  cursor: pointer;
+  flex: none;
+}
+
+.afilm__img {
+  display: block;
+  height: 168px;
+  width: auto;
+  /* Never narrower than square — portrait shots crop to 1:1; landscape
+     shots keep their natural (wider) ratio. */
+  min-width: 168px;
+  object-fit: cover;
+  max-width: none;
+  border-radius: var(--radius-sm);
+  transition:
+    opacity var(--dur) var(--ease-standard),
+    filter var(--dur) var(--ease-standard),
+    /* transform (hover / press) reacts faster than the selection dim so the
+       feedback feels instant — Emil: hover should never feel delayed */
+    transform var(--dur-fast) var(--ease-standard);
+}
+
+/* Selection: the chosen word's photos hold full ink; the rest recede. */
+.afilm[data-has-selection="true"] .afilm__photo:not(.is-active) .afilm__img {
+  opacity: 0.3;
+  filter: grayscale(0.7);
+}
+
+.afilm[data-has-selection="true"] .afilm__photo.is-active .afilm__img {
+  transform: scale(1.02);
+}
+
+@media (hover: hover) {
+  .afilm__photo:hover .afilm__img {
+    transform: scale(1.02);
+  }
+}
+
+/* Press feedback (Emil: pressable tiles must feel responsive). Outside the
+   hover query so taps get it too; after :hover so a press while hovering wins. */
+.afilm__photo:active .afilm__img {
+  transform: scale(0.98);
+}
+
+@media (max-width: 600px) {
+  /* Bleed to the window edges exactly — the column's own side padding. */
+  .afilm {
+    --afilm-bleed: var(--page-pad);
+  }
+
+  .afilm__img {
+    height: 120px;
+    min-width: 120px;
+  }
+}
+
+/* =============================================================================
+   Theme toggle — bottom-left, left-aligned with the rail (TOC). Sun ⟷ moon
+   morph: core radius grows, mask circle slides in for the crescent, rays
+   rotate out. cx/cy/r transition as CSS properties.
+   ========================================================================== */
+.theme-toggle {
+  position: fixed;
+  left: var(--page-pad);
+  bottom: var(--space-8);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--text-muted);
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-out-strong);
+}
+
+.theme-toggle:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .theme-toggle:hover {
+    color: var(--text-strong);
+    background: var(--hover-lift);
+  }
+}
+
+.theme-toggle:focus-visible {
+  color: var(--text-strong);
+}
+
+/* Radial reveal — the toggle wipes in as a circle expanding from its centre.
+   The clip-path radius is a directly-animated property the browser interpolates
+   and repaints every frame; an earlier mask-image + animated-var version was
+   evaluated but never re-rasterised by Chromium, so it jumped in instantly.
+   `backwards` fill shows the collapsed circle before start and releases after,
+   so the rest state has no clip — :active press-scale, the hover background and
+   the 860px left-rail transitions are untouched. circle(80%) clears the button
+   before the hand-off to no-clip, so there's no pop. Reduced-motion skips it. */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-toggle {
+    animation: tt-reveal var(--dur-slow) var(--ease-out-strong) 90ms backwards;
+  }
+}
+
+@keyframes tt-reveal {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(80% at 50% 50%);
+  }
+}
+
+@media (min-width: 860px) {
+  /* Same x as the rail pills: content column left edge minus the rail offset. */
+  .theme-toggle {
+    left: max(
+      var(--page-pad),
+      calc(50vw - var(--content-max) / 2 - var(--rail-offset))
+    );
+    /* Rides the rail's dodge (useRailDodge) so the shared left edge holds
+       while the wide work grid passes; `translate` — not transform — so the
+       :active press-scale composes instead of clobbering the shift. */
+    translate: var(--rail-dodge, 0px) 0;
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur) var(--ease-standard),
+      left var(--dur-layout) var(--ease-out-strong),
+      translate var(--dur-layout) var(--ease-out-strong);
+  }
+
+  /* Case study column is wider — track the cs-rail as the stage morphs. */
+  .theme-toggle--case {
+    left: max(
+      var(--page-pad),
+      calc(50vw - var(--content-max-cs) / 2 - var(--rail-offset))
+    );
+  }
+}
+
+@media (min-width: 860px) and (prefers-reduced-motion: reduce) {
+  .theme-toggle {
+    transition:
+      color var(--dur-fast) var(--ease-standard),
+      background-color var(--dur) var(--ease-standard);
+  }
+}
+
+.tt {
+  overflow: visible;
+  transition: transform var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt {
+  transform: rotate(-15deg);
+}
+
+.tt__core {
+  transition: r var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt__core {
+  r: 8px;
+}
+
+.tt__mask {
+  transition:
+    cx var(--dur-slow) var(--ease-overshoot),
+    cy var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt__mask {
+  cx: 17.5px;
+  cy: 6.5px;
+}
+
+.tt__rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--dur) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-overshoot);
+}
+
+.theme-toggle[data-mode="dark"] .tt__rays {
+  opacity: 0;
+  transform: rotate(-50deg) scale(0.55);
+}
+
+/* =============================================================================
+   Theme crossfade (View Transitions)
+   The whole page swaps light↔dark inside one startViewTransition (lib/theme.js).
+   The browser default cross-fades the old AND new snapshots at once, which
+   double-exposes and flashes a washed-out gray at the midpoint of a light↔dark
+   inversion. Instead: hold the old frame fully opaque underneath and fade the
+   new frame in on top (new is painted above old by default), for one clean,
+   even dissolve on a tuned duration + easing. Per-element color transitions run
+   live inside the new layer and resolve under the same fade.
+   ========================================================================== */
+@supports (view-transition-name: none) {
+  /* The UA stylesheet blends both root snapshots with `mix-blend-mode:
+     plus-lighter` (its default cross-fade relies on that to sum to 1). But we
+     DON'T cross-fade — we hold the old frame opaque and fade the new one in on
+     top. Under plus-lighter that addition over an opaque base blows the
+     midpoint of a light↔dark swap out toward white (the "brightness flash" /
+     dim that read as the device dimming on mobile). Forcing `normal` makes the
+     stack a true linear interpolation: new*t over old*(1−t), no overshoot. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(root) {
+    animation: none;
+  }
+
+  ::view-transition-new(root) {
+    /* Gentle symmetric ease for a clean dissolve — the strong curve rushed the
+       midpoint and read as a snap rather than a fade. */
+    animation: theme-crossfade var(--dur-theme) ease-in-out both;
+  }
+
+  @keyframes theme-crossfade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* Live theme fade — phones always take this path (theme.js skips the View
+   Transition there: the double full-page snapshot + input freeze stutters on
+   mobile GPUs), and it's also the fallback for browsers without the API.
+   theme.js adds `.theme-switching` to <html> for one --dur-theme; every
+   element's paint colors ease across the swap in place. Colors only — never
+   transform/opacity/layout, so Motion-driven animation is untouched. Gradient
+   backgrounds and theme-swapped images snap under it; they're small accents.
+   (Desktop View-Transition swaps never add this class — the crossfade above
+   owns the fade there.) */
+@media (prefers-reduced-motion: no-preference) {
+  :root.theme-switching,
+  :root.theme-switching body,
+  :root.theme-switching *,
+  :root.theme-switching *::before,
+  :root.theme-switching *::after {
+    transition:
+      background-color var(--dur-theme) var(--ease-standard),
+      color var(--dur-theme) var(--ease-standard),
+      border-color var(--dur-theme) var(--ease-standard),
+      box-shadow var(--dur-theme) var(--ease-standard),
+      fill var(--dur-theme) var(--ease-standard),
+      stroke var(--dur-theme) var(--ease-standard);
+  }
+}
+
+/* =============================================================================
+   Reduced motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .rail {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  @media (max-width: 859px) {
+    .stage__home .tab__label {
+      transition: none !important;
+    }
+  }
+
+  .list__highlight {
+    transition: opacity 0.01ms !important;
+  }
+
+  /* Defense in depth — theme.js already skips the View Transition under reduced
+     motion, but zero it here too so any crossfade collapses to an instant swap. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+

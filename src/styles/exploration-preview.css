@@ -107,13 +107,6 @@
   padding-top: clamp(1.75rem, 7vw, 2.75rem);
 }
 
-/* The notch docks bleed flush to the stage edges; in card embeds the caption
-   owns the top strip (~73px: label + subtitle), and a left or top dock would
-   run ink-under-ink beneath it. Drop the stage below the caption instead. */
-.exp-card__demo .nsb-stage {
-  inset: 4.75rem 0 0 0;
-}
-
 .exp-card__demo .jvs-showcase {
   width: min(360px, 92%);
 }

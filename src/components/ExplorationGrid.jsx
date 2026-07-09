@@ -5,15 +5,10 @@ import { RevealItem, StaggerGroup } from "./Reveal.jsx";
 
 import "@/exploration/crateQueue/styles.css";
 import "@/exploration/diffPulse/styles.css";
-import "@/exploration/flutedGlass/styles.css";
-import "@/exploration/grainGradient/styles.css";
 import "@/exploration/holdToSend/styles.css";
 import "@/exploration/jellyScrubber/styles.css";
 import "@/exploration/magneticDock/styles.css";
-import "@/exploration/notchSidebar/styles.css";
-import "@/exploration/odometerCounter/styles.css";
 import "@/exploration/thinkingBorder/styles.css";
-import "@/exploration/voronoiGrid/styles.css";
 import "@/exploration/walletMenu/styles.css";
 import "../styles/exploration-preview.css";
 
@@ -48,29 +43,9 @@ const PREVIEW_COMPONENTS = {
     () => import("@/exploration/magneticDock/MagneticDockStage.jsx"),
     "MagneticDockStage",
   ),
-  notch: lazyPreview(
-    () => import("@/exploration/notchSidebar/NotchSidebarStage.jsx"),
-    "NotchSidebarStage",
-  ),
-  odometer: lazyPreview(
-    () => import("@/exploration/odometerCounter/OdometerCounterStage.jsx"),
-    "OdometerCounterStage",
-  ),
   diff: lazyPreview(
     () => import("@/exploration/diffPulse/DiffPulseStage.jsx"),
     "DiffPulseStage",
-  ),
-  grain: lazyPreview(
-    () => import("@/exploration/grainGradient/GrainGradientStage.jsx"),
-    "GrainGradientStage",
-  ),
-  glass: lazyPreview(
-    () => import("@/exploration/flutedGlass/FlutedGlassStage.jsx"),
-    "FlutedGlassStage",
-  ),
-  voronoi: lazyPreview(
-    () => import("@/exploration/voronoiGrid/VoronoiGridStage.jsx"),
-    "VoronoiGridStage",
   ),
 };
 
@@ -106,32 +81,10 @@ function ExplorationCaption({ label, subtitle, note, noteHref }) {
   );
 }
 
-function ExplorationImage({ src, alt, label, subtitle, note, noteHref }) {
-  return (
-    <div className="exp-card__frame exp-card__frame--image">
-      <img
-        className="exp-card__image"
-        src={src}
-        alt={alt}
-        decoding="async"
-        loading="lazy"
-      />
-      <ExplorationCaption
-        label={label}
-        subtitle={subtitle}
-        note={note}
-        noteHref={noteHref}
-      />
-    </div>
-  );
-}
-
-/* The demos are ambient loops — infinite CSS animations, intervals, one WebGL
-   shader — and running all eleven for the whole tab is what makes the page
-   heavy. Each embed mounts only once its card drifts within MOUNT_MARGIN of
-   the viewport, and unmounts again past UNMOUNT_MARGIN. The wide hysteresis
-   band means a demo never resets anywhere near the visitor's eye, and the
-   two thresholds can't chatter against each other at a boundary. */
+/* The demos are ambient loops — infinite CSS animations, intervals — and
+   running every embed for the whole tab is what makes the page heavy. Each
+   embed mounts only once its card drifts within MOUNT_MARGIN of the viewport,
+   and unmounts again past UNMOUNT_MARGIN. */
 const MOUNT_MARGIN = "40% 0px";
 const UNMOUNT_MARGIN = "180% 0px";
 
@@ -238,7 +191,6 @@ export function ExplorationGrid({ items, theme = "light" }) {
     <StaggerGroup className="exp-grid">
       {items.map((it) => {
         const hasPreview = Boolean(PREVIEW_COMPONENTS[it.preview]);
-        const hasImage = Boolean(it.image);
 
         return (
           <RevealItem key={it.label} as="article" className="exp-card">
@@ -247,15 +199,6 @@ export function ExplorationGrid({ items, theme = "light" }) {
                 kind={it.preview}
                 previewProps={it.previewProps}
                 theme={theme}
-                label={it.label}
-                subtitle={it.subtitle}
-                note={it.note}
-                noteHref={it.noteHref}
-              />
-            ) : hasImage ? (
-              <ExplorationImage
-                src={it.image}
-                alt={it.imageAlt ?? it.label}
                 label={it.label}
                 subtitle={it.subtitle}
                 note={it.note}

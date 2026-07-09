@@ -1,0 +1,358 @@
+/* =============================================================================
+   Exploration preview grid
+   ========================================================================== */
+.exp-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section-inner);
+  width: 100%;
+}
+
+@media (max-width: 520px) {
+  .exp-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.exp-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  --exp-frame-radius: 24px;
+}
+
+/* border-beam wrapper around the live demo frame — carries the -3px nudge so
+   the beam stroke stays glued to the frame's edge. Radius matches image cards. */
+.exp-card__beam {
+  width: 100%;
+  transform: translateY(-3px);
+  border-radius: var(--exp-frame-radius) !important;
+  overflow: hidden;
+  isolation: isolate;
+  clip-path: inset(0 round var(--exp-frame-radius));
+}
+
+.exp-card__beam[data-beam]::before,
+.exp-card__beam[data-beam]::after,
+.exp-card__beam[data-beam] [data-beam-bloom] {
+  border-radius: var(--exp-frame-radius) !important;
+}
+
+.exp-card__beam[data-beam]::before {
+  box-shadow: none !important;
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .exp-card__beam {
+    corner-shape: var(--corner-smooth-max);
+  }
+}
+
+.exp-card__frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  background: var(--exp-card-fill);
+  border-radius: var(--exp-frame-radius);
+  box-shadow: none;
+  isolation: isolate;
+  clip-path: inset(0 round var(--exp-frame-radius));
+}
+
+@supports (corner-shape: superellipse(2)) {
+  .exp-card__frame {
+    corner-shape: var(--corner-smooth-max);
+  }
+
+  .exp-card__image {
+    corner-shape: inherit;
+  }
+
+  .bento__tile {
+    corner-shape: var(--corner-smooth);
+  }
+}
+
+.exp-card__frame--image {
+  background: var(--color-white);
+}
+
+.exp-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* Caption inside the frame: title top-left, optional note top-right.
+   pointer-events: none keeps the live demo's full hit area underneath. */
+.exp-card__caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  pointer-events: none;
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+}
+
+.exp-card__title {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.exp-card__label {
+  display: block;
+  color: var(--text-strong);
+  font-weight: var(--weight-medium, 500);
+}
+
+.exp-card__subtitle {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-leading);
+}
+
+.exp-card__note {
+  align-self: flex-start;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.exp-card__fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--exp-canvas);
+}
+
+/* Photo tiles: light ink over a soft top scrim so the caption survives
+   arbitrary imagery. Live demos keep theme ink on their quiet canvas. */
+.exp-card__frame--image .exp-card__caption {
+  padding-bottom: var(--space-8);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+}
+
+.exp-card__frame--image .exp-card__label {
+  color: #ffffff;
+}
+
+.exp-card__frame--image .exp-card__subtitle {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.exp-card__frame--image .exp-card__note {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Linked notes (credits) stay clickable through the pass-through caption */
+.exp-card__note--link {
+  pointer-events: auto;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+.exp-card__note--link:hover,
+.exp-card__note--link:focus-visible {
+  color: var(--text-strong);
+}
+
+/* ---- CSS miniatures ---------------------------------------------------- */
+.mock {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Jelly volume slider — squished thumb on a filled track */
+.mock--jelly .mock-track {
+  position: relative;
+  width: 66%;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 8%, transparent);
+}
+.mock--jelly .mock-fill {
+  position: absolute;
+  inset: 0 42% 0 0;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+}
+.mock--jelly .mock-thumb {
+  position: absolute;
+  left: 58%;
+  top: 50%;
+  width: 20px;
+  height: 13px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+}
+
+/* Wallet menu — stacked overlapping cards */
+.mock--wallet {
+  grid-auto-flow: row;
+}
+.mock--wallet .mock-card {
+  position: absolute;
+  left: 50%;
+  width: 56%;
+  height: 26%;
+  border-radius: 10px;
+  background: var(--color-white);
+}
+.mock--wallet {
+  position: relative;
+}
+.mock--wallet .mock-card:nth-child(1) {
+  top: 22%;
+  width: 48%;
+  transform: translateX(-50%);
+}
+.mock--wallet .mock-card:nth-child(2) {
+  top: 38%;
+  width: 54%;
+  transform: translateX(-50%);
+}
+.mock--wallet .mock-card:nth-child(3) {
+  top: 54%;
+  width: 60%;
+  background: var(--text-primary);
+  transform: translateX(-50%);
+}
+
+/* Sticker peel — rounded sticker with a lifted corner */
+.mock--sticker .mock-sticker {
+  position: relative;
+  width: 46%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: var(--text-primary);
+}
+.mock--sticker .mock-peel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  height: 46%;
+  background: var(--color-white);
+  border-bottom-right-radius: 16px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/* Cylinder gallery — tiles bent into a curve */
+.mock--cylinder {
+  display: flex;
+  gap: 5px;
+  perspective: 340px;
+}
+.mock--cylinder .mock-tile {
+  width: 18px;
+  height: 48px;
+  border-radius: 6px;
+  background: var(--color-white);
+}
+.mock--cylinder .mock-tile:nth-child(1) {
+  transform: rotateY(42deg);
+  background: color-mix(in oklab, var(--color-black) 22%, var(--color-white));
+}
+.mock--cylinder .mock-tile:nth-child(2) {
+  transform: rotateY(22deg);
+}
+.mock--cylinder .mock-tile:nth-child(3) {
+  transform: rotateY(0deg) scale(1.08);
+  background: var(--text-primary);
+}
+.mock--cylinder .mock-tile:nth-child(4) {
+  transform: rotateY(-22deg);
+}
+.mock--cylinder .mock-tile:nth-child(5) {
+  transform: rotateY(-42deg);
+  background: color-mix(in oklab, var(--color-black) 22%, var(--color-white));
+}
+
+/* Sprout onboarding — a screen with copy lines and step dots */
+.mock--sprout {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 60%;
+  height: 100%;
+}
+.mock--sprout .mock-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: var(--space-3);
+  border-radius: 12px;
+  background: var(--color-white);
+}
+.mock--sprout .mock-line {
+  height: 6px;
+  width: 100%;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 12%, transparent);
+}
+.mock--sprout .mock-line--short {
+  width: 60%;
+}
+.mock--sprout .mock-dots {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+.mock--sprout .mock-dots b {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 18%, transparent);
+  transition: width var(--dur) var(--ease-out-strong);
+}
+.mock--sprout .mock-dots b.is-on {
+  width: 16px;
+  background: var(--text-primary);
+}
+
+/* Page navigation — vertical wayfinding pills, one active */
+.mock--nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  width: 46%;
+}
+.mock--nav .mock-pill {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-black) 10%, transparent);
+}
+.mock--nav .mock-pill:nth-child(1) {
+  width: 70%;
+}
+.mock--nav .mock-pill.is-active {
+  width: 100%;
+  background: var(--text-primary);
+}
+.mock--nav .mock-pill:nth-child(3) {
+  width: 52%;
+}
+.mock--nav .mock-pill:nth-child(4) {
+  width: 82%;
+}
+

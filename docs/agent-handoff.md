@@ -57,9 +57,8 @@ Summary:
 - Removed internal draft notes that rendered in case study placeholders.
 
 Open review items:
-- Confirm whether old/archive folders should be removed or migrated.
 - Confirm whether personal asset filenames should be sanitized.
-- Confirm whether draft case study placeholders should be removed or hidden from production.
+- Physical iPhone device gate for iOS dock (see § Loop).
 
 ## Legacy portfolio assets (for agents)
 
@@ -69,8 +68,7 @@ Reference media from the old Framer site (`wineury.design`) is **not in git**. R
 | ---- | ---- | ----- |
 | **Live-site scraper** | `scripts/scrape-wineury-design.mjs` | Run: `npm run scrape:wineury-design` or `node scripts/scrape-wineury-design.mjs` |
 | **Scrape output** | `exports/wineury-design/` | Gitignored. After run, see `manifest.json` and `cases/{slug}/mockups|videos|…` |
-| **Wired case assets** | `src/assets/case/` | Only assets imported in `src/content.js` ship in the build |
-| **Figma archive script** | `.agents/private/scripts/archive-portfolio-assets.mjs` | Gitignored; outputs to `public/portfolio/` (older rebuild shell, not current case study) |
-| **Work list order** | `CASE_STUDY_ORDER` in `src/content.js` | Newest project window first; do not rely on object key order |
+| **Wired case assets** | `src/assets/case/` | Only assets imported in `src/content/` ship in the build |
+| **Work list order** | `CASE_STUDY_ORDER` in `src/content/index.js` | Shipped studies first; WIP slugs last (locked in UI) |
 
-Do not commit `exports/` or scrape downloads. Convert picks to WebP (or keep video) under `src/assets/` and reference from `content.js`.
+Do not commit `exports/` or scrape downloads. Convert picks to WebP (or keep video) under `src/assets/` and reference from `content`.

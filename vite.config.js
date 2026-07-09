@@ -27,9 +27,6 @@ export default defineConfig({
           if (normalizedId.includes("/node_modules/gsap/")) {
             return "vendor-gsap";
           }
-          if (normalizedId.includes("/node_modules/@paper-design/")) {
-            return "vendor-shaders";
-          }
           return undefined;
         },
       },

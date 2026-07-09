@@ -1,0 +1,148 @@
+/* =============================================================================
+   App styles
+   ========================================================================== */
+
+/* =============================================================================
+   Ambient backdrop — fixed to the bottom of the viewport; never scrolls.
+   ========================================================================== */
+.backdrop {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* Hang the container below the viewport so the image can paint into the strip
+     iOS Safari reveals when the dynamic toolbar hides — see --backdrop-bleed. */
+  bottom: calc(-1 * var(--backdrop-bleed));
+  top: auto;
+  z-index: 0;
+  /* Figma node 558:173 — bg 6-11 1; visible band is still 25vw / 480px, plus bleed. */
+  width: 100%;
+  height: calc(25vw + var(--backdrop-bleed));
+  max-height: calc(480px + var(--backdrop-bleed));
+  overflow: visible;
+  pointer-events: none;
+  background: transparent;
+  /* iOS Safari: own compositor layer so momentum overscroll does not drag the
+     band with the page. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Feather the band's own top edge so wherever the crop window lands it eases
+   out instead of cutting a hard horizontal line. The art's baked top fade only
+   lands above the crop window at narrow widths; as the viewport widens the band
+   top (25vw, capped 480) sits progressively deeper into the image (~18% in at
+   1024w → ~30% at 1920w), slicing opaque glow mid-alpha. Applied to the parent
+   so it stays independent of the blob exclude-mask on the child. Feather height
+   caps at 72px so it never eats into the glow's lower core. */
+.backdrop {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 clamp(40px, 16vw, 72px)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 clamp(40px, 16vw, 72px)
+  );
+}
+
+.backdrop__img {
+  position: absolute;
+  /* Fills the band exactly: the element box is the crop window, and — because
+     the mask below positions in element space — this keeps the --blob-* vars
+     from Backdrop.jsx (computed in band/viewport coordinates) aligned. */
+  inset: 0;
+  background-image: var(--backdrop-img);
+  background-repeat: no-repeat;
+  /* bg-pf.webp (2688×1108, from the 4032×1662 master) bakes soft transparent
+     fades into its own canvas:
+     ~7% of the width on the left, ~10% on the right, ~8% of the height at the
+     bottom. Painted edge-to-edge those fades die on-screen as visible blurred
+     rims. Oversize the art uniformly (130% width, height aspect-locked — never
+     stretched) and sink its bottom edge past the band's bottom (which already
+     hangs --backdrop-bleed below the viewport), so every baked fade lands
+     off-screen and the glow runs cleanly off the left, right, and bottom
+     edges. The 1200px floor keeps phones from scaling the art so small that
+     the bleed swallows the whole glow; the 40px sink floor keeps the bottom
+     fade buried when 5vw shrinks below the fade's rendered height. */
+  background-size: max(130%, 1200px) auto;
+  background-position: left 50% bottom calc(-1 * max(5vw, 40px));
+  pointer-events: none;
+  /* ---- Legibility mask --------------------------------------------------- *
+     The blurred blob (Figma 557:168) is composited OUT of the glow
+     (exclude = inverted alpha), so the image is genuinely erased where copy
+     overlaps it — soft feathered edges come baked into the SVG's blur.
+     Geometry (--blob-*) is driven from Backdrop.jsx: X locked to the content
+     column, height GSAP-stretched downward past the viewport bottom as copy
+     intrudes into the band. Defaults park the blob far outside the band,
+     leaving the image whole until JS measures. */
+  -webkit-mask-image: url("/scrim-blob.svg"), linear-gradient(#000, #000);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
+  -webkit-mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
+  -webkit-mask-composite: xor;
+  mask-image: url("/scrim-blob.svg"), linear-gradient(#000, #000);
+  mask-repeat: no-repeat;
+  mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
+  mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
+  mask-composite: exclude;
+}
+
+/* Case studies scroll past long copy that reaches the band — sink the glow
+   ~1.5vw lower so less of it competes with content. */
+.backdrop--case .backdrop__img {
+  background-position: left 50% bottom calc(-1 * max(6.5vw, 56px));
+}
+
+/* ---- Shell / layout ----------------------------------------------------- */
+.shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 100svh;
+  padding: 100px var(--page-pad) var(--space-10);
+}
+
+/* Home and the case-study page stack in one cell; whichever is active owns
+   the column while the other dims (home) or unmounts (case study). */
+.stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  width: 100%;
+  max-width: var(--content-max);
+  overflow: visible;
+  /* Sole owner of the home ↔ case width morph; ease-in-out for on-screen travel. */
+  transition: max-width var(--dur-layout) var(--ease-in-out-strong);
+}
+
+/* Case study opens wider; home column stays pinned at --content-max behind it. */
+.stage--case {
+  max-width: var(--content-max-cs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    transition: none;
+  }
+}
+
+.stage--case .stage__home .content-wrapper {
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.stage__home,
+.cs {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 1;
+  width: 100%;
+  overflow: visible;
+}
+
