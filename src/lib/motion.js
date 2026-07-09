@@ -20,6 +20,12 @@ export const DUR_REVEAL = 0.32;
 /** Shared fill glide — subtle spring, no harsh bounce (Emil Apple-style). */
 export const SPRING_FILL = { type: "spring", duration: 0.45, bounce: 0.12 };
 
+/** About-filmstrip focus glide. A spring (not a fixed ease) so a fast hover from
+    one word to the next hands off with momentum instead of restarting from a dead
+    stop; low bounce so it settles onto the centred photo, not past it. Replaces a
+    0.9s ease-in-out that felt sluggish as hover feedback. */
+export const FILMSTRIP_GLIDE = { type: "spring", duration: 0.55, bounce: 0.1 };
+
 export const uiEnter = (reducedMotion = false) =>
   reducedMotion ? { duration: 0.12 } : { duration: DUR_UI, ease: EASE_OUT };
 

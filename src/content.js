@@ -1074,7 +1074,8 @@ export const site = {
      Hover-word photos carry a short `cap` shown centered on hover in the
      expanded bento (alt stays the long, descriptive text). */
   about: [
-    "I'm a 23-year-old product designer and researcher based in Atlanta.",
+    "I'm a product designer and researcher based in Atlanta. I started in mobile UX and behavioral tracking, and I care about making interfaces feel clear, useful, and easy to stay with.",
+    "I was born in Queens and raised in Atlanta, so a lot of how I think about design comes from watching how people move through real places.",
     [
       { text: "I'm drawn to tools that change what's possible, whether that's ", tone: "muted" },
       { tool: "Figma", icon: "figma" },
@@ -1090,7 +1091,6 @@ export const site = {
       { tool: "Firebase", icon: "firebase" },
       { text: ".", tone: "muted" },
     ],
-    "I started in mobile UX and behavioral tracking. I think in systems: what stays coherent as a product grows, where the smallest decision carries the most weight, and what makes an interface feel like it was always supposed to be that way.",
     [
       {
         text: "I'm open to founding or early product design roles. Work that's still close to the core decisions and has room to shape what the product becomes.",
@@ -1098,7 +1098,7 @@ export const site = {
       },
     ],
     [
-      "Outside of work, I love ",
+      "When I'm not working, I'm usually thinking about ",
       {
         word: "food",
         photos: [
@@ -1107,7 +1107,7 @@ export const site = {
           { src: foodBirria, alt: "Birria tacos with a cup of consommé", cap: "birria, extra consommé" },
         ],
       },
-      ", I'm always wishing I could visit ",
+      ", wishing I could get back to ",
       {
         word: "my country",
         photos: [
@@ -1116,7 +1116,7 @@ export const site = {
           { src: travelBallpark, alt: "A winter-league baseball game at night", cap: "winter league nights" },
         ],
       },
-      " more, and I try to stay consistent at ",
+      " more often, or dragging myself to ",
       {
         word: "the gym",
         photos: [
@@ -1124,14 +1124,14 @@ export const site = {
           { src: gymMirror, alt: "Gym mirror selfie in the locker room", cap: "locker room check-in" },
         ],
       },
-      ". I also like digging through ",
+      ". I dig through ",
       {
         word: "vinyl",
         photos: [
           { src: vinylOxymoron, alt: "ScHoolboy Q's Oxymoron on vinyl, found in the wild", cap: "oxymoron, found in the wild" },
         ],
       },
-      " bins and hanging out with ",
+      " when I find a good bin, hang out with ",
       {
         word: "my family's dogs",
         photos: [
@@ -1139,10 +1139,10 @@ export const site = {
           { src: dogPoodle, alt: "A curly toy poodle standing on a wood floor", cap: "the menace" },
         ],
       },
-      ". Oh, and I love me some ",
+      ", and yeah, I'm pretty into ",
       {
         word: "Spider-Man",
-        photos: [{ src: milesPlush, alt: "A Spider-Man plush", cap: "Spider-Man stays" }],
+        photos: [{ src: milesPlush, alt: "A Spider-Man plush on a shelf", cap: "Spider-Man stays" }],
       },
       ".",
     ],
