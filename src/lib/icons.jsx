@@ -3,11 +3,9 @@
    where deep CJS entry points resolve under Vite (tab marks, case glyphs). */
 
 import { IconColorPalette as CentralColorPalette } from "central-icons/IconColorPalette";
-import { IconArrowDown as CentralArrowDown } from "central-icons/IconArrowDown";
-import { IconArrowUp as CentralArrowUp } from "central-icons/IconArrowUp";
 import { IconArrowUpRight as CentralArrowUpRight } from "central-icons/IconArrowUpRight";
-import { IconCheckmark1Small as CentralCheckmark1Small } from "central-icons/IconCheckmark1Small";
-import { IconCirclePlaceholderOn } from "central-icons/IconCirclePlaceholderOn";
+import { IconCircleCheck } from "central-icons/IconCircleCheck";
+import { IconCircleInfo } from "central-icons/IconCircleInfo";
 import { IconCircleX } from "central-icons/IconCircleX";
 import { IconCompassRound } from "central-icons/IconCompassRound";
 import { IconCrossSmall } from "central-icons/IconCrossSmall";
@@ -142,15 +140,42 @@ const IconGuideAccess = makeCentralIcon(IconEyeOpen);
 const IconGuideInteraction = makeCentralIcon(IconTouch);
 const IconCursorArrow = makeCentralIcon(CentralArrowUpRight);
 const IconTrafficCone = makeIcon(TrafficCone);
-/* Toast stack marks + dismiss — Central Icons. */
-const IconToastCheck = makeCentralIcon(CentralCheckmark1Small);
+/* Toast stack marks + dismiss — Central Icons, one glyph per tone. */
+const IconToastCheck = makeCentralIcon(IconCircleCheck);
+const IconToastInfo = makeCentralIcon(IconCircleInfo);
 const IconToastWarn = makeCentralIcon(IconWarningSign);
 const IconToastError = makeCentralIcon(IconCircleX);
-const IconToastDot = makeCentralIcon(IconCirclePlaceholderOn);
 const IconToastClose = makeCentralIcon(IconCrossSmall);
-/* Dither metric delta arrows — Central Icons. */
-const IconDeltaUp = makeCentralIcon(CentralArrowUp);
-const IconDeltaDown = makeCentralIcon(CentralArrowDown);
+
+/* 8-bit / dither-feel delta arrows — stepped pixel triangles, not smooth strokes. */
+function PixelArrow({ dir = "up", size = 12, className, ariaHidden = true }) {
+  const up =
+    "M3 1h2v1h1v1h1v1h1v1H6v1H5v2H3V6H2V5H1V4h1V3h1V2h1V1z";
+  const down =
+    "M3 1h2v2h1v1h1v1h1v1H6v1H5v1H3v-1H2v-1H1V5h1V4h1V3h1V1z";
+  return (
+    <svg
+      className={className}
+      width={size}
+      height={size}
+      viewBox="0 0 8 8"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="crispEdges"
+      aria-hidden={ariaHidden || undefined}
+    >
+      <path d={dir === "up" ? up : down} />
+    </svg>
+  );
+}
+
+function IconDeltaUp({ size = 12, className, ariaHidden = true }) {
+  return <PixelArrow dir="up" size={size} className={className} ariaHidden={ariaHidden} />;
+}
+
+function IconDeltaDown({ size = 12, className, ariaHidden = true }) {
+  return <PixelArrow dir="down" size={size} className={className} ariaHidden={ariaHidden} />;
+}
 /* Waving hand for the case-study sign-off. */
 const IconWave = makeCentralIcon(IconRaisingHand5Finger);
 function IconFigmaMark({ className, size = 14, ariaHidden }) {
@@ -244,8 +269,8 @@ export {
   IconTabWork,
   IconToastCheck,
   IconToastClose,
-  IconToastDot,
   IconToastError,
+  IconToastInfo,
   IconToastWarn,
   IconUser,
   IconWave,

@@ -8,6 +8,7 @@
   --ts-shadow:
     0 4px 12px rgba(0, 0, 0, 0.08),
     0 0 0 1px color-mix(in oklab, var(--ts-border) 80%, transparent);
+  --ts-info: var(--accent-features);
   --ts-success: var(--accent-wireframes);
   --ts-warning: var(--accent-overview);
   --ts-error: var(--accent-problem);
@@ -68,7 +69,7 @@
 
 /* Realistic toast card — rounded rect, not a pill button. */
 .ts-toast {
-  --ts-dither: var(--ts-muted);
+  --ts-dither: var(--ts-info);
 
   position: absolute;
   left: 0;
@@ -82,6 +83,10 @@
   touch-action: pan-y;
   cursor: grab;
   overflow: hidden;
+}
+
+.ts-toast[data-tone="default"] {
+  --ts-dither: var(--ts-info);
 }
 
 .ts-toast[data-tone="success"] {
@@ -139,7 +144,7 @@
   padding: 12px 12px 12px 14px;
 }
 
-/* Bare Central mark — no chip fill; vertically centered with copy. */
+/* Central mark per tone — dedicated accent, no chip fill. */
 .ts-mark {
   display: grid;
   place-items: center;
@@ -147,14 +152,10 @@
   height: 14px;
   flex-shrink: 0;
   background: transparent;
-  color: var(--ts-muted);
 }
 
-.ts-mark--default {
-  width: 10px;
-  height: 10px;
-  margin-inline: 2px;
-  opacity: 0.55;
+.ts-mark--info {
+  color: var(--ts-info);
 }
 
 .ts-mark--success {

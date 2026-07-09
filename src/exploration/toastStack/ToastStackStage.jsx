@@ -16,8 +16,8 @@ import {
 import {
   IconToastCheck,
   IconToastClose,
-  IconToastDot,
   IconToastError,
+  IconToastInfo,
   IconToastWarn,
 } from "@/lib/icons.jsx";
 
@@ -55,8 +55,8 @@ function ToneMark({ tone }) {
     );
   }
   return (
-    <span className="ts-mark ts-mark--default" aria-hidden>
-      <IconToastDot size={10} />
+    <span className="ts-mark ts-mark--info" aria-hidden>
+      <IconToastInfo size={14} />
     </span>
   );
 }
