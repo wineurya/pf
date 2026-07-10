@@ -86,6 +86,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /* Whole list, not just the 28px handle — iOS Safari / mobile Chrome treat a
+     vertical finger move as page scroll and fire pointercancel, killing Motion
+     reorder mid-gesture. Short list; page still scrolls from outside the card. */
+  touch-action: none;
 }
 
 .cq-row {
@@ -95,6 +99,7 @@
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none;
   outline: none;
 }
 
@@ -124,6 +129,17 @@
   background: var(--cq-glass-lifted);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+}
+
+/* WebKit (and sometimes mobile Blink) mis-composites backdrop-filter when an
+   ancestor is Motion-transformed (y + scale + rotate). Coarse pointers skip
+   the blur and keep a solid lifted plate instead. */
+@media (pointer: coarse) {
+  .cq-row[data-lifted] .cq-row-glass {
+    background: var(--cq-glass-strong);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 .cq-row:focus-visible .cq-row-glass {
