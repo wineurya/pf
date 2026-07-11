@@ -16,12 +16,12 @@ export const BILLING_PLANS = [
     cta: "Start free",
   },
   {
-    id: "pro",
-    name: "Pro",
+    id: "premium",
+    name: "Premium",
     featured: true,
     price: { monthly: 24, yearly: 18 },
     note: { monthly: "billed monthly", yearly: "billed yearly" },
     features: ["Unlimited projects", "Custom domains", "Priority support"],
-    cta: "Get Pro",
+    cta: "Get Premium",
   },
 ];

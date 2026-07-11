@@ -13,8 +13,8 @@ const EASE = [0.22, 1, 0.36, 1];
 const CLIP_MS = 260;
 const CLIP_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
 
-/* Soft emerald mesh for the Pro corner wash. */
-const PRO_MESH = ["#ecfdf5", "#6ee7b7", "#10b981", "#059669"];
+/* Soft emerald mesh for the featured plan's corner wash. */
+const FEATURED_MESH = ["#ecfdf5", "#6ee7b7", "#10b981", "#059669"];
 
 /* Curved top-right triangle mask: top-middle → rounded TR corner →
    ~34% down the right edge. Feathers to nothing on the inner edge.
@@ -78,7 +78,7 @@ function PriceNote({ text, reduceMotion }) {
   );
 }
 
-function ProCornerWash({ reduceMotion }) {
+function FeaturedCornerWash({ reduceMotion }) {
   return (
     <div
       className={reduceMotion ? "bt-plan-wash" : "bt-plan-wash is-alive"}
@@ -86,7 +86,7 @@ function ProCornerWash({ reduceMotion }) {
     >
       <div className="bt-plan-wash-shader" style={MASK_STYLE}>
         <MeshGradient
-          colors={PRO_MESH}
+          colors={FEATURED_MESH}
           distortion={0.55}
           swirl={0.2}
           grainMixer={0.12}
@@ -108,7 +108,7 @@ function PlanColumn({ plan, period, reduceMotion, onCta }) {
       data-featured={plan.featured || undefined}
       aria-label={`${plan.name} plan`}
     >
-      {plan.featured ? <ProCornerWash reduceMotion={reduceMotion} /> : null}
+      {plan.featured ? <FeaturedCornerWash reduceMotion={reduceMotion} /> : null}
       <header className="bt-plan-head">
         <p className="bt-plan-name">{plan.name}</p>
         {plan.featured ? <span className="bt-plan-tag">Popular</span> : null}
@@ -148,9 +148,9 @@ function PlanColumn({ plan, period, reduceMotion, onCta }) {
   );
 }
 
-/** Billing period tabs — exclusion tabs over two plan cards; Pro corner uses
-    a masked MeshGradient; shared cursor outline on both cards; prices morph;
-    CTA fires a shape burst. */
+/** Billing period tabs — exclusion tabs over two plan cards; the featured
+    plan's corner uses a masked MeshGradient; shared cursor outline on both
+    cards; prices morph; CTA fires a shape burst. */
 export function BillingTabsStage({ className }) {
   const reduceMotion = useReducedMotion() ?? false;
   const [period, setPeriod] = useState("monthly");
