@@ -72,19 +72,21 @@
 }
 
 @media (min-width: 860px) {
-  .rail {
+  /* The dock wrapper (a floating pill below 860px) is the rail-lane cluster
+     here: ONE sticky grid child holding the tablist with the theme toggle
+     under it, so nav + theme scroll, stick, and dodge as a unit. */
+  .home-bottom-bar__dock {
     position: sticky;
     top: 100px;
     grid-row: 1;
     grid-column: 1;
     justify-self: start;
     z-index: 40;
+    display: flex;
     flex-direction: column;
-    flex-wrap: nowrap;
     align-items: flex-start;
-    gap: var(--space-1);
-    margin-bottom: 0;
-    /* Same left edge as .theme-toggle — max(page-pad, column edge − offset). */
+    gap: var(--space-4);
+    /* Left edge = max(page-pad, column edge − rail offset). */
     margin-left: max(
       calc(var(--page-pad) - 50vw + var(--content-max) / 2),
       calc(-1 * var(--rail-offset))
@@ -96,10 +98,19 @@
     transform: translateX(var(--rail-dodge, 0px));
     transition: transform var(--dur-layout) var(--ease-out-strong);
   }
+
+  .rail {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: var(--space-1);
+    margin-bottom: 0;
+    margin-left: 0; /* the lane margin lives on the dock cluster */
+  }
 }
 
 @media (min-width: 860px) and (prefers-reduced-motion: reduce) {
-  .rail {
+  .home-bottom-bar__dock {
     transition: none;
   }
 }
@@ -215,31 +226,6 @@
     background: var(--dock-bg);
   }
 
-  .home-bottom-bar .theme-toggle {
-    position: static;
-    left: auto;
-    bottom: auto;
-    flex-shrink: 0;
-    width: var(--dock-cell);
-    height: var(--dock-cell);
-    border-radius: 50%;
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  .home-bottom-bar .theme-toggle:active {
-    background: var(--hover-lift);
-  }
-
-  @media (hover: hover) {
-    .home-bottom-bar .theme-toggle:hover {
-      color: var(--text-strong);
-      background: var(--hover-lift);
-    }
-  }
-
   .home-bottom-bar .rail {
     position: static;
     flex: 1 1 auto;
@@ -300,12 +286,10 @@
 }
 
 @media (min-width: 860px) {
-  /* Dissolve BOTH the bar and its inner dock wrapper so the rail + theme toggle
-     become direct grid children again — the rail then takes its left-margin grid
-     cell and sticks aligned with the top of the header text (the dock pill is a
-     mobile-only shape). */
-  .home-bottom-bar,
-  .home-bottom-bar__dock {
+  /* Dissolve the bar so the dock becomes a direct grid child — it keeps its
+     box and serves as the sticky rail-lane cluster (rule near .rail above);
+     the floating pill shape is mobile-only. */
+  .home-bottom-bar {
     display: contents;
   }
 }
@@ -345,12 +329,10 @@
   gap: var(--space-1);
 }
 
-/* Phones: the theme toggle rides at the top-right of the header, inline with the
-   name/role block, instead of the bottom dock. Overrides the base fixed position
-   so it flows in the identity row; ≥860px keeps the fixed bottom-left placement. */
+/* Phones: the theme toggle rides at the top-right of the header, inline with
+   the name/role block; ≥860px it lives in the rail-lane cluster instead. */
 @media (max-width: 859px) {
   .head__identity .theme-toggle {
-    position: static;
     margin-left: auto;
     flex-shrink: 0;
   }

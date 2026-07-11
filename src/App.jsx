@@ -493,10 +493,6 @@ export function App() {
         Skip to content
       </a>
 
-      {study ? (
-        <ThemeToggle theme={theme} onToggle={toggleTheme} caseOpen />
-      ) : null}
-
       <div className="shell">
         <div className={`stage${study ? " stage--case" : ""}`}>
           {/* Home never unmounts — it dims while a case study sits on top,
@@ -524,16 +520,24 @@ export function App() {
                     layoutId={isMobileDock ? "m-dock-shell" : undefined}
                     transition={{ layout: dockMorph(reducedMotion) }}
                   >
-                    {/* On phones the toggle rides in the header (top-right, inline
-                        with name/role); the dock keeps it on the ≥860px rail. */}
-                    {isMobileDock ? null : (
-                      <ThemeToggle theme={theme} onToggle={toggleTheme} />
-                    )}
                     <Tabs
                       items={tabs}
                       value={tab}
                       onChange={(id) => startTransition(() => setTab(id))}
                     />
+                    {/* On phones the toggle rides in the header (top-right, inline
+                        with name/role); ≥860px the dock is the sticky rail cluster
+                        and the toggle sits under the section tabs. It stays a
+                        SIBLING of the rail — .rail is the tablist, and a tablist
+                        only admits tab children. The layoutId pairs it with the
+                        case rail's toggle so open/close glides one shared toggle. */}
+                    {isMobileDock ? null : (
+                      <ThemeToggle
+                        theme={theme}
+                        onToggle={toggleTheme}
+                        layoutId="theme-toggle"
+                      />
+                    )}
                   </motion.div>
                 )}
               </div>

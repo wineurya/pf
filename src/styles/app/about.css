@@ -222,6 +222,7 @@
    ========================================================================== */
 .afilm {
   --afilm-bleed: 120px;
+  --sticker-size: 38px;
   margin-top: var(--gap-section);
   /* Kill the track's max-content contribution so the strip can't inflate
      the flex column (content-main) — then take the real width back. */
@@ -259,23 +260,20 @@
 }
 
 .afilm__photo {
-  padding: var(--space-1) 0; /* headroom so the hover scale never clips */
+  /* Headroom for the hover scale AND the sticker overhang — stickers
+     straddle the frame edge by just under half their size, plus a little
+     slack for the bounding box their tilt adds. */
+  padding: calc(var(--sticker-size) * 0.58) 0;
   border: 0;
   background: none;
   cursor: pointer;
   flex: none;
 }
 
-.afilm__img {
+/* Photo + sticker move, dim and scale as one print. */
+.afilm__pic {
+  position: relative;
   display: block;
-  height: 168px;
-  width: auto;
-  /* Never narrower than square — portrait shots crop to 1:1; landscape
-     shots keep their natural (wider) ratio. */
-  min-width: 168px;
-  object-fit: cover;
-  max-width: none;
-  border-radius: var(--radius-sm);
   transition:
     opacity var(--dur) var(--ease-standard),
     filter var(--dur) var(--ease-standard),
@@ -284,25 +282,73 @@
     transform var(--dur-fast) var(--ease-standard);
 }
 
+.afilm__img {
+  display: block;
+  height: 184px;
+  width: auto;
+  /* Never narrower than square — portrait shots crop to 1:1; landscape
+     shots keep their natural (wider) ratio. */
+  min-width: 184px;
+  object-fit: cover;
+  max-width: none;
+  border-radius: var(--radius-sm);
+}
+
+/* Die-cut sticker pinned to the frame edge named by data-edge, offset --at %
+   along it (content keeps it off the corners), tilted --tilt. It hangs just
+   under half off the print so it reads as slapped on, not printed in. */
+.afilm__sticker {
+  position: absolute;
+  width: var(--sticker-size);
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.2));
+}
+
+.afilm__sticker[data-edge="top"] {
+  top: 0;
+  left: var(--at);
+  transform: translate(-50%, -45%) rotate(var(--tilt));
+}
+
+.afilm__sticker[data-edge="bottom"] {
+  bottom: 0;
+  left: var(--at);
+  transform: translate(-50%, 45%) rotate(var(--tilt));
+}
+
+.afilm__sticker[data-edge="left"] {
+  left: 0;
+  top: var(--at);
+  transform: translate(-45%, -50%) rotate(var(--tilt));
+}
+
+.afilm__sticker[data-edge="right"] {
+  right: 0;
+  top: var(--at);
+  transform: translate(45%, -50%) rotate(var(--tilt));
+}
+
 /* Selection: the chosen word's photos hold full ink; the rest recede. */
-.afilm[data-has-selection="true"] .afilm__photo:not(.is-active) .afilm__img {
+.afilm[data-has-selection="true"] .afilm__photo:not(.is-active) .afilm__pic {
   opacity: 0.3;
   filter: grayscale(0.7);
 }
 
-.afilm[data-has-selection="true"] .afilm__photo.is-active .afilm__img {
+.afilm[data-has-selection="true"] .afilm__photo.is-active .afilm__pic {
   transform: scale(1.02);
 }
 
 @media (hover: hover) {
-  .afilm__photo:hover .afilm__img {
+  .afilm__photo:hover .afilm__pic {
     transform: scale(1.02);
   }
 }
 
 /* Press feedback (Emil: pressable tiles must feel responsive). Outside the
    hover query so taps get it too; after :hover so a press while hovering wins. */
-.afilm__photo:active .afilm__img {
+.afilm__photo:active .afilm__pic {
   transform: scale(0.98);
 }
 
@@ -310,24 +356,31 @@
   /* Bleed to the window edges exactly — the column's own side padding. */
   .afilm {
     --afilm-bleed: var(--page-pad);
+    --sticker-size: 30px;
   }
 
   .afilm__img {
-    height: 120px;
-    min-width: 120px;
+    height: 128px;
+    min-width: 128px;
   }
 }
 
 /* =============================================================================
-   Theme toggle — bottom-left, left-aligned with the rail (TOC). Sun ⟷ moon
-   morph: core radius grows, mask circle slides in for the crescent, rays
-   rotate out. cx/cy/r transition as CSS properties.
+   Theme toggle — an in-flow control, never a floating corner button. User
+   testing missed the old fixed bottom-left spot, so it now lives inside each
+   surface's control cluster: under the home rail tabs, at the end of the
+   case-study rail (both sticky, so it stays reachable while scrolled), in the
+   mobile header row, and in the floating case dock. Rail language: naked icon,
+   fill only on hover — no resting chip. Sun ⟷ moon morph: core radius grows,
+   mask circle slides in for the crescent, rays rotate out. cx/cy/r transition
+   as CSS properties.
+
+   Entrance + press-scale + the home ⟷ case-rail shared-element glide live in
+   Motion (ThemeToggle.jsx: clipPath wipe, whileTap, layoutId) — no CSS
+   transform or mount animation here, they would fight Motion's inline
+   transform.
    ========================================================================== */
 .theme-toggle {
-  position: fixed;
-  left: var(--page-pad);
-  bottom: var(--space-8);
-  z-index: 50;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -337,12 +390,7 @@
   border-radius: var(--radius-pill);
   transition:
     color var(--dur-fast) var(--ease-standard),
-    background-color var(--dur) var(--ease-standard),
-    transform var(--dur-fast) var(--ease-out-strong);
-}
-
-.theme-toggle:active {
-  transform: scale(0.97);
+    background-color var(--dur) var(--ease-standard);
 }
 
 @media (hover: hover) {
@@ -354,64 +402,6 @@
 
 .theme-toggle:focus-visible {
   color: var(--text-strong);
-}
-
-/* Radial reveal — the toggle wipes in as a circle expanding from its centre.
-   The clip-path radius is a directly-animated property the browser interpolates
-   and repaints every frame; an earlier mask-image + animated-var version was
-   evaluated but never re-rasterised by Chromium, so it jumped in instantly.
-   `backwards` fill shows the collapsed circle before start and releases after,
-   so the rest state has no clip — :active press-scale, the hover background and
-   the 860px left-rail transitions are untouched. circle(80%) clears the button
-   before the hand-off to no-clip, so there's no pop. Reduced-motion skips it. */
-@media (prefers-reduced-motion: no-preference) {
-  .theme-toggle {
-    animation: tt-reveal var(--dur-slow) var(--ease-out-strong) 90ms backwards;
-  }
-}
-
-@keyframes tt-reveal {
-  from {
-    clip-path: circle(0% at 50% 50%);
-  }
-  to {
-    clip-path: circle(80% at 50% 50%);
-  }
-}
-
-@media (min-width: 860px) {
-  /* Same x as the rail pills: content column left edge minus the rail offset. */
-  .theme-toggle {
-    left: max(
-      var(--page-pad),
-      calc(50vw - var(--content-max) / 2 - var(--rail-offset))
-    );
-    /* Rides the rail's dodge (useRailDodge) so the shared left edge holds
-       while the wide work grid passes; `translate` — not transform — so the
-       :active press-scale composes instead of clobbering the shift. */
-    translate: var(--rail-dodge, 0px) 0;
-    transition:
-      color var(--dur-fast) var(--ease-standard),
-      background-color var(--dur) var(--ease-standard),
-      left var(--dur-layout) var(--ease-out-strong),
-      translate var(--dur-layout) var(--ease-out-strong);
-  }
-
-  /* Case study column is wider — track the cs-rail as the stage morphs. */
-  .theme-toggle--case {
-    left: max(
-      var(--page-pad),
-      calc(50vw - var(--content-max-cs) / 2 - var(--rail-offset))
-    );
-  }
-}
-
-@media (min-width: 860px) and (prefers-reduced-motion: reduce) {
-  .theme-toggle {
-    transition:
-      color var(--dur-fast) var(--ease-standard),
-      background-color var(--dur) var(--ease-standard);
-  }
 }
 
 .tt {

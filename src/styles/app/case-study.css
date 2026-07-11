@@ -47,7 +47,7 @@
   gap: var(--gap-paragraph);
 }
 
-/* Left margin stack — Back + on-this-page sections. */
+/* Left margin stack — Back + on-this-page sections + theme toggle. */
 .cs-rail {
   display: flex;
   flex-direction: row;
@@ -69,17 +69,12 @@
 /* Phone + tablet — the left rail can't clear the wide case column until ~1024px:
    its clamp(680px, 64vw, 880px) column leaves too little left margin for the
    --rail-offset, so below that the rail would hang off the viewport's left edge.
-   Until then the floating bottom dock (.cs-dock) owns navigation and the fixed
-   case-study theme toggle moves into it. This mirrors the home page, which only
-   adopts its left rail at ≥860px because its narrower 576px column leaves room. */
+   Until then the floating bottom dock (.cs-dock) owns navigation and the theme
+   toggle (hidden with the rail it lives in) — the dock carries its own. This
+   mirrors the home page, which only adopts its left rail at ≥860px because its
+   narrower 576px column leaves room. */
 @media (max-width: 1023px) {
   .cs-rail {
-    display: none;
-  }
-
-  /* Two-class selector so this beats the later base `.theme-toggle` display
-     rule regardless of source order — the toggle lives in the dock here. */
-  .theme-toggle.theme-toggle--case {
     display: none;
   }
 }
@@ -126,7 +121,7 @@
     align-items: flex-start;
     gap: var(--gap-paragraph);
     margin-bottom: 0;
-    /* Same left edge as .theme-toggle--case — max(page-pad, column edge − offset). */
+    /* Left edge = max(page-pad, case column edge − rail offset). */
     margin-left: max(
       calc(var(--page-pad) - 50vw + var(--content-max-cs) / 2),
       calc(-1 * var(--rail-offset))
@@ -264,11 +259,8 @@
     }
   }
 
-  /* Reused ThemeToggle — unpin it from its fixed corner into the dock row. */
+  /* Reused ThemeToggle — sized up to a round dock cell. */
   .cs-dock .theme-toggle {
-    position: static;
-    left: auto;
-    bottom: auto;
     flex-shrink: 0;
     width: var(--cs-dock-h);
     height: var(--cs-dock-h);

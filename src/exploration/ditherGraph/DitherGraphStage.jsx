@@ -13,13 +13,14 @@ const GRAPH_W = 280;
 const GRAPH_H = 100;
 const PAD_TOP = 8;
 const LEFT_FADE = 0.26;
-/* Vertical fill dies by this depth fraction — rest of the column is solid white. */
+/* Vertical fill dies by this depth fraction — rest of the column stays clear. */
 const FADE_END = 0.68;
 /* Below the smallest non-zero Bayer cell — never paint accent (avoids floor speckles). */
 const DENSITY_FLOOR = 1 / 16;
-/* Idle shimmer — Bayer phase scrolls ~8fps so the fill feels alive without thrashing. */
-const SHIMMER_FPS = 8;
-const SHIMMER_SPEED = 0.018;
+/* Idle rain — Bayer phase falls mostly down, slight sideways drift. */
+const SHIMMER_FPS = 18;
+const RAIN_Y = 0.28;
+const RAIN_X = 0.05;
 
 /* 4×4 Bayer — thresholds normalized 0–1. */
 const BAYER_4 = [
@@ -69,35 +70,24 @@ function lerpRgb(a, b, t) {
   ];
 }
 
-function readFadeTarget() {
-  if (typeof document === "undefined") return [255, 255, 255];
-  const dark = document.documentElement.getAttribute("data-theme") === "dark";
-  return dark ? [23, 23, 23] : [255, 255, 255];
-}
-
 function bayerAt(x, y, ox, oy) {
   return BAYER_4[(y + oy) & 3][(x + ox) & 3];
 }
 
 /**
- * Ordered dither of an opaque soft fill. `ox`/`oy` scroll the Bayer phase so
- * the pattern drifts without changing the underlying series.
+ * Ordered dither fill on a clear canvas. `ox`/`oy` scroll the Bayer phase so
+ * the under-gradient crawls without changing the underlying series. `img` is
+ * a reused buffer (repaints run at SHIMMER_FPS steady, every frame during
+ * morphs — allocating 112KB per paint would be pure GC churn); cleared to
+ * transparent here before each fill.
  */
-function paintDitherGraph(ctx, w, h, series, accentRgb, fadeRgb, ox, oy) {
-  const img = ctx.createImageData(w, h);
+function paintDitherGraph(ctx, img, w, h, series, accentRgb, ox, oy) {
   const data = img.data;
+  data.fill(0);
   const [ar, ag, ab] = accentRgb;
-  const [fr, fg, fb] = fadeRgb;
   const plotH = h - PAD_TOP;
   const px = ox | 0;
   const py = oy | 0;
-
-  for (let i = 0; i < data.length; i += 4) {
-    data[i] = fr;
-    data[i + 1] = fg;
-    data[i + 2] = fb;
-    data[i + 3] = 255;
-  }
 
   for (let x = 0; x < w; x += 1) {
     const t = x / (w - 1);
@@ -116,6 +106,7 @@ function paintDitherGraph(ctx, w, h, series, accentRgb, fadeRgb, ox, oy) {
       data[i] = ar;
       data[i + 1] = ag;
       data[i + 2] = ab;
+      data[i + 3] = 255;
     }
 
     const strokeY = Math.max(0, Math.min(h - 1, yTop));
@@ -126,6 +117,7 @@ function paintDitherGraph(ctx, w, h, series, accentRgb, fadeRgb, ox, oy) {
         data[i] = ar;
         data[i + 1] = ag;
         data[i + 2] = ab;
+        data[i + 3] = 255;
       }
     }
   }
@@ -133,10 +125,11 @@ function paintDitherGraph(ctx, w, h, series, accentRgb, fadeRgb, ox, oy) {
   ctx.putImageData(img, 0, 0);
 }
 
+/* No visible metric title — the number + delta carry the card; the metric
+   name still reaches AT via the card's aria-label and the sr-only status. */
 function MetricHeader({ metric }) {
   return (
     <div className="dg-head">
-      <p className="dg-label">{metric.label}</p>
       <div className="dg-value-row">
         <span className="dg-value">
           <AnimatedNumber value={metric.value} />
@@ -175,7 +168,7 @@ export function DitherGraphStage({ className }) {
   const busy = useRef(false);
   const morphRaf = useRef(0);
   const shimmerRaf = useRef(0);
-  const fadeRef = useRef(readFadeTarget());
+  const imgRef = useRef(null);
 
   const paint = (series, accentRgb) => {
     const canvas = canvasRef.current;
@@ -184,21 +177,13 @@ export function DitherGraphStage({ className }) {
       canvas.width = GRAPH_W;
       canvas.height = GRAPH_H;
     }
-    const ctx = canvas.getContext("2d", { alpha: false });
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
+    imgRef.current ??= ctx.createImageData(GRAPH_W, GRAPH_H);
     seriesRef.current = series;
     rgbRef.current = accentRgb;
     const { x, y } = phaseRef.current;
-    paintDitherGraph(
-      ctx,
-      GRAPH_W,
-      GRAPH_H,
-      series,
-      accentRgb,
-      fadeRef.current,
-      x,
-      y,
-    );
+    paintDitherGraph(ctx, imgRef.current, GRAPH_W, GRAPH_H, series, accentRgb, x, y);
   };
 
   const runMorph = (nextIndex) => {
@@ -223,9 +208,9 @@ export function DitherGraphStage({ className }) {
 
     const tick = (now) => {
       const t = easeInOut(Math.min(1, (now - start) / MORPH_MS));
-      /* Keep the shimmer drifting through the morph. */
-      phaseRef.current.x += SHIMMER_SPEED * 1.4;
-      phaseRef.current.y += SHIMMER_SPEED * 0.9;
+      /* Keep the rain falling through the morph. */
+      phaseRef.current.x += RAIN_X * 1.2;
+      phaseRef.current.y -= RAIN_Y * 1.2;
       paint(lerpSeries(from.series, to.series, t), lerpRgb(fromRgb, toRgb, t));
       if (t < 1) {
         morphRaf.current = requestAnimationFrame(tick);
@@ -240,7 +225,7 @@ export function DitherGraphStage({ className }) {
 
   const advance = () => runMorph(index + 1);
 
-  /* Continuous Bayer-phase drift — the fill shimmers while idle. */
+  /* Continuous Bayer rain — under-fill falls while idle. */
   useEffect(() => {
     if (reduceMotion) return undefined;
     let last = 0;
@@ -249,8 +234,8 @@ export function DitherGraphStage({ className }) {
       if (busy.current) return;
       if (now - last < 1000 / SHIMMER_FPS) return;
       last = now;
-      phaseRef.current.x += SHIMMER_SPEED;
-      phaseRef.current.y += SHIMMER_SPEED * 0.65;
+      phaseRef.current.x += RAIN_X;
+      phaseRef.current.y -= RAIN_Y;
       paint(seriesRef.current, rgbRef.current);
     };
     shimmerRaf.current = requestAnimationFrame(frame);
@@ -259,19 +244,8 @@ export function DitherGraphStage({ className }) {
   }, [reduceMotion]);
 
   useEffect(() => {
-    fadeRef.current = readFadeTarget();
     paint(DITHER_METRICS[0].series, hexToRgb(DITHER_METRICS[0].accent));
-    const sync = () => {
-      fadeRef.current = readFadeTarget();
-      paint(seriesRef.current, rgbRef.current);
-    };
-    const obs = new MutationObserver(sync);
-    obs.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
     return () => {
-      obs.disconnect();
       cancelAnimationFrame(morphRaf.current);
       cancelAnimationFrame(shimmerRaf.current);
     };

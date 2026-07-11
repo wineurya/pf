@@ -208,14 +208,35 @@ export function AboutFilmstrip({ groups, selectedWord, onSelect }) {
                     onSelect(p.word);
                   }}
                 >
-                  <img
-                    className="afilm__img"
-                    src={p.src}
-                    alt={copy === 0 ? p.alt : ""}
-                    loading="lazy"
-                    decoding="async"
-                    draggable={false}
-                  />
+                  {/* Positioning shell: the photo and its (optional) die-cut
+                      sticker move, dim and scale as one unit. The sticker
+                      straddles the frame edge named by `edge`, offset `at`%
+                      along it — placements live in the content data. */}
+                  <span className="afilm__pic">
+                    <img
+                      className="afilm__img"
+                      src={p.src}
+                      alt={copy === 0 ? p.alt : ""}
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                    />
+                    {p.sticker ? (
+                      <img
+                        className="afilm__sticker"
+                        src={p.sticker.src}
+                        alt=""
+                        data-edge={p.sticker.edge}
+                        style={{
+                          "--at": `${p.sticker.at}%`,
+                          "--tilt": `${p.sticker.tilt}deg`,
+                        }}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    ) : null}
+                  </span>
                 </button>
               ))}
             </div>

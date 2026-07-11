@@ -6,6 +6,7 @@ import { RevealItem, StaggerGroup } from "./Reveal.jsx";
 import { CaseStudyOutro } from "./caseStudy/blocks.jsx";
 import { playDungSfx } from "../lib/dungSfx.js";
 
+import "@/exploration/billingTabs/styles.css";
 import "@/exploration/crateQueue/styles.css";
 import "@/exploration/diffPulse/styles.css";
 import "@/exploration/ditherGraph/styles.css";
@@ -59,6 +60,10 @@ const PREVIEW_COMPONENTS = {
   toast: lazyPreview(
     () => import("@/exploration/toastStack/ToastStackStage.jsx"),
     "ToastStackStage",
+  ),
+  billing: lazyPreview(
+    () => import("@/exploration/billingTabs/BillingTabsStage.jsx"),
+    "BillingTabsStage",
   ),
 };
 

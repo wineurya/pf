@@ -1,23 +1,55 @@
+import { motion } from "motion/react";
 import { playDungSfx } from "../lib/dungSfx.js";
+import { usePrefersReducedMotion } from "../lib/hooks.js";
+import { EASE_OUT, dockMorph, uiExit } from "../lib/motion.js";
 
 /**
- * Sun ⟷ moon morph toggle, fixed to the bottom-left and x-aligned with the
- * rail tabs. The core circle grows into a disc while a mask circle slides in
- * to carve the crescent; rays rotate and shrink away. All motion is CSS
- * (cx/cy/r are transitionable presentation properties).
+ * Sun ⟷ moon morph toggle. An in-flow button — each surface slots it into its
+ * own control cluster (desktop rail, mobile header, floating case dock).
+ *
+ * `layoutId` (desktop rail instances only) makes the toggle a shared element:
+ * opening/closing a case study glides ONE toggle between the home cluster and
+ * the case rail instead of popping two. Standalone mounts (initial load,
+ * mobile header, case dock) play the radial wipe instead — Motion skips
+ * `initial` automatically when a layoutId counterpart exists. The mobile
+ * header/dock instances must NOT get a layoutId: the case dock lives inside
+ * the morphing `m-dock-shell` and nested shared elements fight its FLIP.
+ * `layoutDependency` is pinned so re-renders (theme flips) while the sticky
+ * cluster is scrolled never re-measure and fake a layout delta.
+ *
+ * The icon morph stays CSS: core radius grows into a disc, a mask circle
+ * slides in to carve the crescent, rays rotate out (cx/cy/r transition as
+ * presentation properties).
  */
-export function ThemeToggle({ theme, onToggle, caseOpen = false }) {
+export function ThemeToggle({ theme, onToggle, layoutId }) {
   const dark = theme === "dark";
+  const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <button
+    <motion.button
       type="button"
-      className={`theme-toggle${caseOpen ? " theme-toggle--case" : ""}`}
+      className="theme-toggle"
       data-mode={theme}
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
       aria-pressed={dark}
       onClick={onToggle}
       onPointerEnter={playDungSfx}
+      layoutId={layoutId}
+      layoutDependency={layoutId ? true : undefined}
+      initial={
+        reducedMotion ? false : { clipPath: "circle(0% at 50% 50%)" }
+      }
+      animate={{ clipPath: "circle(80% at 50% 50%)" }}
+      /* Exit phase (leaving a case study): without this, the demoted case-rail
+         instance lingers at full opacity — riding the lead's x-shift as a
+         second sun — until the exiting article unmounts. A fast fade hands the
+         moment to the one toggle gliding back to the home cluster. */
+      exit={{ opacity: 0, transition: uiExit(reducedMotion) }}
+      whileTap={{ scale: 0.97 }}
+      transition={{
+        clipPath: { duration: 0.52, ease: EASE_OUT, delay: 0.09 },
+        layout: dockMorph(reducedMotion),
+      }}
     >
       <svg
         className="tt"
@@ -55,6 +87,6 @@ export function ThemeToggle({ theme, onToggle, caseOpen = false }) {
           <line x1="17.1" y1="6.9" x2="18.64" y2="5.36" />
         </g>
       </svg>
-    </button>
+    </motion.button>
   );
 }

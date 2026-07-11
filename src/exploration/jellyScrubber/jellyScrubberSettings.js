@@ -5,7 +5,7 @@ export const JELLY_SCRUBBER_DEFAULTS = {
   edgeDamping: 18,
   mass: 0.68,
   handleSize: 4,
-  trackThickness: 28,
+  trackThickness: 18,
 };
 
 export const JELLY_PROGRESS_SPRING = (settings, reduceMotion) =>

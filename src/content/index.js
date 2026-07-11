@@ -2,18 +2,38 @@
    About paragraphs may be arrays of segments: strings render as text, and
    { word, photos } objects render as interactive hover words (see HoverWord). */
 
+import childhoodQueens from "../assets/about/about-childhood-01.jpg";
 import dogPoodle from "../assets/about/about-dog-02.jpg";
 import dogSpaniel from "../assets/about/about-dog-01.jpg";
 import foodBirria from "../assets/about/about-food-03.jpg";
 import foodFriedChicken from "../assets/about/about-food-01.jpg";
+import foodGrillWings from "../assets/about/about-food-04.jpg";
 import foodIzakaya from "../assets/about/about-food-02.jpg";
+import gradKennesaw from "../assets/about/about-grad-01.jpg";
 import gymMirror from "../assets/about/about-gym-02.jpg";
 import gymSelfie from "../assets/about/about-gym-01.jpg";
+import lightsCouple from "../assets/about/about-lights-01.jpg";
+import lightsRabbit from "../assets/about/about-lights-02.jpg";
 import milesPlush from "../assets/about/about-collectible-01.jpg";
 import travelBallpark from "../assets/about/about-travel-03.jpg";
 import travelBeach from "../assets/about/about-travel-01.jpg";
 import travelDrStreet from "../assets/about/about-travel-02.jpg";
+import travelFigmaBackseat from "../assets/about/about-travel-05.jpg";
+import travelHeladosBon from "../assets/about/about-travel-04.jpg";
 import vinylOxymoron from "../assets/about/about-vinyl-01.jpg";
+
+/* Die-cut stickers (from the Figma sticker sheet) that sit on the edges of
+   filmstrip photos — see the `sticker` field on photo objects below. */
+import stickerCompass from "../assets/about/stickers/compass.png";
+import stickerDove from "../assets/about/stickers/dove.png";
+import stickerFacetime from "../assets/about/stickers/facetime.png";
+import stickerFolder from "../assets/about/stickers/folder.png";
+import stickerKeys from "../assets/about/stickers/keys.png";
+import stickerMango from "../assets/about/stickers/mango.png";
+import stickerNoPhotos from "../assets/about/stickers/no-photos.png";
+import stickerPill from "../assets/about/stickers/pill.png";
+import stickerShark from "../assets/about/stickers/shark.png";
+import stickerSmile from "../assets/about/stickers/smile.png";
 
 import avanceCover from "../assets/case/avance-cover.webp";
 import kinetixCover from "../assets/case/kinetix-cover.webp";
@@ -133,6 +153,13 @@ export const site = {
       preview: "toast",
     },
     {
+      label: "Billing period tabs",
+      subtitle: "Pricing component",
+      note: "Inspired by @pacocoursey",
+      noteHref: "https://paco.me/craft/tabs",
+      preview: "billing",
+    },
+    {
       label: "Dither metric graph",
       subtitle: "Chart component",
       preview: "dither",
@@ -156,10 +183,39 @@ export const site = {
 
   /* Tool mentions ({ tool, icon }) render with an inline Central brand mark.
      Hover-word photos carry a short `cap` shown centered on hover in the
-     expanded bento (alt stays the long, descriptive text). */
+     expanded bento (alt stays the long, descriptive text). An optional
+     `sticker` ({ src, edge, at, tilt }) pins a die-cut sticker to the photo's
+     frame in the filmstrip: `edge` names the side, `at` is % along that edge
+     (kept off the corners), `tilt` is degrees. */
   about: [
     "I'm a product designer and researcher based in Atlanta. I started in mobile UX and behavioral tracking, and I care about making interfaces feel clear, useful, and easy to stay with.",
-    "I was born in Queens and raised in Atlanta, so a lot of how I think about design comes from watching how people move through real places.",
+    [
+      "I was ",
+      {
+        word: "born in Queens",
+        photos: [
+          {
+            src: childhoodQueens,
+            alt: "A scanned film photo of me as a toddler in an Everlast tank top",
+            cap: "queens, everlast era",
+            sticker: { src: stickerDove, edge: "top", at: 32, tilt: -8 },
+          },
+        ],
+      },
+      " and ",
+      {
+        word: "raised in Atlanta",
+        photos: [
+          {
+            src: gradKennesaw,
+            alt: "Graduation selfie in cap and gown at Kennesaw State",
+            cap: "kennesaw state, cap and gown",
+            sticker: { src: stickerCompass, edge: "right", at: 34, tilt: 10 },
+          },
+        ],
+      },
+      ", so a lot of how I think about design comes from watching how people move through real places.",
+    ],
     [
       { text: "I'm drawn to tools that change what's possible, whether that's ", tone: "muted" },
       { tool: "Figma", icon: "figma" },
@@ -189,30 +245,80 @@ export const site = {
           { src: foodFriedChicken, alt: "A tray of Korean fried chicken", cap: "korean fried chicken run" },
           { src: foodIzakaya, alt: "An izakaya spread of small plates", cap: "izakaya, little plates" },
           { src: foodBirria, alt: "Birria tacos with a cup of consommé", cap: "birria, extra consommé" },
+          { src: foodGrillWings, alt: "Chicken wings lined up with rosemary sprigs on my backyard grill", cap: "rosemary on everything" },
         ],
       },
       ", wishing I could get back to ",
       {
         word: "my country",
         photos: [
-          { src: travelBeach, alt: "Palm trees over a Caribbean beach", cap: "home beach, no filter" },
-          { src: travelDrStreet, alt: "A sunny street in the Dominican Republic", cap: "DR streets, golden hour" },
+          {
+            src: travelBeach,
+            alt: "Palm trees over a Caribbean beach",
+            cap: "home beach, no filter",
+            sticker: { src: stickerShark, edge: "bottom", at: 62, tilt: 7 },
+          },
+          {
+            src: travelDrStreet,
+            alt: "A sunny street in the Dominican Republic",
+            cap: "DR streets, golden hour",
+            sticker: { src: stickerKeys, edge: "bottom", at: 30, tilt: -9 },
+          },
           { src: travelBallpark, alt: "A winter-league baseball game at night", cap: "winter league nights" },
+          {
+            src: travelHeladosBon,
+            alt: "A cup of Helados BON ice cream in a Dominican supermarket",
+            cap: "helados bon, mandatory stop",
+            sticker: { src: stickerMango, edge: "right", at: 58, tilt: 12 },
+          },
+          {
+            src: travelFigmaBackseat,
+            alt: "Laptop open to Figma in the back seat, Dominican countryside out the window",
+            cap: "figma in the back seat",
+            sticker: { src: stickerFolder, edge: "top", at: 68, tilt: 6 },
+          },
         ],
       },
-      " more often, or dragging myself to ",
+      " more often, dragging myself to ",
       {
         word: "the gym",
         photos: [
           { src: gymSelfie, alt: "Post-workout selfie outdoors", cap: "post-pump glow" },
-          { src: gymMirror, alt: "Gym mirror selfie in the locker room", cap: "locker room check-in" },
+          {
+            src: gymMirror,
+            alt: "Gym mirror selfie in the locker room",
+            cap: "locker room check-in",
+            sticker: { src: stickerSmile, edge: "top", at: 34, tilt: -6 },
+          },
+        ],
+      },
+      ", or ending up at ",
+      {
+        word: "the garden lights",
+        photos: [
+          {
+            src: lightsCouple,
+            alt: "Two of us bundled up under the lit-up trees at the botanical garden",
+            cap: "garden lights, annual tradition",
+            sticker: { src: stickerFacetime, edge: "bottom", at: 28, tilt: -8 },
+          },
+          {
+            src: lightsRabbit,
+            alt: "A glowing rabbit sculpture tipping a top hat at the garden lights",
+            cap: "the rabbit gets it",
+          },
         ],
       },
       ". I dig through ",
       {
         word: "vinyl",
         photos: [
-          { src: vinylOxymoron, alt: "ScHoolboy Q's Oxymoron on vinyl, found in the wild", cap: "oxymoron, found in the wild" },
+          {
+            src: vinylOxymoron,
+            alt: "ScHoolboy Q's Oxymoron on vinyl, found in the wild",
+            cap: "oxymoron, found in the wild",
+            sticker: { src: stickerNoPhotos, edge: "right", at: 28, tilt: 9 },
+          },
         ],
       },
       " when I find a good bin, hang out with ",
@@ -226,7 +332,14 @@ export const site = {
       ", and yeah, I'm pretty into ",
       {
         word: "Spider-Man",
-        photos: [{ src: milesPlush, alt: "A Spider-Man plush on a shelf", cap: "Spider-Man stays" }],
+        photos: [
+          {
+            src: milesPlush,
+            alt: "A Spider-Man plush on a shelf",
+            cap: "Spider-Man stays",
+            sticker: { src: stickerPill, edge: "left", at: 38, tilt: -10 },
+          },
+        ],
       },
       ".",
     ],

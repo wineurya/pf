@@ -2,7 +2,7 @@
    Local vars alias site tokens (with fallbacks) so light/dark theming is free. */
 .cq-root {
   --cq-ink: var(--text-strong, #111111);
-  --cq-muted: var(--text-muted, #8d8d8d);
+  --cq-muted: var(--text-muted, #6b6b6b);
   /* Literal white glass — not --surface gray. */
   --cq-glass: hsl(0 0% 100% / 0.78);
   --cq-glass-hover: hsl(0 0% 100% / 0.86);

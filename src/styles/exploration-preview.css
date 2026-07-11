@@ -25,6 +25,12 @@
   min-height: 400px;
 }
 
+/* Billing packs tabs + two plan cards under the caption — floor just
+   enough so nothing clips at column width. */
+.exp-card__frame[data-kind="billing"] {
+  min-height: 400px;
+}
+
 .exp-card__embed {
   position: absolute;
   inset: var(--exp-embed-inset);

@@ -90,9 +90,13 @@
 
   --foreground: #000;
   --text-primary: var(--color-black);
-  --text-secondary: #8d8d8d;
-  --text-muted: #8d8d8d;
-  --text-subtle: #8d8d8d; /* Figma palette has a single muted gray */
+  /* Single muted gray (Figma palette), split by theme for legibility: the
+     original #8d8d8d is only 3.3:1 on --bg / 2.9:1 on --surface — fails WCAG AA
+     for 14px body copy (case-study summaries, notes). #6b6b6b reads 5.3:1 on
+     --bg and 4.7:1 on --surface. Dark keeps #8d8d8d (6.0:1 there). */
+  --text-secondary: #6b6b6b;
+  --text-muted: #6b6b6b;
+  --text-subtle: #6b6b6b;
 
   --accent-link: #2e90fa;
 
@@ -249,6 +253,7 @@
   --border-soft: #262626;
 
   --foreground: #f2f2f2;
+  /* Muted gray stays #8d8d8d on dark paper — 6.0:1 on --bg, 5.1:1 on --surface. */
   --text-secondary: #8d8d8d;
   --text-muted: #8d8d8d;
   --text-subtle: #8d8d8d;

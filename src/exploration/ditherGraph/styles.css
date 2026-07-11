@@ -1,4 +1,4 @@
-/* Dither metric graph — canvas Bayer dither, accent → white. Scoped: dg- */
+/* Dither metric graph — canvas Bayer dither on a clear fill. Scoped: dg- */
 
 .dg-root {
   --dg-ink: var(--text-primary);
@@ -13,7 +13,7 @@
   min-height: 100%;
   overflow: hidden;
   border-radius: inherit;
-  background: var(--exp-canvas);
+  background: transparent;
   color: var(--dg-ink);
   font-family: var(--font-body, system-ui, sans-serif);
 }
@@ -46,19 +46,11 @@
   border-radius: var(--radius-md, 12px);
 }
 
-/* Stable header — label over value + delta. Layout variety is the card
-   proportions / graph, not shuffling text left↔right. */
+/* Stable header — value + delta only (no visible metric title; the name lives
+   in the card's aria-label / sr-only status). */
 .dg-head {
   display: grid;
   gap: var(--space-1);
-}
-
-.dg-label {
-  margin: 0;
-  color: var(--dg-muted);
-  font-size: var(--text-sm-size);
-  line-height: var(--text-sm-leading);
-  font-weight: var(--weight-medium);
 }
 
 .dg-value-row {
@@ -75,7 +67,13 @@
   line-height: 1;
   font-weight: var(--weight-medium);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.06em;
+}
+
+/* AnimatedNumber columns are 1ch — pull them in so the figure reads tighter. */
+.dg-value .anum-col,
+.dg-value .anum-digit {
+  width: 0.86ch;
 }
 
 .dg-unit {

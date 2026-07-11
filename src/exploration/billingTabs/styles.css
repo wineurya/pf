@@ -1,0 +1,540 @@
+/* Billing period tabs — exclusion tabs over two plan cards. Scoped: bt- */
+
+.bt-root {
+  --bt-card: var(--color-white);
+  --bt-ink: var(--text-primary);
+  --bt-muted: var(--text-muted);
+  --bt-border: var(--border-soft);
+  /* Component accent — emerald; chip/tag fills use 12% of this. */
+  --bt-emerald: #10b981;
+  --bt-save: var(--bt-emerald);
+  --bt-save-fill: color-mix(in srgb, var(--bt-emerald) 12%, transparent);
+  --bt-save-on-pill: #6ee7b7;
+  --bt-pill: var(--text-primary);
+  --bt-pill-ink: var(--bg);
+  --bt-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --bt-pop-1: #059669;
+  --bt-pop-2: #10b981;
+  --bt-pop-3: #34d399;
+  --bt-pop-4: #6ee7b7;
+  --bt-pop-5: #047857;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--exp-canvas);
+  color: var(--bt-ink);
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+:root[data-theme="dark"] .bt-root {
+  --bt-emerald: #34d399;
+  --bt-save: var(--bt-emerald);
+  --bt-save-fill: color-mix(in srgb, var(--bt-emerald) 12%, transparent);
+  /* Selected pill is light in dark — mint chip on white fails; use dark green. */
+  --bt-save-on-pill: #047857;
+}
+
+.bt-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  /* Top clears the overlay caption (label + subtitle); keep sides/bottom tight. */
+  padding: 56px var(--space-4) var(--space-4);
+}
+
+/* ---- Exclusion tabs ------------------------------------------------------ */
+
+.bt-tabs {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--bt-border);
+  border-radius: var(--radius-pill);
+  background: var(--bt-card);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.bt-tabs-row {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.bt-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--bt-muted);
+  font: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .bt-tab:hover {
+    color: var(--bt-ink);
+  }
+}
+
+.bt-tab:focus-visible {
+  outline: var(--focus-width, 2px) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.bt-tab-chip {
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--bt-save-fill);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: var(--weight-medium);
+  color: var(--bt-save);
+}
+
+.bt-tabs-overlay {
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  border-radius: inherit;
+  background: var(--bt-pill);
+  pointer-events: none;
+  will-change: clip-path;
+  clip-path: inset(0 100% 0 0 round 999px);
+}
+
+.bt-tabs-overlay .bt-tab {
+  color: var(--bt-pill-ink);
+  cursor: default;
+  transition: none;
+}
+
+.bt-tabs-overlay .bt-tab-chip {
+  background: color-mix(in srgb, var(--bt-save-on-pill) 12%, transparent);
+  color: var(--bt-save-on-pill);
+}
+
+/* ---- Shape burst --------------------------------------------------------- */
+
+.bt-burst {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bt-shape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  will-change: transform, opacity;
+}
+
+.bt-shape svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bt-shape--c1 {
+  color: var(--bt-pop-1);
+}
+.bt-shape--c2 {
+  color: var(--bt-pop-2);
+}
+.bt-shape--c3 {
+  color: var(--bt-pop-3);
+}
+.bt-shape--c4 {
+  color: var(--bt-pop-4);
+}
+.bt-shape--c5 {
+  color: var(--bt-pop-5);
+}
+
+/* ---- Plan cards ---------------------------------------------------------- */
+
+.bt-panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  width: min(440px, 100%);
+}
+
+.bt-plan {
+  --mx: 50%;
+  --my: 50%;
+  --bt-glow: 0;
+  --bt-glow-mul: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: 14px 12px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  box-shadow:
+    0 0 0 1px var(--bt-border),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+/* Hovered card gets a 12% stronger outline. */
+.bt-plan[data-hot] {
+  --bt-glow-mul: 1.12;
+}
+
+/* Cursor-tracked emerald outline — masked to a 1px rim so it never
+   bleeds through the translucent frost fill. */
+.bt-plan::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    200px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--bt-emerald) 75%, transparent),
+    transparent 55%
+  );
+  opacity: calc(var(--bt-glow) * 0.9 * var(--bt-glow-mul));
+  transition: opacity 0.22s var(--bt-ease);
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Frost inset so the radial only reads as a rim. */
+.bt-plan::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: 0;
+  border-radius: calc(var(--radius-lg) - 1px);
+  background: color-mix(in srgb, var(--bt-card) 24%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  pointer-events: none;
+}
+
+.bt-plan > :not(.bt-plan-wash) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Soft MeshGradient, masked to the curved top-right triangle. */
+.bt-plan-wash {
+  position: absolute;
+  inset: 1px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: calc(var(--radius-lg) - 1px);
+  opacity: 0.7;
+}
+
+.bt-plan-wash.is-alive {
+  animation: bt-wash-breathe 8s ease-in-out infinite;
+}
+
+.bt-plan-wash-shader {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+}
+
+.bt-plan-wash-shader > div,
+.bt-plan-wash-shader canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit;
+}
+
+@keyframes bt-wash-breathe {
+  0%,
+  100% {
+    opacity: 0.62;
+  }
+  50% {
+    opacity: 0.78;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-plan-wash.is-alive {
+    animation: none;
+  }
+}
+
+.bt-plan-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+}
+
+.bt-plan-name {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: var(--weight-medium);
+  color: var(--bt-ink);
+}
+
+.bt-plan-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--bt-save-fill);
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: var(--weight-medium);
+  color: var(--bt-save);
+  white-space: nowrap;
+}
+
+.bt-price-block {
+  display: grid;
+  gap: 6px;
+}
+
+.bt-price {
+  display: flex;
+  align-items: baseline;
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: var(--font-display-variation);
+  color: var(--bt-ink);
+}
+
+.bt-price-currency {
+  font-size: 15px;
+  line-height: 1;
+  margin-right: 1px;
+}
+
+.bt-price-figure {
+  font-size: 28px;
+  line-height: 1;
+  font-weight: var(--weight-display);
+  letter-spacing: -0.01em;
+}
+
+.bt-price-unit {
+  margin-left: 3px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--bt-muted);
+}
+
+.bt-price-note {
+  position: relative;
+  height: 16px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--bt-muted);
+}
+
+.bt-price-note span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+}
+
+.bt-features-block {
+  margin: var(--space-4) 0;
+  display: grid;
+  gap: 6px;
+}
+
+.bt-features-label {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--weight-medium);
+  color: var(--bt-ink);
+}
+
+.bt-features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.bt-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--bt-muted);
+}
+
+.bt-check {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--bt-save);
+}
+
+/* ---- CTAs ---------------------------------------------------------------- */
+
+.bt-cta {
+  margin-top: auto;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--bt-card);
+  color: var(--bt-ink);
+  font: inherit;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px var(--bt-border),
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition:
+    background var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+}
+
+@media (hover: hover) {
+  .bt-cta:hover {
+    background: color-mix(in oklab, var(--bt-ink) 4%, var(--bt-card));
+  }
+}
+
+.bt-cta:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.bt-cta:focus-visible {
+  outline: var(--focus-width, 2px) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.bt-plan[data-featured] .bt-cta {
+  position: relative;
+  background: var(--bt-emerald);
+  color: #fff;
+  box-shadow:
+    0 0 0 1px var(--bt-emerald),
+    0 3px 8px color-mix(in oklab, var(--bt-emerald) 28%, transparent),
+    inset 0 0 6px 1px rgba(255, 255, 255, 0.18);
+}
+
+.bt-plan[data-featured] .bt-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 40%),
+    rgb(255 255 255 / 0%)
+  );
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+@media (hover: hover) {
+  .bt-plan[data-featured] .bt-cta:hover {
+    background: color-mix(in oklab, var(--bt-emerald) 88%, #000);
+  }
+}
+
+@media (max-width: 520px) {
+  .bt-stage {
+    padding: 52px var(--space-3) var(--space-3);
+    gap: 10px;
+  }
+
+  .bt-panel {
+    gap: 8px;
+  }
+
+  .bt-plan {
+    gap: var(--space-2);
+    padding: 12px 10px;
+  }
+
+  .bt-features-block {
+    margin: var(--space-3) 0;
+  }
+
+  .bt-price-figure {
+    font-size: 24px;
+  }
+
+  .bt-price-block {
+    gap: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-tab,
+  .bt-cta {
+    transition: none;
+  }
+
+  .bt-cta:active {
+    transform: none;
+  }
+}

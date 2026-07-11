@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { RevealEyebrow, RevealItem, StaggerGroup } from "../Reveal.jsx";
+import { ThemeToggle } from "../ThemeToggle.jsx";
 import { DESKTOP_MQ, useMediaQuery, usePrefersReducedMotion } from "../../lib/hooks.js";
 import { playDungSfx } from "../../lib/dungSfx.js";
 import { fillMorph, layoutMorph } from "../../lib/motion.js";
@@ -28,6 +29,7 @@ export function CaseStudy({
   const ref = useRef(null);
   const scrollLockRef = useRef(null);
   const reducedMotion = usePrefersReducedMotion();
+  const desktopRail = useMediaQuery(DESKTOP_MQ);
   const [activeSection, setActiveSection] = useState(() => named[0]?.id ?? null);
 
   useEffect(() => {
@@ -209,6 +211,19 @@ export function CaseStudy({
               sections={named}
               activeId={activeSection}
               onSelect={jumpToSection}
+            />
+          ) : null}
+          {/* Theme toggle closes the rail cluster (back → sections → theme),
+              mirroring the home rail. Rendered only while the rail is (≥1024px)
+              — below that the floating .cs-dock's own toggle takes over, and a
+              mounted-but-hidden instance would hijack the layoutId with a 0×0
+              box. The shared layoutId glides ONE toggle home rail ⟷ case rail
+              across open/close. */}
+          {desktopRail ? (
+            <ThemeToggle
+              theme={theme}
+              onToggle={onToggleTheme}
+              layoutId="theme-toggle"
             />
           ) : null}
         </aside>
