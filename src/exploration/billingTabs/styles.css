@@ -209,12 +209,16 @@
 }
 
 /* Cursor-tracked emerald outline — masked to a 1px rim so it never
-   bleeds through the translucent frost fill. */
+   bleeds through the translucent frost fill. z-index 1 keeps it painted
+   ABOVE the ::after frost: backdrop-filter samples everything painted
+   below it, so at z 0 the blur smears the lit rim into a haze inside the
+   card (the mask alone can't prevent that). The ring never overlaps
+   content — it only occupies the outer 1px the frost's inset leaves. */
 .bt-plan::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   border-radius: inherit;
   padding: 1px;
   background: radial-gradient(
