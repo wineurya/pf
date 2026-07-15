@@ -88,12 +88,19 @@
   mask-position: var(--blob-x, 0) var(--blob-y, 200vh), 0 0;
   mask-size: var(--blob-w, 0) var(--blob-h, 0), 100% 100%;
   mask-composite: exclude;
+  /* Dim alongside the home ↔ case column morph (see .stage). A plain fade, not
+     movement, so it stays on under prefers-reduced-motion. */
+  transition: opacity var(--dur-layout) var(--ease-in-out-strong);
 }
 
-/* Case studies scroll past long copy that reaches the band — sink the glow
-   ~1.5vw lower so less of it competes with content. */
+/* Case studies are reading surfaces — the blob mask already erases the glow
+   behind copy, but the corner lobes still pulse against long-form text. Sink
+   the glow ~1.5vw lower and dim it to 30% (a 70% cut) so it reads as residual
+   ambience: the standard decorative-background treatment for content-dense
+   pages (NN/g text-over-images guidance), while home keeps the full glow. */
 .backdrop--case .backdrop__img {
   background-position: left 50% bottom calc(-1 * max(6.5vw, 56px));
+  opacity: 0.3;
 }
 
 /* ---- Shell / layout ----------------------------------------------------- */
