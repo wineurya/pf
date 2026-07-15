@@ -52,7 +52,7 @@ export const kinetix = {
       },
       {
         title: "The dashboard had to be opinionated without becoming loud.",
-        p: "The dashboard avoids a wall of charts by leading with ==specifics, not dashboards==: move the CTA above the thumb zone, raise contrast from 2.8:1 to 5.1:1, reorder the form, then test again.",
+        p: "The dashboard avoids a wall of charts by leading with ==specifics==: move the CTA above the thumb zone, raise contrast from 2.8:1 to 5.1:1, reorder the form, then test again.",
       },
       {
         media: "wireframe",

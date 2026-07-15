@@ -91,7 +91,7 @@ export const resolutions = {
       { section: "Personas" },
       {
         title: "Meet Tia.",
-        p: "Research kept pointing at the same person: a student whose day is already full. Tia became the primary persona, and the product was designed for ==one person checking in once a day== — mobile first, low complexity, calendar-aware.",
+        p: "Research kept pointing at the same person: a student whose day is already full. Tia became the primary persona, and the product was designed for ==one person checking in once a day==. Mobile first, low complexity, calendar-aware.",
       },
       {
         personas: [
@@ -102,12 +102,12 @@ export const resolutions = {
             image: resolutionsPersonaTia,
             imageFallback: resolutionsPersonaTiaJpg,
             alt: "Tia in round glasses with long dark hair, lit by warm light against a teal wall",
-            bio: "Fourth-year architecture major in Alpharetta, GA — full-time classes, barista shifts, and an internship on top. Her New Year's resolution was a healthier routine; the hard part is fitting it into a day that is already full.",
+            bio: "Fourth-year architecture major in Alpharetta, GA: full-time classes, barista shifts, and an internship on top. Her New Year's resolution was a healthier routine; the hard part is finding room for it.",
             quirks: [
               {
                 icon: "oneApp",
                 title: "One home for everything",
-                text: "School, shifts, groceries, water, and a long-term goal — in one place instead of five.",
+                text: "School, shifts, groceries, water, and a long-term goal in one place instead of five.",
               },
               {
                 icon: "dailyCheck",
@@ -117,7 +117,7 @@ export const resolutions = {
               {
                 icon: "bigGoal",
                 title: "A goal with a date",
-                text: "Graduate, finish the degree, land the architecture job — long arcs behind the daily list.",
+                text: "Finish the degree, land the architecture job: the long arcs behind the daily list.",
               },
             ],
           },

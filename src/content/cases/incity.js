@@ -42,16 +42,16 @@ export const incity = {
       { section: "Overview" },
       {
         title: "The gist of InCity",
-        p: "ATL311 made a small civic action feel like paperwork. InCity rebuilt the path around ==a shorter mobile flow, clear city updates, and case tracking== residents could return to.",
+        p: "ATL311 made a small civic action feel like paperwork. InCity rebuilt the path around ==a shorter flow, clear city updates, and case tracking==.",
       },
       {
         title: "What was the outcome?",
-        p: "In prototype testing, task completion became ==75% faster==, errors fell from ==30% to about 5%==, and ==abandoned submissions disappeared==. The concept also earned recognition from Kennesaw's Assistant City Manager.",
+        p: "In prototype testing, task completion got ==75% faster==, errors fell from ==30% to 5%==, and ==abandoned submissions disappeared==. The concept earned recognition from Kennesaw's Assistant City Manager.",
       },
       { section: "The problem" },
       {
         title: "ATL311 buried a simple report inside a desktop workflow.",
-        p: "The existing flow asked mobile users to fight tiny controls, hidden menus, and unclear status. For a pothole, a broken light, or a blocked sidewalk, that was enough friction for ==residents to abandon submissions in frustration==.",
+        p: "The existing flow made mobile users fight tiny controls, hidden menus, and unclear status. For a pothole, a broken light, or a blocked sidewalk, that was enough for residents to ==abandon the report==.",
       },
       {
         media: "phone-video",
@@ -88,7 +88,7 @@ export const incity = {
         src: incityResearchInterviews,
         alt: "Remote interview session with an Atlanta resident",
         title: "Research started with real voices.",
-        sub: "Four Atlanta residents and two city officials, including Marty Hughes, Assistant City Manager of Kennesaw, described how people experience 311 and how they would improve it on mobile — backed by a competitive audit and a literature review.",
+        sub: "Four Atlanta residents and two city officials, including Marty Hughes, Assistant City Manager of Kennesaw, described how people experience 311 and what mobile should fix. A competitive audit and a literature review backed the interviews.",
       },
       {
         media: "image",
@@ -114,7 +114,7 @@ export const incity = {
           poster: incityResearchPoster,
         },
         title: "From voices to patterns.",
-        sub: "Interview notes, the competitive audit, and the literature review were grouped into an affinity map — the recurring patterns that shaped every later decision.",
+        sub: "Interview notes, the audit, and the literature review merged into an affinity map. Its recurring patterns shaped every later decision.",
       },
       {
         cols: [
@@ -148,7 +148,7 @@ export const incity = {
             tagline: "The Everyday Resident",
             image: incityPersonaAlex,
             alt: "Alex, an everyday Kennesaw resident",
-            bio: "Alex lives in Kennesaw, GA, and relies heavily on his smartphone for traffic alerts, event planning, and day-to-day tasks. He values ==instant confirmation== when reporting an issue, prefers a high-contrast interface that's easy on the eyes, and appreciates engaging micro-interactions that make the process feel smooth and trustworthy.",
+            bio: "Alex lives in Kennesaw, GA, and runs his day from his phone: traffic alerts, events, errands. When he reports an issue, he wants ==instant confirmation==, high contrast, and interactions smooth enough to trust.",
             quirks: [
               {
                 icon: "tinyControls",
@@ -173,7 +173,7 @@ export const incity = {
             tagline: "The Overloaded Staffer",
             image: incityPersonaBlake,
             alt: "Blake, a city 311 staff member",
-            bio: "Blake manages hundreds of 311 requests every week as part of her city staff role. She needs a ==centralized mobile dashboard== to route issues in one swipe, track departmental responses in real time, and quickly identify critical cases through upvotes and alerts. For Blake, efficiency and visibility are the difference between smooth operations and a clogged workflow.",
+            bio: "Blake handles hundreds of 311 requests a week for the city. She needs a ==centralized mobile dashboard==: route issues in one swipe, track responses in real time, spot critical cases fast. Visibility is the difference between smooth operations and a clogged queue.",
             quirks: [
               {
                 icon: "misrouted",
@@ -198,7 +198,7 @@ export const incity = {
       {
         media: "image",
         src: incityWireframesLowFi,
-        alt: "Low-fidelity wireframe board — the full screen set laid out",
+        alt: "Low-fidelity wireframe board with the full screen set laid out",
         title: "Every good design starts a bit messy.",
         sub: "A single rough screen grew into a full wireframe set and one clear journey from report to resolution.",
       },
@@ -209,7 +209,7 @@ export const incity = {
       { section: "Features" },
       {
         title: "Five features carried the high-fidelity experience.",
-        p: "High fidelity turned the redesign into a working product. Each feature closes a specific gap the original ATL311 left open, spanning Visual identity, Accessibility, and Interaction from first tap to final confirmation.",
+        p: "High fidelity turned the redesign into a working product. Each feature closes a gap ATL311 left open, across Visual identity, Accessibility, and Interaction.",
         guide: [
           { term: "Visual identity", count: 2, icon: "visual" },
           { term: "Accessibility", count: 1, icon: "access" },
@@ -236,7 +236,7 @@ export const incity = {
         sub: "Soft corners, crisp feedback, and playful touches like bouncing pins. Every tap feels predictable and alive.",
         media: "image",
         src: incityFeatureDesignSystem,
-        alt: "InCity design system — color, type, and component tokens",
+        alt: "InCity design system: color, type, and component tokens",
       },
       {
         feat: true,
@@ -245,7 +245,7 @@ export const incity = {
         sub: "Clean type paired with purposeful icons that scale together, so nothing falls out of rhythm.",
         media: "image",
         src: incityFeatureTypeIconography,
-        alt: "InCity type scale and icon set — typography paired with purposeful icons",
+        alt: "InCity type scale and icon set",
         fullBleed: true,
       },
       {
@@ -265,11 +265,11 @@ export const incity = {
         feat: true,
         icon: "clipboard",
         title: "Proof every time",
-        sub: "Every submission lands somewhere you can see it — a confirmation, a tracked case, and a receipt when you pay. ==You are never left guessing whether it went through==.",
+        sub: "Every submission lands somewhere you can see it: a confirmation, a tracked case, a receipt when you pay. ==No guessing whether it went through==.",
         media: "image",
         frameBg: "#000000",
         src: incityFeatureProof,
-        alt: "Submission confirmation screen with case details — You're all set",
+        alt: "Submission confirmation screen with case details reading You're all set",
         portrait: true,
       },
       { section: "Outcomes" },
@@ -298,7 +298,7 @@ export const incity = {
       },
       {
         title: "The city finally answered back.",
-        p: "The redesign also earned ==recognition from the Assistant City Manager of Kennesaw==, who praised its potential impact if implemented. The strongest shift was emotional: the city finally answers back.",
+        p: "The redesign earned ==recognition from Kennesaw's Assistant City Manager==, who praised its potential impact. The strongest shift was emotional: the city finally answers back.",
       },
     ],
   };

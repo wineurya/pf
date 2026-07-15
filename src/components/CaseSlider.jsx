@@ -82,7 +82,7 @@ export function CaseSlider({ slides, label }) {
             transition={{ duration: reducedMotion ? 0.12 : 0.2, ease: EASE_OUT }}
           >
             <strong className="cs__slider-law">{slide.law}</strong>
-            {" — "}
+            {": "}
             {renderRich(slide.text)}
           </motion.span>
         </AnimatePresence>

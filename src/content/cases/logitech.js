@@ -30,7 +30,7 @@ export const logitech = {
       { section: "Overview" },
       {
         title: "The gist of Logitech",
-        p: "The project tested whether ==UX laws could shape a product story== from the start, not appear as a justification after the screens were done.",
+        p: "The project tested whether ==UX laws could shape a product story== from the start, not justify it after the fact.",
       },
       {
         title: "What was the outcome?",
@@ -39,7 +39,7 @@ export const logitech = {
       { section: "The brief" },
       {
         title: "The psychology was mapped before the pixels moved.",
-        p: "The brief was simple: present a new product so it is easy to understand and remember. My angle was to ==put the psychology on the page== by pairing each law with one concrete interface decision before any pixels moved.",
+        p: "The brief was simple: present a new product so it is easy to understand and remember. My angle was to ==put the psychology on the page==, pairing each law with one concrete interface decision.",
       },
       {
         media: "image",
@@ -110,13 +110,13 @@ export const logitech = {
             src: logitechLawMiller,
             alt: "Annotated features page: six feature cards listed so users can retain the information",
             law: "Miller's law",
-            text: "The features page holds six cards — inside the 5–7 chunks people can actually retain.",
+            text: "The features page holds six cards, inside the 5–7 chunks people can retain.",
           },
           {
             src: logitechLawRestorff,
             alt: "Annotated feature slide: the 63-gram weight highlighted as the one contrasting number",
             law: "Von Restorff",
-            text: "One highlighted number — 63 grams — makes the weight the easiest thing on the page to remember.",
+            text: "One highlighted number, 63 grams, makes the weight the easiest thing on the page to remember.",
           },
           {
             src: logitechLawZeigarnik,
