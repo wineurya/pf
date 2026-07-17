@@ -27,6 +27,8 @@ const DESKTOP_RAIL_MQ = "(min-width: 860px)";
  * between tabs. The fill carries a finite, half-height stadium radius (see CSS),
  * so it reads fully rounded yet never oval-stretches under the layout-projection
  * scale — the tab boxes resize instantly underneath so only the fill animates.
+ * `layoutDependency` is pinned like ThemeToggle so sticky reflows don't invent
+ * extra layout deltas mid-morph.
  */
 export function Tabs({ items, value, onChange }) {
   const refs = useRef({});
@@ -124,6 +126,7 @@ export function Tabs({ items, value, onChange }) {
               <motion.span
                 className="tab__fill"
                 layoutId="tab-fill"
+                layoutDependency={true}
                 aria-hidden="true"
                 transition={fillMorph(reducedMotion)}
               />
