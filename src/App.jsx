@@ -421,6 +421,56 @@ export function App() {
      their common left edge holds) toward the page edge during the pass. */
   useRailDodge(!study && tab === "work" && view !== "list", view);
 
+  /* Panel mount identity — can go null for one beat so the outgoing surface
+     finishes exiting before we snap scroll and mount the next. `pendingTab`
+     is the destination chosen while scrolled; the rail highlights it immediately. */
+  const [panelTab, setPanelTab] = useState("work");
+  const [pendingTab, setPendingTab] = useState(null);
+  const pendingTabRef = useRef(null);
+
+  const jumpScrollTop = useCallback(() => {
+    const root = document.documentElement;
+    const prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    root.scrollTop = 0;
+    document.body.scrollTop = 0;
+    root.style.scrollBehavior = prev;
+  }, []);
+
+  const changeTab = useCallback(
+    (id) => {
+      if (id === tab || pendingTabRef.current) return;
+      /* Scrolled on a tall tab: fade out first (panelTab → null), snap to top
+         while the stage is empty, then mount the enter. Hides the scroll jump
+         in the gap between exit and enter. At the top, a normal wait swap. */
+      if (window.scrollY > 1) {
+        pendingTabRef.current = id;
+        setPendingTab(id);
+        setPanelTab(null);
+        return;
+      }
+      startTransition(() => {
+        setTab(id);
+        setPanelTab(id);
+      });
+    },
+    [tab],
+  );
+
+  const onPanelExitComplete = useCallback(() => {
+    const next = pendingTabRef.current;
+    if (next == null) return;
+    jumpScrollTop();
+    pendingTabRef.current = null;
+    setPendingTab(null);
+    setTab(next);
+    setPanelTab(next);
+  }, [jumpScrollTop]);
+
+  /* Rail follows the pending destination so nav responds on click; header /
+     panel chrome still track `tab` until the sequenced enter commits. */
+  const railTab = pendingTab ?? tab;
+
   const aboutPortrait = tab === "about";
   /* Enter mirrors the exit's two-phase staging: the slot opens first (clip+push
      on portraitProgress, DUR_LAYOUT), THEN the photo fades/scales in — so the
@@ -522,8 +572,8 @@ export function App() {
                   >
                     <Tabs
                       items={tabs}
-                      value={tab}
-                      onChange={(id) => startTransition(() => setTab(id))}
+                      value={railTab}
+                      onChange={changeTab}
                     />
                     {/* On phones the toggle rides in the header (top-right, inline
                         with name/role); ≥860px the dock is the sticky rail cluster
@@ -645,20 +695,49 @@ export function App() {
                 </StaggerGroup>
 
                 <main id="main">
-                  {/* popLayout (not "wait"): the incoming panel enters while the
-                      old one fades out on top — no exit-then-enter dead time —
-                      and the exiting panel is popped from flow so its height
-                      never collapses the column mid-swap. */}
-                  <AnimatePresence mode="popLayout">
-                    <StaggerGroup key={tab} className="panel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0}>
-                      <PanelContent
-                        tab={tab}
-                        theme={theme}
-                        onOpenStudy={openStudy}
-                        view={view}
-                        onView={setView}
-                      />
-                    </StaggerGroup>
+                  {/* wait: outgoing panel finishes before the next mounts.
+                      When leaving a scrolled page, changeTab nulls panelTab so
+                      exit runs alone → onExitComplete snaps scroll → then the
+                      pending tab mounts (enter). At-top swaps just key-change. */}
+                  <AnimatePresence
+                    mode="wait"
+                    initial={false}
+                    onExitComplete={onPanelExitComplete}
+                  >
+                    {panelTab ? (
+                      <StaggerGroup
+                        key={panelTab}
+                        className="panel"
+                        role="tabpanel"
+                        id={`panel-${panelTab}`}
+                        aria-labelledby={`tab-${panelTab}`}
+                        tabIndex={0}
+                        /* One cohesive fade for the whole panel — staggering every
+                           Exploration card on the way out felt busy and kept live
+                           demos compositing through the beat. Enter still staggers
+                           via child RevealItems. */
+                        exit={
+                          reducedMotion
+                            ? { opacity: 0, transition: { duration: 0.1 } }
+                            : {
+                                opacity: 0,
+                                y: 8,
+                                transition: {
+                                  duration: DUR_UI_EXIT,
+                                  ease: EASE_OUT,
+                                },
+                              }
+                        }
+                      >
+                        <PanelContent
+                          tab={panelTab}
+                          theme={theme}
+                          onOpenStudy={openStudy}
+                          view={view}
+                          onView={setView}
+                        />
+                      </StaggerGroup>
+                    ) : null}
                   </AnimatePresence>
                 </main>
               </StaggerGroup>
