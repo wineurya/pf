@@ -33,13 +33,11 @@
   transition: opacity var(--dur-layout) var(--ease-in-out-strong);
 }
 
-/* Case studies are reading surfaces — the blob mask already erases the glow
-   behind copy, but the corner lobes still pulse against long-form text. Dim
-   the band to 30% (a 70% cut) so it reads as residual ambience: the standard
-   decorative-background treatment for content-dense pages (NN/g
-   text-over-images guidance), while home keeps the full glow. */
+/* Case studies are reading surfaces — kill the glow entirely so long-form
+   copy sits on the clean page in both themes; home keeps the full glow. The
+   container transition above fades it out/in across the open/close morph. */
 .backdrop--case {
-  opacity: 0.3;
+  opacity: 0;
 }
 
 /* Feather the band's own top edge so wherever the crop window lands it eases
@@ -105,7 +103,7 @@
 }
 
 /* Case studies scroll past long copy that reaches the band — sink the glow
-   ~1.5vw lower so less of it competes with content. (The 30% dim rides the
+   ~1.5vw lower so nothing peeks during the fade. (The full dim rides the
    .backdrop--case container above.) */
 .backdrop--case .backdrop__img {
   background-position: left 50% bottom calc(-1 * max(6.5vw, 56px));
