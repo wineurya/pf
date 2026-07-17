@@ -221,10 +221,6 @@
   padding-inline: var(--space-1);
 }
 
-.pcard--card .pcard__label {
-  color: var(--text-strong);
-}
-
 /* Holds label (left) + meta (right). A plain wrapper inside the motion row so
    the 2×2 hover slide animates here, clear of Framer Motion's layout. */
 .pcard__caption {
@@ -284,7 +280,11 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  /* Color is set per skin; transition lets it ease as a row becomes a card. */
+  /* Title is body content, not meta — reads dark at rest in both skins.
+     (List skin previously inherited --text-muted from .pcard and only
+     brightened on hover/focus.) Transition lets it ease as a row becomes a
+     card. */
+  color: var(--text-strong);
   transition: color var(--dur-fast) var(--ease-standard);
 }
 
