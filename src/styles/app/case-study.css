@@ -5,6 +5,10 @@
 .cs {
   width: 100%;
   outline: none; /* receives programmatic focus on open */
+  /* Long-form reading ink — muted stepped ~1/5 toward page ink. Labels and
+     chrome keep --text-muted; paragraphs people actually read (summaries,
+     block copy) get the extra contrast in both themes. */
+  --cs-copy: color-mix(in oklab, var(--text-strong) 20%, var(--text-muted));
 }
 
 /* Mirrors .content-wrapper — main column + left-offset sticky rail. */
@@ -548,7 +552,7 @@
 
 .cs__summary {
   max-width: var(--max-copy, 40rem);
-  color: var(--text-muted);
+  color: var(--cs-copy, var(--text-muted));
   text-wrap: pretty;
 }
 
@@ -710,18 +714,25 @@
 .cs__block-summary {
   max-width: var(--max-copy, 40rem);
   margin: 0;
-  color: var(--text-muted);
+  color: var(--cs-copy, var(--text-muted));
   text-wrap: pretty;
 }
 
-/* Accent highlight (==phrase== in content). Ink at full --mark-color; fill at
-   12% of the same hue. box-decoration-break: clone gives every wrapped line
-   its own highlight. */
+/* Accent highlight (==phrase== in content). Light-theme ink is the section
+   accent sunk ~1/3 toward page ink — the raw Tailwind-600s (amber, yellow,
+   orange) only reach ~3:1 on white, which reads washed-out at 14px; the mix
+   holds the hue while clearing 4.5:1. Fill stays a quiet tint of the pure
+   accent so the swatch keeps its color identity. A slight weight bump plus
+   rounded, evenly-padded segments (box-decoration-break: clone) make wrapped
+   highlights read as deliberate pieces, not broken slabs. */
 .cs__mark {
-  color: var(--mark-color);
-  background: color-mix(in srgb, var(--mark-color) 12%, transparent);
+  color: color-mix(in oklab, var(--mark-color) 66%, var(--text-strong));
+  background: color-mix(in srgb, var(--mark-color) 13%, transparent);
+  font-weight: 500;
   text-decoration: none;
-  padding: 0.04em 0.12em;
+  padding: 0.1em 0.28em;
+  margin-inline: -0.08em;
+  border-radius: 0.35em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -741,8 +752,12 @@
 .cs__section[data-accent="sprint"] { --mark-color: var(--mark-accent-sprint); }
 .cs__section[data-accent="retro"] { --mark-color: var(--mark-accent-retro); }
 
+/* Dark theme — the 400-level accents already sit 5:1+ on #0a0a0a, so the ink
+   stays pure (mixing toward white would gray the hue); only the fill steps up
+   so the swatch still registers against the dark page. */
 :root[data-theme="dark"] .cs__mark {
-  background: color-mix(in srgb, var(--mark-color) 16%, transparent);
+  color: var(--mark-color);
+  background: color-mix(in srgb, var(--mark-color) 18%, transparent);
 }
 
 /* Blank media stand-ins — same surface language as the hero cover and About
@@ -945,7 +960,7 @@
 }
 
 .cs__features-summary {
-  color: var(--text-muted);
+  color: var(--cs-copy, var(--text-muted));
   text-wrap: pretty;
 }
 
@@ -1461,7 +1476,7 @@
 
 .persona__bio {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--cs-copy, var(--text-muted));
   text-wrap: pretty;
 }
 
