@@ -70,15 +70,34 @@ function ProjectItem({ item, isCard, onOpen, reducedMotion, layoutTransition }) 
             }}
           >
             {item.cover ? (
-              <img
-                className="pcard__cover"
-                src={item.cover}
-                alt={`${item.label} project cover`}
-                width={item.coverW}
-                height={item.coverH}
-                loading="lazy"
-                decoding="async"
-              />
+              /* Theme-aware covers ship both variants; CSS picks one by
+                 [data-theme] so a theme swap never waits on a fetch. */
+              <>
+                <img
+                  className={
+                    item.coverDark
+                      ? "pcard__cover pcard__cover--light"
+                      : "pcard__cover"
+                  }
+                  src={item.cover}
+                  alt={`${item.label} project cover`}
+                  width={item.coverW}
+                  height={item.coverH}
+                  loading="lazy"
+                  decoding="async"
+                />
+                {item.coverDark ? (
+                  <img
+                    className="pcard__cover pcard__cover--dark"
+                    src={item.coverDark}
+                    alt={`${item.label} project cover`}
+                    width={item.coverW}
+                    height={item.coverH}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : null}
+              </>
             ) : (
               <motion.span layout className="pcard__media-label">
                 {item.hero ?? "image"}

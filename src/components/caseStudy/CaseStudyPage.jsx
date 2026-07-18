@@ -238,13 +238,30 @@ export function CaseStudy({
           <div className="cs-band cs-band--chrome">
             <RevealItem as="figure" className="cs__hero">
               {study.cover ? (
-                <img
-                  className="cs__cover"
-                  src={study.cover}
-                  alt={study.coverAlt ?? `${study.title} project cover`}
-                  decoding="async"
-                  fetchPriority="high"
-                />
+                /* Theme-aware covers ship both variants; CSS picks one by
+                   [data-theme] so a theme swap never waits on a fetch. */
+                <>
+                  <img
+                    className={
+                      study.coverDark
+                        ? "cs__cover cs__cover--light"
+                        : "cs__cover"
+                    }
+                    src={study.cover}
+                    alt={study.coverAlt ?? `${study.title} project cover`}
+                    decoding="async"
+                    fetchPriority="high"
+                  />
+                  {study.coverDark ? (
+                    <img
+                      className="cs__cover cs__cover--dark"
+                      src={study.coverDark}
+                      alt={study.coverAlt ?? `${study.title} project cover`}
+                      decoding="async"
+                      fetchPriority="high"
+                    />
+                  ) : null}
+                </>
               ) : (
                 <div className="cs__tile cs__tile--hero">
                   <span className="cs__tile-label">{study.hero ?? "image"}</span>

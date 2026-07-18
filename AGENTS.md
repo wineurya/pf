@@ -104,7 +104,7 @@ If you discover any of the above already tracked, stop and flag it rather than c
 - Respect true aspect ratios. Do not use `object-fit: contain` (letterboxing) unless explicitly asked; favor `cover`/crop matching the reference.
 - **Case-study covers use the image's intrinsic aspect ratio** — width 100%, height auto; gallery cards set `--card-ar` from `naturalWidth / naturalHeight`. Do not force a display ratio (e.g. 16:9) over a panoramic cover.
 - Convert new hero or large images to WebP and update their references. It is a meaningful, recurring performance win.
-- **InCity cover:** `src/assets/case/incity-cover.webp` (2400×715, ~3.36:1). Wired in `src/content.js` with `coverAlt`.
+- **InCity cover:** `src/assets/case/incity-cover.webp` + `incity-cover-dark.webp` (3290×980, ~3.36:1). Wired in `src/content/cases/incity.js` with `cover` / `coverDark` / `coverAlt`.
 
 ## Verifying visual changes
 

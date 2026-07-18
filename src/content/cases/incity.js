@@ -1,6 +1,7 @@
 /* Case study: incity */
 
 import incityCover from "../../assets/case/incity-cover.webp";
+import incityCoverDark from "../../assets/case/incity-cover-dark.webp";
 import incityOldFlowWebm from "../../assets/case/incity-old-flow.webm";
 import incityOldFlowMp4 from "../../assets/case/incity-old-flow.mp4";
 import incityOldFlowPoster from "../../assets/case/incity-old-flow-poster.jpg";
@@ -28,6 +29,9 @@ export const incity = {
     meta: "Civic Reporting",
     hero: "video",
     cover: incityCover,
+    /* Theme-matched export of the same Figma layer with its dark variable mode
+       applied; the light `cover` stays the canonical asset (dims, fallbacks). */
+    coverDark: incityCoverDark,
     coverAlt:
       "InCity status chip reading Awaiting Inspection over a soft gradient background",
     facts: {

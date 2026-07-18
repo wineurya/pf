@@ -54,7 +54,7 @@ import { siren } from "./cases/siren.js";
    true aspect ratio *before* the lazy image loads — no layout shift on load. */
 const COVER_DIMS = new Map([
   [avanceCover, { w: 1600, h: 1600 }],
-  [incityCover, { w: 2400, h: 715 }],
+  [incityCover, { w: 3290, h: 980 }],
   [kinetixCover, { w: 1600, h: 1067 }],
   [logitechCover, { w: 1024, h: 476 }],
   [resolutionsCover, { w: 2048, h: 1148 }],
@@ -116,6 +116,7 @@ export const site = {
       wip: Boolean(study.wip),
       hero: study.hero,
       cover: study.cover,
+      coverDark: study.coverDark,
       coverW: coverDims?.w,
       coverH: coverDims?.h,
     };

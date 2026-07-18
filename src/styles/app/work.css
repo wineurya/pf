@@ -258,12 +258,29 @@
 .pgrid .pcard__media:has(.pcard__cover) {
   display: block;
   aspect-ratio: auto;
+  border-radius: var(--radius-xl);
+  /* Soft lift — 12% gray, wide blur; own overflow:hidden doesn't clip this. */
+  box-shadow: 0 16px 56px rgb(0 0 0 / 4%);
 }
 
 .pcard__cover {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* Theme-aware covers: both variants are in the DOM (the hidden one still
+   downloads, so a theme swap is instant); [data-theme] picks which shows. */
+.pcard__cover--dark {
+  display: none;
+}
+
+:root[data-theme="dark"] .pcard__cover--light {
+  display: none;
+}
+
+:root[data-theme="dark"] .pcard__cover--dark {
+  display: block;
 }
 
 .pcard__media-label {
